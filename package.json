@@ -6,6 +6,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "electron": "^1.7.9"
+    "electron": "1.7.9"
+  },
+  "devDependencies": {
+    "typescript": "^2.6.2"
   }
 }
