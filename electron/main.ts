@@ -10,11 +10,11 @@ function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
         width: 1800,
-        height: 1600,
+        height: 600,
         frame: true,
         focusable: true,
         skipTaskbar: false,
-        alwaysOnTop: true,
+        alwaysOnTop: false,
         thickFrame: true,
         show: true
     });

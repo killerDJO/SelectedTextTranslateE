@@ -7,9 +7,32 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Electron Main",
+            "protocol": "inspector",
+            "name": "Debugn Main Process",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
-            "program": "${workspaceFolder}/electron/main.js"
+            "cwd": "${workspaceRoot}",
+            "program": "${workspaceFolder}/electron/main.js",
+            "outFiles": [
+                "${workspaceRoot}/app/dist/main.build.js",
+                "${workspaceRoot}/app/dist/vendor.build.js",
+                "${workspaceRoot}/app/dist/manifest.build.js"
+            ],
+            //"remoteRoot": "${workspaceRoot}/app",
+            "sourceMaps": true
+        },
+        {
+            "name": "Debug Renderer Process",
+            "type": "chrome",
+            "request": "launch",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "runtimeArgs": [
+                "${workspaceRoot}/electron/main.js",
+                // "--enable-logging",
+                "--remote-debugging-port=9222"
+            ],
+            "timeout": 20000,
+            "sourceMaps": true,
+            "webRoot": "${workspaceRoot}"
         }
     ]
 }
