@@ -3,6 +3,7 @@
         "module": "commonjs",
         "strict": true,
         "strictFunctionTypes": false,
+        "experimentalDecorators": true,
         "removeComments": true,
         "preserveConstEnums": true,
         "forceConsistentCasingInFileNames": true,

@@ -9,6 +9,8 @@
         "no-parameter-properties": false,
         "no-parameter-reassignment": false,
         "no-unused-variable": false,
+        "arrow-parens": false,
+        "eofline": false,
         "linebreak-style": [
             true,
             "CRLF"
@@ -63,6 +65,8 @@
         },
         "no-switch-case-fall-through": true,
         "switch-default": false,
+        "no-inferrable-types": false,
+        "no-default-export": false,
         "variable-name": [
             true,
             "ban-keywords",
