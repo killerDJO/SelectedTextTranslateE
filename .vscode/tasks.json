@@ -4,23 +4,32 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "webpack: dev",
+            "label": "webpack: dev-build - app",
             "type": "shell",
             "command": "npx webpack --config ./app/webpack.config.js",
             "group": "build",
             "problemMatcher": []
         },
         {
+            "label": "webpack: watch - app",
+            "type": "shell",
+            "command": "npx webpack --config ./app/webpack.config.js --watch",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "tsc: build - electron",
             "type": "typescript",
-            "tsconfig": "tsconfig.json",
+            "tsconfig": "electron\\tsconfig.json",
             "problemMatcher": [
                 "$tsc"
             ],
             "group": "build"
         },
         {
+            "label": "tsc: watch - electron",
             "type": "typescript",
-            "tsconfig": "tsconfig.json",
+            "tsconfig": "electron\\tsconfig.json",
             "option": "watch",
             "problemMatcher": [
                 "$tsc-watch"

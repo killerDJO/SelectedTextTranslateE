@@ -27,7 +27,6 @@
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "runtimeArgs": [
                 "${workspaceRoot}/electron/main.js",
-                // "--enable-logging",
                 "--remote-debugging-port=9222"
             ],
             "timeout": 20000,
