@@ -51,6 +51,43 @@
             "script": "pack",
             "group": "build",
             "problemMatcher": []
+        },
+        {
+            "label": "pack: dev",
+            "type": "npm",
+            "script": "pack-dev",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "pack: prod",
+            "type": "npm",
+            "script": "pack-prod",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "full: build-dev",
+            "type": "npm",
+            "script": "full-build-dev",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "full: build-prod",
+            "type": "npm",
+            "script": "full-build-prod",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "dev: start",
+            "group": "build",
+            "problemMatcher": [],
+            "dependsOn": [
+                "main: watch",
+                "renderer: dev-server"
+            ]
         }
     ]
 }

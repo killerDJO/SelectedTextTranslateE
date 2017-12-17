@@ -8,11 +8,16 @@
   "scripts": {
     "renderer-build-dev": "webpack --config ./build/webpack.renderer.js --env.NODE_ENV=dev",
     "renderer-build-prod": "webpack --config ./build/webpack.renderer.js --env.NODE_ENV=prod",
-    "renderer-dev-server": "webpack-dev-server --open --config build/webpack.renderer.js --hot --env.NODE_ENV=dev",
+    "renderer-dev-server": "webpack-dev-server --config build/webpack.renderer.js --hot --env.NODE_ENV=dev",
     "main-build-dev": "webpack --config ./build/webpack.main.js --env.NODE_ENV=dev",
-    "main-build-prod": " webpack --config ./build/webpack.main.js --env.NODE_ENV=prod",
+    "main-build-prod": "webpack --config ./build/webpack.main.js --env.NODE_ENV=prod",
     "main-watch-dev": "webpack --config ./build/webpack.main.js --watch --env.NODE_ENV=dev",
-    "pack": "node build/package.js"
+    "full-build-dev": "npm run main-build-dev && npm run renderer-build-dev",
+    "full-build-prod": "npm run main-build-prod && npm run renderer-build-prod",
+    "pack-dev": "npm run full-build-dev && pack",
+    "pack-prod": "npm run full-build-prod && pack",
+    "pack": "node build/package.js",
+    "dev": "start npm run main-watch-dev && start npm run renderer-dev-server"
   },
   "dependencies": {},
   "devDependencies": {
