@@ -11,13 +11,7 @@
             "name": "Debugn Main Process",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
             "cwd": "${workspaceRoot}",
-            "program": "${workspaceFolder}/electron/main.js",
-            "outFiles": [
-                "${workspaceRoot}/app/dist/main.build.js",
-                "${workspaceRoot}/app/dist/vendor.build.js",
-                "${workspaceRoot}/app/dist/manifest.build.js"
-            ],
-            //"remoteRoot": "${workspaceRoot}/app",
+            "program": "${workspaceFolder}/dist/main/main.build.js",
             "sourceMaps": true
         },
         {
@@ -26,7 +20,7 @@
             "request": "launch",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "runtimeArgs": [
-                "${workspaceRoot}/electron/main.js",
+                "${workspaceFolder}/dist/main/main.build.js",
                 "--remote-debugging-port=9222"
             ],
             "timeout": 20000,

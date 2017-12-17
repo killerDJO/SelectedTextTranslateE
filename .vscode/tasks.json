@@ -5,50 +5,52 @@
     "tasks": [
         {
             "label": "renderer: build-dev",
-            "type": "shell",
-            "command": "npx webpack --config ./renderer/webpack.config.js --env.NODE_ENV=dev",
+            "type": "npm",
+            "script": "renderer-build-dev",
             "group": "build",
             "problemMatcher": []
         },
         {
             "label": "renderer: build-prod",
-            "type": "shell",
-            "command": "npx webpack --config ./renderer/webpack.config.js --env.NODE_ENV=prod",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "renderer: watch",
-            "type": "shell",
-            "command": "npx webpack --config ./renderer/webpack.config.js --watch --env.NODE_ENV=dev",
+            "type": "npm",
+            "script": "renderer-build-prod",
             "group": "build",
             "problemMatcher": []
         },
         {
             "label": "renderer: dev-server",
-            "type": "shell",
-            "command": "npx webpack-dev-server --open --config renderer/webpack.config.js --hot --env.NODE_ENV=dev",
+            "type": "npm",
+            "script": "renderer-dev-server",
             "group": "build",
             "problemMatcher": []
         },
         {
-            "label": "tsc: build - electron",
-            "type": "typescript",
-            "tsconfig": "main\\tsconfig.json",
-            "problemMatcher": [
-                "$tsc"
-            ],
-            "group": "build"
+            "label": "main: build-dev",
+            "type": "npm",
+            "script": "main-build-dev",
+            "group": "build",
+            "problemMatcher": []
         },
         {
-            "label": "tsc: watch - electron",
-            "type": "typescript",
-            "tsconfig": "main\\tsconfig.json",
-            "option": "watch",
-            "problemMatcher": [
-                "$tsc-watch"
-            ],
-            "group": "build"
+            "label": "main: build-prod",
+            "type": "npm",
+            "script": "main-build-prod",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "main: watch",
+            "type": "npm",
+            "script": "main-watch-dev",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "pack",
+            "type": "npm",
+            "script": "pack",
+            "group": "build",
+            "problemMatcher": []
         }
     ]
 }

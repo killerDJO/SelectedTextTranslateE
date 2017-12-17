@@ -1,8 +1,13 @@
 import { app, BrowserWindow, Menu, Tray } from "electron";
 import * as path from "path";
 import * as url from "url";
+import icon from "./assets/SelectedTextTranslate.ico";
 
 let win: BrowserWindow | null;
+
+const baseUrl = process.env.NODE_ENV === "dev"
+    ? "http://localhost:8080"
+    : `file:${path.resolve(__dirname, "..\\renderer\\index.html")}`;
 
 app.on("ready", createWindow);
 
@@ -25,14 +30,9 @@ function createWindow() {
     //     }
     // });
 
-    // and load the index.html of the app.
-    win.loadURL(url.format({
-        pathname: "localhost:8080/index.html",
-        protocol: "http:",
-        slashes: true
-    }));
+    win.loadURL(baseUrl);
 
-    createTaskBar();
+    //createTaskBar();
 
     win.on("closed", () => {
         win = null;
@@ -40,7 +40,9 @@ function createWindow() {
 }
 
 function createTaskBar(): void {
-    const tray = new Tray(path.join(__dirname, "assets/SelectedTextTranslate.ico"));
+    console.log(icon);
+    const iconPath = path.join(__dirname, icon);
+    const tray = new Tray(iconPath);
     const contextMenu = Menu.buildFromTemplate([
         { label: "Close", type: "normal", role: "quit" },
     ]);

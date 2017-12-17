@@ -2,17 +2,27 @@
   "name": "selected-text-translate",
   "version": "0.0.1",
   "description": "",
-  "main": "main.js",
+  "main": "dist/main/main.build.js",
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "electron": "1.7.9",
-    "vue": "2.5.11",
-    "vue-property-decorator": "6.0.0"
+  "scripts": {
+    "renderer-build-dev": "webpack --config ./build/webpack.renderer.js --env.NODE_ENV=dev",
+    "renderer-build-prod": "webpack --config ./build/webpack.renderer.js --env.NODE_ENV=prod",
+    "renderer-dev-server": "webpack-dev-server --open --config build/webpack.renderer.js --hot --env.NODE_ENV=dev",
+    "main-build-dev": "webpack --config ./build/webpack.main.js --env.NODE_ENV=dev",
+    "main-build-prod": " webpack --config ./build/webpack.main.js --env.NODE_ENV=prod",
+    "main-watch-dev": "webpack --config ./build/webpack.main.js --watch --env.NODE_ENV=dev",
+    "pack": "node build/package.js"
   },
+  "dependencies": {},
   "devDependencies": {
+    "electron": "^1.7.9",
+    "vue": "2.5.11",
+    "vue-property-decorator": "6.0.0",
     "clean-webpack-plugin": "^0.1.17",
     "css-loader": "^0.28.7",
+    "electron-packager": "^10.1.0",
+    "file-loader": "^1.1.6",
     "html-webpack-plugin": "^2.30.1",
     "node-sass": "^4.7.2",
     "sass-loader": "^6.0.6",
@@ -26,6 +36,7 @@
     "vue-style-loader": "^3.0.3",
     "vue-template-compiler": "2.5.11",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.9.7"
+    "webpack-dev-server": "^2.9.7",
+    "webpack-node-externals": "^1.6.0"
   }
 }

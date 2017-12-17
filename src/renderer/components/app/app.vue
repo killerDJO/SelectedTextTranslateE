@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div>412 {{greeting}}</div>
+    <div>Test {{greeting}}</div>
     <button @click="processClick" class="test">Click Me</button>
   </div>
 </template>
