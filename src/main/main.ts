@@ -1,7 +1,6 @@
 import { app, BrowserWindow, Menu, Tray } from "electron";
 import * as path from "path";
 import * as url from "url";
-import icon from "./assets/SelectedTextTranslate.ico";
 
 let win: BrowserWindow | null;
 
@@ -32,7 +31,7 @@ function createWindow() {
 
     win.loadURL(baseUrl);
 
-    //createTaskBar();
+    createTaskBar();
 
     win.on("closed", () => {
         win = null;
@@ -40,9 +39,7 @@ function createWindow() {
 }
 
 function createTaskBar(): void {
-    console.log(icon);
-    const iconPath = path.join(__dirname, icon);
-    const tray = new Tray(iconPath);
+    const tray = new Tray(path.resolve(__dirname, "icons\\tray.ico"));
     const contextMenu = Menu.buildFromTemplate([
         { label: "Close", type: "normal", role: "quit" },
     ]);
