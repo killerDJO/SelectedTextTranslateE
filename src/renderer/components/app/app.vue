@@ -2,6 +2,7 @@
   <div>
     <div>Test {{greeting}}</div>
     <button @click="processClick" class="test">Click Me</button>
+    <div class="icon"></div>
   </div>
 </template>
 
