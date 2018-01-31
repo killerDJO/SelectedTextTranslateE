@@ -33,6 +33,7 @@
         "no-null-keyword": false,
         "no-require-imports": true,
         "no-unnecessary-qualifier": false,
+        "no-unnecessary-class": false,
         "no-use-before-declare": false,
         "no-void-expression": false,
         "prefer-function-over-method": false,
@@ -68,6 +69,7 @@
         "switch-default": false,
         "no-inferrable-types": false,
         "no-default-export": false,
+        "no-submodule-imports": false,
         "variable-name": [
             true,
             "ban-keywords",
@@ -91,6 +93,8 @@
         "match-default-export-name": false,
         "no-boolean-literal-compare": false,
         "no-unnecessary-type-assertion": false,
-        "return-undefined": false
+        "return-undefined": false,
+        "member-ordering": false,
+        "ordered-imports": false
     }
 }
