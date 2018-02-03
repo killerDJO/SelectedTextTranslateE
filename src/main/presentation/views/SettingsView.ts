@@ -1,5 +1,5 @@
 import { ViewBase } from "./ViewBase";
-import { Event } from "electron";
+import { Event, app } from "electron";
 
 export class SettingsView extends ViewBase {
     constructor() {
@@ -19,6 +19,10 @@ export class SettingsView extends ViewBase {
         this.window.on("close", (event: Event) => {
             event.preventDefault();
             this.window.hide();
+        });
+
+        app.on("before-quit", () => {
+            this.window.removeAllListeners("close");
         });
     }
 }

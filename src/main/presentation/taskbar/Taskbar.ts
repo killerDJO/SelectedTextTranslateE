@@ -21,7 +21,7 @@ export class Taskbar {
         const contextMenu = Menu.buildFromTemplate([
             { label: "Settings", click: () => this.OnShowSettings.next(undefined) },
             { type: "separator" },
-            { label: "Quite", type: "normal", role: "quit" }
+            { label: "Quit", type: "normal", role: "quit" }
         ]);
         this.tray.setToolTip("Selected Text Translate");
         this.tray.setContextMenu(contextMenu);

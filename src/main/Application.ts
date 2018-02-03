@@ -1,7 +1,7 @@
 import { app } from "electron";
-import { Taskbar } from "./taskbar/Taskbar";
-import { TranslationView } from "./views/TranslationView";
-import { SettingsView } from "./views/SettingsView";
+import { Taskbar } from "./presentation/taskbar/Taskbar";
+import { TranslationView } from "./presentation/views/TranslationView";
+import { SettingsView } from "./presentation/views/SettingsView";
 
 class Application {
     private taskbar: Taskbar;
