@@ -4,11 +4,11 @@ import { RendererLocationProvider } from "../RendererLocationProvider";
 export abstract class ViewBase {
     protected window: BrowserWindow;
 
-    constructor(options: BrowserWindowConstructorOptions) {
+    constructor(options: BrowserWindowConstructorOptions, name: string) {
         options.show = false;
         this.window = new BrowserWindow(options);
 
-        this.window.loadURL(RendererLocationProvider.getRendererLocation());
+        this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${name}`);
     }
 
     public show(): void {
