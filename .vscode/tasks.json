@@ -11,16 +11,9 @@
             "problemMatcher": []
         },
         {
-            "label": "renderer: build-prod",
+            "label": "renderer: watch",
             "type": "npm",
-            "script": "renderer-build-prod",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "renderer: dev-server",
-            "type": "npm",
-            "script": "renderer-dev-server",
+            "script": "renderer-watch-dev",
             "group": "build",
             "problemMatcher": []
         },
@@ -32,23 +25,9 @@
             "problemMatcher": []
         },
         {
-            "label": "main: build-prod",
-            "type": "npm",
-            "script": "main-build-prod",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
             "label": "main: watch",
             "type": "npm",
             "script": "main-watch-dev",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "pack",
-            "type": "npm",
-            "script": "pack",
             "group": "build",
             "problemMatcher": []
         },
@@ -86,7 +65,7 @@
             "problemMatcher": [],
             "dependsOn": [
                 "main: watch",
-                "renderer: dev-server"
+                "renderer: watch"
             ]
         }
     ]

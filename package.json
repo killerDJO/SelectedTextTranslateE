@@ -8,7 +8,7 @@
   "scripts": {
     "renderer-build-dev": "webpack --config ./build-scripts/webpack.renderer.js --env.NODE_ENV=dev",
     "renderer-build-prod": "webpack --config ./build-scripts/webpack.renderer.js --env.NODE_ENV=prod",
-    "renderer-dev-server": "webpack-dev-server --config build-scripts/webpack.renderer.js --hot --env.NODE_ENV=dev",
+    "renderer-watch-dev": "webpack --config ./build-scripts/webpack.renderer.js --watch --env.NODE_ENV=dev",
     "main-build-dev": "webpack --config ./build-scripts/webpack.main.js --env.NODE_ENV=dev",
     "main-build-prod": "webpack --config ./build-scripts/webpack.main.js --env.NODE_ENV=prod",
     "main-watch-dev": "webpack --config ./build-scripts/webpack.main.js --watch --env.NODE_ENV=dev",
