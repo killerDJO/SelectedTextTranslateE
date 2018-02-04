@@ -10,8 +10,3 @@ new Vue({
     },
     router
 }).$mount("body");
-
-import { ipcRenderer } from "electron"
-ipcRenderer.on("translate-result", (sender: Electron.EventEmitter, translateResult: string) => {
-    console.log("result: " + translateResult);
-})

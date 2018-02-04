@@ -15,6 +15,10 @@ export class TranslationView extends ViewBase {
             },
             "");
 
-        this.window.on("blur", () => this.hide());
+        this.Window.on("blur", () => this.hide());
+    }
+
+    public showTranslateResult(translateResult: string): void {
+        this.MessageBus.sendTranslateResult(this.Window, translateResult);
     }
 }

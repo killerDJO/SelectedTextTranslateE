@@ -25,7 +25,7 @@ class Application {
         });
 
         textExtractor.TextToTranslate.subscribe(text => {
-            this.translationView.sendMessage("translate-result", text);
+            this.translationView.showTranslateResult(text);
             this.translationView.show();
         });
     }

@@ -1,27 +1,26 @@
 import { BrowserWindowConstructorOptions, BrowserWindow } from "electron";
 import { RendererLocationProvider } from "../RendererLocationProvider";
-import { arch } from "os";
+import { IMainMessageBus } from "common/messaging/IMainMessageBus";
+import { MessageBus } from "common/messaging/MessageBus";
 
 export abstract class ViewBase {
-    protected window: BrowserWindow;
+    protected readonly Window: BrowserWindow;
+    protected readonly MessageBus: IMainMessageBus;
 
     constructor(options: BrowserWindowConstructorOptions, name: string) {
         options.show = false;
-        this.window = new BrowserWindow(options);
+        this.Window = new BrowserWindow(options);
+        this.MessageBus = new MessageBus();
 
-        this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${name}`);
+        this.Window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${name}`);
     }
 
     public show(): void {
-        this.window.show();
-        this.window.focus();
+        this.Window.show();
+        this.Window.focus();
     }
 
     public hide(): void {
-        this.window.hide();
-    }
-
-    public sendMessage(channel: string, ...args: any[]): void {
-        this.window.webContents.send(channel, args);
+        this.Window.hide();
     }
 }

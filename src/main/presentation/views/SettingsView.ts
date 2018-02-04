@@ -16,13 +16,13 @@ export class SettingsView extends ViewBase {
             },
             "settings");
 
-        this.window.on("close", (event: Event) => {
+        this.Window.on("close", (event: Event) => {
             event.preventDefault();
-            this.window.hide();
+            this.Window.hide();
         });
 
         app.on("before-quit", () => {
-            this.window.removeAllListeners("close");
+            this.Window.removeAllListeners("close");
         });
     }
 }

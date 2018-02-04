@@ -1,16 +1,15 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { ipcRenderer } from "electron"
+import ComponentBase from "../ComponentBase";
 
 @Component
-export default class TranslationResult extends Vue {
+export default class TranslationResult extends ComponentBase {
 
     text: string = "";
 
     constructor() {
         super();
-        ipcRenderer.on("translate-result", (sender: Electron.EventEmitter, translateResult: string[]) => {
-            this.updateTranslateResult(translateResult[0]);
-        })
+        this.MessageBus.receiveTranslateResult(translateResult => this.updateTranslateResult(translateResult))
     }
 
     updateTranslateResult(text: string): void {
