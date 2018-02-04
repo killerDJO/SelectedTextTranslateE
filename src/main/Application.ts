@@ -1,4 +1,4 @@
-import { app } from "electron";
+import { app, ipcMain } from "electron";
 import { Taskbar } from "./presentation/taskbar/Taskbar";
 import { TranslationView } from "./presentation/views/TranslationView";
 import { SettingsView } from "./presentation/views/SettingsView";
@@ -25,7 +25,8 @@ class Application {
         });
 
         textExtractor.TextToTranslate.subscribe(text => {
-            console.log(text);
+            this.translationView.sendMessage("translate-result", text);
+            this.translationView.show();
         });
     }
 

@@ -1,8 +1,8 @@
 import Vue from "vue";
 import Router from "vue-router";
 
-import TranslationResult from "./components/TranslationResult/translationResult.vue";
-import Settings from "./components/Settings/settings.vue";
+import TranslationResult from "./components/translation-result/TranslationResult.vue";
+import Settings from "./components/settings/Settings.vue";
 
 Vue.use(Router);
 

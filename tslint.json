@@ -27,7 +27,7 @@
             "allow-declarations",
             "allow-named-functions"
         ],
-        "no-any": true,
+        "no-any": false,
         "no-magic-numbers": true,
         "no-non-null-assertion": true,
         "no-null-keyword": false,
@@ -95,6 +95,7 @@
         "no-unnecessary-type-assertion": false,
         "return-undefined": false,
         "member-ordering": false,
-        "ordered-imports": false
+        "ordered-imports": false,
+        "object-literal-sort-keys": false,
     }
 }

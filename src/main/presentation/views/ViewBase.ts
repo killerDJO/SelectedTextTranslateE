@@ -1,5 +1,6 @@
 import { BrowserWindowConstructorOptions, BrowserWindow } from "electron";
 import { RendererLocationProvider } from "../RendererLocationProvider";
+import { arch } from "os";
 
 export abstract class ViewBase {
     protected window: BrowserWindow;
@@ -18,5 +19,9 @@ export abstract class ViewBase {
 
     public hide(): void {
         this.window.hide();
+    }
+
+    public sendMessage(channel: string, ...args: any[]): void {
+        this.window.webContents.send(channel, args);
     }
 }
