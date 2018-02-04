@@ -16,12 +16,12 @@
     "full-build-prod": "npm run main-build-prod && npm run renderer-build-prod",
     "pack-dev": "npm run full-build-dev && npm run pack",
     "pack-prod": "npm run full-build-prod && npm run pack",
-    "pack": "node build-scripts/package.js"
+    "pack": "node build-scripts/package.js",
+    "rebuild-native": "npx electron-rebuild"
   },
   "dependencies": {
     "ffi": "^2.2.0",
-    "rxjs": "^5.5.6",
-    "sleep": "^5.1.1"
+    "rxjs": "^5.5.6"
   },
   "devDependencies": {
     "@types/ffi": "^0.1.0",
@@ -30,6 +30,7 @@
     "css-loader": "^0.28.7",
     "electron": "1.7.9",
     "electron-packager": "^10.1.0",
+    "electron-rebuild": "^1.7.3",
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.6",
     "html-webpack-plugin": "^2.30.1",
@@ -41,7 +42,6 @@
     "uglifyjs-webpack-plugin": "^1.1.4",
     "url-loader": "^0.6.2",
     "vue": "2.5.11",
-    "vue-hot-reload-api": "^2.2.4",
     "vue-html-loader": "^1.2.4",
     "vue-loader": "^13.6.0",
     "vue-property-decorator": "6.0.0",
@@ -49,7 +49,6 @@
     "vue-style-loader": "^3.0.3",
     "vue-template-compiler": "2.5.11",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.9.7",
     "webpack-node-externals": "^1.6.0"
   }
 }
