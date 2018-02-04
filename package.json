@@ -19,13 +19,16 @@
     "pack": "node build-scripts/package.js"
   },
   "dependencies": {
-    "rxjs": "^5.5.6"
+    "ffi": "^2.2.0",
+    "rxjs": "^5.5.6",
+    "sleep": "^5.1.1"
   },
   "devDependencies": {
+    "@types/ffi": "^0.1.0",
     "clean-webpack-plugin": "^0.1.17",
     "copy-webpack-plugin": "^4.3.1",
     "css-loader": "^0.28.7",
-    "electron": "^1.7.9",
+    "electron": "1.7.9",
     "electron-packager": "^10.1.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "file-loader": "^1.1.6",
@@ -34,7 +37,7 @@
     "sass-loader": "^6.0.6",
     "ts-loader": "^3.2.0",
     "tslint": "^5.8.0",
-    "typescript": "^2.6.2",
+    "typescript": "2.7.1",
     "uglifyjs-webpack-plugin": "^1.1.4",
     "url-loader": "^0.6.2",
     "vue": "2.5.11",

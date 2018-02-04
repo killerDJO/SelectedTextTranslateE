@@ -2,9 +2,11 @@ import { app } from "electron";
 import { Taskbar } from "./presentation/taskbar/Taskbar";
 import { TranslationView } from "./presentation/views/TranslationView";
 import { SettingsView } from "./presentation/views/SettingsView";
+import { TextExtractor } from "./business-logic/translation/TextExtractor";
+import { HotkeysRegistry } from "./presentation/hotkeys/HotkeysRegistry";
 
 class Application {
-    private taskbar: Taskbar;
+    private taskbar!: Taskbar;
 
     private translationView: TranslationView;
     private settingsView: SettingsView;
@@ -14,6 +16,17 @@ class Application {
         this.settingsView = new SettingsView();
 
         this.createTaskbar();
+
+        const hotkeysRegistry = new HotkeysRegistry();
+        const textExtractor = new TextExtractor();
+        hotkeysRegistry.registerHotkeys();
+        hotkeysRegistry.OnTranslate.subscribe(() => {
+            textExtractor.getSelectedText();
+        });
+
+        textExtractor.TextToTranslate.subscribe(text => {
+            console.log(text);
+        });
     }
 
     private createTaskbar(): void {
