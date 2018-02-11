@@ -1,7 +1,6 @@
 import { Menu, Tray } from "electron";
 import * as path from "path";
 import * as Rx from "rxjs/Rx";
-import { Observer } from "rxjs/Observer";
 
 export class Taskbar {
     private tray!: Tray;

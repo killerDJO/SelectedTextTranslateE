@@ -20,11 +20,18 @@
     "rebuild-native": "npx electron-rebuild"
   },
   "dependencies": {
+    "axios": "^0.17.1",
     "ffi": "^2.2.0",
-    "rxjs": "^5.5.6"
+    "memory-cache": "^0.2.0",
+    "request": "^2.83.0",
+    "rxjs": "^5.5.6",
+    "safe-eval": "^0.3.0",
+    "xmldom": "^0.1.27"
   },
   "devDependencies": {
     "@types/ffi": "^0.1.0",
+    "@types/memory-cache": "^0.2.0",
+    "@types/xmldom": "^0.1.29",
     "clean-webpack-plugin": "^0.1.17",
     "copy-webpack-plugin": "^4.3.1",
     "css-loader": "^0.28.7",

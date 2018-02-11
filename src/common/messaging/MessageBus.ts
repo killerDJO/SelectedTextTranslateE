@@ -11,6 +11,6 @@ export class MessageBus implements IMainMessageBus, IRendererMessageBus {
     public receiveTranslateResult(callback: (translateResult: string) => void): void {
         ipcRenderer.on("translate-result", (sender: Electron.EventEmitter, translateResult: string) => {
             callback(translateResult);
-        })
+        });
     }
 }

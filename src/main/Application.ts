@@ -4,6 +4,7 @@ import { TranslationView } from "./presentation/views/TranslationView";
 import { SettingsView } from "./presentation/views/SettingsView";
 import { TextExtractor } from "./business-logic/translation/TextExtractor";
 import { HotkeysRegistry } from "./presentation/hotkeys/HotkeysRegistry";
+import { TextTranslator } from "./business-logic/translation/TextTranslator";
 
 class Application {
     private taskbar!: Taskbar;
@@ -24,9 +25,12 @@ class Application {
             textExtractor.getSelectedText();
         });
 
+        const textTranslator = new TextTranslator();
         textExtractor.TextToTranslate.subscribe(text => {
-            this.translationView.showTranslateResult(text);
-            this.translationView.show();
+            textTranslator.translate("test").subscribe(result => {
+                this.translationView.showTranslateResult(result);
+                this.translationView.show();
+            });
         });
     }
 
