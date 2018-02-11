@@ -27,8 +27,8 @@ class Application {
 
         const textTranslator = new TextTranslator();
         textExtractor.TextToTranslate.subscribe(text => {
-            textTranslator.translate("test").subscribe(result => {
-                this.translationView.showTranslateResult(result);
+            textTranslator.translate(text).subscribe(result => {
+                this.translationView.showTranslateResult(JSON.stringify(result));
                 this.translationView.show();
             });
         });

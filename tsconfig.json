@@ -3,6 +3,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "strict": true,
+        "target": "es6",
         "strictFunctionTypes": false,
         "experimentalDecorators": true,
         "removeComments": true,

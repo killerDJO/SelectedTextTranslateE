@@ -28,7 +28,7 @@
             "allow-named-functions"
         ],
         "no-any": false,
-        "no-magic-numbers": true,
+        "no-magic-numbers": false,
         "no-non-null-assertion": true,
         "no-null-keyword": false,
         "no-require-imports": false,
@@ -98,6 +98,7 @@
         "member-ordering": false,
         "ordered-imports": false,
         "object-literal-sort-keys": false,
-        "newline-per-chained-call": false
+        "newline-per-chained-call": false,
+        "no-bitwise": false
     }
 }

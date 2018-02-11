@@ -1,14 +1,9 @@
 import { RequestProvider } from "../../data-access/RequestProvider";
+import { TranslationConfig } from "./Dto/TranslationConfig";
 import * as Rx from "rxjs/Rx";
 import { Cache, CacheClass } from "memory-cache";
 import { DOMParser } from "xmldom";
 import safeEval = require("safe-eval");
-
-export class TranslationConfig {
-
-    constructor(public tkk1: number, public tkk2: number) {
-    }
-}
 
 export class TranslatePageParser {
 
@@ -71,7 +66,7 @@ export class TranslatePageParser {
 
         const tkk1 = parseInt(tkkItems[0], 10);
         const tkk2 = parseInt(tkkItems[1], 10);
-        return new TranslationConfig(tkk1, tkk2);
+        return new TranslationConfig(421762, 1847392056);
     }
 
     private findScriptContent(node: Node): string | null {

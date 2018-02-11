@@ -9,6 +9,10 @@ export class RequestProvider {
         return this.executeRequest(url).map(content => content.data.toString());
     }
 
+    public getJsonContent<TContent>(url: string): Rx.Observable<TContent> {
+        return this.executeRequest(url).map(content => content.data);
+    }
+
     private executeRequest(url: string): Rx.Observable<any> {
         return Rx.Observable.fromPromise<any>(axios.get(url, {
             headers: {
