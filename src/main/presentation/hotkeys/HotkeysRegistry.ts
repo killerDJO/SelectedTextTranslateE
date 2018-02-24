@@ -1,17 +1,31 @@
 import { globalShortcut } from "electron";
 import { Subject } from "rxjs";
+import { injectable } from "inversify";
 
+@injectable()
 export class HotkeysRegistry {
 
-    public readonly OnTranslate: Subject<void>;
+    public readonly translate$: Subject<void>;
+    public readonly zoomIn$: Subject<void>;
+    public readonly zoomOut$: Subject<void>;
 
     constructor() {
-        this.OnTranslate = new Subject();
+        this.translate$ = new Subject();
+        this.zoomIn$ = new Subject();
+        this.zoomOut$ = new Subject();
     }
 
     public registerHotkeys(): void {
         globalShortcut.register("CommandOrControl+T", () => {
-            this.OnTranslate.next();
+            this.translate$.next();
+        });
+
+        globalShortcut.register("CommandOrControl+R", () => {
+            this.zoomIn$.next();
+        });
+
+        globalShortcut.register("CommandOrControl+Y", () => {
+            this.zoomOut$.next();
         });
     }
 }

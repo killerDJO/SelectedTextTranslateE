@@ -7,14 +7,11 @@ import { MessageBus } from "../framework/MessageBus";
 import { Messages } from "common/messaging/Messages";
 
 export abstract class ViewBase {
-    protected readonly scaleProvider: ScaleProvider;
-
     protected readyStatus!: BehaviorSubject<boolean>;
     protected messageBus!: MessageBus;
     protected window!: BrowserWindow;
 
-    constructor() {
-        this.scaleProvider = new ScaleProvider();
+    constructor(protected readonly scaleProvider: ScaleProvider) {
     }
 
     public show(): void {

@@ -1,44 +1,41 @@
 import { Observable, ReplaySubject } from "rxjs";
 import { ipcMain } from "electron";
+import { injectable } from "inversify";
+
 import { Channels } from "common/messaging/Messages";
 
 export class MessageBus {
     private static readonly ReplayMessagesNumber: number = 1;
 
-    private observablesRegistry: { [key: string]: any };
+    private observablesRegistry: { [key: string]: ReplaySubject<any> };
 
     constructor(private readonly window: Electron.BrowserWindow) {
         this.observablesRegistry = {};
+
+        ipcMain.on(Channels.Subscribe, (sender: Electron.EventEmitter, receivedName: string) => {
+            if (!!this.observablesRegistry[receivedName]) {
+                this.observablesRegistry[receivedName]
+                    .take(MessageBus.ReplayMessagesNumber)
+                    .subscribe(value => this.window.webContents.send(Channels.Observe, receivedName, value));
+            }
+        });
     }
 
     public registerObservable<TValue>(name: string, observable$: Observable<TValue>): void {
-        const subject$ = this.observablesRegistry[name] as ReplaySubject<TValue> || new ReplaySubject<TValue>(MessageBus.ReplayMessagesNumber);
-        this.observablesRegistry[name] = subject$;
+        if (this.observablesRegistry[name]) {
+            observable$.subscribe(value => this.observablesRegistry[name].next(value));
+            return;
+        }
 
-        observable$.subscribe(subject$);
-
+        const subject$ = new ReplaySubject<TValue>(MessageBus.ReplayMessagesNumber);
         subject$.subscribe(value => this.window.webContents.send(Channels.Observe, name, value));
-
-        ipcMain.on(Channels.Subscribe, (sender: Electron.EventEmitter, receivedName: string) => {
-            if (receivedName === name) {
-                subject$.take(MessageBus.ReplayMessagesNumber).subscribe(value => this.window.webContents.send(Channels.Observe, name, value));
-            }
+        observable$.subscribe(value => {
+            subject$.next(value);
         });
+        this.observablesRegistry[name] = subject$;
     }
 
     public sendValue<TValue>(name: string, value: TValue): void {
-        const subject$ = this.observablesRegistry[name] as ReplaySubject<TValue> || new ReplaySubject<TValue>(MessageBus.ReplayMessagesNumber);
-        this.observablesRegistry[name] = subject$;
-
-        subject$.next(value);
-        subject$.complete();
-
-        subject$.subscribe(lastValue => this.window.webContents.send(Channels.Observe, name, lastValue));
-
-        ipcMain.on(Channels.Subscribe, (sender: Electron.EventEmitter, receivedName: string) => {
-            if (receivedName === name) {
-                subject$.take(MessageBus.ReplayMessagesNumber).subscribe(lastValue => this.window.webContents.send(Channels.Observe, name, lastValue));
-            }
-        });
+        this.registerObservable(name, Observable.of(value));
     }
 }

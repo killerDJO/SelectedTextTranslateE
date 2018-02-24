@@ -2,19 +2,18 @@ import { Cache, CacheClass } from "memory-cache";
 import { DOMParser } from "xmldom";
 import safeEval = require("safe-eval");
 import { Observable } from "rxjs";
+import { injectable } from "inversify";
 
 import { RequestProvider } from "../../data-access/RequestProvider";
 import { TranslationConfig } from "./dto/TranslationConfig";
 
+@injectable()
 export class TranslatePageParser {
-
-    private readonly requestProvider: RequestProvider = new RequestProvider();
-
     private readonly cacheKey: string = "TranslationConfig";
     private readonly cache: CacheClass<string, TranslationConfig> = new Cache();
     private readonly refreshIntervalMilliseconds: number;
 
-    constructor() {
+    constructor(private readonly requestProvider: RequestProvider) {
         const MinutesInHour = 60;
         const SecondsInMinute = 60;
         const MillisecondsInSecond = 1000;

@@ -1,4 +1,5 @@
 import { Observable } from "rxjs";
+import { injectable, inject } from "inversify";
 
 import { TranslatePageParser } from "./TranslatePageParser";
 import { RequestProvider } from "../../data-access/RequestProvider";
@@ -9,13 +10,16 @@ import { DictionaryProvider } from "../dictionary/DictionaryProvider";
 import { DictionaryRecord } from "../dictionary/dto/DictionaryRecord";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 
+@injectable()
 export class TextTranslator {
     private readonly recordsCacheDays: number = 30;
 
-    private readonly requestProvider: RequestProvider = new RequestProvider();
-    private readonly hashProvider: HashProvider = new HashProvider();
-    private readonly dictionaryProvider: DictionaryProvider = new DictionaryProvider();
-    private readonly responseParser: TranslationResponseParser = new TranslationResponseParser();
+    constructor(
+        private readonly requestProvider: RequestProvider,
+        private readonly hashProvider: HashProvider,
+        private readonly dictionaryProvider: DictionaryProvider,
+        private readonly responseParser: TranslationResponseParser) {
+    }
 
     public translate(sentence: string, isForcedTranslation: boolean): Observable<TranslateResult | null> {
         const sanitizedSentence = this.sanitizeSentence(sentence);

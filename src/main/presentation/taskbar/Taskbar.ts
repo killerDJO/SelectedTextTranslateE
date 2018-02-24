@@ -1,28 +1,30 @@
 import { Menu, Tray } from "electron";
 import * as path from "path";
 import { Subject, Observable } from "rxjs";
+import { injectable } from "inversify";
 
+@injectable()
 export class Taskbar {
     private tray!: Tray;
 
-    public readonly OnShowTranslation: Observable<void>;
-    public readonly OnShowSettings: Subject<void>;
-    public readonly OnTranslateSelectedText: Subject<void>;
+    public readonly showTranslation$: Observable<void>;
+    public readonly showSettings$: Subject<void>;
+    public readonly translateSelectedText$: Subject<void>;
 
     public constructor() {
         this.createTaskBar();
 
-        this.OnShowTranslation = Observable.fromEventPattern((handler: () => void) => this.tray.on("click", handler));
-        this.OnShowSettings = new Subject();
-        this.OnTranslateSelectedText = new Subject();
+        this.showTranslation$ = Observable.fromEventPattern((handler: () => void) => this.tray.on("click", handler));
+        this.showSettings$ = new Subject();
+        this.translateSelectedText$ = new Subject();
     }
 
     private createTaskBar(): void {
         this.tray = new Tray(path.resolve(__dirname, "icons\\tray.ico"));
         const contextMenu = Menu.buildFromTemplate([
-            { label: "Translate from clipboard", click: () => this.OnTranslateSelectedText.next() },
+            { label: "Translate from clipboard", click: () => this.translateSelectedText$.next() },
             { label: "Dictionary" },
-            { label: "Settings", click: () => this.OnShowSettings.next() },
+            { label: "Settings", click: () => this.showSettings$.next() },
             { type: "separator" },
             { label: "Suspend" },
             { type: "separator" },

@@ -1,13 +1,15 @@
 import * as ffi from "ffi";
 import { clipboard } from "electron";
 import { Subject } from "rxjs";
+import { injectable } from "inversify";
 
+@injectable()
 export class TextExtractor {
 
-    public readonly TextToTranslate: Subject<string>;
+    public readonly textToTranslate$: Subject<string>;
 
     constructor() {
-        this.TextToTranslate = new Subject();
+        this.textToTranslate$ = new Subject();
     }
 
     public getSelectedText(): void {
@@ -16,7 +18,7 @@ export class TextExtractor {
         const copyDelayMilliseconds = 100;
         setTimeout(
             () => {
-                this.TextToTranslate.next(clipboard.readText());
+                this.textToTranslate$.next(clipboard.readText());
             },
             copyDelayMilliseconds);
     }

@@ -1,18 +1,19 @@
-import { ReplaySubject, Observable } from "rxjs";
+import { ReplaySubject, Observable, AsyncSubject } from "rxjs";
 import { Database } from "sqlite3";
 import * as path from "path";
 import { app } from "electron";
+import { injectable } from "inversify";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { SqLiteProvider } from "../../data-access/SqLiteProvider";
 import { DictionaryRecord } from "./dto/DictionaryRecord";
 
+@injectable()
 export class DictionaryProvider {
 
-    private readonly sqLiteProvider: SqLiteProvider = new SqLiteProvider();
-    private readonly database$: ReplaySubject<Database> = new ReplaySubject(1);
+    private readonly database$: AsyncSubject<Database> = new AsyncSubject();
 
-    constructor() {
+    constructor(private readonly sqLiteProvider: SqLiteProvider) {
         this.createDatabase().subscribe(this.database$);
     }
 

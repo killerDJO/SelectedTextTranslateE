@@ -1,10 +1,13 @@
 import { Observable } from "rxjs";
+import { injectable } from "inversify";
 
 import { TranslatePageParser } from "./TranslatePageParser";
 import { TranslationConfig } from "./dto/TranslationConfig";
 
+@injectable()
 export class HashProvider {
-    private readonly translatePageParser: TranslatePageParser = new TranslatePageParser();
+    constructor(private readonly translatePageParser: TranslatePageParser) {
+    }
 
     public computeHash(text: string): Observable<string> {
         return this.translatePageParser.getTranslationConfig()

@@ -12,6 +12,8 @@
     "cSpell.words": [
         "KEYEVENTF",
         "devtool",
+        "injectable",
+        "inversify",
         "keybd"
     ]
 }

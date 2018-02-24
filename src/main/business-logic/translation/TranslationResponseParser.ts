@@ -1,4 +1,5 @@
 import { isArray } from "util";
+import { injectable } from "inversify";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
@@ -30,6 +31,7 @@ import { TranslateResultCategoryEntry } from "common/dto/translation/TranslateRe
 //  <irrelevant>,
 //  [<irrelevant>, <suggestion>, <irrelevant>, null, null, <irrelevant>],
 // ]
+@injectable()
 export class TranslationResponseParser {
     public parse(root: any, input: string): TranslateResult {
         const sentence = this.parseSentence(root, input);

@@ -1,12 +1,18 @@
-import { ViewBase } from "./ViewBase";
 import { BrowserWindow, screen } from "electron";
-import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Observable } from "rxjs";
+import { injectable, inject } from "inversify";
+
+import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
 
+import { ScaleProvider } from "../framework/ScaleProvider";
+import { ViewBase } from "./ViewBase";
+
+@injectable()
 export class TranslationView extends ViewBase {
-    constructor() {
-        super();
+    constructor(scaleProvider: ScaleProvider) {
+        super(scaleProvider);
+
         const primaryDisplay = screen.getPrimaryDisplay();
 
         const width = this.scaleProvider.scale(300);
@@ -28,7 +34,7 @@ export class TranslationView extends ViewBase {
             show: false
         }));
 
-        //this.window.on("blur", () => this.hide());
+        // this.window.on("blur", () => this.hide());
     }
 
     public showTranslateResult(translateResult: TranslateResult | null): void {

@@ -23,7 +23,9 @@
   "dependencies": {
     "axios": "^0.17.1",
     "ffi": "^2.2.0",
+    "inversify": "^4.10.0",
     "memory-cache": "^0.2.0",
+    "reflect-metadata": "^0.1.12",
     "rxjs": "^5.5.6",
     "safe-eval": "^0.3.0",
     "sqlite3": "^3.1.13",
