@@ -1,20 +1,20 @@
 import { Menu, Tray } from "electron";
 import * as path from "path";
-import * as Rx from "rxjs/Rx";
+import { Subject, Observable } from "rxjs";
 
 export class Taskbar {
     private tray!: Tray;
 
-    public readonly OnShowTranslation: Rx.Observable<void>;
-    public readonly OnShowSettings: Rx.Subject<void>;
-    public readonly OnTranslateSelectedText: Rx.Subject<void>;
+    public readonly OnShowTranslation: Observable<void>;
+    public readonly OnShowSettings: Subject<void>;
+    public readonly OnTranslateSelectedText: Subject<void>;
 
     public constructor() {
         this.createTaskBar();
 
-        this.OnShowTranslation = Rx.Observable.fromEventPattern((handler: () => void) => this.tray.on("click", handler));
-        this.OnShowSettings = new Rx.Subject();
-        this.OnTranslateSelectedText = new Rx.Subject();
+        this.OnShowTranslation = Observable.fromEventPattern((handler: () => void) => this.tray.on("click", handler));
+        this.OnShowSettings = new Subject();
+        this.OnTranslateSelectedText = new Subject();
     }
 
     private createTaskBar(): void {

@@ -1,13 +1,13 @@
 import * as ffi from "ffi";
 import { clipboard } from "electron";
-import * as Rx from "rxjs/Rx";
+import { Subject } from "rxjs";
 
 export class TextExtractor {
 
-    public readonly TextToTranslate: Rx.Subject<string>;
+    public readonly TextToTranslate: Subject<string>;
 
     constructor() {
-        this.TextToTranslate = new Rx.Subject();
+        this.TextToTranslate = new Subject();
     }
 
     public getSelectedText(): void {

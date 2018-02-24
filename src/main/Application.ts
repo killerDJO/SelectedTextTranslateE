@@ -1,4 +1,5 @@
 import { app, ipcMain } from "electron";
+
 import { Taskbar } from "./presentation/taskbar/Taskbar";
 import { TranslationView } from "./presentation/views/TranslationView";
 import { SettingsView } from "./presentation/views/SettingsView";
@@ -27,7 +28,7 @@ class Application {
 
         const textTranslator = new TextTranslator();
         textExtractor.TextToTranslate.subscribe(text => {
-            textTranslator.translate(text).subscribe(result => {
+            textTranslator.translate(text, false).subscribe(result => {
                 this.translationView.showTranslateResult(JSON.stringify(result));
                 this.translationView.show();
             });

@@ -1,9 +1,10 @@
-import { RequestProvider } from "../../data-access/RequestProvider";
-import { TranslationConfig } from "./Dto/TranslationConfig";
-import * as Rx from "rxjs/Rx";
 import { Cache, CacheClass } from "memory-cache";
 import { DOMParser } from "xmldom";
 import safeEval = require("safe-eval");
+import { Observable } from "rxjs";
+
+import { RequestProvider } from "../../data-access/RequestProvider";
+import { TranslationConfig } from "./dto/TranslationConfig";
 
 export class TranslatePageParser {
 
@@ -20,23 +21,19 @@ export class TranslatePageParser {
         this.refreshIntervalMilliseconds = MinutesInHour * SecondsInMinute * MillisecondsInSecond;
     }
 
-    public getTranslationConfig(): Rx.Observable<TranslationConfig> {
+    public getTranslationConfig(): Observable<TranslationConfig> {
 
         const cachedTranslationConfig = this.cache.get(this.cacheKey);
         if (cachedTranslationConfig !== null) {
-            return Rx.Observable.of(cachedTranslationConfig);
+            return Observable.of(cachedTranslationConfig);
         }
 
-        const updatedTranslationConfig = this.getUpdatedTranslationConfig().single();
-
-        updatedTranslationConfig.subscribe(translationConfig => {
-            this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds);
-        });
-
-        return updatedTranslationConfig;
+        return this.getUpdatedTranslationConfig()
+            .single()
+            .do(translationConfig => this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds));
     }
 
-    private getUpdatedTranslationConfig(): Rx.Observable<TranslationConfig> {
+    private getUpdatedTranslationConfig(): Observable<TranslationConfig> {
         return this.requestProvider.getStringContent("https://translate.google.com").map(html => {
             const scriptContent = this.extractScriptContentFromHtml(html);
             return this.extractConfig(scriptContent);

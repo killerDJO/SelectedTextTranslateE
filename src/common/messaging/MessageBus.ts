@@ -1,4 +1,4 @@
-import { ipcRenderer } from "electron"
+import { ipcRenderer } from "electron";
 import { IMainMessageBus } from "./IMainMessageBus";
 import { IRendererMessageBus } from "./IRendererMessageBus";
 

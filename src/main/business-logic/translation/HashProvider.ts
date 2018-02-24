@@ -1,12 +1,12 @@
-import * as Rx from "rxjs/Rx";
+import { Observable } from "rxjs";
 
 import { TranslatePageParser } from "./TranslatePageParser";
-import { TranslationConfig } from "./Dto/TranslationConfig";
+import { TranslationConfig } from "./dto/TranslationConfig";
 
 export class HashProvider {
     private readonly translatePageParser: TranslatePageParser = new TranslatePageParser();
 
-    public computeHash(text: string): Rx.Observable<string> {
+    public computeHash(text: string): Observable<string> {
         return this.translatePageParser.getTranslationConfig()
             .single()
             .map(translationConfig => this.computeHashWithConfig(text, translationConfig));

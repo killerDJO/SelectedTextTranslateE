@@ -1,12 +1,12 @@
 import { globalShortcut } from "electron";
-import * as Rx from "rxjs/Rx";
+import { Subject } from "rxjs";
 
 export class HotkeysRegistry {
 
-    public readonly OnTranslate: Rx.Subject<void>;
+    public readonly OnTranslate: Subject<void>;
 
     constructor() {
-        this.OnTranslate = new Rx.Subject();
+        this.OnTranslate = new Subject();
     }
 
     public registerHotkeys(): void {
