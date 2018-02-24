@@ -3,12 +3,11 @@ import { Observable } from "rxjs";
 import { TranslatePageParser } from "./TranslatePageParser";
 import { RequestProvider } from "../../data-access/RequestProvider";
 import { TranslationConfig } from "./dto/TranslationConfig";
-import { TranslateResult } from "./dto/TranslateResult";
-import { TranslateResultSentence } from "./dto/TranslateResultSentence";
 import { HashProvider } from "./HashProvider";
 import { TranslationResponseParser } from "./TranslationResponseParser";
 import { DictionaryProvider } from "../dictionary/DictionaryProvider";
 import { DictionaryRecord } from "../dictionary/dto/DictionaryRecord";
+import { TranslateResult } from "common/dto/translation/TranslateResult";
 
 export class TextTranslator {
     private readonly recordsCacheDays: number = 30;

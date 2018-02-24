@@ -1,9 +1,9 @@
 import { isArray } from "util";
 
-import { TranslateResult } from "./dto/TranslateResult";
-import { TranslateResultSentence } from "./dto/TranslateResultSentence";
-import { TranslateResultCategory } from "./dto/TranslateResultCategory";
-import { TranslateResultCategoryEntry } from "./dto/TranslateResultCategoryEntry";
+import { TranslateResult } from "common/dto/translation/TranslateResult";
+import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
+import { TranslateResultCategory } from "common/dto/translation/TranslateResultCategory";
+import { TranslateResultCategoryEntry } from "common/dto/translation/TranslateResultCategoryEntry";
 
 // Relevant response has the following format
 // [

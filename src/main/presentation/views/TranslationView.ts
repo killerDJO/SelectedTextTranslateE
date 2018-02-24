@@ -1,10 +1,10 @@
 import { ViewBase } from "./ViewBase";
-import { ScaleProvider } from "../providers/ScaleProvider";
 import { BrowserWindow, screen } from "electron";
+import { TranslateResult } from "common/dto/translation/TranslateResult";
+import { Observable } from "rxjs";
+import { Messages } from "common/messaging/Messages";
 
 export class TranslationView extends ViewBase {
-    private readonly scaleProvider: ScaleProvider = new ScaleProvider();
-
     constructor() {
         super();
         const primaryDisplay = screen.getPrimaryDisplay();
@@ -15,7 +15,7 @@ export class TranslationView extends ViewBase {
         const x = primaryDisplay.workArea.width - width - padding;
         const y = primaryDisplay.workArea.height - height - padding;
 
-        this.window = new BrowserWindow({
+        this.initialize(new BrowserWindow({
             width: width,
             height: height,
             x: x,
@@ -26,14 +26,12 @@ export class TranslationView extends ViewBase {
             thickFrame: false,
             alwaysOnTop: true,
             show: false
-        });
+        }));
 
-        this.window.on("blur", () => this.hide());
-
-        this.load();
+        //this.window.on("blur", () => this.hide());
     }
 
-    public showTranslateResult(translateResult: string): void {
-        this.messageBus.sendTranslateResult(this.window, translateResult);
+    public showTranslateResult(translateResult: TranslateResult | null): void {
+        this.messageBus.sendValue(Messages.TranslateResult, translateResult);
     }
 }

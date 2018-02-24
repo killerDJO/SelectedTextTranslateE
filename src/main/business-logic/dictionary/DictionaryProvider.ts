@@ -3,8 +3,8 @@ import { Database } from "sqlite3";
 import * as path from "path";
 import { app } from "electron";
 
+import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { SqLiteProvider } from "../../data-access/SqLiteProvider";
-import { TranslateResult } from "../translation/dto/TranslateResult";
 import { DictionaryRecord } from "./dto/DictionaryRecord";
 
 export class DictionaryProvider {
@@ -77,8 +77,9 @@ export class DictionaryProvider {
             "CREATE TABLE IF NOT EXISTS Dictionary(Sentence TEXT, IsForcedTranslation BOOLEAN, Count INTEGER, Json TEXT, CreatedDate INTEGER, UpdatedDate INTEGER, IsActive BOOLEAN, PRIMARY KEY (Sentence, IsForcedTranslation))";
         const CreateDictionaryTableIndexQuery = "CREATE INDEX IF NOT EXISTS IX_Dictionary_Count on Dictionary(Count)";
 
+        const userDataPath = app.getPath("userData");
         return this.sqLiteProvider
-            .openDatabase("dictionary.db")
+            .openDatabase(path.resolve(userDataPath, "dictionary.db"))
             .concatMap(database => this.sqLiteProvider.executeNonQuery(database, CreateDictionaryTableQuery), database => database)
             .concatMap(database => this.sqLiteProvider.executeNonQuery(database, CreateDictionaryTableIndexQuery), database => database)
             .single();

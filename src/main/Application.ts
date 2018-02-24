@@ -29,7 +29,7 @@ class Application {
         const textTranslator = new TextTranslator();
         textExtractor.TextToTranslate.subscribe(text => {
             textTranslator.translate(text, false).subscribe(result => {
-                this.translationView.showTranslateResult(JSON.stringify(result));
+                this.translationView.showTranslateResult(result);
                 this.translationView.show();
             });
         });

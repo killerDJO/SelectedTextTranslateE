@@ -1,13 +1,12 @@
 import Vue from "vue";
-import { IRendererMessageBus } from "common/messaging/IRendererMessageBus";
-import { MessageBus } from "common/messaging/MessageBus";
 import { ipcMain } from "electron";
+import { MessageBus } from "renderer/framework/MessageBus";
 
 export default class TranslationResult extends Vue {
-    protected MessageBus: IRendererMessageBus;
+    protected messageBus: MessageBus;
 
     constructor() {
         super();
-        this.MessageBus = new MessageBus();
+        this.messageBus = new MessageBus();
     }
 }

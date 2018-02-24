@@ -5,18 +5,17 @@ export class SettingsView extends ViewBase {
     constructor() {
         super();
 
-        this.window = new BrowserWindow(
-            {
-                width: 600,
-                height: 600,
-                frame: true,
-                focusable: true,
-                skipTaskbar: false,
-                thickFrame: true,
-                alwaysOnTop: false,
-                title: "Settings",
-                show: false
-            });
+        this.initialize(new BrowserWindow({
+            width: 600,
+            height: 600,
+            frame: true,
+            focusable: true,
+            skipTaskbar: false,
+            thickFrame: true,
+            alwaysOnTop: false,
+            title: "Settings",
+            show: false
+        }));
 
         this.window.on("close", (event: Event) => {
             event.preventDefault();
@@ -26,7 +25,5 @@ export class SettingsView extends ViewBase {
         app.on("before-quit", () => {
             this.window.removeAllListeners("close");
         });
-
-        this.load("settings");
     }
 }

@@ -1,18 +1,20 @@
 import { BrowserWindowConstructorOptions, BrowserWindow } from "electron";
 import { BehaviorSubject, ReplaySubject } from "rxjs";
 
-import { RendererLocationProvider } from "../providers/RendererLocationProvider";
-import { IMainMessageBus } from "common/messaging/IMainMessageBus";
-import { MessageBus } from "common/messaging/MessageBus";
+import { RendererLocationProvider } from "../framework/RendererLocationProvider";
+import { ScaleProvider } from "../framework/ScaleProvider";
+import { MessageBus } from "../framework/MessageBus";
+import { Messages } from "common/messaging/Messages";
 
 export abstract class ViewBase {
+    protected readonly scaleProvider: ScaleProvider;
+
+    protected readyStatus!: BehaviorSubject<boolean>;
+    protected messageBus!: MessageBus;
     protected window!: BrowserWindow;
-    protected readonly messageBus: IMainMessageBus;
-    protected readonly readyStatus: BehaviorSubject<boolean>;
 
     constructor() {
-        this.messageBus = new MessageBus();
-        this.readyStatus = new BehaviorSubject(false);
+        this.scaleProvider = new ScaleProvider();
     }
 
     public show(): void {
@@ -26,8 +28,13 @@ export abstract class ViewBase {
         this.window.hide();
     }
 
-    protected load(name?: string) {
+    protected initialize(window: Electron.BrowserWindow, name?: string) {
+        this.window = window;
+        this.messageBus = new MessageBus(window);
+        this.readyStatus = new BehaviorSubject(false);
+
         this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${name || ""}`);
+        this.messageBus.registerObservable(Messages.ScaleFactor, this.scaleProvider.scaleFactor$);
         this.window.once("ready-to-show", () => this.readyStatus.next(true));
     }
 }

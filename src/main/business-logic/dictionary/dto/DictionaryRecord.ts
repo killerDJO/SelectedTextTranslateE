@@ -1,4 +1,4 @@
-import { TranslateResult } from "../../translation/dto/TranslateResult";
+import { TranslateResult } from "common/dto/translation/TranslateResult";
 
 export class DictionaryRecord {
     constructor(
