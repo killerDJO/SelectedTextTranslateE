@@ -8,5 +8,5 @@ new Vue({
     render(createElement) {
         return createElement("app");
     },
-    router
+    router,
 }).$mount("body");

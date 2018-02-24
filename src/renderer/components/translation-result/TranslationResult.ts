@@ -5,7 +5,7 @@ import ComponentBase from "../ComponentBase";
 @Component
 export default class TranslationResult extends ComponentBase {
 
-    private text: string = "";
+    private text: string = "ready";
 
     constructor() {
         super();

@@ -1,5 +1,6 @@
 {
   "name": "selected-text-translate",
+  "productName": "SelectedTextTranslate",
   "version": "0.0.1",
   "description": "",
   "main": "dist/main/main.build.js",

@@ -1,9 +1,11 @@
 import { ViewBase } from "./ViewBase";
-import { Event, app } from "electron";
+import { Event, app, BrowserWindow } from "electron";
 
 export class SettingsView extends ViewBase {
     constructor() {
-        super(
+        super();
+
+        this.window = new BrowserWindow(
             {
                 width: 600,
                 height: 600,
@@ -12,17 +14,19 @@ export class SettingsView extends ViewBase {
                 skipTaskbar: false,
                 thickFrame: true,
                 alwaysOnTop: false,
-                title: "Settings"
-            },
-            "settings");
+                title: "Settings",
+                show: false
+            });
 
-        this.Window.on("close", (event: Event) => {
+        this.window.on("close", (event: Event) => {
             event.preventDefault();
-            this.Window.hide();
+            this.window.hide();
         });
 
         app.on("before-quit", () => {
-            this.Window.removeAllListeners("close");
+            this.window.removeAllListeners("close");
         });
+
+        this.load("settings");
     }
 }

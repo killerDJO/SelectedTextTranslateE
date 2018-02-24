@@ -1,5 +1,7 @@
 import { ReplaySubject, Observable } from "rxjs";
 import { Database } from "sqlite3";
+import * as path from "path";
+import { app } from "electron";
 
 import { SqLiteProvider } from "../../data-access/SqLiteProvider";
 import { TranslateResult } from "../translation/dto/TranslateResult";

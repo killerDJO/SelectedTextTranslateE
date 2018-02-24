@@ -99,6 +99,7 @@
         "ordered-imports": false,
         "object-literal-sort-keys": false,
         "newline-per-chained-call": false,
-        "no-bitwise": false
+        "no-bitwise": false,
+        "object-literal-shorthand": false
     }
 }

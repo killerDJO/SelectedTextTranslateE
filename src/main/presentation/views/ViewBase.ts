@@ -1,26 +1,33 @@
 import { BrowserWindowConstructorOptions, BrowserWindow } from "electron";
-import { RendererLocationProvider } from "../RendererLocationProvider";
+import { BehaviorSubject, ReplaySubject } from "rxjs";
+
+import { RendererLocationProvider } from "../providers/RendererLocationProvider";
 import { IMainMessageBus } from "common/messaging/IMainMessageBus";
 import { MessageBus } from "common/messaging/MessageBus";
 
 export abstract class ViewBase {
-    protected readonly Window: BrowserWindow;
-    protected readonly MessageBus: IMainMessageBus;
+    protected window!: BrowserWindow;
+    protected readonly messageBus: IMainMessageBus;
+    protected readonly readyStatus: BehaviorSubject<boolean>;
 
-    constructor(options: BrowserWindowConstructorOptions, name: string) {
-        options.show = false;
-        this.Window = new BrowserWindow(options);
-        this.MessageBus = new MessageBus();
-
-        this.Window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${name}`);
+    constructor() {
+        this.messageBus = new MessageBus();
+        this.readyStatus = new BehaviorSubject(false);
     }
 
     public show(): void {
-        this.Window.show();
-        this.Window.focus();
+        this.readyStatus.first(isReady => isReady).subscribe(() => {
+            this.window.show();
+            this.window.focus();
+        });
     }
 
     public hide(): void {
-        this.Window.hide();
+        this.window.hide();
+    }
+
+    protected load(name?: string) {
+        this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${name || ""}`);
+        this.window.once("ready-to-show", () => this.readyStatus.next(true));
     }
 }
