@@ -19,13 +19,19 @@ export class HotkeysRegistry {
         globalShortcut.register("CommandOrControl+T", () => {
             this.translate$.next();
         });
+    }
 
-        globalShortcut.register("CommandOrControl+R", () => {
+    public registerZoomHotkeys(): void {
+        globalShortcut.register("CommandOrControl+=", () => {
             this.zoomIn$.next();
         });
-
-        globalShortcut.register("CommandOrControl+Y", () => {
+        globalShortcut.register("CommandOrControl+-", () => {
             this.zoomOut$.next();
         });
+    }
+
+    public unregisterZoomHotkeys(): void {
+        globalShortcut.unregister("CommandOrControl+=");
+        globalShortcut.unregister("CommandOrControl+-");
     }
 }

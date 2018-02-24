@@ -24,7 +24,7 @@ export class Application {
         private readonly hotkeysRegistry: HotkeysRegistry,
         private readonly textExtractor: TextExtractor) {
 
-        this.translationView = new TranslationView(scaleProvider);
+        this.translationView = new TranslationView(hotkeysRegistry, scaleProvider);
         this.settingsView = new SettingsView(scaleProvider);
 
         this.createTaskbar();

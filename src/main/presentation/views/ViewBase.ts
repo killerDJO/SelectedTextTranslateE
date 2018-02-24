@@ -31,7 +31,6 @@ export abstract class ViewBase {
         this.readyStatus = new BehaviorSubject(false);
 
         this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${name || ""}`);
-        this.messageBus.registerObservable(Messages.ScaleFactor, this.scaleProvider.scaleFactor$);
         this.window.once("ready-to-show", () => this.readyStatus.next(true));
     }
 }
