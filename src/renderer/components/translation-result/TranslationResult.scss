@@ -1,29 +1,83 @@
-.header{
-    height: 50px;
-    padding-left: 15px;
-    box-sizing: border-box;
-    border-bottom: 1px solid rgb(170, 170, 170);
-    
-    .translation {
+@import "../../framework/framework.scss";
 
+.translate-result {
+    float: left;
+    min-width: 100%;
+
+    .header {
+        height: 50px;
+        padding-left: 15px;
+        padding-right: 3px;
+        box-sizing: border-box;
+        border-bottom: 1px solid $light-gray;
+        
+        .sentence {
+            line-height: 20px;
+            padding-top: 5px;
+    
+            .translation {
+                font-size: $font-large;
+            }
+            .origin {
+                font-size: $font-small;
+                color: $gray;
+            }
+        }
     }
-    .origin {
+
+    .body{
+        padding-left: 15px;
+        padding-right: 3px;
+        padding-top: 10px;
+        font-size: $font-medium;
+        float: left;
+
+        .category {
+            padding-bottom: 10px;
+            float: left;
+            clear: both;
+    
+            .category-header{
+    
+                .part-of-speech {
+                    font-style: italic;
+                    color: $gray;
+                }
+    
+            }
+    
+            .category-entry {
+                white-space: nowrap;
+                padding-top: 4px;
+    
+                .reverse-translations{
+                    font-style: italic;
+                    color: $gray;
+                    padding-left: 2px;
+                }
+    
+                .score {
+                    display: inline-block;
+                    height: 7px;
+                    background-color: $light-gray;
+                    margin-right: 2px;
+    
+                    &.high {
+                        width: 24px;
+                    }
+    
+                    &.medium {
+                        width: 16px;
+                        margin-left: 8px;
+                    }
+    
+                    &.low {
+                        width: 8px;
+                        margin-left: 16px;
+                    }
+                }
+            }
+        }
         
     }
-}
-.body{
-    .category {
-        .category-header{
-
-        }
-
-        .category-entry{
-
-        }
-
-        .reverse-translation{
-            
-        }
-    }
-    
 }

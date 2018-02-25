@@ -21,9 +21,7 @@ export default class App extends ComponentBase {
 
     public get scaleStyle(): any {
         return {
-            "transform": `scale(${this.scaleFactor})`,
-            "max-height": `calc(100% / ${this.scaleFactor})`,
-            "max-width": `calc(100% / ${this.scaleFactor})`
+            zoom: `${this.scaleFactor * 100}%`
         };
     }
 
