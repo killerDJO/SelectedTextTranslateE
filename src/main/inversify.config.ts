@@ -12,9 +12,9 @@ import { TranslationResponseParser } from "main/business-logic/translation/Trans
 
 import { MessageBus } from "main/presentation/framework/MessageBus";
 import { RendererLocationProvider } from "main/presentation/framework/RendererLocationProvider";
-import { ScaleProvider } from "main/presentation/framework/ScaleProvider";
 import { HotkeysRegistry } from "./presentation/hotkeys/HotkeysRegistry";
 import { Application } from "main/presentation/Application";
+import { PresentationSettings } from "main/presentation/framework/PresentationSettings";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -42,9 +42,9 @@ class Binder {
     }
 
     private bindPresentation(): void {
+        this.container.bind<PresentationSettings>(PresentationSettings).toSelf().inSingletonScope();
         this.container.bind<MessageBus>(MessageBus).toSelf().inSingletonScope();
         this.container.bind<RendererLocationProvider>(RendererLocationProvider).toSelf();
-        this.container.bind<ScaleProvider>(ScaleProvider).toSelf().inSingletonScope();
         this.container.bind<HotkeysRegistry>(HotkeysRegistry).toSelf().inSingletonScope();
 
     }

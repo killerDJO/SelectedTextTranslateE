@@ -1,17 +1,18 @@
 import { BrowserWindowConstructorOptions, BrowserWindow } from "electron";
 import { BehaviorSubject, ReplaySubject } from "rxjs";
 
-import { RendererLocationProvider } from "../framework/RendererLocationProvider";
-import { ScaleProvider } from "../framework/ScaleProvider";
-import { MessageBus } from "../framework/MessageBus";
 import { Messages } from "common/messaging/Messages";
+
+import { PresentationSettings } from "main/presentation/framework/PresentationSettings";
+import { MessageBus } from "main/presentation/framework/MessageBus";
+import { RendererLocationProvider } from "main/presentation/framework/RendererLocationProvider";
 
 export abstract class ViewBase {
     protected readyStatus!: BehaviorSubject<boolean>;
     protected messageBus!: MessageBus;
     protected window!: BrowserWindow;
 
-    constructor(protected readonly scaleProvider: ScaleProvider) {
+    constructor(protected readonly presentationSettings: PresentationSettings) {
     }
 
     public show(): void {

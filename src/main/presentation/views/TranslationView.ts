@@ -5,16 +5,16 @@ import { injectable, inject } from "inversify";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
 
-import { ScaleProvider } from "../framework/ScaleProvider";
-import { ViewBase } from "./ViewBase";
-import { HotkeysRegistry } from "../hotkeys/HotkeysRegistry";
+import { PresentationSettings } from "main/presentation/framework/PresentationSettings";
+import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
+import { ViewBase } from "main/presentation/views/ViewBase";
 
 @injectable()
 export class TranslationView extends ViewBase {
     constructor(
         private readonly hotkeysRegistry: HotkeysRegistry,
-        scaleProvider: ScaleProvider) {
-        super(scaleProvider);
+        presentationSettings: PresentationSettings) {
+        super(presentationSettings);
 
         const bounds = this.computeBounds();
         this.initialize(new BrowserWindow({
@@ -30,8 +30,8 @@ export class TranslationView extends ViewBase {
             show: false
         }));
 
-        this.messageBus.registerObservable(Messages.ScaleFactor, this.scaleProvider.scaleFactor$);
-        this.scaleProvider.scaleFactor$.subscribe(this.scale.bind(this));
+        this.presentationSettings.scaleFactor$.subscribe(this.scale.bind(this));
+        this.messageBus.registerObservable(Messages.AccentColor, this.presentationSettings.accentColor$);
 
         this.window.on("focus", () => {
             this.hotkeysRegistry.registerZoomHotkeys();
@@ -47,15 +47,16 @@ export class TranslationView extends ViewBase {
         this.messageBus.sendValue(Messages.TranslateResult, translateResult);
     }
 
-    private scale(): void {
+    private scale(scaleFactor: number): void {
         this.window.setBounds(this.computeBounds());
+        this.messageBus.sendValue(Messages.ScaleFactor, scaleFactor);
     }
 
     private computeBounds(): Electron.Rectangle {
         const primaryDisplay = screen.getPrimaryDisplay();
         const padding = 5;
-        const width = this.scaleProvider.scale(300);
-        const height = this.scaleProvider.scale(400);
+        const width = this.presentationSettings.scale(300);
+        const height = this.presentationSettings.scale(400);
         return {
             width: width,
             height: height,

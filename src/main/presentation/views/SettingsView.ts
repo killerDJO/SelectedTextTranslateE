@@ -1,13 +1,13 @@
 import { Event, app, BrowserWindow } from "electron";
 import { injectable, inject } from "inversify";
 
-import { ScaleProvider } from "main/presentation/framework/ScaleProvider";
+import { PresentationSettings } from "main/presentation/framework/PresentationSettings";
 import { ViewBase } from "main/presentation/views/ViewBase";
 
 @injectable()
 export class SettingsView extends ViewBase {
-    constructor(scaleProvider: ScaleProvider) {
-        super(scaleProvider);
+    constructor(presentationSettings: PresentationSettings) {
+        super(presentationSettings);
 
         this.initialize(new BrowserWindow({
             width: 600,

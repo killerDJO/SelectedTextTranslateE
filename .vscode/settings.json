@@ -10,6 +10,7 @@
     },
     "typescript.tsdk": "./node_modules/typescript/lib",
     "cSpell.words": [
+        "Bootstrapper",
         "KEYEVENTF",
         "devtool",
         "injectable",
