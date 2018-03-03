@@ -24,7 +24,7 @@ class Bootstrapper {
                 return createElement("app");
             },
             router,
-        }).$mount("body");
+        }).$mount(".app");
     }
 }
 

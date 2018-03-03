@@ -13,7 +13,7 @@ module.exports = env => {
 
     const scssFrameworkFile = path.resolve(__dirname, rendererPath, "framework/framework.scss");
     const extractSass = new ExtractTextPlugin({
-        filename: "styles.[contenthash].css"
+        filename: "styles.css"
     });
 
     const config = {

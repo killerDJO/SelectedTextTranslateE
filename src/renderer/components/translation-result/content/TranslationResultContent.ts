@@ -5,7 +5,7 @@ import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dt
 @Component
 export default class TranslationResultContent extends ComponentBase {
 
-    @Prop({ type: Array })
+    @Prop(Array)
     public categories!: ReadonlyArray<TranslateResultCategory>;
 
     public getScoreClass(entry: TranslateResultCategoryEntry): string {

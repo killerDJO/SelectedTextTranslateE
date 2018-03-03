@@ -12,7 +12,11 @@ export class MessageBus {
     constructor(private readonly window: Electron.BrowserWindow) {
         this.observablesRegistry = {};
 
-        ipcMain.on(Channels.Subscribe, (sender: Electron.EventEmitter, receivedName: string) => {
+        ipcMain.on(Channels.Subscribe, (event: Electron.Event, receivedName: string) => {
+            if (event.sender.id !== this.window.webContents.id) {
+                return;
+            }
+
             if (!!this.observablesRegistry[receivedName]) {
                 this.observablesRegistry[receivedName]
                     .take(MessageBus.ReplayMessagesNumber)

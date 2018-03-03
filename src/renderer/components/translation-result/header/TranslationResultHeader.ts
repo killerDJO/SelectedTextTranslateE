@@ -5,6 +5,6 @@ import { TranslateResultSentence } from "common/dto/translation/TranslateResultS
 @Component
 export default class TranslationResultHeader extends ComponentBase {
 
-    @Prop({ type: Object })
+    @Prop(Object)
     public sentence!: TranslateResultSentence;
 }
