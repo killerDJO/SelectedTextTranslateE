@@ -14,7 +14,7 @@ import { MessageBus } from "main/presentation/framework/MessageBus";
 import { RendererLocationProvider } from "main/presentation/framework/RendererLocationProvider";
 import { HotkeysRegistry } from "./presentation/hotkeys/HotkeysRegistry";
 import { Application } from "main/presentation/Application";
-import { PresentationSettings } from "main/presentation/framework/PresentationSettings";
+import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
 
 class Binder {
     public readonly container: Container = new Container();

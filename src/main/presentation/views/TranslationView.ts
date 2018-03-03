@@ -5,7 +5,7 @@ import { injectable, inject } from "inversify";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
 
-import { PresentationSettings } from "main/presentation/framework/PresentationSettings";
+import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
 import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
 import { ViewBase } from "main/presentation/views/ViewBase";
 
@@ -32,6 +32,8 @@ export class TranslationView extends ViewBase {
 
         this.presentationSettings.scaleFactor$.subscribe(this.scale.bind(this));
         this.messageBus.registerObservable(Messages.AccentColor, this.presentationSettings.accentColor$);
+        this.messageBus.registerObservable(Messages.ResultVisibilitySettings, this.presentationSettings.resultVisibilitySettings$);
+        this.messageBus.registerObservable(Messages.ScoreSettings, this.presentationSettings.scoreSettings$);
 
         this.window.on("focus", () => {
             this.hotkeysRegistry.registerZoomHotkeys();

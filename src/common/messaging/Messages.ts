@@ -4,7 +4,9 @@ export class Channels {
 }
 
 export class Messages {
-    public static readonly AccentColor: string = "accent-factor";
+    public static readonly AccentColor: string = "accent-color";
+    public static readonly ResultVisibilitySettings: string = "result-visibility-settings";
+    public static readonly ScoreSettings: string = "score-settings";
     public static readonly ScaleFactor: string = "scale-factor";
     public static readonly TranslateResult: string = "translate-result";
 }

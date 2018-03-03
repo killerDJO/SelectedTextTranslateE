@@ -3,7 +3,7 @@ import { BehaviorSubject, ReplaySubject } from "rxjs";
 
 import { Messages } from "common/messaging/Messages";
 
-import { PresentationSettings } from "main/presentation/framework/PresentationSettings";
+import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
 import { MessageBus } from "main/presentation/framework/MessageBus";
 import { RendererLocationProvider } from "main/presentation/framework/RendererLocationProvider";
 

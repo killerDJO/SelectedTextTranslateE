@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+}
+
+.button {
+    font-size: 10px;
+    color: $gray;
+    text-decoration: underline;
+    cursor: pointer;
+    display: inline-block;
+
+    &:hover{
+        color: black;
+    }
+}

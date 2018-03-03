@@ -1,20 +1,25 @@
 import { Component, Prop } from "vue-property-decorator";
-import { ComponentBase } from "renderer/components/ComponentBase";
+
+import { ScoreSettings } from "common/dto/presentation-settings/ScoreSettings";
+import { ResultVisibilitySettings } from "common/dto/presentation-settings/ResultVisibilitySettings";
 import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dto/translation/TranslateResult";
 
-@Component
+import { ComponentBase } from "renderer/components/ComponentBase";
+import ContentCategory from "renderer/components/translation-result/content/category/ContentCategory.vue";
+
+@Component({
+    components: {
+        ContentCategory
+    }
+})
 export default class TranslationResultContent extends ComponentBase {
 
     @Prop(Array)
     public categories!: ReadonlyArray<TranslateResultCategory>;
 
-    public getScoreClass(entry: TranslateResultCategoryEntry): string {
-        if (entry.score >= 0.05) {
-            return "high";
-        }
-        if (entry.score >= 0.0025) {
-            return "medium";
-        }
-        return "low";
-    }
+    @Prop(Object)
+    public scoreSettings!: ScoreSettings;
+
+    @Prop(Object)
+    public resultVisibilitySettings!: ResultVisibilitySettings;
 }

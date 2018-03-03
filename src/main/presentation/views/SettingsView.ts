@@ -1,7 +1,7 @@
 import { Event, app, BrowserWindow } from "electron";
 import { injectable, inject } from "inversify";
 
-import { PresentationSettings } from "main/presentation/framework/PresentationSettings";
+import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
 import { ViewBase } from "main/presentation/views/ViewBase";
 
 @injectable()

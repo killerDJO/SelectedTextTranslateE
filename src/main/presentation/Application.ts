@@ -9,7 +9,7 @@ import { SettingsView } from "main/presentation/views/SettingsView";
 import { TextTranslator } from "main/business-logic/translation/TextTranslator";
 import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
 import { TextExtractor } from "main/business-logic/translation/TextExtractor";
-import { PresentationSettings } from "main/presentation/framework/PresentationSettings";
+import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
 
 @injectable()
 export class Application {

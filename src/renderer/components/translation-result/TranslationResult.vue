@@ -2,7 +2,7 @@
     <div class="translate-result">
         <div v-if="hasResult">
             <translation-result-header :sentence="translateResult.sentence"/>
-            <translation-result-content :categories="translateResult.categories" />
+            <translation-result-content :categories="translateResult.categories" :score-settings="scoreSettings" :result-visibility-settings="resultVisibilitySettings"/>
         </div>
         <div v-else>Please select text to translate</div>
     </div>
