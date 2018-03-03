@@ -1,7 +1,7 @@
 <template>
   <div class="main" :style="accentStyle">
     <div class="scroll-holder">
-      <router-view class="content" :style="scaleStyle"></router-view>
+      <router-view class="view" :style="scaleStyle"></router-view>
     </div>
   </div>
 </template>

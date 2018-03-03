@@ -1,4 +1,4 @@
-import ComponentBase from "../ComponentBase";
+import { ComponentBase } from "../ComponentBase";
 import { Component } from "vue-property-decorator";
 import { Messages } from "common/messaging/Messages";
 

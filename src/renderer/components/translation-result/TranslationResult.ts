@@ -1,14 +1,21 @@
 import { Component } from "vue-property-decorator";
 import { ipcRenderer } from "electron";
 
-import ComponentBase from "../ComponentBase";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
-import { TranslateResultCategoryEntry } from "common/dto/translation/TranslateResultCategoryEntry";
+import { ComponentBase } from "renderer/components/ComponentBase";
+import TranslationResultContent from "./content/TranslationResultContent.vue";
+import TranslationResultHeader from "./header/TranslationResultHeader.vue";
 
-@Component
+@Component({
+    components: {
+        TranslationResultContent,
+        TranslationResultHeader
+    }
+})
 export default class TranslationResult extends ComponentBase {
 
+    private readonly categoryToExpansionStateMap: { [key: number]: boolean } = {};
     public translateResult: TranslateResult | null = null;
 
     constructor() {
@@ -18,16 +25,6 @@ export default class TranslationResult extends ComponentBase {
 
     public get hasResult(): boolean {
         return this.translateResult !== null;
-    }
-
-    public getScoreClass(entry: TranslateResultCategoryEntry): string {
-        if (entry.score >= 0.05) {
-            return "high";
-        }
-        if (entry.score >= 0.0025) {
-            return "medium";
-        }
-        return "low";
     }
 
     private updateTranslateResult(translateResult: TranslateResult | null): void {
