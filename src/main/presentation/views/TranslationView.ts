@@ -1,5 +1,5 @@
 import { BrowserWindow, screen } from "electron";
-import { Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { injectable, inject } from "inversify";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
@@ -11,6 +11,9 @@ import { ViewBase } from "main/presentation/views/ViewBase";
 
 @injectable()
 export class TranslationView extends ViewBase {
+
+    public readonly playText$: Observable<string>;
+
     constructor(
         private readonly hotkeysRegistry: HotkeysRegistry,
         presentationSettings: PresentationSettings) {
@@ -42,7 +45,9 @@ export class TranslationView extends ViewBase {
             this.hotkeysRegistry.unregisterZoomHotkeys();
         });
 
-        // this.window.on("blur", () => this.hide());
+        this.window.on("blur", () => this.hide());
+
+        this.playText$ = this.messageBus.getValue(Messages.PlayTextCommand);
     }
 
     public showTranslateResult(translateResult: TranslateResult | null): void {

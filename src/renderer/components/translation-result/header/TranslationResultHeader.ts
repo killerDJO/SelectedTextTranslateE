@@ -7,4 +7,8 @@ export default class TranslationResultHeader extends ComponentBase {
 
     @Prop(Object)
     public sentence!: TranslateResultSentence;
+
+    public playText(): void {
+        this.$emit("play-text");
+    }
 }

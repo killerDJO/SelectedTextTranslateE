@@ -15,4 +15,8 @@ export class MessageBus {
         ipcRenderer.send(Channels.Subscribe, name);
         return subject$;
     }
+
+    public sendCommand<TValue>(name: string, value?: TValue): void {
+        ipcRenderer.send(Channels.Observe, name, value);
+    }
 }

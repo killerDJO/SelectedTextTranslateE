@@ -7,7 +7,7 @@ import { ResultVisibilitySettings } from "common/dto/presentation-settings/Resul
 import { ComponentBase } from "renderer/components/ComponentBase";
 
 @Component
-export default class ContentCategory extends ComponentBase {
+export default class TranslationResultContentCategory extends ComponentBase {
 
     @Prop(Object)
     public category!: TranslateResultCategory;

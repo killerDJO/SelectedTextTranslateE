@@ -9,4 +9,6 @@ export class Messages {
     public static readonly ScoreSettings: string = "score-settings";
     public static readonly ScaleFactor: string = "scale-factor";
     public static readonly TranslateResult: string = "translate-result";
+
+    public static readonly PlayTextCommand: string = "play-text-command";
 }

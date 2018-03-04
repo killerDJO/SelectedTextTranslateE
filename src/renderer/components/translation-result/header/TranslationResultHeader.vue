@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <div class="translation">{{ sentence.translation }}</div>
-        <div class="origin">{{ sentence.origin }}</div>
+        <i class="play" @click="playText"></i><div class="origin">{{ sentence.origin }}</div>
     </div>
 </template>
 

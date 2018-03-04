@@ -11,8 +11,27 @@
     .translation {
         font-size: $font-large;
     }
+
     .origin {
         font-size: $font-small;
         color: $gray;
+        display: inline-block;
+        margin-left: 2px;
+    }
+
+    .play {
+        position: relative;
+        top: 0.5px;
+        width: 8px;
+        height: 8px;
+        cursor: pointer;
+        background-size: contain;
+        background-repeat: no-repeat;
+        display: inline-block;
+        background-image: url("icons/play.svg");
+
+        &:hover{
+            background-image: url("icons/play-hovered.svg");
+        }
     }
 }

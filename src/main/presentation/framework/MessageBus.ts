@@ -13,7 +13,7 @@ export class MessageBus {
         this.observablesRegistry = {};
 
         ipcMain.on(Channels.Subscribe, (event: Electron.Event, receivedName: string) => {
-            if (event.sender.id !== this.window.webContents.id) {
+            if (!this.isCurrentWindowEvent(event)) {
                 return;
             }
 
@@ -41,5 +41,25 @@ export class MessageBus {
 
     public sendValue<TValue>(name: string, value: TValue): void {
         this.registerObservable(name, Observable.of(value));
+    }
+
+    public getValue<TValue>(name: string): Observable<TValue> {
+        const subject$ = new ReplaySubject<TValue>(1);
+        ipcMain.on(Channels.Observe, (event: Electron.Event, receivedName: string, observable: TValue) => {
+            if (!this.isCurrentWindowEvent(event)) {
+                return;
+            }
+
+            if (receivedName !== name) {
+                return;
+            }
+
+            subject$.next(observable);
+        });
+        return subject$;
+    }
+
+    private isCurrentWindowEvent(event: Electron.Event): boolean {
+        return event.sender.id === this.window.webContents.id;
     }
 }

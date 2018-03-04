@@ -5,11 +5,11 @@ import { ResultVisibilitySettings } from "common/dto/presentation-settings/Resul
 import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dto/translation/TranslateResult";
 
 import { ComponentBase } from "renderer/components/ComponentBase";
-import ContentCategory from "renderer/components/translation-result/content/category/ContentCategory.vue";
+import TranslationResultContentCategory from "renderer/components/translation-result/content/category/TranslationResultContentCategory.vue";
 
 @Component({
     components: {
-        ContentCategory
+        TranslationResultContentCategory
     }
 })
 export default class TranslationResultContent extends ComponentBase {

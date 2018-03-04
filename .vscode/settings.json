@@ -9,10 +9,12 @@
         "node_modules": true
     },
     "typescript.tsdk": "./node_modules/typescript/lib",
+    "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
     "cSpell.words": [
         "Bootstrapper",
         "KEYEVENTF",
         "VUEJS",
+        "arraybuffer",
         "devtool",
         "injectable",
         "inversify",

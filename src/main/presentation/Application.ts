@@ -10,6 +10,7 @@ import { TextTranslator } from "main/business-logic/translation/TextTranslator";
 import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
 import { TextExtractor } from "main/business-logic/translation/TextExtractor";
 import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
+import { TextPlayer } from "main/business-logic/translation/TextPlayer";
 
 @injectable()
 export class Application {
@@ -20,6 +21,7 @@ export class Application {
 
     constructor(
         private readonly textTranslator: TextTranslator,
+        private readonly textPlayer: TextPlayer,
         private readonly presentationSettings: PresentationSettings,
         private readonly hotkeysRegistry: HotkeysRegistry,
         private readonly textExtractor: TextExtractor) {
@@ -43,6 +45,8 @@ export class Application {
                 this.translationView.show();
             });
         });
+
+        this.translationView.playText$.subscribe(text => this.textPlayer.playText(text));
     }
 
     private createTaskbar(): void {

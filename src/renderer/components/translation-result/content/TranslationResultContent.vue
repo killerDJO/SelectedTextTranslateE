@@ -1,6 +1,6 @@
 <template>
     <div class="content">
-        <content-category 
+        <translation-result-content-category 
             v-for="category in categories"
             :key="category.baseForm + category.partOfSpeech"
             :category="category"

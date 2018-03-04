@@ -34,7 +34,7 @@ module.exports = env => {
                 new TsconfigPathsPlugin()
             ]
         },
-        externals: [nodeExternals(), "path"],
+        externals: [nodeExternals()],
         plugins: [
             new CleanWebpackPlugin(
                 [

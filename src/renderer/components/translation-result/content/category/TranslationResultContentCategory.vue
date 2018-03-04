@@ -8,5 +8,5 @@
     </div>
 </template>
 
-<script src="./ContentCategory.ts" lang="ts"></script>
-<style src="./ContentCategory.scss" lang="scss" scoped></style>
+<script src="./TranslationResultContentCategory.ts" lang="ts"></script>
+<style src="./TranslationResultContentCategory.scss" lang="scss" scoped></style>

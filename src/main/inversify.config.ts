@@ -9,6 +9,7 @@ import { TextExtractor } from "main/business-logic/translation/TextExtractor";
 import { TextTranslator } from "main/business-logic/translation/TextTranslator";
 import { TranslatePageParser } from "main/business-logic/translation/TranslatePageParser";
 import { TranslationResponseParser } from "main/business-logic/translation/TranslationResponseParser";
+import { TextPlayer } from "main/business-logic/translation/TextPlayer";
 
 import { MessageBus } from "main/presentation/framework/MessageBus";
 import { RendererLocationProvider } from "main/presentation/framework/RendererLocationProvider";
@@ -39,6 +40,7 @@ class Binder {
         this.container.bind<TextTranslator>(TextTranslator).toSelf();
         this.container.bind<TranslatePageParser>(TranslatePageParser).toSelf();
         this.container.bind<TranslationResponseParser>(TranslationResponseParser).toSelf();
+        this.container.bind<TextPlayer>(TextPlayer).toSelf();
     }
 
     private bindPresentation(): void {
