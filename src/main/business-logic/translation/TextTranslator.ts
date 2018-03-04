@@ -71,7 +71,9 @@ export class TextTranslator {
 
     private getTranslationResponse(text: string, isForcedTranslation: boolean, hash: string): Observable<any> {
         const encodedText = encodeURIComponent(text);
-        const translateUrl = `https://translate.google.com/translate_a/single?client=t&sl=en&tl=ru&hl=ru&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=4&tk=${hash}&q=${encodedText}`;
-        return this.requestProvider.getJsonContent(translateUrl);
+        const forceTranslationArgument = isForcedTranslation ? "qc" : "qca";
+        const domain = "https://translate.google.com";
+        const urlPath = `translate_a/single?client=t&sl=en&tl=ru&hl=ru&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=${forceTranslationArgument}&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=4&tk=${hash}&q=${encodedText}`;
+        return this.requestProvider.getJsonContent(`${domain}/${urlPath}`);
     }
 }

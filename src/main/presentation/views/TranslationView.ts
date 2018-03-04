@@ -13,6 +13,8 @@ import { ViewBase } from "main/presentation/views/ViewBase";
 export class TranslationView extends ViewBase {
 
     public readonly playText$: Observable<string>;
+    public readonly translateText$: Observable<string>;
+    public readonly forceTranslateText$: Observable<string>;
 
     constructor(
         private readonly hotkeysRegistry: HotkeysRegistry,
@@ -45,9 +47,11 @@ export class TranslationView extends ViewBase {
             this.hotkeysRegistry.unregisterZoomHotkeys();
         });
 
-        this.window.on("blur", () => this.hide());
+        //this.window.on("blur", () => this.hide());
 
         this.playText$ = this.messageBus.getValue(Messages.PlayTextCommand);
+        this.translateText$ = this.messageBus.getValue(Messages.TranslateCommand);
+        this.forceTranslateText$ = this.messageBus.getValue(Messages.ForceTranslateCommand);
     }
 
     public showTranslateResult(translateResult: TranslateResult | null): void {

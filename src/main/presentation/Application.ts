@@ -39,14 +39,18 @@ export class Application {
         hotkeysRegistry.zoomIn$.subscribe(() => this.presentationSettings.zoomIn());
         hotkeysRegistry.zoomOut$.subscribe(() => this.presentationSettings.zoomOut());
 
-        textExtractor.textToTranslate$.subscribe(text => {
-            textTranslator.translate(text, false).subscribe(result => {
-                this.translationView.showTranslateResult(result);
-                this.translationView.show();
-            });
-        });
+        textExtractor.textToTranslate$.subscribe(text => this.translateText(text, false));
 
         this.translationView.playText$.subscribe(text => this.textPlayer.playText(text));
+        this.translationView.translateText$.subscribe(text => this.translateText(text, false));
+        this.translationView.forceTranslateText$.subscribe(text => this.translateText(text, true));
+    }
+
+    private translateText(text: string, isForcedTranslation: boolean): void {
+        this.textTranslator.translate(text, isForcedTranslation).subscribe(result => {
+            this.translationView.showTranslateResult(result);
+            this.translationView.show();
+        });
     }
 
     private createTaskbar(): void {

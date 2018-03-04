@@ -4,7 +4,7 @@
         <div v-for="entry in visibleEntries" :key="entry.word" class="category-entry">
             <span class="score" :class="getScoreClass(entry)"></span> {{entry.word}} <span class="reverse-translations">- {{entry.reverseTranslations.join(", ")}}</span>
         </div>
-        <a v-if="hasInitiallyHiddenEntries" class="expand button" @click="toggleExpansionState">{{ expandButtonText }}</a>
+        <a v-if="hasInitiallyHiddenEntries" class="expand link-button" @click="toggleExpansionState">{{ expandButtonText }}</a>
     </div>
 </template>
 

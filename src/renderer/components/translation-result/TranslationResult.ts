@@ -41,6 +41,22 @@ export default class TranslationResult extends ComponentBase {
         this.messageBus.sendCommand(Messages.PlayTextCommand, this.translateResult.sentence.input);
     }
 
+    public translateSuggestion(): void {
+        if (this.translateResult === null) {
+            return;
+        }
+
+        this.messageBus.sendCommand(Messages.TranslateCommand, this.translateResult.sentence.suggestion);
+    }
+
+    public forceTranslation(): void {
+        if (this.translateResult === null) {
+            return;
+        }
+
+        this.messageBus.sendCommand(Messages.ForceTranslateCommand, this.translateResult.sentence.input);
+    }
+
     private updateTranslateResult(translateResult: TranslateResult | null): void {
         this.translateResult = translateResult;
     }

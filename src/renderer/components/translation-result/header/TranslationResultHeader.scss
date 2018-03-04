@@ -34,4 +34,10 @@
             background-image: url("icons/play-hovered.svg");
         }
     }
+
+    .header-actions {
+        font-size: $font-small;
+        color: $gray;
+        display: inline-block;
+    }
 }

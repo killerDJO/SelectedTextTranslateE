@@ -11,4 +11,6 @@ export class Messages {
     public static readonly TranslateResult: string = "translate-result";
 
     public static readonly PlayTextCommand: string = "play-text-command";
+    public static readonly TranslateCommand: string = "translate-command";
+    public static readonly ForceTranslateCommand: string = "force-translate-command";
 }
