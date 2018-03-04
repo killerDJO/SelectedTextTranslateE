@@ -23,11 +23,9 @@ export class TextPlayer {
     }
 
     public playText(text: string): void {
-        this.getAudioContent(text).subscribe(content => {
-            this.saveContentToTempFile(content).subscribe(() => {
-                this.playTempFile();
-            });
-        });
+        this.getAudioContent(text)
+            .concatMap(content => this.saveContentToTempFile(content))
+            .subscribe(() => this.playTempFile());
     }
 
     private saveContentToTempFile(content: Buffer): Observable<void> {

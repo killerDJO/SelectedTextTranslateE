@@ -29,7 +29,8 @@ export class TextTranslator {
         }
 
         return this.dictionaryProvider.getRecord(sanitizedSentence, isForcedTranslation)
-            .concatMap(dictionaryRecord => this.getTranslateResult(sentence, isForcedTranslation, dictionaryRecord));
+            .concatMap(dictionaryRecord => this.getTranslateResult(sentence, isForcedTranslation, dictionaryRecord))
+            .do(translateResult => this.dictionaryProvider.incrementTranslationsNumber(translateResult, isForcedTranslation).publish().connect());
     }
 
     private getTranslateResult(sentence: string, isForcedTranslation: boolean, dictionaryRecord: DictionaryRecord | null): Observable<TranslateResult> {
