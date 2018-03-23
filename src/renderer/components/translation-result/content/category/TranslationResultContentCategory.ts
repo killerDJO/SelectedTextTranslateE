@@ -4,7 +4,7 @@ import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dt
 import { ScoreSettings } from "common/dto/presentation-settings/ScoreSettings";
 import { ResultVisibilitySettings } from "common/dto/presentation-settings/ResultVisibilitySettings";
 
-import { ComponentBase } from "renderer/components/ComponentBase";
+import { ComponentBase } from "components/ComponentBase";
 
 @Component
 export default class TranslationResultContentCategory extends ComponentBase {

@@ -31,7 +31,7 @@ module.exports = env => {
         resolve: {
             extensions: [".ts"],
             plugins: [
-                new TsconfigPathsPlugin()
+                new TsconfigPathsPlugin({ configFile: "./src/main/tsconfig.json" })
             ]
         },
         externals: [nodeExternals()],

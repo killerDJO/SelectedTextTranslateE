@@ -1,15 +1,15 @@
 import { app, ipcMain, SystemPreferences } from "electron";
 import { injectable, inject } from "inversify";
 
-import { Taskbar } from "main/presentation/Taskbar";
-import { TranslationView } from "main/presentation/views/TranslationView";
-import { SettingsView } from "main/presentation/views/SettingsView";
-import { TextTranslator } from "main/business-logic/translation/TextTranslator";
-import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
-import { TextExtractor } from "main/business-logic/translation/TextExtractor";
-import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
-import { TextPlayer } from "main/business-logic/translation/TextPlayer";
-import { Scaler } from "main/presentation/infrastructure/Scaler";
+import { Taskbar } from "presentation/Taskbar";
+import { TranslationView } from "presentation/views/TranslationView";
+import { SettingsView } from "presentation/views/SettingsView";
+import { TextTranslator } from "business-logic/translation/TextTranslator";
+import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
+import { TextExtractor } from "business-logic/translation/TextExtractor";
+import { PresentationSettings } from "presentation/settings/PresentationSettings";
+import { TextPlayer } from "business-logic/translation/TextPlayer";
+import { Scaler } from "presentation/infrastructure/Scaler";
 
 @injectable()
 export class Application {

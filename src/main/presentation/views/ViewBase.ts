@@ -1,12 +1,12 @@
 import { BrowserWindow } from "electron";
 import { BehaviorSubject } from "rxjs";
 
-import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
-import { Scaler } from "main/presentation/infrastructure/Scaler";
-import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
-import { MessageBus } from "main/presentation/infrastructure/MessageBus";
+import { PresentationSettings } from "presentation/settings/PresentationSettings";
+import { Scaler } from "presentation/infrastructure/Scaler";
+import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
+import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { Messages } from "common/messaging/Messages";
-import { RendererLocationProvider } from "main/presentation/infrastructure/RendererLocationProvider";
+import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
 import { ViewNames } from "common/ViewNames";
 
 export abstract class ViewBase {

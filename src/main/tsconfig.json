@@ -12,7 +12,12 @@
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "sourceMap": true,
-        "baseUrl": "src/"
+        "baseUrl": ".",
+        "paths": {
+            "common/*": [
+                "../common/*"
+            ]
+        }
     },
     "exclude": [
         "node_modules"

@@ -1,5 +1,5 @@
 import { Component, Prop } from "vue-property-decorator";
-import { ComponentBase } from "renderer/components/ComponentBase";
+import { ComponentBase } from "components/ComponentBase";
 import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
 
 @Component

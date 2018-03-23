@@ -4,9 +4,9 @@ import * as path from "path";
 // tslint:disable-next-line:no-import-side-effect
 import "reflect-metadata";
 
-import { Application } from "main/presentation/Application";
-import { container } from "main/inversify.config";
-import { DevToolsLoader } from "main/presentation/infrastructure/DevToolsLoader";
+import { Application } from "presentation/Application";
+import { container } from "inversify.config";
+import { DevToolsLoader } from "presentation/infrastructure/DevToolsLoader";
 
 let application: Application;
 app.on("ready", async () => {

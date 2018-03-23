@@ -1,11 +1,11 @@
 import { Event, app, BrowserWindow } from "electron";
 import { injectable, inject } from "inversify";
 
-import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
-import { MessageBus } from "main/presentation/infrastructure/MessageBus";
-import { Scaler } from "main/presentation/infrastructure/Scaler";
+import { PresentationSettings } from "presentation/settings/PresentationSettings";
+import { MessageBus } from "presentation/infrastructure/MessageBus";
+import { Scaler } from "presentation/infrastructure/Scaler";
 import { ViewBase } from "./ViewBase";
-import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
+import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { ViewNames } from "common/ViewNames";
 
 @injectable()

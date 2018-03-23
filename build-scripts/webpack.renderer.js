@@ -82,7 +82,7 @@ module.exports = env => {
         resolve: {
             extensions: [".ts", ".js"],
             plugins: [
-                new TsconfigPathsPlugin()
+                new TsconfigPathsPlugin({ configFile: "./src/renderer/tsconfig.json" })
             ]
         },
         devServer: {

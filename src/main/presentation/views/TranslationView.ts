@@ -5,10 +5,10 @@ import { injectable, inject } from "inversify";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
 
-import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
-import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
-import { Scaler } from "main/presentation/infrastructure/Scaler";
-import { ViewBase } from "main/presentation/views/ViewBase";
+import { PresentationSettings } from "presentation/settings/PresentationSettings";
+import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
+import { Scaler } from "presentation/infrastructure/Scaler";
+import { ViewBase } from "presentation/views/ViewBase";
 import { ViewNames } from "common/ViewNames";
 
 @injectable()

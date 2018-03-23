@@ -7,7 +7,7 @@ import { Decoder } from "lame";
 import { Readable } from "stream";
 import Speaker = require("speaker");
 
-import { RequestProvider } from "main/data-access/RequestProvider";
+import { RequestProvider } from "data-access/RequestProvider";
 import { HashProvider } from "./HashProvider";
 
 @injectable()

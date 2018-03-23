@@ -1,22 +1,22 @@
 import { Container } from "inversify";
 
-import { RequestProvider } from "main/data-access/RequestProvider";
-import { SqLiteProvider } from "main/data-access/SqLiteProvider";
+import { RequestProvider } from "data-access/RequestProvider";
+import { SqLiteProvider } from "data-access/SqLiteProvider";
 
-import { DictionaryProvider } from "main/business-logic/dictionary/DictionaryProvider";
-import { HashProvider } from "main/business-logic/translation/HashProvider";
-import { TextExtractor } from "main/business-logic/translation/TextExtractor";
-import { TextTranslator } from "main/business-logic/translation/TextTranslator";
-import { TranslatePageParser } from "main/business-logic/translation/TranslatePageParser";
-import { TranslationResponseParser } from "main/business-logic/translation/TranslationResponseParser";
-import { TextPlayer } from "main/business-logic/translation/TextPlayer";
+import { DictionaryProvider } from "business-logic/dictionary/DictionaryProvider";
+import { HashProvider } from "business-logic/translation/HashProvider";
+import { TextExtractor } from "business-logic/translation/TextExtractor";
+import { TextTranslator } from "business-logic/translation/TextTranslator";
+import { TranslatePageParser } from "business-logic/translation/TranslatePageParser";
+import { TranslationResponseParser } from "business-logic/translation/TranslationResponseParser";
+import { TextPlayer } from "business-logic/translation/TextPlayer";
 
-import { MessageBus } from "main/presentation/infrastructure/MessageBus";
-import { RendererLocationProvider } from "main/presentation/infrastructure/RendererLocationProvider";
-import { Application } from "main/presentation/Application";
-import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
-import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
-import { Scaler } from "main/presentation/infrastructure/Scaler";
+import { MessageBus } from "presentation/infrastructure/MessageBus";
+import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
+import { Application } from "presentation/Application";
+import { PresentationSettings } from "presentation/settings/PresentationSettings";
+import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
+import { Scaler } from "presentation/infrastructure/Scaler";
 
 class Binder {
     public readonly container: Container = new Container();
