@@ -1,9 +1,7 @@
 import { app, ipcMain, SystemPreferences } from "electron";
 import { injectable, inject } from "inversify";
-// tslint:disable-next-line:no-import-side-effect
-import "reflect-metadata";
 
-import { Taskbar } from "main/presentation/taskbar/Taskbar";
+import { Taskbar } from "main/presentation/Taskbar";
 import { TranslationView } from "main/presentation/views/TranslationView";
 import { SettingsView } from "main/presentation/views/SettingsView";
 import { TextTranslator } from "main/business-logic/translation/TextTranslator";
@@ -11,6 +9,7 @@ import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
 import { TextExtractor } from "main/business-logic/translation/TextExtractor";
 import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
 import { TextPlayer } from "main/business-logic/translation/TextPlayer";
+import { Scaler } from "main/presentation/infrastructure/Scaler";
 
 @injectable()
 export class Application {
@@ -22,12 +21,13 @@ export class Application {
     constructor(
         private readonly textTranslator: TextTranslator,
         private readonly textPlayer: TextPlayer,
+        private readonly scaler: Scaler,
         private readonly presentationSettings: PresentationSettings,
         private readonly hotkeysRegistry: HotkeysRegistry,
         private readonly textExtractor: TextExtractor) {
 
-        this.translationView = new TranslationView(hotkeysRegistry, presentationSettings);
-        this.settingsView = new SettingsView(presentationSettings);
+        this.translationView = new TranslationView(presentationSettings, scaler, hotkeysRegistry);
+        this.settingsView = new SettingsView(presentationSettings, scaler, hotkeysRegistry);
 
         this.createTaskbar();
 
@@ -36,8 +36,8 @@ export class Application {
             textExtractor.getSelectedText();
         });
 
-        hotkeysRegistry.zoomIn$.subscribe(() => this.presentationSettings.zoomIn());
-        hotkeysRegistry.zoomOut$.subscribe(() => this.presentationSettings.zoomOut());
+        hotkeysRegistry.zoomIn$.subscribe(() => this.scaler.zoomIn());
+        hotkeysRegistry.zoomOut$.subscribe(() => this.scaler.zoomOut());
 
         textExtractor.textToTranslate$.subscribe(text => this.translateText(text, false));
 

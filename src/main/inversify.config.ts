@@ -11,11 +11,12 @@ import { TranslatePageParser } from "main/business-logic/translation/TranslatePa
 import { TranslationResponseParser } from "main/business-logic/translation/TranslationResponseParser";
 import { TextPlayer } from "main/business-logic/translation/TextPlayer";
 
-import { MessageBus } from "main/presentation/framework/MessageBus";
-import { RendererLocationProvider } from "main/presentation/framework/RendererLocationProvider";
-import { HotkeysRegistry } from "./presentation/hotkeys/HotkeysRegistry";
+import { MessageBus } from "main/presentation/infrastructure/MessageBus";
+import { RendererLocationProvider } from "main/presentation/infrastructure/RendererLocationProvider";
 import { Application } from "main/presentation/Application";
 import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
+import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
+import { Scaler } from "main/presentation/infrastructure/Scaler";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -48,7 +49,7 @@ class Binder {
         this.container.bind<MessageBus>(MessageBus).toSelf().inSingletonScope();
         this.container.bind<RendererLocationProvider>(RendererLocationProvider).toSelf();
         this.container.bind<HotkeysRegistry>(HotkeysRegistry).toSelf().inSingletonScope();
-
+        this.container.bind<Scaler>(Scaler).toSelf().inSingletonScope();
     }
 }
 

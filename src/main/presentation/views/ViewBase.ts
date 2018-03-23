@@ -1,24 +1,45 @@
-import { BrowserWindowConstructorOptions, BrowserWindow } from "electron";
-import { BehaviorSubject, ReplaySubject } from "rxjs";
-
-import { Messages } from "common/messaging/Messages";
+import { BrowserWindow } from "electron";
+import { BehaviorSubject } from "rxjs";
 
 import { PresentationSettings } from "main/presentation/settings/PresentationSettings";
-import { MessageBus } from "main/presentation/framework/MessageBus";
-import { RendererLocationProvider } from "main/presentation/framework/RendererLocationProvider";
+import { Scaler } from "main/presentation/infrastructure/Scaler";
+import { HotkeysRegistry } from "main/presentation/hotkeys/HotkeysRegistry";
+import { MessageBus } from "main/presentation/infrastructure/MessageBus";
+import { Messages } from "common/messaging/Messages";
+import { RendererLocationProvider } from "main/presentation/infrastructure/RendererLocationProvider";
+import { ViewNames } from "common/ViewNames";
 
 export abstract class ViewBase {
-    protected readyStatus!: BehaviorSubject<boolean>;
-    protected messageBus!: MessageBus;
-    protected window!: BrowserWindow;
+    public readonly window: BrowserWindow;
+    public readonly messageBus: MessageBus;
+    public readonly isReadyToShow$: BehaviorSubject<boolean>;
 
-    constructor(protected readonly presentationSettings: PresentationSettings) {
+    constructor(
+        viewName: ViewNames,
+        protected presentationSettings: PresentationSettings,
+        protected scaler: Scaler,
+        protected hotkeysRegistry: HotkeysRegistry) {
+
+        this.window = new BrowserWindow({
+            frame: false,
+            focusable: true,
+            thickFrame: false,
+            show: false,
+        });
+        this.window.setBounds(this.getInitialBounds());
+
+        this.isReadyToShow$ = new BehaviorSubject<boolean>(false);
+        this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
+        this.messageBus = new MessageBus(this.window);
+
+        this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${viewName}`);
+
+        this.initializeSubscriptions();
     }
 
     public show(): void {
-        this.readyStatus.first(isReady => isReady).subscribe(() => {
+        this.isReadyToShow$.filter(isReady => isReady).subscribe(() => {
             this.window.show();
-            this.window.focus();
         });
     }
 
@@ -26,12 +47,24 @@ export abstract class ViewBase {
         this.window.hide();
     }
 
-    protected initialize(window: Electron.BrowserWindow, name?: string) {
-        this.window = window;
-        this.messageBus = new MessageBus(window);
-        this.readyStatus = new BehaviorSubject(false);
+    protected scale(): void {
+        this.window.setBounds(this.scaleBounds(this.window.getBounds()));
+        this.messageBus.sendValue(Messages.ScaleFactor, this.scaler.scaleFactor$.value);
+    }
 
-        this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${name || ""}`);
-        this.window.once("ready-to-show", () => this.readyStatus.next(true));
+    protected abstract scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle;
+
+    protected abstract getInitialBounds(): Electron.Rectangle;
+
+    private initializeSubscriptions(): void {
+        this.scaler.scaleFactor$.subscribe(this.scale.bind(this));
+        this.messageBus.registerObservable(Messages.AccentColor, this.presentationSettings.accentColor$);
+
+        this.window.on("focus", () => {
+            this.hotkeysRegistry.registerZoomHotkeys();
+        });
+        this.window.on("blur", () => {
+            this.hotkeysRegistry.unregisterZoomHotkeys();
+        });
     }
 }
