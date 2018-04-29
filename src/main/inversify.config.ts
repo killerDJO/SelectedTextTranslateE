@@ -17,16 +17,24 @@ import { Application } from "presentation/Application";
 import { PresentationSettings } from "presentation/settings/PresentationSettings";
 import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { Scaler } from "presentation/infrastructure/Scaler";
+import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
+import { Logger } from "infrastructure/Logger";
 
 class Binder {
     public readonly container: Container = new Container();
 
     constructor() {
+        this.bindInfrastructure();
         this.bindDataAccess();
         this.bindBusinessLogic();
         this.bindPresentation();
 
         this.container.bind<Application>(Application).toSelf();
+    }
+
+    private bindInfrastructure(): void {
+        this.container.bind<StorageFolderProvider>(StorageFolderProvider).toSelf();
+        this.container.bind<Logger>(Logger).toSelf().inSingletonScope();
     }
 
     private bindDataAccess(): void {

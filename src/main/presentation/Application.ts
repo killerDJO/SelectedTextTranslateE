@@ -10,6 +10,7 @@ import { TextExtractor } from "business-logic/translation/TextExtractor";
 import { PresentationSettings } from "presentation/settings/PresentationSettings";
 import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { Scaler } from "presentation/infrastructure/Scaler";
+import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 
 @injectable()
 export class Application {
@@ -24,10 +25,11 @@ export class Application {
         private readonly scaler: Scaler,
         private readonly presentationSettings: PresentationSettings,
         private readonly hotkeysRegistry: HotkeysRegistry,
-        private readonly textExtractor: TextExtractor) {
+        private readonly textExtractor: TextExtractor,
+        private readonly storageFolderProvider: StorageFolderProvider) {
 
         this.createViews(presentationSettings, scaler, hotkeysRegistry);
-        this.createTaskbar();
+        this.createTaskbar(storageFolderProvider);
         this.setupHotkeys(hotkeysRegistry, textExtractor);
     }
 
@@ -60,8 +62,8 @@ export class Application {
         textExtractor.textToTranslate$.subscribe(text => this.translateText(text, false));
     }
 
-    private createTaskbar(): void {
-        this.taskbar = new Taskbar();
+    private createTaskbar(storageFolderProvider: StorageFolderProvider): void {
+        this.taskbar = new Taskbar(storageFolderProvider);
 
         this.taskbar.showTranslation$.subscribe(() => {
             this.settingsView.hide();

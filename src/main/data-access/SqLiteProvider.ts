@@ -1,7 +1,7 @@
 import { Database } from "sqlite3";
 import { Data } from "electron";
 import { Observable } from "rxjs";
-import { injectable, inject } from "inversify";
+import { injectable } from "inversify";
 
 @injectable()
 export class SqLiteProvider {

@@ -1,14 +1,16 @@
 import { Observable } from "rxjs";
 import { injectable, inject } from "inversify";
 
+import { TranslateResult } from "common/dto/translation/TranslateResult";
+import { Logger } from "infrastructure/Logger";
+
 import { TranslatePageParser } from "./TranslatePageParser";
-import { RequestProvider } from "../../data-access/RequestProvider";
 import { TranslationConfig } from "./dto/TranslationConfig";
 import { HashProvider } from "./HashProvider";
 import { TranslationResponseParser } from "./TranslationResponseParser";
-import { DictionaryProvider } from "../dictionary/DictionaryProvider";
-import { DictionaryRecord } from "../dictionary/dto/DictionaryRecord";
-import { TranslateResult } from "common/dto/translation/TranslateResult";
+import { RequestProvider } from "data-access/RequestProvider";
+import { DictionaryProvider } from "business-logic/dictionary/DictionaryProvider";
+import { DictionaryRecord } from "business-logic/dictionary/dto/DictionaryRecord";
 
 @injectable()
 export class TextTranslator {
@@ -18,10 +20,13 @@ export class TextTranslator {
         private readonly requestProvider: RequestProvider,
         private readonly hashProvider: HashProvider,
         private readonly dictionaryProvider: DictionaryProvider,
-        private readonly responseParser: TranslationResponseParser) {
+        private readonly responseParser: TranslationResponseParser,
+        private readonly logger: Logger) {
     }
 
     public translate(sentence: string, isForcedTranslation: boolean): Observable<TranslateResult | null> {
+        this.logger.info(`Translating text: "${sentence}".`);
+
         const sanitizedSentence = this.sanitizeSentence(sentence);
 
         if (sanitizedSentence === "") {
@@ -34,7 +39,9 @@ export class TextTranslator {
     }
 
     private getTranslateResult(sentence: string, isForcedTranslation: boolean, dictionaryRecord: DictionaryRecord | null): Observable<TranslateResult> {
-        const translateResult$ = this.getResponseFromService(sentence, isForcedTranslation);
+        const translateResult$ = this
+            .getResponseFromService(sentence, isForcedTranslation)
+            .do(() => this.logger.info(`Serving translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" from service.`));
 
         if (dictionaryRecord === null) {
             return translateResult$
@@ -46,6 +53,7 @@ export class TextTranslator {
                 .concatMap(translateResult => this.dictionaryProvider.updateTranslateResult(translateResult, isForcedTranslation), translateResult => translateResult);
         }
 
+        this.logger.info(`Serving translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" from dictionary.`);
         return Observable.of(dictionaryRecord.translateResult);
     }
 

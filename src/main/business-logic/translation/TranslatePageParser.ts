@@ -4,8 +4,9 @@ import safeEval = require("safe-eval");
 import { Observable } from "rxjs";
 import { injectable } from "inversify";
 
-import { RequestProvider } from "../../data-access/RequestProvider";
 import { TranslationConfig } from "./dto/TranslationConfig";
+import { Logger } from "infrastructure/Logger";
+import { RequestProvider } from "data-access/RequestProvider";
 
 @injectable()
 export class TranslatePageParser {
@@ -13,7 +14,7 @@ export class TranslatePageParser {
     private readonly cache: CacheClass<string, TranslationConfig> = new Cache();
     private readonly refreshIntervalMilliseconds: number;
 
-    constructor(private readonly requestProvider: RequestProvider) {
+    constructor(private readonly requestProvider: RequestProvider, private readonly logger: Logger) {
         const MinutesInHour = 60;
         const SecondsInMinute = 60;
         const MillisecondsInSecond = 1000;
@@ -29,6 +30,7 @@ export class TranslatePageParser {
 
         return this.getUpdatedTranslationConfig()
             .single()
+            .do(() => this.logger.info("Translation config has been updated."))
             .do(translationConfig => this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds));
     }
 

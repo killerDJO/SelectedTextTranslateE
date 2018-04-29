@@ -1,7 +1,9 @@
-import { Menu, Tray } from "electron";
+import { Menu, Tray, shell } from "electron";
 import * as path from "path";
 import { Subject, Observable } from "rxjs";
 import { injectable } from "inversify";
+
+import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 
 @injectable()
 export class Taskbar {
@@ -11,7 +13,7 @@ export class Taskbar {
     public readonly showSettings$: Subject<void>;
     public readonly translateSelectedText$: Subject<void>;
 
-    public constructor() {
+    public constructor(private readonly storageFolderProvider: StorageFolderProvider) {
         this.createTaskBar();
 
         this.showTranslation$ = Observable.fromEventPattern((handler: () => void) => this.tray.on("click", handler));
@@ -27,6 +29,7 @@ export class Taskbar {
             { label: "Settings", click: () => this.showSettings$.next() },
             { type: "separator" },
             { label: "Suspend" },
+            { label: "Open storage folder", click: () => shell.openItem(this.storageFolderProvider.getPath()) },
             { type: "separator" },
             { label: "Quit", type: "normal", role: "quit" }
         ]);
