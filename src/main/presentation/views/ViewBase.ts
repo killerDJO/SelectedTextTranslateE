@@ -15,10 +15,10 @@ export abstract class ViewBase {
     public readonly isReadyToShow$: BehaviorSubject<boolean>;
 
     constructor(
-        viewName: ViewNames,
-        protected presentationSettings: PresentationSettings,
-        protected scaler: Scaler,
-        protected hotkeysRegistry: HotkeysRegistry) {
+        protected readonly viewName: ViewNames,
+        protected readonly presentationSettings: PresentationSettings,
+        protected readonly scaler: Scaler,
+        protected readonly hotkeysRegistry: HotkeysRegistry) {
 
         this.window = new BrowserWindow({
             frame: false,

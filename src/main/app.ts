@@ -11,5 +11,5 @@ import { DevToolsLoader } from "presentation/infrastructure/DevToolsLoader";
 let application: Application;
 app.on("ready", async () => {
     await DevToolsLoader.load();
-    application = container.get<Application>(Application);
+    application = container.get<Application>(Application); 
 });

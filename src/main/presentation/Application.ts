@@ -15,8 +15,8 @@ import { Scaler } from "presentation/infrastructure/Scaler";
 export class Application {
     private taskbar!: Taskbar;
 
-    private translationView: TranslationView;
-    private settingsView: SettingsView;
+    private translationView!: TranslationView;
+    private settingsView!: SettingsView;
 
     constructor(
         private readonly textTranslator: TextTranslator,
@@ -26,11 +26,29 @@ export class Application {
         private readonly hotkeysRegistry: HotkeysRegistry,
         private readonly textExtractor: TextExtractor) {
 
-        this.translationView = new TranslationView(presentationSettings, scaler, hotkeysRegistry);
-        this.settingsView = new SettingsView(presentationSettings, scaler, hotkeysRegistry);
-
+        this.createViews(presentationSettings, scaler, hotkeysRegistry);
         this.createTaskbar();
+        this.setupHotkeys(hotkeysRegistry, textExtractor);
+    }
 
+    private createViews(presentationSettings: PresentationSettings, scaler: Scaler, hotkeysRegistry: HotkeysRegistry): void {
+        this.createTranslationView(presentationSettings, scaler, hotkeysRegistry);
+        this.createSettingsView(presentationSettings, scaler, hotkeysRegistry);
+    }
+
+    private createTranslationView(presentationSettings: PresentationSettings, scaler: Scaler, hotkeysRegistry: HotkeysRegistry): void {
+        this.translationView = new TranslationView(presentationSettings, scaler, hotkeysRegistry);
+
+        this.translationView.playText$.subscribe(text => this.textPlayer.playText(text));
+        this.translationView.translateText$.subscribe(text => this.translateText(text, false));
+        this.translationView.forceTranslateText$.subscribe(text => this.translateText(text, true));
+    }
+
+    private createSettingsView(presentationSettings: PresentationSettings, scaler: Scaler, hotkeysRegistry: HotkeysRegistry): void {
+        this.settingsView = new SettingsView(presentationSettings, scaler, hotkeysRegistry);
+    }
+
+    private setupHotkeys(hotkeysRegistry: HotkeysRegistry, textExtractor: TextExtractor): void {
         hotkeysRegistry.registerHotkeys();
         hotkeysRegistry.translate$.subscribe(() => {
             textExtractor.getSelectedText();
@@ -40,17 +58,6 @@ export class Application {
         hotkeysRegistry.zoomOut$.subscribe(() => this.scaler.zoomOut());
 
         textExtractor.textToTranslate$.subscribe(text => this.translateText(text, false));
-
-        this.translationView.playText$.subscribe(text => this.textPlayer.playText(text));
-        this.translationView.translateText$.subscribe(text => this.translateText(text, false));
-        this.translationView.forceTranslateText$.subscribe(text => this.translateText(text, true));
-    }
-
-    private translateText(text: string, isForcedTranslation: boolean): void {
-        this.textTranslator.translate(text, isForcedTranslation).subscribe(result => {
-            this.translationView.showTranslateResult(result);
-            this.translationView.show();
-        });
     }
 
     private createTaskbar(): void {
@@ -64,6 +71,13 @@ export class Application {
         this.taskbar.showSettings$.subscribe(() => {
             this.settingsView.show();
             this.translationView.hide();
+        });
+    }
+
+    private translateText(text: string, isForcedTranslation: boolean): void {
+        this.textTranslator.translate(text, isForcedTranslation).subscribe(result => {
+            this.translationView.showTranslateResult(result);
+            this.translationView.show();
         });
     }
 }

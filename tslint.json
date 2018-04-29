@@ -1,7 +1,6 @@
 {
-    "lintOptions": {
-        "typeCheck": false
-    },
+    "$schema": "http://json.schemastore.org/tslint",
+    "defaultSeverity": "warning",
     "extends": "tslint:all",
     "rules": {
         "cyclomatic-complexity": true,
