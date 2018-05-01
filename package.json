@@ -38,6 +38,7 @@
     "xmldom": "^0.1.27"
   },
   "devDependencies": {
+    "@types/node": "^8.10.10",
     "@types/electron-devtools-installer": "^2.0.2",
     "@types/ffi": "^0.1.0",
     "@types/memory-cache": "^0.2.0",

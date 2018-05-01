@@ -25,9 +25,8 @@ module.exports = env => {
 
             ]
         },
-        node: {
-            __dirname: false
-        },
+        target: "node",
+        node: false,
         resolve: {
             extensions: [".ts"],
             plugins: [

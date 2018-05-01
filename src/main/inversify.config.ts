@@ -19,6 +19,7 @@ import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { Scaler } from "presentation/infrastructure/Scaler";
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 import { Logger } from "infrastructure/Logger";
+import { ErrorHandler } from "infrastructure/ErrorHandler";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -35,6 +36,7 @@ class Binder {
     private bindInfrastructure(): void {
         this.container.bind<StorageFolderProvider>(StorageFolderProvider).toSelf();
         this.container.bind<Logger>(Logger).toSelf().inSingletonScope();
+        this.container.bind<ErrorHandler>(ErrorHandler).toSelf().inSingletonScope();
     }
 
     private bindDataAccess(): void {

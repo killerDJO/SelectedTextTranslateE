@@ -29,7 +29,7 @@ export class Logger {
         logger.warn(message);
     }
 
-    public error(message: string): void {
-        logger.error(message);
+    public error(message: string, error: Error): void {
+        logger.error(`${message}. Error: "${error.message}". Stack trace: "${error.stack}"`);
     }
 }
