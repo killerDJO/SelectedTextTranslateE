@@ -1,13 +1,12 @@
 const path = require("path");
 const webpack = require("webpack");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
-module.exports = env => {
+module.exports = (env, argv) => {
+    const isProduction = argv.mode === "production";
     const config = {
         entry: path.resolve(__dirname, "../src/main/app.ts"),
         output: {
@@ -21,17 +20,18 @@ module.exports = env => {
                     test: /\.ts$/,
                     loader: "ts-loader",
                     exclude: /node_modules/,
-                },
-
+                }
             ]
         },
-        target: "node",
         node: false,
         resolve: {
             extensions: [".ts"],
             plugins: [
                 new TsconfigPathsPlugin({ configFile: "./src/main/tsconfig.json" })
             ]
+        },
+        optimization: {
+            minimize: false
         },
         externals: [nodeExternals()],
         plugins: [
@@ -48,23 +48,15 @@ module.exports = env => {
                     to: "./icons"
                 },
             ]),
-            new webpack.NoEmitOnErrorsPlugin(),
-            new webpack.DefinePlugin({
-                "process.env.NODE_ENV": `"${env.NODE_ENV}"`
-            })
+            new webpack.NoEmitOnErrorsPlugin()
         ]
     };
 
-    if (env.NODE_ENV === "dev") {
-        config.devtool = "inline-source-map";
-    }
-    else if (env.NODE_ENV === "prod") {
+    if (isProduction) {
         config.devtool = "source-map";
-        config.plugins.push(
-            new UglifyJsPlugin({
-                sourceMap: true
-            })
-        )
+    }
+    else {
+        config.devtool = "inline-source-map";
     }
 
     return config;

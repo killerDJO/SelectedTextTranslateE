@@ -1,6 +1,5 @@
 const packageConfig = require('./package.config');
 const packager = require('electron-packager');
-const chalk = require('chalk');
 const del = require('del');
 
 clean();

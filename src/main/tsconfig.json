@@ -12,6 +12,7 @@
         "forceConsistentCasingInFileNames": true,
         "noImplicitReturns": true,
         "sourceMap": true,
+        "importHelpers": true,
         "baseUrl": ".",
         "paths": {
             "common/*": [

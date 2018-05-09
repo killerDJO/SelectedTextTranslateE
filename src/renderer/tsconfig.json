@@ -13,6 +13,7 @@
         "noImplicitReturns": true,
         "sourceMap": true,
         "baseUrl": ".",
+        "importHelpers": true,
         "paths": {
             "common/*": [
                 "../common/*"

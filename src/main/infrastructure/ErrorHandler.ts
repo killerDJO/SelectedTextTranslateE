@@ -18,5 +18,6 @@ export class ErrorHandler {
 
     private handleError(title: string, error: Error): void {
         this.logger.error(title, error);
+        process.exit();
     }
 }
