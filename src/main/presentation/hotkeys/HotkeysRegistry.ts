@@ -2,8 +2,10 @@ import { globalShortcut } from "electron";
 import { Subject } from "rxjs";
 import { injectable } from "inversify";
 
+import { IZoomHotkeysRegistry } from "presentation/hotkeys/IZoomHotkeysRegistry";
+
 @injectable()
-export class HotkeysRegistry {
+export class HotkeysRegistry implements IZoomHotkeysRegistry {
 
     public readonly translate$: Subject<void>;
     public readonly zoomIn$: Subject<void>;

@@ -1,13 +1,11 @@
 import { BrowserWindow } from "electron";
 import { BehaviorSubject } from "rxjs";
 
-import { PresentationSettings } from "presentation/settings/PresentationSettings";
-import { Scaler } from "presentation/infrastructure/Scaler";
-import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
 import { ViewNames } from "common/ViewNames";
+import { ViewContext } from "./ViewContext";
 
 export abstract class ViewBase {
     public readonly window: BrowserWindow;
@@ -16,9 +14,7 @@ export abstract class ViewBase {
 
     constructor(
         protected readonly viewName: ViewNames,
-        protected readonly presentationSettings: PresentationSettings,
-        protected readonly scaler: Scaler,
-        protected readonly hotkeysRegistry: HotkeysRegistry) {
+        protected readonly context: ViewContext) {
 
         this.window = new BrowserWindow({
             frame: false,
@@ -49,7 +45,7 @@ export abstract class ViewBase {
 
     protected scale(): void {
         this.window.setBounds(this.scaleBounds(this.window.getBounds()));
-        this.messageBus.sendValue(Messages.ScaleFactor, this.scaler.scaleFactor$.value);
+        this.messageBus.sendValue(Messages.ScaleFactor, this.context.scaler.scaleFactor$.value);
     }
 
     protected abstract scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle;
@@ -57,14 +53,14 @@ export abstract class ViewBase {
     protected abstract getInitialBounds(): Electron.Rectangle;
 
     private initializeSubscriptions(): void {
-        this.scaler.scaleFactor$.subscribe(this.scale.bind(this));
-        this.messageBus.registerObservable(Messages.AccentColor, this.presentationSettings.accentColor$);
+        this.context.scaler.scaleFactor$.subscribe(this.scale.bind(this));
+        this.messageBus.registerObservable(Messages.AccentColor, this.context.accentColorProvider.accentColor$);
 
         this.window.on("focus", () => {
-            this.hotkeysRegistry.registerZoomHotkeys();
+            this.context.zoomHotkeysRegistry.registerZoomHotkeys();
         });
         this.window.on("blur", () => {
-            this.hotkeysRegistry.unregisterZoomHotkeys();
+            this.context.zoomHotkeysRegistry.unregisterZoomHotkeys();
         });
     }
 }

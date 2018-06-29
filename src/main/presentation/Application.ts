@@ -5,12 +5,12 @@ import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
 import { SettingsView } from "presentation/views/SettingsView";
 import { TextTranslator } from "business-logic/translation/TextTranslator";
-import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { TextExtractor } from "business-logic/translation/TextExtractor";
-import { PresentationSettings } from "presentation/settings/PresentationSettings";
 import { TextPlayer } from "business-logic/translation/TextPlayer";
-import { Scaler } from "presentation/infrastructure/Scaler";
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
+import { ViewContext } from "presentation/framework/ViewContext";
+import { Scaler } from "presentation/framework/Scaler";
+import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 
 @injectable()
 export class Application {
@@ -22,48 +22,48 @@ export class Application {
     constructor(
         private readonly textTranslator: TextTranslator,
         private readonly textPlayer: TextPlayer,
-        private readonly scaler: Scaler,
-        private readonly presentationSettings: PresentationSettings,
+        private readonly viewContext: ViewContext,
         private readonly hotkeysRegistry: HotkeysRegistry,
+        private readonly scaler: Scaler,
         private readonly textExtractor: TextExtractor,
         private readonly storageFolderProvider: StorageFolderProvider) {
 
-        this.createViews(presentationSettings, scaler, hotkeysRegistry);
-        this.createTaskbar(storageFolderProvider);
-        this.setupHotkeys(hotkeysRegistry, textExtractor);
+        this.createViews();
+        this.createTaskbar();
+        this.setupHotkeys();
     }
 
-    private createViews(presentationSettings: PresentationSettings, scaler: Scaler, hotkeysRegistry: HotkeysRegistry): void {
-        this.createTranslationView(presentationSettings, scaler, hotkeysRegistry);
-        this.createSettingsView(presentationSettings, scaler, hotkeysRegistry);
+    private createViews(): void {
+        this.createTranslationView();
+        this.createSettingsView();
     }
 
-    private createTranslationView(presentationSettings: PresentationSettings, scaler: Scaler, hotkeysRegistry: HotkeysRegistry): void {
-        this.translationView = new TranslationView(presentationSettings, scaler, hotkeysRegistry);
+    private createTranslationView(): void {
+        this.translationView = new TranslationView(this.viewContext);
 
         this.translationView.playText$.subscribe(text => this.textPlayer.playText(text));
         this.translationView.translateText$.subscribe(text => this.translateText(text, false));
         this.translationView.forceTranslateText$.subscribe(text => this.translateText(text, true));
     }
 
-    private createSettingsView(presentationSettings: PresentationSettings, scaler: Scaler, hotkeysRegistry: HotkeysRegistry): void {
-        this.settingsView = new SettingsView(presentationSettings, scaler, hotkeysRegistry);
+    private createSettingsView(): void {
+        this.settingsView = new SettingsView(this.viewContext);
     }
 
-    private setupHotkeys(hotkeysRegistry: HotkeysRegistry, textExtractor: TextExtractor): void {
-        hotkeysRegistry.registerHotkeys();
-        hotkeysRegistry.translate$.subscribe(() => {
-            textExtractor.getSelectedText();
+    private setupHotkeys(): void {
+        this.hotkeysRegistry.registerHotkeys();
+        this.hotkeysRegistry.translate$.subscribe(() => {
+            this.textExtractor.getSelectedText();
         });
 
-        hotkeysRegistry.zoomIn$.subscribe(() => this.scaler.zoomIn());
-        hotkeysRegistry.zoomOut$.subscribe(() => this.scaler.zoomOut());
+        this.hotkeysRegistry.zoomIn$.subscribe(() => this.viewContext.scaler.zoomIn());
+        this.hotkeysRegistry.zoomOut$.subscribe(() => this.viewContext.scaler.zoomOut());
 
-        textExtractor.textToTranslate$.subscribe(text => this.translateText(text, false));
+        this.textExtractor.textToTranslate$.subscribe(text => this.translateText(text, false));
     }
 
-    private createTaskbar(storageFolderProvider: StorageFolderProvider): void {
-        this.taskbar = new Taskbar(storageFolderProvider);
+    private createTaskbar(): void {
+        this.taskbar = new Taskbar(this.storageFolderProvider);
 
         this.taskbar.showTranslation$.subscribe(() => {
             this.settingsView.hide();

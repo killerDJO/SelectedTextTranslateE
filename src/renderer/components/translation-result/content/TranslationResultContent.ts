@@ -1,7 +1,6 @@
 import { Component, Prop } from "vue-property-decorator";
 
-import { ScoreSettings } from "common/dto/presentation-settings/ScoreSettings";
-import { ResultVisibilitySettings } from "common/dto/presentation-settings/ResultVisibilitySettings";
+import { ScoreSettings, ResultVisibilitySettings } from "common/dto/presentation-settings/PresentationSettings";
 import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dto/translation/TranslateResult";
 
 import { ComponentBase } from "components/ComponentBase";

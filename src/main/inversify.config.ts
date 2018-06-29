@@ -14,12 +14,15 @@ import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
 import { Application } from "presentation/Application";
-import { PresentationSettings } from "presentation/settings/PresentationSettings";
+import { AccentColorProvider } from "presentation/framework/AccentColorProvider";
 import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
-import { Scaler } from "presentation/infrastructure/Scaler";
+import { Scaler } from "presentation/framework/Scaler";
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 import { Logger } from "infrastructure/Logger";
 import { ErrorHandler } from "infrastructure/ErrorHandler";
+import { SettingsStore } from "infrastructure/SettingsStore";
+import { ViewContext } from "presentation/framework/ViewContext";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -37,6 +40,7 @@ class Binder {
         this.container.bind<StorageFolderProvider>(StorageFolderProvider).toSelf();
         this.container.bind<Logger>(Logger).toSelf().inSingletonScope();
         this.container.bind<ErrorHandler>(ErrorHandler).toSelf().inSingletonScope();
+        this.container.bind<SettingsStore>(SettingsStore).toSelf().inSingletonScope();
     }
 
     private bindDataAccess(): void {
@@ -52,12 +56,14 @@ class Binder {
         this.container.bind<TranslatePageParser>(TranslatePageParser).toSelf();
         this.container.bind<TranslationResponseParser>(TranslationResponseParser).toSelf();
         this.container.bind<TextPlayer>(TextPlayer).toSelf();
+        this.container.bind<SettingsProvider>(SettingsProvider).toSelf();
     }
 
     private bindPresentation(): void {
-        this.container.bind<PresentationSettings>(PresentationSettings).toSelf().inSingletonScope();
+        this.container.bind<AccentColorProvider>(AccentColorProvider).toSelf().inSingletonScope();
         this.container.bind<MessageBus>(MessageBus).toSelf().inSingletonScope();
         this.container.bind<RendererLocationProvider>(RendererLocationProvider).toSelf();
+        this.container.bind<ViewContext>(ViewContext).toSelf();
         this.container.bind<HotkeysRegistry>(HotkeysRegistry).toSelf().inSingletonScope();
         this.container.bind<Scaler>(Scaler).toSelf().inSingletonScope();
     }

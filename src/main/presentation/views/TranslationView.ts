@@ -5,11 +5,9 @@ import { injectable, inject } from "inversify";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
 
-import { PresentationSettings } from "presentation/settings/PresentationSettings";
-import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
-import { Scaler } from "presentation/infrastructure/Scaler";
-import { ViewBase } from "presentation/views/ViewBase";
+import { ViewBase } from "presentation/framework/ViewBase";
 import { ViewNames } from "common/ViewNames";
+import { ViewContext } from "presentation/framework/ViewContext";
 
 @injectable()
 export class TranslationView extends ViewBase {
@@ -18,17 +16,15 @@ export class TranslationView extends ViewBase {
     public translateText$!: Observable<string>;
     public forceTranslateText$!: Observable<string>;
 
-    constructor(
-        presentationSettings: PresentationSettings,
-        scaler: Scaler,
-        hotkeysRegistry: HotkeysRegistry) {
-        super(ViewNames.TranslationResult, presentationSettings, scaler, hotkeysRegistry);
+    constructor(viewContext: ViewContext) {
+        super(ViewNames.TranslationResult, viewContext);
 
         this.window.setAlwaysOnTop(true);
         this.window.setSkipTaskbar(true);
 
-        this.messageBus.registerObservable(Messages.ResultVisibilitySettings, this.presentationSettings.resultVisibilitySettings$);
-        this.messageBus.registerObservable(Messages.ScoreSettings, this.presentationSettings.scoreSettings$);
+        const settings = this.context.settingsProvider.getSettings();
+        this.messageBus.registerValue(Messages.ResultVisibilitySettings, settings.presentation.visibility);
+        this.messageBus.registerValue(Messages.ScoreSettings, settings.presentation.score);
 
         this.playText$ = this.messageBus.getValue(Messages.PlayTextCommand);
         this.translateText$ = this.messageBus.getValue(Messages.TranslateCommand);
@@ -48,8 +44,8 @@ export class TranslationView extends ViewBase {
     protected getInitialBounds(): Electron.Rectangle {
         const primaryDisplay = screen.getPrimaryDisplay();
         const padding = 5;
-        const width = this.scaler.scale(300);
-        const height = this.scaler.scale(400);
+        const width = this.context.scaler.scale(300);
+        const height = this.context.scaler.scale(400);
         return {
             width: width,
             height: height,

@@ -7,7 +7,7 @@ import { Channels } from "common/messaging/Messages";
 export class MessageBus {
     private static readonly ReplayMessagesNumber: number = 1;
 
-    private observablesRegistry: { [key: string]: ReplaySubject<any> };
+    private readonly observablesRegistry: { [key: string]: ReplaySubject<any> };
 
     constructor(private readonly window: Electron.BrowserWindow) {
         this.observablesRegistry = {};
@@ -23,6 +23,10 @@ export class MessageBus {
                     .subscribe(value => this.window.webContents.send(Channels.Observe, receivedName, value));
             }
         });
+    }
+
+    public registerValue<TValue>(name: string, value: TValue): void {
+        this.registerObservable(name, Observable.of(value));
     }
 
     public registerObservable<TValue>(name: string, observable$: Observable<TValue>): void {

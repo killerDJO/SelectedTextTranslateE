@@ -3,8 +3,7 @@ import { ipcRenderer } from "electron";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
-import { ScoreSettings } from "common/dto/presentation-settings/ScoreSettings";
-import { ResultVisibilitySettings } from "common/dto/presentation-settings/ResultVisibilitySettings";
+import { ScoreSettings, ResultVisibilitySettings } from "common/dto/presentation-settings/PresentationSettings";
 
 import { ComponentBase } from "components/ComponentBase";
 import TranslationResultContent from "./content/TranslationResultContent.vue";
