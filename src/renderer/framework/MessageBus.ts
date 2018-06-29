@@ -1,10 +1,10 @@
 import { Observable, ReplaySubject } from "rxjs";
 import { ipcRenderer } from "electron";
-import { Channels } from "common/messaging/Messages";
+import { Channels, Messages } from "common/messaging/Messages";
 
 export class MessageBus {
 
-    public getValue<TValue>(name: string): Observable<TValue> {
+    public getValue<TValue>(name: Messages): Observable<TValue> {
         const subject$ = new ReplaySubject<TValue>(1);
         ipcRenderer.on(Channels.Observe, (sender: Electron.EventEmitter, receivedName: string, observable: TValue) => {
             if (receivedName !== name) {
@@ -16,7 +16,7 @@ export class MessageBus {
         return subject$;
     }
 
-    public sendCommand<TValue>(name: string, value?: TValue): void {
+    public sendCommand<TValue>(name: Messages, value?: TValue): void {
         ipcRenderer.send(Channels.Observe, name, value);
     }
 }

@@ -10,7 +10,7 @@ import { StorageFolderProvider } from "./StorageFolderProvider";
 @injectable()
 export class Logger {
     constructor(private readonly storageFolderProvider: StorageFolderProvider) {
-        const logFilePath = path.join(storageFolderProvider.getPath(), "log.txt");
+        const logFilePath = path.join(storageFolderProvider.getPath(), "log.%DATE%.txt");
         logger.configure({
             transports: [
                 new logger.transports.DailyRotateFile({

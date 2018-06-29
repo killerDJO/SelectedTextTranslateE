@@ -44,7 +44,7 @@ export const translationResult: Module<TranslationResultState, RootState> = {
     }
 };
 
-function executeCommand(state: TranslationResultState, commandName: string, inputGetter: (translateResult: TranslateResult) => string | null): void {
+function executeCommand(state: TranslationResultState, commandName: Messages, inputGetter: (translateResult: TranslateResult) => string | null): void {
     if (state.translateResult === null) {
         return;
     }
