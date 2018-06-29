@@ -1,13 +1,14 @@
+import Vue from "vue";
 import { Component } from "vue-property-decorator";
-import { ipcRenderer } from "electron";
+import { namespace } from "vuex-class";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
-import { Messages } from "common/messaging/Messages";
-import { ScoreSettings, ResultVisibilitySettings } from "common/dto/presentation-settings/PresentationSettings";
+import { PresentationSettings } from "common/dto/presentation-settings/PresentationSettings";
 
-import { ComponentBase } from "components/ComponentBase";
 import TranslationResultContent from "./content/TranslationResultContent.vue";
 import TranslationResultHeader from "./header/TranslationResultHeader.vue";
+
+const ns = namespace("app/translationResult");
 
 @Component({
     components: {
@@ -15,56 +16,21 @@ import TranslationResultHeader from "./header/TranslationResultHeader.vue";
         TranslationResultHeader
     }
 })
-export default class TranslationResult extends ComponentBase {
+export default class TranslationResult extends Vue {
+    @ns.State public translateResult!: TranslateResult;
+    @ns.State public presentationSettings!: PresentationSettings;
 
-    public translateResult: TranslateResult | null = null;
-    public scoreSettings!: ScoreSettings;
-    public resultVisibilitySettings!: ResultVisibilitySettings;
+    @ns.Action private readonly fetchData!: () => void;
+    @ns.Action private readonly playText!: () => void;
+    @ns.Action private readonly translateSuggestion!: () => void;
+    @ns.Action private readonly forceTranslation!: () => void;
 
     constructor() {
         super();
-        this.messageBus.getValue<TranslateResult | null>(Messages.TranslateResult).subscribe(this.updateTranslateResult);
-        this.messageBus.getValue<ScoreSettings>(Messages.ScoreSettings).subscribe(this.updateScoreSettings);
-        this.messageBus.getValue<ResultVisibilitySettings>(Messages.ResultVisibilitySettings).subscribe(this.updateVisibilitySettings);
+        this.fetchData();
     }
 
     public get hasResult(): boolean {
         return this.translateResult !== null;
-    }
-
-    public playText(): void {
-        if (this.translateResult === null) {
-            return;
-        }
-
-        this.messageBus.sendCommand(Messages.PlayTextCommand, this.translateResult.sentence.input);
-    }
-
-    public translateSuggestion(): void {
-        if (this.translateResult === null) {
-            return;
-        }
-
-        this.messageBus.sendCommand(Messages.TranslateCommand, this.translateResult.sentence.suggestion);
-    }
-
-    public forceTranslation(): void {
-        if (this.translateResult === null) {
-            return;
-        }
-
-        this.messageBus.sendCommand(Messages.ForceTranslateCommand, this.translateResult.sentence.input);
-    }
-
-    private updateTranslateResult(translateResult: TranslateResult | null): void {
-        this.translateResult = translateResult;
-    }
-
-    private updateScoreSettings(scoreSettings: ScoreSettings): void {
-        this.scoreSettings = scoreSettings;
-    }
-
-    private updateVisibilitySettings(resultVisibilitySettings: ResultVisibilitySettings): void {
-        this.resultVisibilitySettings = resultVisibilitySettings;
     }
 }

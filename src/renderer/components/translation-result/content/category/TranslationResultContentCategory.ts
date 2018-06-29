@@ -1,21 +1,17 @@
 import { Component, Prop } from "vue-property-decorator";
+import Vue from "vue";
 
 import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dto/translation/TranslateResult";
-import { ScoreSettings, ResultVisibilitySettings } from "common/dto/presentation-settings/PresentationSettings";
-
-import { ComponentBase } from "components/ComponentBase";
+import { PresentationSettings } from "common/dto/presentation-settings/PresentationSettings";
 
 @Component
-export default class TranslationResultContentCategory extends ComponentBase {
+export default class TranslationResultContentCategory extends Vue {
 
     @Prop(Object)
     public category!: TranslateResultCategory;
 
     @Prop(Object)
-    public scoreSettings!: ScoreSettings;
-
-    @Prop(Object)
-    public resultVisibilitySettings!: ResultVisibilitySettings;
+    public presentationSettings!: PresentationSettings;
 
     public isExpanded: boolean = false;
 
@@ -52,10 +48,10 @@ export default class TranslationResultContentCategory extends ComponentBase {
     }
 
     public getScoreClass(entry: TranslateResultCategoryEntry): string {
-        if (entry.score >= this.scoreSettings.highThreshold) {
+        if (entry.score >= this.presentationSettings.score.highThreshold) {
             return "high";
         }
-        if (entry.score >= this.scoreSettings.mediumThreshold) {
+        if (entry.score >= this.presentationSettings.score.mediumThreshold) {
             return "medium";
         }
         return "low";
@@ -66,6 +62,6 @@ export default class TranslationResultContentCategory extends ComponentBase {
     }
 
     private isVisibleEntry(entry: TranslateResultCategoryEntry, index: number): boolean {
-        return entry.score > this.resultVisibilitySettings.lowScoreThreshold || index <= this.resultVisibilitySettings.visibleByDefaultNumber;
+        return entry.score > this.presentationSettings.visibility.lowScoreThreshold || index <= this.presentationSettings.visibility.visibleByDefaultNumber;
     }
 }

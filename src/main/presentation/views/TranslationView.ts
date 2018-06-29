@@ -23,8 +23,7 @@ export class TranslationView extends ViewBase {
         this.window.setSkipTaskbar(true);
 
         const settings = this.context.settingsProvider.getSettings();
-        this.messageBus.registerValue(Messages.ResultVisibilitySettings, settings.presentation.visibility);
-        this.messageBus.registerValue(Messages.ScoreSettings, settings.presentation.score);
+        this.messageBus.registerValue(Messages.PresentationSettings, settings.presentation);
 
         this.playText$ = this.messageBus.getValue(Messages.PlayTextCommand);
         this.translateText$ = this.messageBus.getValue(Messages.TranslateCommand);

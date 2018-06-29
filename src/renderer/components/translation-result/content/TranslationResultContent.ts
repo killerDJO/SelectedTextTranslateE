@@ -1,9 +1,9 @@
 import { Component, Prop } from "vue-property-decorator";
+import Vue from "vue";
 
-import { ScoreSettings, ResultVisibilitySettings } from "common/dto/presentation-settings/PresentationSettings";
+import { PresentationSettings } from "common/dto/presentation-settings/PresentationSettings";
 import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dto/translation/TranslateResult";
 
-import { ComponentBase } from "components/ComponentBase";
 import TranslationResultContentCategory from "components/translation-result/content/category/TranslationResultContentCategory.vue";
 
 @Component({
@@ -11,14 +11,11 @@ import TranslationResultContentCategory from "components/translation-result/cont
         TranslationResultContentCategory
     }
 })
-export default class TranslationResultContent extends ComponentBase {
+export default class TranslationResultContent extends Vue {
 
     @Prop(Array)
     public categories!: ReadonlyArray<TranslateResultCategory>;
 
     @Prop(Object)
-    public scoreSettings!: ScoreSettings;
-
-    @Prop(Object)
-    public resultVisibilitySettings!: ResultVisibilitySettings;
+    public presentationSettings!: PresentationSettings;
 }

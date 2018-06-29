@@ -1,16 +1,21 @@
-import { ComponentBase } from "../ComponentBase";
-import { Component } from "vue-property-decorator";
+import { Component, Watch } from "vue-property-decorator";
+import { namespace } from "vuex-class";
+import Vue from "vue";
+
 import { Messages } from "common/messaging/Messages";
 
+const ns = namespace("app");
+
 @Component
-export default class App extends ComponentBase {
-    private accentColor: string = "";
-    private scaleFactor: number = 1;
+export default class App extends Vue {
+    @ns.State public accentColor!: string;
+    @ns.State public scaleFactor!: number;
+
+    @ns.Action private readonly fetchData!: () => void;
 
     constructor() {
         super();
-        this.messageBus.getValue<string>(Messages.AccentColor).subscribe(this.updateAccentColor);
-        this.messageBus.getValue<number>(Messages.ScaleFactor).subscribe(this.updateScaleFactor);
+        this.fetchData();
     }
 
     public get accentStyle(): any {
@@ -25,16 +30,8 @@ export default class App extends ComponentBase {
         };
     }
 
-    private updateAccentColor(accentColor: string): void {
-        this.accentColor = accentColor;
-        this.forceRepaint();
-    }
-
-    private updateScaleFactor(scaleFactor: number): void {
-        this.scaleFactor = scaleFactor;
-        this.forceRepaint();
-    }
-
+    @Watch("scaleFactor")
+    @Watch("accentColor")
     private forceRepaint(): void {
         this.$el.style.display = "none";
         // tslint:disable-next-line:no-unused-expression [No need to store this anywhere, the reference is enough]

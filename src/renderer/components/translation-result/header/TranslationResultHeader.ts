@@ -1,9 +1,10 @@
+import Vue from "vue";
+
 import { Component, Prop } from "vue-property-decorator";
-import { ComponentBase } from "components/ComponentBase";
 import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
 
 @Component
-export default class TranslationResultHeader extends ComponentBase {
+export default class TranslationResultHeader extends Vue {
 
     @Prop(Object)
     public sentence!: TranslateResultSentence;

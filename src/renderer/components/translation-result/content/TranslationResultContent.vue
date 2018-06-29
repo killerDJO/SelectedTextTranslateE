@@ -4,8 +4,7 @@
             v-for="category in categories"
             :key="category.baseForm + category.partOfSpeech"
             :category="category"
-            :score-settings="scoreSettings"
-            :result-visibility-settings="resultVisibilitySettings" />
+            :presentation-settings="presentationSettings"/>
     </div>
 </template>
 
