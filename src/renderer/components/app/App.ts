@@ -30,12 +30,18 @@ export default class App extends Vue {
         };
     }
 
-    @Watch("scaleFactor")
-    @Watch("accentColor")
-    private forceRepaint(): void {
-        this.$el.style.display = "none";
-        // tslint:disable-next-line:no-unused-expression [No need to store this anywhere, the reference is enough]
-        this.$el.offsetHeight;
-        this.$el.style.display = "block";
+    public mounted(): void {
+        this.$children.forEach(child => child.$on("hook:updated", this.repaintLayout.bind(this)));
+    }
+
+    public repaintLayout(): void {
+        const scrollHolder = this.$el.getElementsByClassName("scroll-holder")[0] as HTMLElement;
+        if (scrollHolder === null) {
+            return;
+        }
+
+        scrollHolder.style.width = "auto";
+        const hight = scrollHolder.offsetHeight;
+        scrollHolder.style.width = "100%";
     }
 }

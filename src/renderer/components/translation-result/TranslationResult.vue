@@ -1,5 +1,5 @@
 <template>
-    <div class="translate-result">
+    <div class="translate-result" v-if="isInitialized">
         <div v-if="hasResult">
             <translation-result-header
                 :sentence="translateResult.sentence"

@@ -18,7 +18,7 @@
     "pack-dev": "npm run full-build-dev && npm run pack",
     "pack-prod": "npm run full-build-prod && npm run pack",
     "pack": "node build-scripts/package.js",
-    "rebuild-native": "npx electron-rebuild"
+    "rebuild-native": "npx electron-rebuild -f"
   },
   "dependencies": {
     "axios": "^0.17.1",
@@ -40,7 +40,7 @@
     "xmldom": "^0.1.27"
   },
   "devDependencies": {
-    "@types/electron-devtools-installer": "^2.0.2",
+    "@types/electron-devtools-installer": "^2.0.3",
     "@types/electron-store": "^1.3.0",
     "@types/ffi": "^0.1.0",
     "@types/memory-cache": "^0.2.0",
@@ -52,8 +52,8 @@
     "copy-webpack-plugin": "^4.5.1",
     "css-loader": "^0.28.11",
     "del": "^3.0.0",
-    "electron": "1.8.6",
-    "electron-devtools-installer": "^2.2.3",
+    "electron": "^2.0.0-beta.3",
+    "electron-devtools-installer": "^2.2.4",
     "electron-packager": "^10.1.0",
     "electron-rebuild": "^1.7.3",
     "file-loader": "^1.1.11",

@@ -11,13 +11,15 @@ const messageBus = new MessageBus();
 interface TranslationResultState {
     translateResult: TranslateResult | null;
     presentationSettings?: PresentationSettings;
+    isInitialized: boolean;
 }
 
 export const translationResult: Module<TranslationResultState, RootState> = {
     namespaced: true,
     state: {
         translateResult: null,
-        presentationSettings: undefined
+        presentationSettings: undefined,
+        isInitialized: false
     },
     mutations: {
         setTranslateResult(state: TranslationResultState, translateResult: TranslateResult | null): void {
@@ -25,12 +27,18 @@ export const translationResult: Module<TranslationResultState, RootState> = {
         },
         setPresentationSettings(state: TranslationResultState, presentationSettings: PresentationSettings): void {
             state.presentationSettings = presentationSettings;
+        },
+        setInitialized(state: TranslationResultState): void {
+            state.isInitialized = true;
         }
     },
     actions: {
         fetchData({ commit }): void {
             messageBus.getValue<TranslateResult | null>(Messages.TranslateResult).subscribe(translateResult => commit("setTranslateResult", translateResult));
-            messageBus.getValue<PresentationSettings>(Messages.PresentationSettings).subscribe(presentationSettings => commit("setPresentationSettings", presentationSettings));
+            messageBus.getValue<PresentationSettings>(Messages.PresentationSettings).subscribe(presentationSettings => {
+                commit("setPresentationSettings", presentationSettings);
+                commit("setInitialized");
+            });
         },
         playText({ state }): void {
             executeCommand(state, Messages.PlayTextCommand, translateResult => translateResult.sentence.input);

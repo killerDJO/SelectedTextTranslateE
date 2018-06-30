@@ -19,6 +19,7 @@ const ns = namespace("app/translationResult");
 export default class TranslationResult extends Vue {
     @ns.State public translateResult!: TranslateResult;
     @ns.State public presentationSettings!: PresentationSettings;
+    @ns.State public isInitialized!: boolean;
 
     @ns.Action private readonly fetchData!: () => void;
     @ns.Action private readonly playText!: () => void;

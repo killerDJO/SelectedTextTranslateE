@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, WebPreferences } from "electron";
 import { BehaviorSubject } from "rxjs";
 
 import { MessageBus } from "presentation/infrastructure/MessageBus";
@@ -18,16 +18,20 @@ export abstract class ViewBase {
 
         this.window = new BrowserWindow({
             frame: false,
+            backgroundColor: "#ffffff",
             focusable: true,
             thickFrame: false,
             show: false,
+            webPreferences: {
+                backgroundThrottling: false,
+                affinity: "window"
+            }
         });
         this.window.setBounds(this.getInitialBounds());
 
         this.isReadyToShow$ = new BehaviorSubject<boolean>(false);
         this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
         this.messageBus = new MessageBus(this.window);
-
         this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${viewName}`);
 
         this.initializeSubscriptions();
@@ -35,7 +39,7 @@ export abstract class ViewBase {
 
     public show(): void {
         this.isReadyToShow$.filter(isReady => isReady).subscribe(() => {
-            this.window.show();
+            setTimeout(() => this.window.show(), 75);
         });
     }
 
