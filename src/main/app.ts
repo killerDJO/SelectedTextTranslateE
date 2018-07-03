@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Notification, dialog } from "electron";
+import { app, BrowserWindow } from "electron";
 import * as path from "path";
 // tslint:disable-next-line:no-import-side-effect
 import "reflect-metadata";
@@ -7,6 +7,8 @@ import { Application } from "presentation/Application";
 import { container } from "inversify.config";
 import { DevToolsLoader } from "presentation/infrastructure/DevToolsLoader";
 import { ErrorHandler } from "infrastructure/ErrorHandler";
+
+app.setAppUserModelId(process.execPath);
 
 let application: Application;
 app.on("ready", async () => {

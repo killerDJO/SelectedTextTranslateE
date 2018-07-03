@@ -23,6 +23,8 @@ import { ErrorHandler } from "infrastructure/ErrorHandler";
 import { SettingsStore } from "infrastructure/SettingsStore";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { NotificationSender } from "infrastructure/NotificationSender";
+import { RendererErrorHandler } from 'presentation/infrastructure/RendererErrorHandler';
 
 class Binder {
     public readonly container: Container = new Container();
@@ -38,6 +40,7 @@ class Binder {
 
     private bindInfrastructure(): void {
         this.container.bind<StorageFolderProvider>(StorageFolderProvider).toSelf();
+        this.container.bind<NotificationSender>(NotificationSender).toSelf();
         this.container.bind<Logger>(Logger).toSelf().inSingletonScope();
         this.container.bind<ErrorHandler>(ErrorHandler).toSelf().inSingletonScope();
         this.container.bind<SettingsStore>(SettingsStore).toSelf().inSingletonScope();
@@ -66,6 +69,7 @@ class Binder {
         this.container.bind<ViewContext>(ViewContext).toSelf();
         this.container.bind<HotkeysRegistry>(HotkeysRegistry).toSelf().inSingletonScope();
         this.container.bind<Scaler>(Scaler).toSelf().inSingletonScope();
+        this.container.bind<RendererErrorHandler>(RendererErrorHandler).toSelf().inSingletonScope();
     }
 }
 

@@ -59,6 +59,7 @@ export abstract class ViewBase {
     private initializeSubscriptions(): void {
         this.context.scaler.scaleFactor$.subscribe(this.scale.bind(this));
         this.messageBus.registerObservable(Messages.AccentColor, this.context.accentColorProvider.accentColor$);
+        this.messageBus.getValue<Error>(Messages.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
 
         this.window.on("focus", () => {
             this.context.zoomHotkeysRegistry.registerZoomHotkeys();

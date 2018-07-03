@@ -11,5 +11,7 @@ export enum Messages {
 
     PlayTextCommand = "play-text-command",
     TranslateCommand = "translate-command",
-    ForceTranslateCommand = "force-translate-command"
+    ForceTranslateCommand = "force-translate-command",
+
+    RendererError = "renderer-error"
 }
