@@ -9,6 +9,7 @@ import Speaker = require("speaker");
 
 import { RequestProvider } from "data-access/RequestProvider";
 import { HashProvider } from "./HashProvider";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 @injectable()
 export class TextPlayer {
@@ -17,7 +18,8 @@ export class TextPlayer {
 
     constructor(
         private readonly requestProvider: RequestProvider,
-        private readonly hashProvider: HashProvider) {
+        private readonly hashProvider: HashProvider,
+        private readonly settingsProvider: SettingsProvider) {
 
         this.tempFilePath = path.resolve(app.getPath("temp"), "STT_audio.mp3");
     }
@@ -36,7 +38,7 @@ export class TextPlayer {
     private getAudioContent(text: string): Observable<Buffer> {
         const encodedText = encodeURIComponent(text);
         return this.hashProvider.computeHash(text)
-            .map(hash => `https://translate.google.com/translate_tts?tl=en&client=t&q=${text}&tk=${hash}`)
+            .map(hash => `${this.settingsProvider.getSettings().engine.baseUrl}/translate_tts?tl=en&client=t&q=${text}&tk=${hash}`)
             .concatMap(url => this.requestProvider.getBinaryContent(url));
     }
 

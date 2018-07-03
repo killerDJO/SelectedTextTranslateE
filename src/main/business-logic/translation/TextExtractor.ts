@@ -2,20 +2,21 @@ import * as ffi from "ffi";
 import { clipboard } from "electron";
 import { Subject } from "rxjs";
 import { injectable } from "inversify";
+import { SettingsProvider } from "../settings/SettingsProvider";
 
 @injectable()
 export class TextExtractor {
 
     public readonly textToTranslate$: Subject<string>;
 
-    constructor() {
+    constructor(private readonly settingsProvider: SettingsProvider) {
         this.textToTranslate$ = new Subject();
     }
 
     public getSelectedText(): void {
         this.broadcastCopyCommand();
 
-        const copyDelayMilliseconds = 100;
+        const copyDelayMilliseconds = this.settingsProvider.getSettings().engine.copyDelayMilliseconds;
         setTimeout(
             () => {
                 this.textToTranslate$.next(clipboard.readText());

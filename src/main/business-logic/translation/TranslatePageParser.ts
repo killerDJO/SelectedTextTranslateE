@@ -7,6 +7,7 @@ import { injectable } from "inversify";
 import { TranslationConfig } from "./dto/TranslationConfig";
 import { Logger } from "infrastructure/Logger";
 import { RequestProvider } from "data-access/RequestProvider";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 @injectable()
 export class TranslatePageParser {
@@ -14,7 +15,10 @@ export class TranslatePageParser {
     private readonly cache: CacheClass<string, TranslationConfig> = new Cache();
     private readonly refreshIntervalMilliseconds: number;
 
-    constructor(private readonly requestProvider: RequestProvider, private readonly logger: Logger) {
+    constructor(
+        private readonly requestProvider: RequestProvider,
+        private readonly logger: Logger,
+        private readonly settingsProvider: SettingsProvider) {
         const MinutesInHour = 60;
         const SecondsInMinute = 60;
         const MillisecondsInSecond = 1000;
@@ -35,7 +39,7 @@ export class TranslatePageParser {
     }
 
     private getUpdatedTranslationConfig(): Observable<TranslationConfig> {
-        return this.requestProvider.getStringContent("https://translate.google.com").map(html => {
+        return this.requestProvider.getStringContent(this.settingsProvider.getSettings().engine.baseUrl).map(html => {
             const scriptContent = this.extractScriptContentFromHtml(html);
             return this.extractConfig(scriptContent);
         });

@@ -23,6 +23,7 @@ export class ErrorHandler {
     private async handleError(title: string, error: Error): Promise<void> {
         this.logger.error(title, error);
         this.openMessageBox();
+        this.logger.info("Application shutdown due to main process error.");
         await this.logger.flush();
         process.exit();
     }

@@ -1,0 +1,5 @@
+export interface TranslationEngineSettings {
+    readonly copyDelayMilliseconds: number;
+    readonly baseUrl: string;
+    readonly dictionaryRefreshInterval: number;
+}
