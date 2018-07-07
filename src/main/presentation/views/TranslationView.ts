@@ -37,7 +37,16 @@ export class TranslationView extends ViewBase {
     }
 
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
-        return this.getInitialBounds();
+        const bottomRightX = bounds.x + bounds.width;
+        const bottomRightY = bounds.y + bounds.height;
+        const width = this.context.scaler.rescale(bounds.width);
+        const height = this.context.scaler.rescale(bounds.height);
+        return {
+            width: width,
+            height: height,
+            x: bottomRightX - width,
+            y: bottomRightY - height
+        };
     }
 
     protected getInitialBounds(): Electron.Rectangle {

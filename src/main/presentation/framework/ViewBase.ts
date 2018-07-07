@@ -1,4 +1,4 @@
-import { BrowserWindow, WebPreferences } from "electron";
+import { BrowserWindow, WebPreferences, screen } from "electron";
 import { BehaviorSubject } from "rxjs";
 
 import { MessageBus } from "presentation/infrastructure/MessageBus";
@@ -27,14 +27,14 @@ export abstract class ViewBase {
                 affinity: "window"
             }
         });
-        this.window.setBounds(this.getInitialBounds());
 
         this.isReadyToShow$ = new BehaviorSubject<boolean>(false);
-        this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
+
         this.messageBus = new MessageBus(this.window);
         this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${viewName}`);
 
         this.initializeSubscriptions();
+        this.window.setBounds(this.getInitialBounds());
     }
 
     public show(): void {
@@ -52,7 +52,33 @@ export abstract class ViewBase {
         this.messageBus.sendValue(Messages.ScaleFactor, this.context.scaler.scaleFactor$.value);
     }
 
-    protected abstract scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle;
+    protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
+        const width = this.context.scaler.rescale(bounds.width);
+        const height = this.context.scaler.rescale(bounds.height);
+        const widthDelta = Math.round((width - bounds.width) / 2);
+        const heightDelta = Math.round((height - bounds.height) / 2);
+        return {
+            width: width,
+            height: height,
+            x: bounds.x - widthDelta,
+            y: bounds.y - heightDelta
+        };
+    }
+
+    protected getCentralPosition(width: number, height: number): Electron.Rectangle {
+        const primaryDisplay = screen.getPrimaryDisplay();
+        const scaledWidth = this.context.scaler.scale(width);
+        const scaledHeight = this.context.scaler.scale(height);
+        const x = Math.round(primaryDisplay.bounds.width / 2 - scaledWidth / 2);
+        const y = Math.round(primaryDisplay.bounds.height / 2) - scaledHeight / 2;
+
+        return {
+            x: x,
+            y: y,
+            width: width,
+            height: height
+        };
+    }
 
     protected abstract getInitialBounds(): Electron.Rectangle;
 
@@ -67,5 +93,6 @@ export abstract class ViewBase {
         this.window.on("blur", () => {
             this.context.zoomHotkeysRegistry.unregisterZoomHotkeys();
         });
+        this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
     }
 }

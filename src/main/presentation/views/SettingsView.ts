@@ -1,5 +1,5 @@
-import { Event, app, BrowserWindow } from "electron";
-import { injectable, inject } from "inversify";
+import { Event, app, BrowserWindow, screen } from "electron";
+import { injectable } from "inversify";
 
 import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { ViewNames } from "common/ViewNames";
@@ -12,16 +12,7 @@ export class SettingsView extends ViewBase {
         super(ViewNames.Settings, viewContext);
     }
 
-    protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
-        return this.getInitialBounds();
-    }
-
     protected getInitialBounds(): Electron.Rectangle {
-        return {
-            x: 100,
-            y: 100,
-            width: this.context.scaler.scale(600),
-            height: this.context.scaler.scale(300)
-        };
+        return this.getCentralPosition(600, 300);
     }
 }

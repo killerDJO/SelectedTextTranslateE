@@ -18,18 +18,6 @@ export default class App extends Vue {
         this.fetchData();
     }
 
-    public get accentStyle(): any {
-        return {
-            "border-color": `#${this.accentColor}`
-        };
-    }
-
-    public get scaleStyle(): any {
-        return {
-            zoom: `${this.scaleFactor * 100}%`
-        };
-    }
-
     public mounted(): void {
         this.$children.forEach(child => child.$on("hook:updated", this.repaintLayout.bind(this)));
     }
