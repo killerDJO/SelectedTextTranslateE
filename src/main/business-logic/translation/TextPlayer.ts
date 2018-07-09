@@ -8,7 +8,7 @@ import { Readable } from "stream";
 import Speaker = require("speaker");
 
 import { RequestProvider } from "data-access/RequestProvider";
-import { HashProvider } from "./HashProvider";
+import { HashProvider } from "business-logic/translation/HashProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 @injectable()

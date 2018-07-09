@@ -1,4 +1,4 @@
-import { TranslateResultCategoryEntry } from "./TranslateResultCategoryEntry";
+import { TranslateResultCategoryEntry } from "common/dto/translation/TranslateResultCategoryEntry";
 
 export class TranslateResultCategory {
     constructor(

@@ -4,7 +4,7 @@ import safeEval = require("safe-eval");
 import { Observable } from "rxjs";
 import { injectable } from "inversify";
 
-import { TranslationConfig } from "./dto/TranslationConfig";
+import { TranslationConfig } from "business-logic/translation/dto/TranslationConfig";
 import { Logger } from "infrastructure/Logger";
 import { RequestProvider } from "data-access/RequestProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";

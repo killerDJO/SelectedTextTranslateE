@@ -2,7 +2,7 @@ import * as ffi from "ffi";
 import { clipboard } from "electron";
 import { Subject } from "rxjs";
 import { injectable } from "inversify";
-import { SettingsProvider } from "../settings/SettingsProvider";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 @injectable()
 export class TextExtractor {

@@ -4,10 +4,10 @@ import { injectable, inject } from "inversify";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Logger } from "infrastructure/Logger";
 
-import { TranslatePageParser } from "./TranslatePageParser";
-import { TranslationConfig } from "./dto/TranslationConfig";
-import { HashProvider } from "./HashProvider";
-import { TranslationResponseParser } from "./TranslationResponseParser";
+import { TranslatePageParser } from "business-logic/translation/TranslatePageParser";
+import { TranslationConfig } from "business-logic/translation/dto/TranslationConfig";
+import { HashProvider } from "business-logic/translation/HashProvider";
+import { TranslationResponseParser } from "business-logic/translation/TranslationResponseParser";
 import { RequestProvider } from "data-access/RequestProvider";
 import { DictionaryProvider } from "business-logic/dictionary/DictionaryProvider";
 import { DictionaryRecord } from "business-logic/dictionary/dto/DictionaryRecord";

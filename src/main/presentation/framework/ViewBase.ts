@@ -6,7 +6,7 @@ import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
 import { ViewNames } from "common/ViewNames";
-import { ViewContext } from "./ViewContext";
+import { ViewContext } from "presentation/framework/ViewContext";
 import { ViewOptions } from "presentation/framework/ViewOptions";
 
 export abstract class ViewBase {

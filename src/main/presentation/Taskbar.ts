@@ -4,7 +4,7 @@ import { Subject, Observable } from "rxjs";
 import { injectable } from "inversify";
 
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
-import { IconsProvider } from "./infrastructure/IconsProvider";
+import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 
 @injectable()
 export class Taskbar {

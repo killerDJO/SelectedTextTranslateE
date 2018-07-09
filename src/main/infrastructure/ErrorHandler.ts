@@ -1,8 +1,8 @@
 import { injectable } from "inversify";
 import { dialog, shell } from "electron";
 
-import { Logger } from "./Logger";
-import { NotificationSender } from "./NotificationSender";
+import { Logger } from "infrastructure/Logger";
+import { NotificationSender } from "infrastructure/NotificationSender";
 
 
 @injectable()

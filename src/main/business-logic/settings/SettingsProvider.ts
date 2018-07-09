@@ -1,4 +1,4 @@
-import { Settings } from "./dto/Settings";
+import { Settings } from "business-logic/settings/dto/Settings";
 import { injectable } from "inversify";
 import { SettingsStore } from "infrastructure/SettingsStore";
 

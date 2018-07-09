@@ -1,9 +1,9 @@
-import { TranslateResultSentence } from "./TranslateResultSentence";
-import { TranslateResultCategory } from "./TranslateResultCategory";
+import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
+import { TranslateResultCategory } from "common/dto/translation/TranslateResultCategory";
 
-export { TranslateResultSentence } from "./TranslateResultSentence";
-export { TranslateResultCategory } from "./TranslateResultCategory";
-export { TranslateResultCategoryEntry } from "./TranslateResultCategoryEntry";
+export { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
+export { TranslateResultCategory } from "common/dto/translation/TranslateResultCategory";
+export { TranslateResultCategoryEntry } from "common/dto/translation/TranslateResultCategoryEntry";
 
 export class TranslateResult {
     constructor(

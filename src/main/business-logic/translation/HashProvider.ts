@@ -1,8 +1,8 @@
 import { Observable } from "rxjs";
 import { injectable } from "inversify";
 
-import { TranslatePageParser } from "./TranslatePageParser";
-import { TranslationConfig } from "./dto/TranslationConfig";
+import { TranslatePageParser } from "business-logic/translation/TranslatePageParser";
+import { TranslationConfig } from "business-logic/translation/dto/TranslationConfig";
 
 @injectable()
 export class HashProvider {

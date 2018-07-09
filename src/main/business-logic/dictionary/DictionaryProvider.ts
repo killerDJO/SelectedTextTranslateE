@@ -5,7 +5,7 @@ import { injectable } from "inversify";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Logger } from "infrastructure/Logger";
-import { DictionaryRecord } from "./dto/DictionaryRecord";
+import { DictionaryRecord } from "business-logic/dictionary/dto/DictionaryRecord";
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 import { SqLiteProvider } from "data-access/SqLiteProvider";
 

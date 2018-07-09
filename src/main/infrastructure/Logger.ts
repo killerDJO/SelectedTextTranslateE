@@ -6,7 +6,7 @@ import * as path from "path";
 // tslint:disable-next-line:no-import-side-effect
 import "winston-daily-rotate-file";
 
-import { StorageFolderProvider } from "./StorageFolderProvider";
+import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 
 
 @injectable()
