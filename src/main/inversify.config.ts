@@ -25,6 +25,8 @@ import { ViewContext } from "presentation/framework/ViewContext";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { NotificationSender } from "infrastructure/NotificationSender";
 import { RendererErrorHandler } from 'presentation/infrastructure/RendererErrorHandler';
+import { IconsProvider } from "presentation/infrastructure/IconsProvider";
+import { ViewsRegistry } from "presentation/views/ViewsRegistry";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -70,6 +72,8 @@ class Binder {
         this.container.bind<HotkeysRegistry>(HotkeysRegistry).toSelf().inSingletonScope();
         this.container.bind<Scaler>(Scaler).toSelf().inSingletonScope();
         this.container.bind<RendererErrorHandler>(RendererErrorHandler).toSelf().inSingletonScope();
+        this.container.bind<IconsProvider>(IconsProvider).toSelf().inSingletonScope();
+        this.container.bind<ViewsRegistry>(ViewsRegistry).toSelf().inSingletonScope();
     }
 }
 

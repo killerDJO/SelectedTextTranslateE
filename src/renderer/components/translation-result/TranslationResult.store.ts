@@ -34,8 +34,8 @@ export const translationResult: Module<TranslationResultState, RootState> = {
     },
     actions: {
         fetchData({ commit }): void {
-            messageBus.getValue<TranslateResult | null>(Messages.TranslateResult).subscribe(translateResult => commit("setTranslateResult", translateResult));
-            messageBus.getValue<PresentationSettings>(Messages.PresentationSettings).subscribe(presentationSettings => {
+            messageBus.getValue<TranslateResult | null>(Messages.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
+            messageBus.getValue<PresentationSettings>(Messages.PresentationSettings, presentationSettings => {
                 commit("setPresentationSettings", presentationSettings);
                 commit("setInitialized");
             });

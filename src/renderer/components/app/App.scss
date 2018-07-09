@@ -1,26 +1,31 @@
 .main {
     font-family: Arial, Helvetica, sans-serif;
+    height: 100vh;
 
-    $border-width: 1px;
-    $header-height: 6px;
+    $frameless-border-width: 1px;
+    $frameless-header-height: 6px;
 
-    border: $border-width solid;
-    height: calc(100vh - 2 * #{$border-width});
-
+    &.frameless {
+        border: $frameless-border-width solid;
+    }
+    
     .scroll-holder {
         position: relative;
         width: 100%;
-        height: calc(100% -  #{$header-height});
         overflow: auto;
     }
 
-    .header {
-        height: $header-height;
+    .frameless-header {
+        height: $frameless-header-height;
         width: 100%;
         position: relative;
         top: 0;
         left: 0;
         z-index: 100;
         -webkit-app-region: drag;
+
+        &+.scroll-holder {
+            height: calc(100% -  #{$frameless-header-height});
+        }
     }
 }

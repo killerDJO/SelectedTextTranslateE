@@ -1,9 +1,10 @@
 import { Menu, Tray, shell } from "electron";
-import * as path from "path";
+
 import { Subject, Observable } from "rxjs";
 import { injectable } from "inversify";
 
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
+import { IconsProvider } from "./infrastructure/IconsProvider";
 
 @injectable()
 export class Taskbar {
@@ -13,7 +14,9 @@ export class Taskbar {
     public readonly showSettings$: Subject<void>;
     public readonly translateSelectedText$: Subject<void>;
 
-    public constructor(private readonly storageFolderProvider: StorageFolderProvider) {
+    public constructor(
+        private readonly storageFolderProvider: StorageFolderProvider,
+        private readonly iconsProvider: IconsProvider) {
         this.createTaskBar();
 
         this.showTranslation$ = Observable.fromEventPattern((handler: () => void) => this.tray.on("click", handler));
@@ -22,7 +25,7 @@ export class Taskbar {
     }
 
     private createTaskBar(): void {
-        this.tray = new Tray(path.resolve(__dirname, "icons\\tray.ico"));
+        this.tray = new Tray(this.iconsProvider.getIconPath("tray"));
         const contextMenu = Menu.buildFromTemplate([
             { label: "Translate from clipboard", click: () => this.translateSelectedText$.next() },
             { label: "Dictionary" },

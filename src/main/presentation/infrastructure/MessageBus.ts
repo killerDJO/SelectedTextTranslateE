@@ -1,18 +1,23 @@
 import { Observable, ReplaySubject } from "rxjs";
 import { ipcMain } from "electron";
-import { injectable } from "inversify";
 
 import { Channels, Messages } from "common/messaging/Messages";
+
+interface Subscription {
+    readonly channel: string;
+    readonly callback: Function;
+}
 
 export class MessageBus {
     private static readonly ReplayMessagesNumber: number = 1;
 
     private readonly observablesRegistry: { [key: string]: ReplaySubject<any> };
+    private readonly subscriptions: Subscription[] = [];
 
     constructor(private readonly window: Electron.BrowserWindow) {
         this.observablesRegistry = {};
 
-        ipcMain.on(Channels.Subscribe, (event: Electron.Event, receivedName: string) => {
+        const subscription = this.createSubscription(Channels.Subscribe, (event: Electron.Event, receivedName: string) => {
             if (!this.isCurrentWindowEvent(event)) {
                 return;
             }
@@ -23,6 +28,8 @@ export class MessageBus {
                     .subscribe(value => this.window.webContents.send(Channels.Observe, receivedName, value));
             }
         });
+
+        ipcMain.on(subscription.channel, subscription.callback);
     }
 
     public registerValue<TValue>(name: Messages, value: TValue): void {
@@ -49,7 +56,7 @@ export class MessageBus {
 
     public getValue<TValue>(name: Messages): Observable<TValue> {
         const subject$ = new ReplaySubject<TValue>(1);
-        ipcMain.on(Channels.Observe, (event: Electron.Event, receivedName: string, observable: TValue) => {
+        const subscription = this.createSubscription(Channels.Observe, (event: Electron.Event, receivedName: string, observable: TValue) => {
             if (!this.isCurrentWindowEvent(event)) {
                 return;
             }
@@ -60,10 +67,24 @@ export class MessageBus {
 
             subject$.next(observable);
         });
+        ipcMain.on(subscription.channel, subscription.callback);
+
         return subject$;
+    }
+
+    public destroy(): void {
+        for (const callback of this.subscriptions) {
+            ipcMain.removeListener(callback.channel, callback.callback);
+        }
+    }
+
+    private createSubscription<TValue>(channel: string, callback: (event: Electron.Event, receivedName: string, value: TValue) => void): Subscription {
+        const subscription: Subscription = { channel, callback };
+        this.subscriptions.push(subscription);
+        return subscription;
     }
 
     private isCurrentWindowEvent(event: Electron.Event): boolean {
         return event.sender.id === this.window.webContents.id;
     }
-}
+} 

@@ -29,6 +29,7 @@ export default class TranslationResult extends Vue {
     constructor() {
         super();
         this.fetchData();
+        console.log("fetchData");
     }
 
     public get hasResult(): boolean {

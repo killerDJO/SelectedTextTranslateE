@@ -1,37 +1,33 @@
-import { BrowserWindow, WebPreferences, screen } from "electron";
-import { BehaviorSubject } from "rxjs";
+import { BrowserWindow, screen } from "electron";
+import { BehaviorSubject, Subscription } from "rxjs";
+import * as path from "path";
 
 import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
 import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "./ViewContext";
+import { ViewOptions } from "presentation/framework/ViewOptions";
 
 export abstract class ViewBase {
-    public readonly window: BrowserWindow;
-    public readonly messageBus: MessageBus;
-    public readonly isReadyToShow$: BehaviorSubject<boolean>;
+    private readonly subscriptions: Subscription[] = [];
+
+    protected readonly window: BrowserWindow;
+    protected readonly messageBus: MessageBus;
+    protected readonly isReadyToShow$: BehaviorSubject<boolean>;
 
     constructor(
-        protected readonly viewName: ViewNames,
-        protected readonly context: ViewContext) {
+        public readonly viewName: ViewNames,
+        protected readonly context: ViewContext,
+        protected readonly viewOptions: ViewOptions) {
 
-        this.window = new BrowserWindow({
-            frame: false,
-            backgroundColor: "#ffffff",
-            focusable: true,
-            thickFrame: false,
-            show: false,
-            webPreferences: {
-                backgroundThrottling: false,
-                affinity: "window"
-            }
-        });
-
+        this.window = new BrowserWindow(this.getWindowSettings());
+        //this.window.setMenu(null);
         this.isReadyToShow$ = new BehaviorSubject<boolean>(false);
+        this.loadWindow();
 
         this.messageBus = new MessageBus(this.window);
-        this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${viewName}`);
+        this.messageBus.sendValue(Messages.IsFramelessWindow, this.viewOptions.isFrameless);
 
         this.initializeSubscriptions();
         this.window.setBounds(this.getInitialBounds());
@@ -45,6 +41,10 @@ export abstract class ViewBase {
 
     public hide(): void {
         this.window.hide();
+    }
+
+    public isDestroyed(): boolean {
+        return this.window.isDestroyed();
     }
 
     protected scale(): void {
@@ -82,8 +82,29 @@ export abstract class ViewBase {
 
     protected abstract getInitialBounds(): Electron.Rectangle;
 
+    private getWindowSettings(): Electron.BrowserWindowConstructorOptions {
+        return {
+            frame: !this.viewOptions.isFrameless,
+            resizable: true,
+            title: this.viewOptions.title,
+            icon: !!this.viewOptions.iconName ? this.context.iconsProvider.getIconPath(this.viewOptions.iconName) : undefined,
+            backgroundColor: "#ffffff",
+            focusable: true,
+            thickFrame: !this.viewOptions.isFrameless,
+            show: false,
+            webPreferences: {
+                backgroundThrottling: false,
+                affinity: "window"
+            }
+        };
+    }
+
+    private loadWindow(): void {
+        this.window.loadURL(`${RendererLocationProvider.getRendererLocation()}#${this.viewName}`);
+    }
+
     private initializeSubscriptions(): void {
-        this.context.scaler.scaleFactor$.subscribe(this.scale.bind(this));
+        this.registerSubscription(this.context.scaler.scaleFactor$.subscribe(this.scale.bind(this)));
         this.messageBus.registerObservable(Messages.AccentColor, this.context.accentColorProvider.accentColor$);
         this.messageBus.getValue<Error>(Messages.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
 
@@ -94,5 +115,17 @@ export abstract class ViewBase {
             this.context.zoomHotkeysRegistry.unregisterZoomHotkeys();
         });
         this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
+        this.window.once("closed", () => this.destroy());
+    }
+
+    private registerSubscription(subscription: Subscription): void {
+        this.subscriptions.push(subscription);
+    }
+
+    private destroy(): void {
+        for (const subscription of this.subscriptions) {
+            subscription.unsubscribe();
+        }
+        this.messageBus.destroy();
     }
 }

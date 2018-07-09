@@ -1,6 +1,6 @@
-import { BrowserWindow, screen } from "electron";
-import { Observable, Subject } from "rxjs";
-import { injectable, inject } from "inversify";
+import { screen } from "electron";
+import { Observable } from "rxjs";
+import { injectable } from "inversify";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
@@ -17,7 +17,7 @@ export class TranslationView extends ViewBase {
     public forceTranslateText$!: Observable<string>;
 
     constructor(viewContext: ViewContext) {
-        super(ViewNames.TranslationResult, viewContext);
+        super(ViewNames.TranslationResult, viewContext, { isFrameless: true });
 
         this.window.setAlwaysOnTop(true);
         this.window.setSkipTaskbar(true);
@@ -29,10 +29,10 @@ export class TranslationView extends ViewBase {
         this.translateText$ = this.messageBus.getValue(Messages.TranslateCommand);
         this.forceTranslateText$ = this.messageBus.getValue(Messages.ForceTranslateCommand);
 
-        //this.window.on("blur", () => this.hide());
+        this.window.on("blur", () => this.hide());
     }
 
-    public showTranslateResult(translateResult: TranslateResult | null): void {
+    public setTranslateResult(translateResult: TranslateResult | null): void {
         this.messageBus.sendValue(Messages.TranslateResult, translateResult);
     }
 

@@ -7,6 +7,7 @@ import { RootState } from "store";
 interface ApplicationState {
     accentColor?: string;
     scaleFactor: number;
+    isFrameless: boolean;
 }
 
 const messageBus = new MessageBus();
@@ -15,7 +16,8 @@ export const app: Module<ApplicationState, RootState> = {
     namespaced: true,
     state: {
         accentColor: undefined,
-        scaleFactor: 1
+        scaleFactor: 1,
+        isFrameless: false
     },
     mutations: {
         setAccentColor(state: ApplicationState, accentColor: string): void {
@@ -23,12 +25,16 @@ export const app: Module<ApplicationState, RootState> = {
         },
         setScaleFactor(state: ApplicationState, scaleFactor: number): void {
             state.scaleFactor = scaleFactor;
+        },
+        setFramelessStatus(state: ApplicationState, isFrameless: boolean): void {
+            state.isFrameless = isFrameless;
         }
     },
     actions: {
         fetchData({ commit }): void {
-            messageBus.getValue<string>(Messages.AccentColor).subscribe(accentColor => commit("setAccentColor", accentColor));
-            messageBus.getValue<number>(Messages.ScaleFactor).subscribe(scaleFactor => commit("setScaleFactor", scaleFactor));
+            messageBus.getValue<string>(Messages.AccentColor, accentColor => commit("setAccentColor", accentColor));
+            messageBus.getValue<number>(Messages.ScaleFactor, scaleFactor => commit("setScaleFactor", scaleFactor));
+            messageBus.getValue<string>(Messages.IsFramelessWindow, isFrameless => commit("setFramelessStatus", isFrameless));
         }
     },
     modules: {

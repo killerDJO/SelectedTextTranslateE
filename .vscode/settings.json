@@ -8,6 +8,8 @@
         "**/*.js.map": true,
         "node_modules": true
     },
+    "typescript.preferences.importModuleSpecifier": "non-relative",
+    "typescript.preferences.quoteStyle": "double",
     "typescript.tsdk": "./node_modules/typescript/lib",
     "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
     "cSpell.words": [

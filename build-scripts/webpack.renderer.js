@@ -33,12 +33,12 @@ module.exports = (env, argv) => {
                     loader: "vue-loader",
                 },
                 {
-                    test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+                    test: /\.(png|jpe?g|gif|svg|eot|ttf|woff|woff2)(\?.*)?$/,
                     use: {
                         loader: "url-loader",
                         query: {
                             limit: 10000,
-                            name: "imgs/[name]--[folder].[ext]"
+                            name: "static/[name]--[folder].[ext]"
                         }
                     }
                 },
@@ -55,6 +55,13 @@ module.exports = (env, argv) => {
                             }
                         }
                     ]
+                },
+                {
+                    test: /\.css$/,
+                    use: [
+                        MiniCssExtractPlugin.loader,
+                        'css-loader'
+                    ]
                 }
             ]
         },
@@ -68,7 +75,7 @@ module.exports = (env, argv) => {
         plugins: [
             new VueLoaderPlugin(),
             new MiniCssExtractPlugin({
-                filename: "style.css"
+                filename: "[name].css"
             }),
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, rendererPath, "index.html")
@@ -86,7 +93,7 @@ module.exports = (env, argv) => {
             splitChunks: {
                 cacheGroups: {
                     commons: {
-                        test: /[\\/]node_modules[\\/]/,
+                        test: /[\\/](node_modules|vendor)[\\/]/,
                         name: "vendors",
                         chunks: "all"
                     }

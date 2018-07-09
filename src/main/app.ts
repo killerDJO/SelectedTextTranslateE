@@ -1,5 +1,4 @@
-import { app, BrowserWindow } from "electron";
-import * as path from "path";
+import { app } from "electron";
 // tslint:disable-next-line:no-import-side-effect
 import "reflect-metadata";
 
@@ -22,4 +21,8 @@ app.on("ready", async () => {
 
 app.on("before-quit", () => {
     logger.info("Application shutdown.");
+});
+
+app.on('window-all-closed', () => {
+    // do nothing
 });

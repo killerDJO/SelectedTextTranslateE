@@ -5,6 +5,7 @@ import { injectable } from "inversify";
 import { IZoomHotkeysRegistry } from "presentation/hotkeys/IZoomHotkeysRegistry";
 import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { RendererErrorHandler } from "presentation/infrastructure/RendererErrorHandler";
+import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 
 @injectable()
 export class ViewContext {
@@ -16,6 +17,7 @@ export class ViewContext {
         public readonly settingsProvider: SettingsProvider,
         public readonly scaler: Scaler,
         public readonly errorHandler: RendererErrorHandler,
+        public readonly iconsProvider: IconsProvider,
         hotkeysRegistry: HotkeysRegistry
     ) {
         this.zoomHotkeysRegistry = hotkeysRegistry;

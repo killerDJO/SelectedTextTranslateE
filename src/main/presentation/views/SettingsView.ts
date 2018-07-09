@@ -9,7 +9,11 @@ import { ViewContext } from "presentation/framework/ViewContext";
 @injectable()
 export class SettingsView extends ViewBase {
     constructor(viewContext: ViewContext) {
-        super(ViewNames.Settings, viewContext);
+        super(ViewNames.Settings, viewContext, {
+            iconName: "tray",
+            isFrameless: false,
+            title: "Settings"
+        });
     }
 
     protected getInitialBounds(): Electron.Rectangle {
