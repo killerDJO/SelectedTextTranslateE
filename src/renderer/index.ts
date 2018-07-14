@@ -1,13 +1,16 @@
 import { webFrame } from "electron";
 import Vue from "vue";
 import Vuex from "vuex";
-import { root, RootState } from "store";
-
 import Router from "vue-router";
-import App from "./components/app/App.vue";
-import { router } from "./router";
-import { MessageBus } from "framework/MessageBus";
+import { root, RootState } from "root.store";
+
+import App from "components/app/App.vue";
+import { router } from "router";
+import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
+
+import "filters";
+import "directives";
 
 class Bootstrapper {
 
@@ -24,16 +27,21 @@ class Bootstrapper {
     }
 
     private static bootstrapVue(): void {
-        Vue.use(Vuex);
-        const store = new Vuex.Store<RootState>(root);
+        this.registerPlugins();
+
         new Vue({
-            store,
+            store: new Vuex.Store<RootState>(root),
             components: { App },
             render(createElement) {
                 return createElement("app");
             },
             router,
         }).$mount(".app");
+    }
+
+    private static registerPlugins(): void {
+        Vue.use(Router);
+        Vue.use(Vuex);
     }
 
     private static setupErrorHandling(): void {
@@ -44,6 +52,7 @@ class Bootstrapper {
 
         Vue.config.errorHandler = (error: Error, vm: Vue, info: string) => {
             Bootstrapper.sendErrorMessage(messageBus, error);
+            console.error(error);
         };
     }
 

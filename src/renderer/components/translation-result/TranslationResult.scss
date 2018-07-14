@@ -1,4 +1,17 @@
 .translate-result {
+    line-height: 1.2;
     float: left;
     min-width: 100%;
+
+    /deep/ .link-button {
+        font-size: 10px;
+        color: $gray;
+        text-decoration: underline;
+        cursor: pointer;
+        display: inline-block;
+    
+        &:hover{
+            color: black;
+        }
+    }
 }

@@ -12,6 +12,7 @@ export class Taskbar {
 
     public readonly showTranslation$: Observable<void>;
     public readonly showSettings$: Subject<void>;
+    public readonly showHistory$: Subject<void>;
     public readonly translateSelectedText$: Subject<void>;
 
     public constructor(
@@ -21,6 +22,7 @@ export class Taskbar {
 
         this.showTranslation$ = Observable.fromEventPattern((handler: () => void) => this.tray.on("click", handler));
         this.showSettings$ = new Subject();
+        this.showHistory$ = new Subject();
         this.translateSelectedText$ = new Subject();
     }
 
@@ -28,7 +30,7 @@ export class Taskbar {
         this.tray = new Tray(this.iconsProvider.getIconPath("tray"));
         const contextMenu = Menu.buildFromTemplate([
             { label: "Translate from clipboard", click: () => this.translateSelectedText$.next() },
-            { label: "Dictionary" },
+            { label: "History", click: () => this.showHistory$.next() },
             { label: "Settings", click: () => this.showSettings$.next() },
             { type: "separator" },
             { label: "Suspend" },

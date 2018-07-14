@@ -65,12 +65,12 @@ export abstract class ViewBase {
         };
     }
 
-    protected getCentralPosition(width: number, height: number): Electron.Rectangle {
+    protected getCentralPosition(widthPercent: number, heightPercent: number): Electron.Rectangle {
         const primaryDisplay = screen.getPrimaryDisplay();
-        const scaledWidth = this.context.scaler.scale(width);
-        const scaledHeight = this.context.scaler.scale(height);
-        const x = Math.round(primaryDisplay.bounds.width / 2 - scaledWidth / 2);
-        const y = Math.round(primaryDisplay.bounds.height / 2) - scaledHeight / 2;
+        const width = Math.round(primaryDisplay.bounds.width * widthPercent / 100);
+        const height = Math.round(primaryDisplay.bounds.height * heightPercent / 100);
+        const x = Math.round(primaryDisplay.bounds.width / 2 - width / 2);
+        const y = Math.round(primaryDisplay.bounds.height / 2 - height / 2);
 
         return {
             x: x,

@@ -5,6 +5,7 @@ import { ViewBase } from "presentation/framework/ViewBase";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslationView } from "presentation/views/TranslationView";
 import { SettingsView } from "presentation/views/SettingsView";
+import { HistoryView } from "presentation/views/HistoryView";
 
 @injectable()
 export class ViewsRegistry {
@@ -12,6 +13,7 @@ export class ViewsRegistry {
 
     private readonly viewFactories: Map<ViewNames, (viewContext: ViewContext) => ViewBase> = new Map<ViewNames, (viewContext: ViewContext) => ViewBase>([
         [ViewNames.TranslationResult, viewContext => new TranslationView(viewContext)],
+        [ViewNames.History, viewContext => new HistoryView(viewContext)],
         [ViewNames.Settings, viewContext => new SettingsView(viewContext)]
     ]);
 

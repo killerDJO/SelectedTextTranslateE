@@ -1,12 +1,7 @@
-import { Event, app, BrowserWindow, screen } from "electron";
-import { injectable } from "inversify";
-
-import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { ViewNames } from "common/ViewNames";
 import { ViewBase } from "presentation/framework/ViewBase";
 import { ViewContext } from "presentation/framework/ViewContext";
 
-@injectable()
 export class SettingsView extends ViewBase {
     constructor(viewContext: ViewContext) {
         super(ViewNames.Settings, viewContext, {
@@ -17,6 +12,7 @@ export class SettingsView extends ViewBase {
     }
 
     protected getInitialBounds(): Electron.Rectangle {
-        return this.getCentralPosition(600, 300);
+        const settingsViewSettings = this.context.settingsProvider.getSettings().view.settings;
+        return this.getCentralPosition(settingsViewSettings.width, settingsViewSettings.height);
     }
 }

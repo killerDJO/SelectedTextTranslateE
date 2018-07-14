@@ -2,11 +2,11 @@ import { app } from "electron";
 // tslint:disable-next-line:no-import-side-effect
 import "reflect-metadata";
 
-import { Application } from "presentation/Application";
 import { container } from "inversify.config";
 import { DevToolsLoader } from "presentation/infrastructure/DevToolsLoader";
 import { ErrorHandler } from "infrastructure/ErrorHandler";
 import { Logger } from "infrastructure/Logger";
+import { Application } from "presentation/Application";
 
 app.setAppUserModelId(process.execPath);
 const logger = container.get<Logger>(Logger);
@@ -23,6 +23,6 @@ app.on("before-quit", () => {
     logger.info("Application shutdown.");
 });
 
-app.on('window-all-closed', () => {
+app.on("window-all-closed", () => {
     // do nothing
 });

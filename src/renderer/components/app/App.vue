@@ -9,5 +9,5 @@
 
 <script src="./App.ts" lang="ts"></script>
 <style src="../../vendor/photon/css/photon.css" lang="css"></style>
-<style src="../../framework/common.scss" lang="scss"></style>
+<style src="../../css-framework/common.scss" lang="scss"></style>
 <style src="./App.scss" lang="scss" scoped></style>

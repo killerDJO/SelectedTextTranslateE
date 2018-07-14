@@ -2,14 +2,21 @@ import { BehaviorSubject } from "rxjs";
 import { screen } from "electron";
 import { injectable } from "inversify";
 
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+
 @injectable()
 export class Scaler {
-    private readonly scaleFactorAdjustment: number = 0.05;
+    private readonly scaleFactorAdjustment: number;
+    private readonly verticalResolutionBaseline: number;
+
     private readonly previousScaleFactor$: BehaviorSubject<number>;
 
     public readonly scaleFactor$: BehaviorSubject<number>;
 
-    constructor() {
+    constructor(private readonly settingsProvider: SettingsProvider) {
+        this.scaleFactorAdjustment = this.settingsProvider.getSettings().view.scaling.scalingStep;
+        this.verticalResolutionBaseline = this.settingsProvider.getSettings().view.scaling.verticalResolutionBaseline;
+
         this.scaleFactor$ = new BehaviorSubject(this.computeInitialScaleFactor());
         this.previousScaleFactor$ = new BehaviorSubject(this.scaleFactor$.value);
     }
@@ -35,7 +42,7 @@ export class Scaler {
     private computeInitialScaleFactor(): number {
         const primaryDisplay = screen.getPrimaryDisplay();
         const verticalResolution = primaryDisplay.workAreaSize.height;
-        return verticalResolution / 860;
+        return verticalResolution / this.verticalResolutionBaseline;
     }
 
     private savePreviousScaleFactor(): void {

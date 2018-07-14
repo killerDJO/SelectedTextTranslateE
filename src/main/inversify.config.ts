@@ -3,7 +3,7 @@ import { Container } from "inversify";
 import { RequestProvider } from "data-access/RequestProvider";
 import { SqLiteProvider } from "data-access/SqLiteProvider";
 
-import { DictionaryProvider } from "business-logic/dictionary/DictionaryProvider";
+import { HistoryStore } from "business-logic/history/HistoryStore";
 import { HashProvider } from "business-logic/translation/HashProvider";
 import { TextExtractor } from "business-logic/translation/TextExtractor";
 import { TextTranslator } from "business-logic/translation/TextTranslator";
@@ -54,7 +54,7 @@ class Binder {
     }
 
     private bindBusinessLogic(): void {
-        this.container.bind<DictionaryProvider>(DictionaryProvider).toSelf().inSingletonScope();
+        this.container.bind<HistoryStore>(HistoryStore).toSelf().inSingletonScope();
         this.container.bind<HashProvider>(HashProvider).toSelf();
         this.container.bind<TextExtractor>(TextExtractor).toSelf();
         this.container.bind<TextTranslator>(TextTranslator).toSelf();

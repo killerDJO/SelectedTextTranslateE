@@ -1,8 +1,9 @@
-import { StoreOptions, Module } from "vuex";
-import { MessageBus } from "framework/MessageBus";
+import { Module } from "vuex";
+import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { translationResult } from "components/translation-result/TranslationResult.store";
-import { RootState } from "store";
+import { history } from "components/history/History.store";
+import { RootState } from "root.store";
 
 interface ApplicationState {
     accentColor?: string;
@@ -38,6 +39,7 @@ export const app: Module<ApplicationState, RootState> = {
         }
     },
     modules: {
-        translationResult
+        translationResult,
+        history
     }
 };

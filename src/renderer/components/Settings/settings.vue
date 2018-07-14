@@ -4,5 +4,5 @@
   </div>
 </template>
 
-<script src="./settings.ts" lang="ts"></script>
-<style src="./settings.scss" lang="scss" scoped></style>
+<script src="./Settings.ts" lang="ts"></script>
+<style src="./Settings.scss" lang="scss" scoped></style>

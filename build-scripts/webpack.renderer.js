@@ -11,7 +11,7 @@ module.exports = (env, argv) => {
     const destinationPath = "../dist/renderer";
     const rendererPath = "../src/renderer";
 
-    const scssFrameworkFile = path.resolve(__dirname, rendererPath, "framework/framework.scss");
+    const scssFrameworkFile = path.resolve(__dirname, rendererPath, "css-framework/framework.scss");
 
     const config = {
         entry: path.resolve(__dirname, rendererPath, "index.ts"),

@@ -13,6 +13,8 @@ import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewsRegistry } from "presentation/views/ViewsRegistry";
 import { ViewNames } from "common/ViewNames";
 import { ViewBase } from "presentation/framework/ViewBase";
+import { HistoryView } from "presentation/views/HistoryView";
+import { HistoryStore } from "business-logic/history/HistoryStore";
 
 @injectable()
 export class Application {
@@ -25,6 +27,7 @@ export class Application {
         private readonly hotkeysRegistry: HotkeysRegistry,
         private readonly iconsProvider: IconsProvider,
         private readonly textExtractor: TextExtractor,
+        private readonly historyStore: HistoryStore,
         private readonly viewsRegistry: ViewsRegistry,
         private readonly storageFolderProvider: StorageFolderProvider) {
 
@@ -55,6 +58,10 @@ export class Application {
 
         this.taskbar.showTranslation$.subscribe(() => this.showView(ViewNames.TranslationResult, this.setupTranslationView.bind(this)));
         this.taskbar.showSettings$.subscribe(() => this.showView(ViewNames.Settings));
+        this.taskbar.showHistory$.subscribe(() => {
+            const historyView = this.showView<HistoryView>(ViewNames.History);
+            this.historyStore.getRecords().subscribe(records => historyView.setHistoryRecords(records));
+        });
     }
 
     private translateText(text: string, isForcedTranslation: boolean): void {

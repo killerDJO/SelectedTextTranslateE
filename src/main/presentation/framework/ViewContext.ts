@@ -6,6 +6,7 @@ import { IZoomHotkeysRegistry } from "presentation/hotkeys/IZoomHotkeysRegistry"
 import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { RendererErrorHandler } from "presentation/infrastructure/RendererErrorHandler";
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
+import { ViewSettings } from "business-logic/settings/dto/ViewSettings";
 
 @injectable()
 export class ViewContext {
@@ -18,7 +19,7 @@ export class ViewContext {
         public readonly scaler: Scaler,
         public readonly errorHandler: RendererErrorHandler,
         public readonly iconsProvider: IconsProvider,
-        hotkeysRegistry: HotkeysRegistry
+        hotkeysRegistry: HotkeysRegistry,
     ) {
         this.zoomHotkeysRegistry = hotkeysRegistry;
     }

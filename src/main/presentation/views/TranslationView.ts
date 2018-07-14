@@ -1,6 +1,5 @@
 import { screen } from "electron";
 import { Observable } from "rxjs";
-import { injectable } from "inversify";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
@@ -9,7 +8,6 @@ import { ViewBase } from "presentation/framework/ViewBase";
 import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "presentation/framework/ViewContext";
 
-@injectable()
 export class TranslationView extends ViewBase {
 
     public playText$!: Observable<string>;
@@ -51,14 +49,15 @@ export class TranslationView extends ViewBase {
 
     protected getInitialBounds(): Electron.Rectangle {
         const primaryDisplay = screen.getPrimaryDisplay();
-        const padding = 5;
-        const width = this.context.scaler.scale(300);
-        const height = this.context.scaler.scale(400);
+
+        const translationSettings = this.context.settingsProvider.getSettings().view.translation;
+        const width = this.context.scaler.scale(translationSettings.width);
+        const height = this.context.scaler.scale(translationSettings.height);
         return {
             width: width,
             height: height,
-            x: primaryDisplay.workArea.width - width - padding,
-            y: primaryDisplay.workArea.height - height - padding
+            x: primaryDisplay.workArea.width - width - translationSettings.margin,
+            y: primaryDisplay.workArea.height - height - translationSettings.margin
         };
     }
 }

@@ -2,9 +2,9 @@ import { Module } from "vuex";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { PresentationSettings } from "common/dto/presentation-settings/PresentationSettings";
-import { MessageBus } from "framework/MessageBus";
+import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
-import { RootState } from "store";
+import { RootState } from "root.store";
 
 const messageBus = new MessageBus();
 

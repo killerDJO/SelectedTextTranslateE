@@ -4,13 +4,11 @@ import { injectable, inject } from "inversify";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Logger } from "infrastructure/Logger";
 
-import { TranslatePageParser } from "business-logic/translation/TranslatePageParser";
-import { TranslationConfig } from "business-logic/translation/dto/TranslationConfig";
 import { HashProvider } from "business-logic/translation/HashProvider";
 import { TranslationResponseParser } from "business-logic/translation/TranslationResponseParser";
 import { RequestProvider } from "data-access/RequestProvider";
-import { DictionaryProvider } from "business-logic/dictionary/DictionaryProvider";
-import { DictionaryRecord } from "business-logic/dictionary/dto/DictionaryRecord";
+import { HistoryStore } from "business-logic/history/HistoryStore";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 @injectable()
@@ -18,7 +16,7 @@ export class TextTranslator {
     constructor(
         private readonly requestProvider: RequestProvider,
         private readonly hashProvider: HashProvider,
-        private readonly dictionaryProvider: DictionaryProvider,
+        private readonly historyStore: HistoryStore,
         private readonly responseParser: TranslationResponseParser,
         private readonly logger: Logger,
         private readonly settingsProvider: SettingsProvider) {
@@ -33,39 +31,39 @@ export class TextTranslator {
             return Observable.of(null);
         }
 
-        return this.dictionaryProvider.getRecord(sanitizedSentence, isForcedTranslation)
-            .concatMap(dictionaryRecord => this.getTranslateResult(sentence, isForcedTranslation, dictionaryRecord))
-            .do(translateResult => this.dictionaryProvider.incrementTranslationsNumber(translateResult, isForcedTranslation).publish().connect());
+        return this.historyStore.getRecord(sanitizedSentence, isForcedTranslation)
+            .concatMap(historyRecord => this.getTranslateResult(sentence, isForcedTranslation, historyRecord))
+            .do(translateResult => this.historyStore.incrementTranslationsNumber(translateResult, isForcedTranslation).publish().connect());
     }
 
-    private getTranslateResult(sentence: string, isForcedTranslation: boolean, dictionaryRecord: DictionaryRecord | null): Observable<TranslateResult> {
+    private getTranslateResult(sentence: string, isForcedTranslation: boolean, historyRecord: HistoryRecord | null): Observable<TranslateResult> {
         const translateResult$ = this
             .getResponseFromService(sentence, isForcedTranslation)
             .do(() => this.logger.info(`Serving translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" from service.`));
 
-        if (dictionaryRecord === null) {
+        if (historyRecord === null) {
             return translateResult$
-                .concatMap(translateResult => this.dictionaryProvider.addTranslateResult(translateResult, isForcedTranslation), translateResult => translateResult);
+                .concatMap(translateResult => this.historyStore.addTranslateResult(translateResult, isForcedTranslation), translateResult => translateResult);
         }
 
-        if (this.isDictionaryRecordExpired(dictionaryRecord)) {
+        if (this.isHistoryRecordExpired(historyRecord)) {
             return translateResult$
-                .concatMap(translateResult => this.dictionaryProvider.updateTranslateResult(translateResult, isForcedTranslation), translateResult => translateResult);
+                .concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, isForcedTranslation), translateResult => translateResult);
         }
 
         this.logger.info(`Serving translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" from dictionary.`);
-        return Observable.of(dictionaryRecord.translateResult);
+        return Observable.of(historyRecord.translateResult);
     }
 
-    private isDictionaryRecordExpired(dictionaryRecord: DictionaryRecord): boolean {
+    private isHistoryRecordExpired(historyRecord: HistoryRecord): boolean {
         const currentTime = Date.now();
-        const elapsedMilliseconds = currentTime - dictionaryRecord.updatedDate.getTime();
+        const elapsedMilliseconds = currentTime - historyRecord.updatedDate.getTime();
         const MillisecondsInSecond = 1000;
         const SecondsInMinute = 60;
         const MinutesInHour = 60;
         const HoursInDay = 24;
         const elapsedDays = elapsedMilliseconds / MillisecondsInSecond / SecondsInMinute / MinutesInHour / HoursInDay;
-        return elapsedDays > this.settingsProvider.getSettings().engine.dictionaryRefreshInterval;
+        return elapsedDays > this.settingsProvider.getSettings().engine.historyRefreshInterval;
     }
 
     private getResponseFromService(sentence: string, isForcedTranslation: boolean): Observable<TranslateResult> {

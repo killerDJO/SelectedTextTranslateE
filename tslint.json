@@ -31,6 +31,7 @@
         "no-non-null-assertion": true,
         "no-null-keyword": false,
         "no-require-imports": false,
+        "no-import-side-effect": false,
         "no-unnecessary-qualifier": false,
         "no-unnecessary-class": false,
         "no-use-before-declare": false,

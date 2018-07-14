@@ -1,0 +1,68 @@
+$border-color: #ddd;
+$border-radius: 3px;
+
+.history {
+    padding: 15px;
+
+    .results {
+        border: 1.5px solid $border-color;
+        margin-top: 5px;
+        float: left;
+        width: 100%;
+        table-layout: fixed;
+        border-radius: $border-radius;
+
+        td:not(:last-child){
+            border-right: 1px solid $border-color;
+        }
+
+        .word-column,
+        .translation-column {
+            width: 37%;
+        }
+
+        .times-column {
+            width: 10%;
+        }
+
+        .last-translated-column {
+            width: 16%;
+        }
+
+        thead {
+            th:first-child {
+                border-top-left-radius: $border-radius;
+            }
+            th:last-child {
+                border-top-right-radius: $border-radius;
+            }
+        }
+
+        tr:last-child {
+            td:first-child {
+                border-bottom-left-radius: $border-radius;
+            }
+            td:last-child {
+                border-bottom-right-radius: $border-radius;
+            }
+        }
+    }
+
+    .header {
+        position: relative;
+        box-sizing: content-box;
+        float: left;
+        width: 100%;
+
+        .title {
+            font-size: 1.2em;
+            font-weight: bold;
+            display: inline;
+        }
+
+        .number-selector {
+            width: 95px;
+            float: right;
+        }
+    }
+}
