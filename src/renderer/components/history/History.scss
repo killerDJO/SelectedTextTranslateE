@@ -1,11 +1,10 @@
-$border-color: #ddd;
 $border-radius: 3px;
 
 .history {
-    padding: 15px;
+    padding: 5px 15px 0 15px;
 
     .results {
-        border: 1.5px solid $border-color;
+        border: 1.5px solid $table-border;
         margin-top: 5px;
         float: left;
         width: 100%;
@@ -13,7 +12,7 @@ $border-radius: 3px;
         border-radius: $border-radius;
 
         td:not(:last-child){
-            border-right: 1px solid $border-color;
+            border-right: 1px solid $table-border;
         }
 
         .word-column,
@@ -64,5 +63,13 @@ $border-radius: 3px;
             width: 95px;
             float: right;
         }
+    }
+
+    .footer {
+        float: right;
+        margin-top: 0;
+        font-style: italic;
+        font-size: 0.9em;
+        color: $gray;
     }
 }

@@ -41,6 +41,16 @@ export class Application {
         translationView.forceTranslateText$.subscribe(text => this.translateText(text, true));
     }
 
+    private setupHistoryView(historyView: HistoryView): void {
+        historyView.historyRecordsRequest$
+            .concatMap(request => this.historyStore.getRecords(request.limit, request.sortColumn, request.sortOrder))
+            .subscribe(records => historyView.setHistoryRecords(records));
+        this.historyStore.historyUpdated$
+            .subscribe(() => historyView.notifyHistoryUpdated());
+        historyView.translateText$
+            .subscribe(text => this.translateText(text, false));
+    }
+
     private setupHotkeys(): void {
         this.hotkeysRegistry.registerHotkeys();
         this.hotkeysRegistry.translate$.subscribe(() => {
@@ -58,10 +68,7 @@ export class Application {
 
         this.taskbar.showTranslation$.subscribe(() => this.showView(ViewNames.TranslationResult, this.setupTranslationView.bind(this)));
         this.taskbar.showSettings$.subscribe(() => this.showView(ViewNames.Settings));
-        this.taskbar.showHistory$.subscribe(() => {
-            const historyView = this.showView<HistoryView>(ViewNames.History);
-            this.historyStore.getRecords().subscribe(records => historyView.setHistoryRecords(records));
-        });
+        this.taskbar.showHistory$.subscribe(() => this.showView(ViewNames.History, this.setupHistoryView.bind(this)));
     }
 
     private translateText(text: string, isForcedTranslation: boolean): void {

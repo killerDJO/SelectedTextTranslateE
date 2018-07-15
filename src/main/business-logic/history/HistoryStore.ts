@@ -1,10 +1,12 @@
-import { ReplaySubject, Observable, AsyncSubject } from "rxjs";
+import { Observable, AsyncSubject, Subject } from "rxjs";
 import { Database } from "sqlite3";
 import * as path from "path";
 import { injectable } from "inversify";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { SortColumn } from "common/dto/history/SortColumn";
+import { SortOrder } from "common/dto/history/SortOrder";
 import { Logger } from "infrastructure/Logger";
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 import { SqLiteProvider } from "data-access/SqLiteProvider";
@@ -13,12 +15,17 @@ import { SqLiteProvider } from "data-access/SqLiteProvider";
 export class HistoryStore {
 
     private readonly database$: AsyncSubject<Database> = new AsyncSubject();
+    private readonly historyUpdatedSubject$: Subject<void> = new Subject();
 
     constructor(
         private readonly sqLiteProvider: SqLiteProvider,
         private readonly storageFolderProvider: StorageFolderProvider,
         private readonly logger: Logger) {
         this.createDatabase().subscribe(this.database$);
+    }
+
+    public get historyUpdated$(): Observable<void> {
+        return this.historyUpdatedSubject$;
     }
 
     public addTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<void> {
@@ -32,7 +39,8 @@ export class HistoryStore {
                 $CreatedDate: currentTime,
                 $UpdatedDate: currentTime
             })
-            .do(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is saved to dictionary.`));
+            .do(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is saved to dictionary.`))
+            .do(() => this.notifyAboutUpdate());
     }
 
     public updateTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<void> {
@@ -45,18 +53,21 @@ export class HistoryStore {
                 $IsForcedTranslation: isForcedTranslation ? 1 : 0,
                 $UpdatedDate: currentTime
             })
-            .do(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is updated in dictionary.`));
+            .do(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is updated in dictionary.`))
+            .do(() => this.notifyAboutUpdate());
     }
 
     public incrementTranslationsNumber(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<void> {
+        const currentTime = new Date().getTime();
         return this.executeNonQuery(
             "UPDATE TranslationHistory SET Count = Count + 1, LastTranslatedDate = $Date WHERE Sentence = $Sentence AND IsForcedTranslation = $IsForcedTranslation",
             {
                 $Sentence: translateResult.sentence.input,
                 $IsForcedTranslation: isForcedTranslation ? 1 : 0,
-                $Date: new Date().getTime()
+                $Date: currentTime
             })
-            .do(() => this.logger.info(`Translations number for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is incremented.`));
+            .do(() => this.logger.info(`Translations number for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is incremented.`))
+            .do(() => this.notifyAboutUpdate());
     }
 
     public getRecord(sentence: string, isForcedTranslation: boolean): Observable<HistoryRecord | null> {
@@ -70,14 +81,28 @@ export class HistoryStore {
             .map(result => !!result.length ? this.createHistoryRecord(result[0]) : null);
     }
 
-    public getRecords(): Observable<HistoryRecord[]> {
+    public getRecords(limit: number, sortColumn: SortColumn, sortOrder: SortOrder): Observable<HistoryRecord[]> {
+        const sortColumnMap = {
+            [SortColumn.Input]: "Sentence",
+            [SortColumn.TimesTranslated]: "Count",
+            [SortColumn.LastTranslatedDate]: "LastTranslatedDate",
+        };
+
         return this
             .executeReader(
-                "SELECT Sentence, Count, Json, IsForcedTranslation, CreatedDate, UpdatedDate, LastTranslatedDate FROM TranslationHistory WHERE IsForcedTranslation = $IsForcedTranslation",
+                `SELECT Sentence, Count, Json, IsForcedTranslation, CreatedDate, UpdatedDate, LastTranslatedDate\
+                 FROM TranslationHistory\
+                 WHERE IsForcedTranslation = $IsForcedTranslation\
+                 ORDER BY ${sortColumnMap[sortColumn]} ${sortOrder === SortOrder.Asc ? "ASC" : "DESC"}\
+                 LIMIT ${limit}`,
                 {
-                    $IsForcedTranslation: 0,
+                    $IsForcedTranslation: 0
                 })
             .map(result => result.map(this.createHistoryRecord.bind(this)));
+    }
+
+    private notifyAboutUpdate(): void {
+        this.historyUpdatedSubject$.next();
     }
 
     private createHistoryRecord(dbRecord: any): HistoryRecord {

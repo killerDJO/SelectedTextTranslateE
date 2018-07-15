@@ -1,0 +1,25 @@
+.sortable-header {
+    position: relative;
+    cursor: pointer;
+
+    .icon {
+        position: absolute;
+        right: 6px;
+        color: $gray;
+
+        &.icon-up-dir {
+            top: -1px;
+        }
+        &.icon-down-dir {
+            top: 5px;
+        }
+
+        &.hidden {
+            display: none;
+        }
+
+        &.active {
+            color: black;
+        }
+    }
+}

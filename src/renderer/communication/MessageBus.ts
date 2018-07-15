@@ -16,4 +16,8 @@ export class MessageBus {
     public sendCommand<TValue>(name: Messages, value?: TValue): void {
         ipcRenderer.send(Channels.Observe, name, value);
     }
+
+    public getNotification(name: Messages, callback: () => void): void {
+        this.getValue<void>(name, callback);
+    }
 }

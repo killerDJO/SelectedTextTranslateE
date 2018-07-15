@@ -54,6 +54,10 @@ export class MessageBus {
         this.registerObservable(name, Observable.of(value));
     }
 
+    public sendNotification(name: Messages): void {
+        this.registerObservable(name, Observable.of(null));
+    }
+
     public getValue<TValue>(name: Messages): Observable<TValue> {
         const subject$ = new ReplaySubject<TValue>(1);
         const subscription = this.createSubscription(Channels.Observe, (event: Electron.Event, receivedName: string, observable: TValue) => {

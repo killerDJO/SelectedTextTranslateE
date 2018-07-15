@@ -10,11 +10,14 @@ export enum Messages {
     IsFramelessWindow = "is-frameless-window",
 
     TranslateResult = "translate-result",
-    HistoryRecords = "history-records",
 
     PlayTextCommand = "play-text-command",
     TranslateCommand = "translate-command",
     ForceTranslateCommand = "force-translate-command",
 
-    RendererError = "renderer-error"
+    RendererError = "renderer-error",
+
+    HistoryRecords = "history-records",
+    RequestHistoryRecords = "get-history-records",
+    HistoryUpdated = "history-updated",
 }

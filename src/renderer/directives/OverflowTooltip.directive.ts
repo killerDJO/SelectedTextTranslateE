@@ -10,6 +10,9 @@ interface TooltipData {
 
 @Directive()
 export class OverflowTooltip implements DirectiveOptions {
+
+    private readonly tooltipsMap: Map<HTMLElement, TooltipData> = new Map();
+
     public bind(element: HTMLElement): void {
         this.createTooltip(element);
     }
@@ -62,14 +65,18 @@ export class OverflowTooltip implements DirectiveOptions {
         tooltipData.tooltip.dispose();
         element.removeEventListener("mouseenter", tooltipData.mouseenterCallback);
         element.removeEventListener("mouseleave", tooltipData.mouseleaveCallback);
-        this.setTooltipData(element, null);
+        this.removeTooltipData(element);
     }
 
-    private setTooltipData(element: HTMLElement, tooltipData: TooltipData | null): void {
-        (element.dataset as any).overflowTooltip = tooltipData;
+    private setTooltipData(element: HTMLElement, tooltipData: TooltipData): void {
+        this.tooltipsMap.set(element, tooltipData);
+    }
+
+    private removeTooltipData(element: HTMLElement): void {
+        this.tooltipsMap.delete(element);
     }
 
     private getTooltipData(element: HTMLElement): TooltipData | null {
-        return (element.dataset as any).overflowTooltip || null;
+        return this.tooltipsMap.get(element) || null;
     }
 }
