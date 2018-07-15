@@ -3,6 +3,7 @@ import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { translationResult } from "components/translation-result/TranslationResult.store";
 import { history } from "components/history/History.store";
+import { settings } from "components/settings/Settings.store"
 import { RootState } from "root.store";
 
 interface ApplicationState {
@@ -40,6 +41,7 @@ export const app: Module<ApplicationState, RootState> = {
     },
     modules: {
         translationResult,
-        history
+        history,
+        settings
     }
 };

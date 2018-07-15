@@ -15,6 +15,8 @@ import { ViewNames } from "common/ViewNames";
 import { ViewBase } from "presentation/framework/ViewBase";
 import { HistoryView } from "presentation/views/HistoryView";
 import { HistoryStore } from "business-logic/history/HistoryStore";
+import { SettingsView } from "presentation/views/SettingsView";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 @injectable()
 export class Application {
@@ -27,6 +29,7 @@ export class Application {
         private readonly hotkeysRegistry: HotkeysRegistry,
         private readonly iconsProvider: IconsProvider,
         private readonly textExtractor: TextExtractor,
+        private readonly settingsProvider: SettingsProvider,
         private readonly historyStore: HistoryStore,
         private readonly viewsRegistry: ViewsRegistry,
         private readonly storageFolderProvider: StorageFolderProvider) {
@@ -51,23 +54,28 @@ export class Application {
             .subscribe(text => this.translateText(text, false));
     }
 
+    private setupSettingsView(settingsView: SettingsView): void {
+        settingsView.setSettings(this.settingsProvider.getSettings());
+    }
+
     private setupHotkeys(): void {
         this.hotkeysRegistry.registerHotkeys();
-        this.hotkeysRegistry.translate$.subscribe(() => {
-            this.textExtractor.getSelectedText();
-        });
+        this.hotkeysRegistry.translate$
+            .concatMap(() => this.textExtractor.getSelectedText())
+            .subscribe(text => this.translateText(text, false));
+        this.hotkeysRegistry.playText$
+            .concatMap(() => this.textExtractor.getSelectedText())
+            .subscribe(text => this.textPlayer.playText(text));
 
         this.hotkeysRegistry.zoomIn$.subscribe(() => this.viewContext.scaler.zoomIn());
         this.hotkeysRegistry.zoomOut$.subscribe(() => this.viewContext.scaler.zoomOut());
-
-        this.textExtractor.textToTranslate$.subscribe(text => this.translateText(text, false));
     }
 
     private createTaskbar(): void {
         this.taskbar = new Taskbar(this.storageFolderProvider, this.iconsProvider);
 
         this.taskbar.showTranslation$.subscribe(() => this.showView(ViewNames.TranslationResult, this.setupTranslationView.bind(this)));
-        this.taskbar.showSettings$.subscribe(() => this.showView(ViewNames.Settings));
+        this.taskbar.showSettings$.subscribe(() => this.showView(ViewNames.Settings, this.setupSettingsView.bind(this)));
         this.taskbar.showHistory$.subscribe(() => this.showView(ViewNames.History, this.setupHistoryView.bind(this)));
     }
 

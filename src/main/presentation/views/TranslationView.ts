@@ -20,9 +20,6 @@ export class TranslationView extends ViewBase {
         this.window.setAlwaysOnTop(true);
         this.window.setSkipTaskbar(true);
 
-        const settings = this.context.settingsProvider.getSettings();
-        this.messageBus.registerValue(Messages.PresentationSettings, settings.presentation);
-
         this.playText$ = this.messageBus.getValue(Messages.PlayTextCommand);
         this.translateText$ = this.messageBus.getValue(Messages.TranslateCommand);
         this.forceTranslateText$ = this.messageBus.getValue(Messages.ForceTranslateCommand);
@@ -50,7 +47,7 @@ export class TranslationView extends ViewBase {
     protected getInitialBounds(): Electron.Rectangle {
         const primaryDisplay = screen.getPrimaryDisplay();
 
-        const translationSettings = this.context.settingsProvider.getSettings().view.translation;
+        const translationSettings = this.context.viewSettings.translation;
         const width = this.context.scaler.scale(translationSettings.width);
         const height = this.context.scaler.scale(translationSettings.height);
         return {

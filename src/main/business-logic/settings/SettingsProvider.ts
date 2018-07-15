@@ -43,9 +43,17 @@ export class SettingsProvider {
                         height: this.settingsStore.getOrSetDefault<number>("view.settings.height", 55)
                     },
                     scaling: {
+                        autoScale: this.settingsStore.getOrSetDefault<boolean>("view.scaling.autoScale", true),
+                        initialScaling: this.settingsStore.getOrSetDefault<number>("view.scaling.initialScaling", 1),
                         scalingStep: this.settingsStore.getOrSetDefault<number>("view.scaling.scalingStep", 0.05),
                         verticalResolutionBaseline: this.settingsStore.getOrSetDefault<number>("view.scaling.verticalResolutionBaseline", 860)
                     }
+                },
+                hotkeys: {
+                    translate: this.settingsStore.getOrSetDefault<string[]>("hotkeys.translate", ["CommandOrControl+T"]),
+                    playText: this.settingsStore.getOrSetDefault<string[]>("hotkeys.playText", ["CommandOrControl+R"]),
+                    zoomIn: this.settingsStore.getOrSetDefault<string[]>("hotkeys.zoomIn", ["CommandOrControl+="]),
+                    zoomOut: this.settingsStore.getOrSetDefault<string[]>("hotkeys.zoomOut", ["CommandOrControl+-"])
                 }
             };
         }

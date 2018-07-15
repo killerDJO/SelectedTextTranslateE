@@ -13,6 +13,8 @@ export interface ViewSize {
 export interface Scaling {
     verticalResolutionBaseline: number;
     scalingStep: number;
+    autoScale: boolean;
+    initialScaling: number;
 }
 
 export interface TranslationSettings extends ViewSize {

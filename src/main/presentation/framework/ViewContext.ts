@@ -7,20 +7,29 @@ import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { RendererErrorHandler } from "presentation/infrastructure/RendererErrorHandler";
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewSettings } from "business-logic/settings/dto/ViewSettings";
+import { PresentationSettings } from "common/dto/presentation-settings/PresentationSettings";
 
 @injectable()
 export class ViewContext {
-
-    public readonly zoomHotkeysRegistry: IZoomHotkeysRegistry;
-
     constructor(
         public readonly accentColorProvider: AccentColorProvider,
-        public readonly settingsProvider: SettingsProvider,
+        private readonly settingsProvider: SettingsProvider,
         public readonly scaler: Scaler,
         public readonly errorHandler: RendererErrorHandler,
         public readonly iconsProvider: IconsProvider,
-        hotkeysRegistry: HotkeysRegistry,
+        private readonly hotkeysRegistry: HotkeysRegistry,
     ) {
-        this.zoomHotkeysRegistry = hotkeysRegistry;
+    }
+
+    public get viewSettings(): ViewSettings {
+        return this.settingsProvider.getSettings().view;
+    }
+
+    public get presentationSettings(): PresentationSettings {
+        return this.settingsProvider.getSettings().presentation;
+    }
+
+    public get zoomHotkeysRegistry(): IZoomHotkeysRegistry {
+        return this.hotkeysRegistry;
     }
 }

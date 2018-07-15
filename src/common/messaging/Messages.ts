@@ -20,4 +20,6 @@ export enum Messages {
     HistoryRecords = "history-records",
     RequestHistoryRecords = "get-history-records",
     HistoryUpdated = "history-updated",
+
+    EditableSettings = "editable-settings",
 }

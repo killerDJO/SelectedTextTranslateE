@@ -32,7 +32,7 @@ export class HistoryView extends ViewBase {
     }
 
     protected getInitialBounds(): Electron.Rectangle {
-        const historySettings = this.context.settingsProvider.getSettings().view.history;
+        const historySettings = this.context.viewSettings.history;
         return this.getCentralPosition(historySettings.width, historySettings.height);
     }
 }

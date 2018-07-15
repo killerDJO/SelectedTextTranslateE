@@ -1,27 +1,28 @@
 import * as ffi from "ffi";
 import { clipboard } from "electron";
-import { Subject } from "rxjs";
+import { Subject, Observable } from "rxjs";
 import { injectable } from "inversify";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 @injectable()
 export class TextExtractor {
 
-    public readonly textToTranslate$: Subject<string>;
-
     constructor(private readonly settingsProvider: SettingsProvider) {
-        this.textToTranslate$ = new Subject();
     }
 
-    public getSelectedText(): void {
+    public getSelectedText(): Observable<string> {
         this.broadcastCopyCommand();
 
+        const textToTranslate$ = new Subject<string>();
         const copyDelayMilliseconds = this.settingsProvider.getSettings().engine.copyDelayMilliseconds;
         setTimeout(
             () => {
-                this.textToTranslate$.next(clipboard.readText());
+                textToTranslate$.next(clipboard.readText());
+                textToTranslate$.complete();
             },
             copyDelayMilliseconds);
+
+        return textToTranslate$;
     }
 
     private broadcastCopyCommand(): void {

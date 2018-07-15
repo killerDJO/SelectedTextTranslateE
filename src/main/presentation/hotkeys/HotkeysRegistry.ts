@@ -3,37 +3,46 @@ import { Subject } from "rxjs";
 import { injectable } from "inversify";
 
 import { IZoomHotkeysRegistry } from "presentation/hotkeys/IZoomHotkeysRegistry";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { HotkeySettings } from "business-logic/settings/dto/HotkeySettings";
 
 @injectable()
 export class HotkeysRegistry implements IZoomHotkeysRegistry {
 
-    public readonly translate$: Subject<void>;
-    public readonly zoomIn$: Subject<void>;
-    public readonly zoomOut$: Subject<void>;
+    public readonly translate$: Subject<void> = new Subject();
+    public readonly playText$: Subject<void> = new Subject();
+    public readonly zoomIn$: Subject<void> = new Subject();
+    public readonly zoomOut$: Subject<void> = new Subject();
 
-    constructor() {
-        this.translate$ = new Subject();
-        this.zoomIn$ = new Subject();
-        this.zoomOut$ = new Subject();
+    constructor(private readonly settingsProvider: SettingsProvider) {
     }
 
     public registerHotkeys(): void {
-        globalShortcut.register("CommandOrControl+T", () => {
+        this.registerCommands(this.hotkeys.translate, () => {
             this.translate$.next();
         });
+        this.registerCommands(this.hotkeys.playText, () => this.playText$.next());
     }
 
     public registerZoomHotkeys(): void {
-        globalShortcut.register("CommandOrControl+=", () => {
-            this.zoomIn$.next();
-        });
-        globalShortcut.register("CommandOrControl+-", () => {
-            this.zoomOut$.next();
-        });
+        this.registerCommands(this.hotkeys.zoomIn, () => this.zoomIn$.next());
+        this.registerCommands(this.hotkeys.zoomOut, () => this.zoomOut$.next());
     }
 
     public unregisterZoomHotkeys(): void {
-        globalShortcut.unregister("CommandOrControl+=");
-        globalShortcut.unregister("CommandOrControl+-");
+        this.unregisterCommands(this.hotkeys.zoomIn);
+        this.unregisterCommands(this.hotkeys.zoomOut);
+    }
+
+    private get hotkeys(): HotkeySettings {
+        return this.settingsProvider.getSettings().hotkeys;
+    }
+
+    private registerCommands(commands: string[], action: () => void): void {
+        commands.forEach(command => globalShortcut.register(command, action));
+    }
+
+    private unregisterCommands(commands: string[]): void {
+        commands.forEach(command => globalShortcut.unregister(command));
     }
 }
