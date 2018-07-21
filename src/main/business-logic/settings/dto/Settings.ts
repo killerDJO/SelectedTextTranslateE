@@ -1,4 +1,4 @@
-import { PresentationSettings } from "common/dto/presentation-settings/PresentationSettings";
+import { PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
 import { TranslationEngineSettings } from "business-logic/settings/dto/TranslationEngineSettings";
 import { ViewSettings } from "business-logic/settings/dto/ViewSettings";
 import { HotkeySettings } from "business-logic/settings/dto/HotkeySettings";

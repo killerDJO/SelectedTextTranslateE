@@ -56,6 +56,7 @@ export class Application {
 
     private setupSettingsView(settingsView: SettingsView): void {
         settingsView.setSettings(this.settingsProvider.getSettings());
+        settingsView.pauseHotkeys$.subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());
     }
 
     private setupHotkeys(): void {
@@ -66,9 +67,6 @@ export class Application {
         this.hotkeysRegistry.playText$
             .concatMap(() => this.textExtractor.getSelectedText())
             .subscribe(text => this.textPlayer.playText(text));
-
-        this.hotkeysRegistry.zoomIn$.subscribe(() => this.viewContext.scaler.zoomIn());
-        this.hotkeysRegistry.zoomOut$.subscribe(() => this.viewContext.scaler.zoomOut());
     }
 
     private createTaskbar(): void {

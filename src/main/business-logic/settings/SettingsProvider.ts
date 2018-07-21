@@ -1,6 +1,7 @@
 import { Settings } from "business-logic/settings/dto/Settings";
 import { injectable } from "inversify";
 import { SettingsStore } from "infrastructure/SettingsStore";
+import { Hotkey } from "common/dto/settings/Hotkey";
 
 @injectable()
 export class SettingsProvider {
@@ -21,6 +22,10 @@ export class SettingsProvider {
                     visibility: {
                         lowScoreThreshold: this.settingsStore.getOrSetDefault<number>("presentation.visibility.lowScoreThreshold", 0.003),
                         visibleByDefaultNumber: this.settingsStore.getOrSetDefault<number>("presentation.visibility.visibleByDefaultNumber", 7)
+                    },
+                    hotkeys: {
+                        zoomIn: this.settingsStore.getOrSetDefault<Hotkey[]>("presentation.hotkeys.zoomIn", [{ keys: ["Control", "+"] }]),
+                        zoomOut: this.settingsStore.getOrSetDefault<Hotkey[]>("presentation.hotkeys.zoomOut", [{ keys: ["Control", "-"] }])
                     }
                 },
                 engine: {
@@ -39,7 +44,7 @@ export class SettingsProvider {
                         height: this.settingsStore.getOrSetDefault<number>("view.history.height", 55)
                     },
                     settings: {
-                        width: this.settingsStore.getOrSetDefault<number>("view.settings.width", 70),
+                        width: this.settingsStore.getOrSetDefault<number>("view.settings.width", 50),
                         height: this.settingsStore.getOrSetDefault<number>("view.settings.height", 55)
                     },
                     scaling: {
@@ -50,10 +55,9 @@ export class SettingsProvider {
                     }
                 },
                 hotkeys: {
-                    translate: this.settingsStore.getOrSetDefault<string[]>("hotkeys.translate", ["CommandOrControl+T"]),
-                    playText: this.settingsStore.getOrSetDefault<string[]>("hotkeys.playText", ["CommandOrControl+R"]),
-                    zoomIn: this.settingsStore.getOrSetDefault<string[]>("hotkeys.zoomIn", ["CommandOrControl+="]),
-                    zoomOut: this.settingsStore.getOrSetDefault<string[]>("hotkeys.zoomOut", ["CommandOrControl+-"])
+                    translate: this.settingsStore.getOrSetDefault<Hotkey[]>("hotkeys.translate", [{ keys: ["Control", "T"] }]),
+                    playText: this.settingsStore.getOrSetDefault<Hotkey[]>("hotkeys.playText", [{ keys: ["Control", "R"] }]),
+
                 }
             };
         }

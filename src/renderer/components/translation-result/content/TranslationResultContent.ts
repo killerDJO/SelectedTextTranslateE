@@ -1,7 +1,7 @@
 import { Component, Prop } from "vue-property-decorator";
 import Vue from "vue";
 
-import { PresentationSettings } from "common/dto/presentation-settings/PresentationSettings";
+import { PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
 import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dto/translation/TranslateResult";
 
 import TranslationResultContentCategory from "components/translation-result/content/category/TranslationResultContentCategory.vue";

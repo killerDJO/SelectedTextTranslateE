@@ -3,7 +3,7 @@ import { Component } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
-import { PresentationSettings } from "common/dto/presentation-settings/PresentationSettings";
+import { PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
 
 import TranslationResultContent from "./content/TranslationResultContent.vue";
 import TranslationResultHeader from "./header/TranslationResultHeader.vue";

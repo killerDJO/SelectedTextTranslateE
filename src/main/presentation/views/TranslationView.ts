@@ -10,9 +10,9 @@ import { ViewContext } from "presentation/framework/ViewContext";
 
 export class TranslationView extends ViewBase {
 
-    public playText$!: Observable<string>;
-    public translateText$!: Observable<string>;
-    public forceTranslateText$!: Observable<string>;
+    public readonly playText$!: Observable<string>;
+    public readonly translateText$!: Observable<string>;
+    public readonly forceTranslateText$!: Observable<string>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.TranslationResult, viewContext, { isFrameless: true });

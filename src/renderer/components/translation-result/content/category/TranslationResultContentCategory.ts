@@ -2,7 +2,7 @@ import { Component, Prop } from "vue-property-decorator";
 import Vue from "vue";
 
 import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dto/translation/TranslateResult";
-import { PresentationSettings } from "common/dto/presentation-settings/PresentationSettings";
+import { PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
 
 @Component
 export default class TranslationResultContentCategory extends Vue {

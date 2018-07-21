@@ -3,7 +3,7 @@ import { Module } from "vuex";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
-import { EditableSettings } from "common/dto/editable-settings/EditableSettings";
+import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 
 const messageBus = new MessageBus();
 
@@ -24,6 +24,12 @@ export const settings: Module<SettingsState, RootState> = {
     actions: {
         setup({ commit }): void {
             messageBus.getValue<EditableSettings>(Messages.EditableSettings, editableSettings => commit("setSettings", editableSettings));
+        },
+        pauseHotkeys(): void {
+            messageBus.sendCommand<boolean>(Messages.PauseHotkeys, true);
+        },
+        enableHotkeys(): void {
+            messageBus.sendCommand<boolean>(Messages.PauseHotkeys, false);
         }
     }
 };

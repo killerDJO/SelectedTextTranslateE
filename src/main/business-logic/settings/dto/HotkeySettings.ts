@@ -1,6 +1,6 @@
+import { Hotkey } from "common/dto/settings/Hotkey";
+
 export interface HotkeySettings {
-    translate: string[];
-    playText: string[];
-    zoomIn: string[];
-    zoomOut: string[];
+    translate: Hotkey[];
+    playText: Hotkey[];
 }

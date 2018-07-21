@@ -1,6 +1,5 @@
 import { BrowserWindow, screen } from "electron";
-import { BehaviorSubject, Subscription } from "rxjs";
-import * as path from "path";
+import { BehaviorSubject, Subscription, Observable } from "rxjs";
 
 import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { Messages } from "common/messaging/Messages";
@@ -28,7 +27,7 @@ export abstract class ViewBase {
 
         this.messageBus = new MessageBus(this.window);
         this.messageBus.sendValue(Messages.IsFramelessWindow, this.viewOptions.isFrameless);
-        this.messageBus.registerValue(Messages.PresentationSettings, this.context.presentationSettings);
+        this.messageBus.registerObservable(Messages.PresentationSettings, this.context.presentationSettings);
 
         this.initializeSubscriptions();
         this.window.setBounds(this.getInitialBounds());
@@ -108,13 +107,8 @@ export abstract class ViewBase {
         this.registerSubscription(this.context.scaler.scaleFactor$.subscribe(this.scale.bind(this)));
         this.messageBus.registerObservable(Messages.AccentColor, this.context.accentColorProvider.accentColor$);
         this.messageBus.getValue<Error>(Messages.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
-
-        this.window.on("focus", () => {
-            this.context.zoomHotkeysRegistry.registerZoomHotkeys();
-        });
-        this.window.on("blur", () => {
-            this.context.zoomHotkeysRegistry.unregisterZoomHotkeys();
-        });
+        this.messageBus.getValue<void>(Messages.ZoomInCommand).subscribe(() => this.context.scaler.zoomIn());
+        this.messageBus.getValue<void>(Messages.ZoomOutCommand).subscribe(() => this.context.scaler.zoomOut());
         this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
         this.window.once("closed", () => this.destroy());
     }

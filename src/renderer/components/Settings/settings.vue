@@ -15,10 +15,20 @@
         </nav>
       </div>
       <div class="pane" v-if="settings !== null">
-        <scaling-settings v-if="isActiveGroup(SettingsGroup.Scaling)" :hotkey-settings="settings.hotkeys"/>
-        <hotkey-settings v-if="isActiveGroup(SettingsGroup.Hotkeys)"/>
+        <scaling-settings v-if="isActiveGroup(SettingsGroup.Scaling)" />
+        <hotkey-settings v-if="isActiveGroup(SettingsGroup.Hotkeys)" :hotkey-settings="settings.hotkeys" @hotkey-input-started="hotkeyInputStarted" @hotkey-input-completed="hotkeyInputCompleted"/>
       </div>
     </div>
+    <footer class="toolbar toolbar-footer">
+      <div class="toolbar-actions">
+        <button class="btn btn-primary pull-right">
+          Save
+        </button>
+        <button class="btn btn-default pull-right">
+          Discard
+        </button>
+      </div>
+    </footer>
   </div>
 </template>
 

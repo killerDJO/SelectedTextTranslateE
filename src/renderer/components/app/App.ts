@@ -2,7 +2,8 @@ import { Component, Watch } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 import Vue from "vue";
 
-import { Messages } from "common/messaging/Messages";
+import { PresentationHotkeySettings } from "common/dto/settings/presentation-settings/PresentationSettings";
+import { HotkeysRegistry } from "components/app/services/HotkeysRegistry";
 
 const ns = namespace("app");
 
@@ -11,8 +12,14 @@ export default class App extends Vue {
     @ns.State public accentColor!: string;
     @ns.State public scaleFactor!: number;
     @ns.State public isFrameless!: boolean;
+    @ns.State public hotkeySettings!: PresentationHotkeySettings | undefined;
+    @ns.State public areHotkeysPaused!: boolean;
 
     @ns.Action private readonly fetchData!: () => void;
+    @ns.Action private readonly zoomIn!: () => void;
+    @ns.Action private readonly zoomOut!: () => void;
+
+    private readonly hotkeysRegistry: HotkeysRegistry = new HotkeysRegistry();
 
     constructor() {
         super();
@@ -34,5 +41,18 @@ export default class App extends Vue {
             const hight = scrollHolder.offsetHeight;
             scrollHolder.style.width = originalWidth;
         }, 10);
+    }
+
+    @Watch("hotkeySettings", { deep: true })
+    @Watch("areHotkeysPaused")
+    private hotkeySettingsChanged() {
+        this.hotkeysRegistry.unregisterAllHotkeys();
+
+        if (!this.hotkeySettings || this.areHotkeysPaused) {
+            return;
+        }
+
+        this.hotkeysRegistry.registerHotkeys(this.hotkeySettings.zoomIn, this.zoomIn);
+        this.hotkeysRegistry.registerHotkeys(this.hotkeySettings.zoomOut, this.zoomOut);
     }
 }

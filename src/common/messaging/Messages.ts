@@ -15,6 +15,9 @@ export enum Messages {
     TranslateCommand = "translate-command",
     ForceTranslateCommand = "force-translate-command",
 
+    ZoomInCommand = "zoom-in",
+    ZoomOutCommand = "zoom-out",
+
     RendererError = "renderer-error",
 
     HistoryRecords = "history-records",
@@ -22,4 +25,5 @@ export enum Messages {
     HistoryUpdated = "history-updated",
 
     EditableSettings = "editable-settings",
+    PauseHotkeys = "pause-hotkeys",
 }
