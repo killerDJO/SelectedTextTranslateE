@@ -1,4 +1,4 @@
-import { Hotkey } from "../Hotkey";
+import { Hotkey } from "common/dto/settings/Hotkey";
 
 export interface PresentationSettings {
     readonly visibility: ResultVisibilitySettings;

@@ -5,6 +5,7 @@ import Vue from "vue";
 import { PresentationHotkeySettings } from "common/dto/settings/presentation-settings/PresentationSettings";
 import { HotkeysRegistry } from "components/app/services/HotkeysRegistry";
 
+
 const ns = namespace("app");
 
 @Component

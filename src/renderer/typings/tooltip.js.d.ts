@@ -1,12 +1,12 @@
 declare module "tooltip.js" {
 
-    import { Boundary, Placement, PopperOptions } from 'popper.js';
+    import { Boundary, Placement, PopperOptions } from "popper.js";
 
     export type PlacementFunction = (tooltip: HTMLElement, reference: HTMLElement) => string;
 
     export type TitleFunction = () => string;
 
-    export type Delay = Record<'show' | 'hide', number>;
+    export type Delay = Record<"show" | "hide", number>;
 
     export interface Options {
         container?: HTMLElement | string;
@@ -29,15 +29,17 @@ declare module "tooltip.js" {
     class Tooltip {
         constructor(reference: HTMLElement, options: Options);
 
-        _isOpen: boolean;
+        public _isOpen: boolean;
 
-        show(): void;
+        public show(): void;
 
-        hide(): void;
+        public hide(): void;
 
-        dispose(): void;
+        public dispose(): void;
 
-        toggle(): void;
+        public toggle(): void;
+
+        public updateTitleContent(title: string): void;
     }
 
     export default Tooltip;

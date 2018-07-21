@@ -5,6 +5,8 @@ import Router from "vue-router";
 import { root, RootState } from "root.store";
 
 import App from "components/app/App.vue";
+import ValidatedField from "components/shared/validated-field/ValidatedField.vue";
+
 import { router } from "router";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
@@ -28,6 +30,7 @@ class Bootstrapper {
 
     private static bootstrapVue(): void {
         this.registerPlugins();
+        this.registerSharedComponents();
 
         new Vue({
             store: new Vuex.Store<RootState>(root),
@@ -37,6 +40,10 @@ class Bootstrapper {
             },
             router,
         }).$mount(".app");
+    }
+
+    private static registerSharedComponents(): void {
+        Vue.component("validated-field", ValidatedField);
     }
 
     private static registerPlugins(): void {

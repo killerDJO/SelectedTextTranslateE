@@ -1,0 +1,14 @@
+.validated-field {
+    display: inline-block;
+    width: 100%;
+
+    .content {
+        width: 100%;
+    }
+
+    &.error {
+        /deep/ input[type="text"] {
+            border-color: red;
+        }
+    }
+}

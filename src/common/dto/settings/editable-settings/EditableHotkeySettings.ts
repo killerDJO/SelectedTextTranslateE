@@ -1,4 +1,4 @@
-import { Hotkey } from "../Hotkey";
+import { Hotkey } from "common/dto/settings/Hotkey";
 
 export interface EditableHotkeySettings {
     readonly translate: Hotkey[];

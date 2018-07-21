@@ -26,8 +26,10 @@
         </table>
       </div>
       <div class="hotkey-edit">
-        <hotkey-input class="hotkey-input-control" :hotkey.sync="currentHotkey" @input-started="hotkeyInputStarted" @input-completed="hotkeyInputCompleted"/>
-        <button class="btn btn-mini btn-default add-hotkey" @click="addHotkey">Add</button>
+        <validated-field :validation-message="currentHotkeyValidationMessage" class="hotkey-input-control">
+          <hotkey-input :hotkey.sync="currentHotkey" @input-started="hotkeyInputStarted" @input-completed="hotkeyInputCompleted"/>
+        </validated-field>
+        <button class="btn btn-mini btn-default add-hotkey" @click="addHotkey" :disabled="!isAddHotkeyEnabled">Add</button>
       </div>
     </div>
   </div>

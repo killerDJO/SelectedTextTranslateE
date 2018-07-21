@@ -1,4 +1,4 @@
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { EditableHotkeySettings } from "common/dto/settings/editable-settings/EditableHotkeySettings";
 
 import HotkeyInput from "components/settings/hotkeys-settings/hotkey-input/HotkeyInput.vue";
@@ -32,6 +32,7 @@ export default class HotkeySettings extends Vue {
 
     public currentCommand: Command | null = null;
     public currentHotkey: Hotkey | null = null;
+    public currentHotkeyValidationMessage: string | null = null;
 
     public mounted() {
         this.createCommandsList();
@@ -51,6 +52,10 @@ export default class HotkeySettings extends Vue {
             return;
         }
         this.currentCommand = currentCommand;
+    }
+
+    public get isAddHotkeyEnabled(): boolean {
+        return !this.currentHotkeyValidationMessage && !!this.currentHotkey;
     }
 
     public removeHotkey(hotkeyToRemove: Hotkey): void {
@@ -84,6 +89,25 @@ export default class HotkeySettings extends Vue {
 
     public createHotkeyString(hotkey: Hotkey): string {
         return hotkey.keys.join(" + ");
+    }
+
+    @Watch("currentHotkey", { deep: true })
+    public validateCurrentHotkey() {
+        if (!this.currentHotkey) {
+            this.currentHotkeyValidationMessage = null;
+            return;
+        }
+
+        const currentHotkeyId = this.createHotkeyString(this.currentHotkey);
+        for (const command of this.commands) {
+            for (const hotkey of command.hotkeys) {
+                if (this.createHotkeyString(hotkey) === currentHotkeyId) {
+                    this.currentHotkeyValidationMessage = `Hotkey conflicts with another one for the '${command.name}' command.`;
+                    return;
+                }
+            }
+        }
+        this.currentHotkeyValidationMessage = null;
     }
 
     private createCommandsList(): void {
