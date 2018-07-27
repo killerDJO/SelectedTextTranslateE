@@ -39,7 +39,7 @@ export class TranslatePageParser {
     }
 
     private getUpdatedTranslationConfig(): Observable<TranslationConfig> {
-        return this.requestProvider.getStringContent(this.settingsProvider.getSettings().engine.baseUrl).map(html => {
+        return this.requestProvider.getStringContent(this.settingsProvider.getSettings().value.engine.baseUrl).map(html => {
             const scriptContent = this.extractScriptContentFromHtml(html);
             return this.extractConfig(scriptContent);
         });

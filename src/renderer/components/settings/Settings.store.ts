@@ -1,4 +1,5 @@
 import { Module } from "vuex";
+import * as _ from "lodash";
 
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
@@ -14,7 +15,7 @@ interface SettingsState {
 export const settings: Module<SettingsState, RootState> = {
     namespaced: true,
     state: {
-        settings: null,
+        settings: null
     },
     mutations: {
         setSettings(state: SettingsState, editableSettings: EditableSettings): void {
@@ -24,6 +25,12 @@ export const settings: Module<SettingsState, RootState> = {
     actions: {
         setup({ commit }): void {
             messageBus.getValue<EditableSettings>(Messages.EditableSettings, editableSettings => commit("setSettings", editableSettings));
+        },
+        updateSettings({ state }, editableSettings: EditableSettings): void {
+            if (_.isEqual(state.settings, editableSettings)) {
+                return;
+            }
+            messageBus.sendCommand<EditableSettings>(Messages.EditableSettingsUpdated, editableSettings);
         },
         pauseHotkeys(): void {
             messageBus.sendCommand<boolean>(Messages.PauseHotkeys, true);

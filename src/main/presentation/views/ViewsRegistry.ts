@@ -23,7 +23,6 @@ export class ViewsRegistry {
     public getOrCreateView<TView extends ViewBase>(name: ViewNames, postCreateAction?: (view: TView) => void): TView {
         const existingView = this.viewsCache.get(name);
         if (existingView === undefined || existingView.isDestroyed()) {
-
             this.viewsCache.set(name, this.createView<TView>(name, postCreateAction));
         }
 

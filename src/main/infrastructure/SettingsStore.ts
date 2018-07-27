@@ -1,6 +1,5 @@
 import Store = require("electron-store");
 import { injectable } from "inversify";
-import { Observable } from "rxjs";
 
 @injectable()
 export class SettingsStore {
@@ -17,6 +16,10 @@ export class SettingsStore {
         }
 
         return this.store.get(name);
+    }
+
+    public setAll(settings: {}) {
+        this.store.set(settings);
     }
 
     public set<TValue>(name: string, value: TValue) {

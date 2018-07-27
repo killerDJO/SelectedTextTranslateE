@@ -38,7 +38,7 @@ export class TextPlayer {
     private getAudioContent(text: string): Observable<Buffer> {
         const encodedText = encodeURIComponent(text);
         return this.hashProvider.computeHash(text)
-            .map(hash => `${this.settingsProvider.getSettings().engine.baseUrl}/translate_tts?tl=en&client=t&q=${text}&tk=${hash}`)
+            .map(hash => `${this.settingsProvider.getSettings().value.engine.baseUrl}/translate_tts?tl=en&client=t&q=${text}&tk=${hash}`)
             .concatMap(url => this.requestProvider.getBinaryContent(url));
     }
 

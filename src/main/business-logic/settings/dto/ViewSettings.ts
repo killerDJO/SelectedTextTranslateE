@@ -14,6 +14,7 @@ export interface Scaling {
     verticalResolutionBaseline: number;
     scalingStep: number;
     autoScale: boolean;
+    scaleTranslationViewOnly: boolean;
     initialScaling: number;
 }
 

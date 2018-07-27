@@ -2,6 +2,6 @@ import { EditableHotkeySettings } from "common/dto/settings/editable-settings/Ed
 import { EditableScalingSettings } from "common/dto/settings/editable-settings/EditableScalingSettings";
 
 export interface EditableSettings {
-    readonly hotkeys: EditableHotkeySettings;
-    readonly scaling: EditableScalingSettings;
+    hotkeys: EditableHotkeySettings;
+    scaling: EditableScalingSettings;
 }

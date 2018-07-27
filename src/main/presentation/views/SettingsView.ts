@@ -6,24 +6,29 @@ import { ViewContext } from "presentation/framework/ViewContext";
 import { Settings } from "business-logic/settings/dto/Settings";
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { Messages } from "common/messaging/Messages";
+import { DeepPartial } from "utils/deep-partial";
 
 export class SettingsView extends ViewBase {
 
     public readonly pauseHotkeys$!: Observable<boolean>;
+    public readonly updatedSettings$!: Observable<DeepPartial<Settings>>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.Settings, viewContext, {
             iconName: "tray",
             isFrameless: false,
-            title: "Settings"
+            title: "Settings",
+            isScalingEnabled: !viewContext.viewSettings.scaling.scaleTranslationViewOnly
         });
 
         this.pauseHotkeys$ = this.messageBus.getValue<boolean>(Messages.PauseHotkeys);
         this.messageBus.registerObservable(Messages.PauseHotkeys, this.pauseHotkeys$);
+        this.updatedSettings$ = this.messageBus.getValue<EditableSettings>(Messages.EditableSettingsUpdated).map(editableSettings => this.getSettings(editableSettings));
     }
 
-    public setSettings(settings: Settings): void {
-        this.messageBus.sendValue(Messages.EditableSettings, this.getEditableSettings(settings));
+    public setSettings(settings$: Observable<Settings>): void {
+        this.registerSubscription(
+            this.messageBus.registerObservable(Messages.EditableSettings, settings$.map(this.getEditableSettings)));
     }
 
     protected getInitialBounds(): Electron.Rectangle {
@@ -34,12 +39,34 @@ export class SettingsView extends ViewBase {
     private getEditableSettings(settings: Settings): EditableSettings {
         return {
             hotkeys: {
-                playText: settings.hotkeys.playText,
-                translate: settings.hotkeys.translate,
-                zoomIn: settings.presentation.hotkeys.zoomIn,
-                zoomOut: settings.presentation.hotkeys.zoomOut
+                global: {
+                    playText: settings.hotkeys.playText,
+                    translate: settings.hotkeys.translate,
+                },
+                local: {
+                    zoomIn: settings.presentation.hotkeys.zoomIn,
+                    zoomOut: settings.presentation.hotkeys.zoomOut
+                }
             },
             scaling: settings.view.scaling
-        }
+        };
+    }
+
+    private getSettings(settings: EditableSettings): DeepPartial<Settings> {
+        return {
+            hotkeys: {
+                playText: settings.hotkeys.global.playText,
+                translate: settings.hotkeys.global.translate
+            },
+            presentation: {
+                hotkeys: {
+                    zoomIn: settings.hotkeys.local.zoomIn,
+                    zoomOut: settings.hotkeys.local.zoomOut
+                }
+            },
+            view: {
+                scaling: settings.scaling
+            }
+        };
     }
 }

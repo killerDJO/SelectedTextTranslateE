@@ -25,5 +25,6 @@ export enum Messages {
     HistoryUpdated = "history-updated",
 
     EditableSettings = "editable-settings",
+    EditableSettingsUpdated = "editable-settings-updated",
     PauseHotkeys = "pause-hotkeys",
 }

@@ -1,8 +1,6 @@
 .hotkey-settings {
-    padding: 10px;
-    width: 50%;
-    min-width: 250px;
     display: inline-block;
+    width: 100%;
 
     .header {
         position: relative;
@@ -13,6 +11,7 @@
             display: table-cell;
             width: 20%;
             vertical-align: middle;
+            text-align: left;
         }
     
         .command-selector {
@@ -21,37 +20,47 @@
         }
     }
 
-    .hotkeys-list {
-        margin-top: 10px;
+    .hotkeys {
+        max-width: 400px;
+        margin-top: 5px;
 
-        .hotkey-column {
-            width: 85%;
+        $action-column-width: 15%;
+
+        .hotkeys-list {
+            margin-top: 0;
+    
+            .hotkey-column {
+                width: 85%;
+            }
+    
+            .action-column {
+                width: $action-column-width;
+                text-align: center;
+                padding: 2px 0;
+    
+                .remove-hotkey:hover{
+                    color: red;
+                    cursor: pointer;
+                }
+            }
         }
-
-        .action-column {
-            width: 15%;
-            text-align: center;
-            padding: 2px 0;
-
-            .remove-hotkey:hover{
-                color: red;
-                cursor: pointer;
+    
+        .hotkey-edit {
+            display: inline-block;
+            margin-top: 5px;
+            width: 100%;
+            
+            .hotkey-input-control {
+                width: 80%;
+            }
+    
+            .add-hotkey{
+                float: right;
+                padding: 1px 6px;
+                width: calc(#{$action-column-width} + 1px)
             }
         }
     }
 
-    .hotkey-edit {
-        display: inline-block;
-        margin-top: 5px;
-        width: 100%;
-        
-        .hotkey-input-control {
-            width: 80%;
-        }
-
-        .add-hotkey{
-            float: right;
-            width: 16%
-        }
-    }
+    
 }

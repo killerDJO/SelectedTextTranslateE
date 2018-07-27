@@ -9,28 +9,49 @@ import { Hotkey } from "common/dto/settings/Hotkey";
 @injectable()
 export class HotkeysRegistry {
 
+    private areHotkeysPaused: boolean = false;
+
     public readonly translate$: Subject<void> = new Subject();
     public readonly playText$: Subject<void> = new Subject();
 
     constructor(private readonly settingsProvider: SettingsProvider) {
+        this.settingsProvider.getSettings().subscribe(() => this.remapHotkeys());
     }
 
     public registerHotkeys(): void {
+        this.registerAllHotkeys();
+    }
+
+    public pauseHotkeys(): void {
+        this.areHotkeysPaused = true;
+        this.unregisterAllHotkeys();
+    }
+
+    public resumeHotkeys(): void {
+        this.registerAllHotkeys();
+        this.areHotkeysPaused = false;
+    }
+
+    private get hotkeys(): HotkeySettings {
+        return this.settingsProvider.getSettings().value.hotkeys;
+    }
+
+    private remapHotkeys(): void {
+        if (this.areHotkeysPaused) {
+            return;
+        }
+        this.unregisterAllHotkeys();
+        this.registerAllHotkeys();
+    }
+
+    private registerAllHotkeys(): void {
         this.registerCommand(this.hotkeys.translate, () => this.translate$.next());
         this.registerCommand(this.hotkeys.playText, () => this.playText$.next());
     }
 
-    public pauseHotkeys(): void {
+    private unregisterAllHotkeys(): void {
         this.unregisterCommand(this.hotkeys.translate);
         this.unregisterCommand(this.hotkeys.playText);
-    }
-
-    public resumeHotkeys(): void {
-        this.registerHotkeys();
-    }
-
-    private get hotkeys(): HotkeySettings {
-        return this.settingsProvider.getSettings().hotkeys;
     }
 
     private registerCommand(hotkeys: Hotkey[], action: () => void): void {

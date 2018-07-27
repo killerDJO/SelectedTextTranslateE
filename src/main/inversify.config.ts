@@ -16,7 +16,7 @@ import { RendererLocationProvider } from "presentation/infrastructure/RendererLo
 import { Application } from "presentation/Application";
 import { AccentColorProvider } from "presentation/framework/AccentColorProvider";
 import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
-import { Scaler } from "presentation/framework/Scaler";
+import { Scaler } from "presentation/framework/scaling/Scaler";
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 import { Logger } from "infrastructure/Logger";
 import { ErrorHandler } from "infrastructure/ErrorHandler";
@@ -24,9 +24,11 @@ import { SettingsStore } from "infrastructure/SettingsStore";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { NotificationSender } from "infrastructure/NotificationSender";
-import { RendererErrorHandler } from 'presentation/infrastructure/RendererErrorHandler';
+import { RendererErrorHandler } from "presentation/infrastructure/RendererErrorHandler";
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewsRegistry } from "presentation/views/ViewsRegistry";
+import { NullScaler } from "presentation/framework/scaling/NullScaler";
+import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -61,7 +63,7 @@ class Binder {
         this.container.bind<TranslatePageParser>(TranslatePageParser).toSelf();
         this.container.bind<TranslationResponseParser>(TranslationResponseParser).toSelf();
         this.container.bind<TextPlayer>(TextPlayer).toSelf();
-        this.container.bind<SettingsProvider>(SettingsProvider).toSelf();
+        this.container.bind<SettingsProvider>(SettingsProvider).toSelf().inSingletonScope();
     }
 
     private bindPresentation(): void {
@@ -71,6 +73,8 @@ class Binder {
         this.container.bind<ViewContext>(ViewContext).toSelf();
         this.container.bind<HotkeysRegistry>(HotkeysRegistry).toSelf().inSingletonScope();
         this.container.bind<Scaler>(Scaler).toSelf().inSingletonScope();
+        this.container.bind<NullScaler>(NullScaler).toSelf().inSingletonScope();
+        this.container.bind<ScalerFactory>(ScalerFactory).toSelf();
         this.container.bind<RendererErrorHandler>(RendererErrorHandler).toSelf().inSingletonScope();
         this.container.bind<IconsProvider>(IconsProvider).toSelf().inSingletonScope();
         this.container.bind<ViewsRegistry>(ViewsRegistry).toSelf().inSingletonScope();

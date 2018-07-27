@@ -14,7 +14,7 @@ export class TextExtractor {
         this.broadcastCopyCommand();
 
         const textToTranslate$ = new Subject<string>();
-        const copyDelayMilliseconds = this.settingsProvider.getSettings().engine.copyDelayMilliseconds;
+        const copyDelayMilliseconds = this.settingsProvider.getSettings().value.engine.copyDelayMilliseconds;
         setTimeout(
             () => {
                 textToTranslate$.next(clipboard.readText());

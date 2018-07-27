@@ -1,3 +1,5 @@
+import { remote } from "electron";
+
 import { Hotkey } from "common/dto/settings/Hotkey";
 import * as Mousetrap from "mousetrap";
 
@@ -8,6 +10,10 @@ export class HotkeysRegistry {
 
     public unregisterAllHotkeys(): void {
         Mousetrap.reset();
+    }
+
+    public registerDevToolsHotkey(): void {
+        Mousetrap.bind("ctrl+shift+i", () => remote.getCurrentWindow().webContents.toggleDevTools());
     }
 
     private createCommand(hotkey: Hotkey): string {

@@ -5,7 +5,6 @@ import Vue from "vue";
 import { PresentationHotkeySettings } from "common/dto/settings/presentation-settings/PresentationSettings";
 import { HotkeysRegistry } from "components/app/services/HotkeysRegistry";
 
-
 const ns = namespace("app");
 
 @Component
@@ -46,8 +45,9 @@ export default class App extends Vue {
 
     @Watch("hotkeySettings", { deep: true })
     @Watch("areHotkeysPaused")
-    private hotkeySettingsChanged() {
+    public hotkeySettingsChanged() {
         this.hotkeysRegistry.unregisterAllHotkeys();
+        this.hotkeysRegistry.registerDevToolsHotkey();
 
         if (!this.hotkeySettings || this.areHotkeysPaused) {
             return;

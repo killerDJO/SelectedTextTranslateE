@@ -16,7 +16,8 @@ export class HistoryView extends ViewBase {
         super(ViewNames.History, viewContext, {
             iconName: "tray",
             isFrameless: false,
-            title: "History"
+            title: "History",
+            isScalingEnabled: !viewContext.viewSettings.scaling.scaleTranslationViewOnly
         });
 
         this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.RequestHistoryRecords);
@@ -27,8 +28,8 @@ export class HistoryView extends ViewBase {
         this.messageBus.sendValue(Messages.HistoryRecords, historyRecords);
     }
 
-    public notifyHistoryUpdated(): void {
-        this.messageBus.sendNotification(Messages.HistoryUpdated);
+    public subscribeToHistoryUpdate(historyUpdate$: Observable<void>): void {
+        this.registerSubscription(historyUpdate$.subscribe(() => this.messageBus.sendNotification(Messages.HistoryUpdated)));
     }
 
     protected getInitialBounds(): Electron.Rectangle {

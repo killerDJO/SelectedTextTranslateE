@@ -1,15 +1,15 @@
 <template>
   <div class="hotkey-settings">
-    <div class="header">
-      <p class="title">Command:</p>
-      <select class="form-control command-selector" v-model="currentCommandKey">
-        <option v-for="command in commands" :value="command.key" :key="command.key">
-          {{ command.name }}
-        </option>
-      </select>
-    </div>
-    <div v-if="currentCommand !== null">
-      <div>
+    <div class="settings-item">
+      <div class="header">
+        <p class="title">Command:</p>
+        <select class="form-control command-selector" v-model="currentCommandKey">
+          <option v-for="command in commands" :value="command.key" :key="command.key">
+            {{ command.name }}
+          </option>
+        </select>
+      </div>
+      <div v-if="currentCommand !== null" class="hotkeys">
         <table class="table-striped non-clickable hotkeys-list">
           <thead>
             <tr>
@@ -24,12 +24,12 @@
             </tr>
           </tbody>
         </table>
-      </div>
-      <div class="hotkey-edit">
-        <validated-field :validation-message="currentHotkeyValidationMessage" class="hotkey-input-control">
-          <hotkey-input :hotkey.sync="currentHotkey" @input-started="hotkeyInputStarted" @input-completed="hotkeyInputCompleted"/>
-        </validated-field>
-        <button class="btn btn-mini btn-default add-hotkey" @click="addHotkey" :disabled="!isAddHotkeyEnabled">Add</button>
+        <div class="hotkey-edit">
+          <validated-field :validation-message="currentHotkeyValidationMessage" class="hotkey-input-control">
+            <hotkey-input :hotkey.sync="currentHotkey" @input-started="hotkeyInputStarted" @input-completed="hotkeyInputCompleted"/>
+          </validated-field>
+          <button class="btn btn-mini btn-default add-hotkey" @click="addHotkey" :disabled="!isAddHotkeyEnabled">Add</button>
+        </div>
       </div>
     </div>
   </div>

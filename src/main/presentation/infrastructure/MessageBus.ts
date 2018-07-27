@@ -1,4 +1,4 @@
-import { Observable, ReplaySubject } from "rxjs";
+import { Observable, ReplaySubject, Subscription as RxJxSubscription } from "rxjs";
 import { ipcMain } from "electron";
 
 import { Channels, Messages } from "common/messaging/Messages";
@@ -32,22 +32,18 @@ export class MessageBus {
         ipcMain.on(subscription.channel, subscription.callback);
     }
 
-    public registerValue<TValue>(name: Messages, value: TValue): void {
-        this.registerObservable(name, Observable.of(value));
-    }
-
-    public registerObservable<TValue>(name: Messages, observable$: Observable<TValue>): void {
+    public registerObservable<TValue>(name: Messages, observable$: Observable<TValue>): RxJxSubscription {
         if (this.observablesRegistry[name]) {
-            observable$.subscribe(value => this.observablesRegistry[name].next(value));
-            return;
+            return observable$.subscribe(value => this.observablesRegistry[name].next(value));
         }
 
         const subject$ = new ReplaySubject<TValue>(MessageBus.ReplayMessagesNumber);
         subject$.subscribe(value => this.window.webContents.send(Channels.Observe, name, value));
-        observable$.subscribe(value => {
+        const subscription = observable$.subscribe(value => {
             subject$.next(value);
         });
         this.observablesRegistry[name] = subject$;
+        return subscription;
     }
 
     public sendValue<TValue>(name: Messages, value: TValue): void {
@@ -77,8 +73,8 @@ export class MessageBus {
     }
 
     public destroy(): void {
-        for (const callback of this.subscriptions) {
-            ipcMain.removeListener(callback.channel, callback.callback);
+        for (const subscription of this.subscriptions) {
+            ipcMain.removeListener(subscription.channel, subscription.callback);
         }
     }
 

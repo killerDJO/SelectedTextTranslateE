@@ -15,7 +15,7 @@ export class TranslationView extends ViewBase {
     public readonly forceTranslateText$!: Observable<string>;
 
     constructor(viewContext: ViewContext) {
-        super(ViewNames.TranslationResult, viewContext, { isFrameless: true });
+        super(ViewNames.TranslationResult, viewContext, { isFrameless: true, isScalingEnabled: true });
 
         this.window.setAlwaysOnTop(true);
         this.window.setSkipTaskbar(true);
@@ -34,8 +34,8 @@ export class TranslationView extends ViewBase {
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
         const bottomRightX = bounds.x + bounds.width;
         const bottomRightY = bounds.y + bounds.height;
-        const width = this.context.scaler.rescale(bounds.width);
-        const height = this.context.scaler.rescale(bounds.height);
+        const width = this.scaler.rescale(bounds.width);
+        const height = this.scaler.rescale(bounds.height);
         return {
             width: width,
             height: height,
@@ -48,8 +48,8 @@ export class TranslationView extends ViewBase {
         const primaryDisplay = screen.getPrimaryDisplay();
 
         const translationSettings = this.context.viewSettings.translation;
-        const width = this.context.scaler.scale(translationSettings.width);
-        const height = this.context.scaler.scale(translationSettings.height);
+        const width = this.scaler.scale(translationSettings.width);
+        const height = this.scaler.scale(translationSettings.height);
         return {
             width: width,
             height: height,

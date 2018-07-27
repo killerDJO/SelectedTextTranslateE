@@ -3,20 +3,14 @@ import { screen } from "electron";
 import { injectable } from "inversify";
 
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { IScaler } from "presentation/framework/scaling/IScaler";
 
 @injectable()
-export class Scaler {
-    private readonly scaleFactorAdjustment: number;
-    private readonly verticalResolutionBaseline: number;
-
+export class Scaler implements IScaler {
     private readonly previousScaleFactor$: BehaviorSubject<number>;
-
     public readonly scaleFactor$: BehaviorSubject<number>;
 
     constructor(private readonly settingsProvider: SettingsProvider) {
-        this.scaleFactorAdjustment = this.settingsProvider.getSettings().view.scaling.scalingStep;
-        this.verticalResolutionBaseline = this.settingsProvider.getSettings().view.scaling.verticalResolutionBaseline;
-
         this.scaleFactor$ = new BehaviorSubject(this.computeInitialScaleFactor());
         this.previousScaleFactor$ = new BehaviorSubject(this.scaleFactor$.value);
     }
@@ -39,10 +33,20 @@ export class Scaler {
         return Math.round(this.scaleFactor$.value / this.previousScaleFactor$.value * value);
     }
 
+    private get scaleFactorAdjustment(): number {
+        return this.settingsProvider.getSettings().value.view.scaling.scalingStep;
+    }
+
     private computeInitialScaleFactor(): number {
+        const scalingSettings = this.settingsProvider.getSettings().value.view.scaling;
+        if (!scalingSettings.autoScale) {
+            return scalingSettings.initialScaling;
+        }
+
+        const verticalResolutionBaseline = this.settingsProvider.getSettings().value.view.scaling.verticalResolutionBaseline;
         const primaryDisplay = screen.getPrimaryDisplay();
         const verticalResolution = primaryDisplay.workAreaSize.height;
-        return verticalResolution / this.verticalResolutionBaseline;
+        return verticalResolution / verticalResolutionBaseline;
     }
 
     private savePreviousScaleFactor(): void {

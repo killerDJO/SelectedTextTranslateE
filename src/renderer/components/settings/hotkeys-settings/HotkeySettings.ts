@@ -1,5 +1,6 @@
+import * as _ from "lodash";
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import { EditableHotkeySettings } from "common/dto/settings/editable-settings/EditableHotkeySettings";
+import { EditableHotkeySettings, LocalHotkeySettings, GlobalHotkeySettings } from "common/dto/settings/editable-settings/EditableHotkeySettings";
 
 import HotkeyInput from "components/settings/hotkeys-settings/hotkey-input/HotkeyInput.vue";
 import { Hotkey } from "common/dto/settings/Hotkey";
@@ -7,6 +8,7 @@ import { Hotkey } from "common/dto/settings/Hotkey";
 interface Command {
     readonly name: string;
     readonly key: string;
+    readonly isGlobal: boolean;
     hotkeys: Hotkey[];
 }
 
@@ -21,9 +23,10 @@ export default class HotkeySettings extends Vue {
 
     private static readonly HotkeyInputStartedEvent: string = "hotkey-input-started";
     private static readonly HotkeyInputCompletedEvent: string = "hotkey-input-completed";
+    private static readonly HotkeysUpdatedEvent: string = "hotkeys-updated";
 
     private readonly commands: Command[] = [];
-    private readonly hotkeyToCommandMap = new Map<keyof EditableHotkeySettings, string>([
+    private readonly hotkeysDisplayName = new Map<keyof LocalHotkeySettings | keyof GlobalHotkeySettings, string>([
         ["translate", "Translate Text"],
         ["playText", "Play Text"],
         ["zoomIn", "Zoom In"],
@@ -110,13 +113,41 @@ export default class HotkeySettings extends Vue {
         this.currentHotkeyValidationMessage = null;
     }
 
+    @Watch("commands", { deep: true })
+    public updateHotkeySettings(): void {
+        const updatedHotkeySettings = _.cloneDeep(this.hotkeySettings);
+
+        for (const command of this.commands) {
+            const hotkeys = this.getHotkeySetting(command.key, updatedHotkeySettings).hotkeys;
+            hotkeys.length = 0;
+            hotkeys.push(...command.hotkeys);
+        }
+
+        this.$emit(HotkeySettings.HotkeysUpdatedEvent, updatedHotkeySettings);
+    }
+
     private createCommandsList(): void {
-        for (const [key, value] of this.hotkeyToCommandMap) {
+        for (const [key, value] of this.hotkeysDisplayName) {
+            const hotkeySettings = _.cloneDeep(this.getHotkeySetting(key, this.hotkeySettings));
             this.commands.push({
                 name: value,
                 key: key,
-                hotkeys: this.hotkeySettings[key]
+                hotkeys: hotkeySettings.hotkeys,
+                isGlobal: hotkeySettings.isGlobal
             });
         }
+    }
+
+    private getHotkeySetting(key: string, settings: EditableHotkeySettings): { hotkeys: Hotkey[]; isGlobal: boolean } {
+        const hotkeyTypes: Array<keyof EditableHotkeySettings> = ["global", "local"];
+        for (const hotkeyType of hotkeyTypes) {
+            for (const currentKey of Object.keys(settings[hotkeyType])) {
+                if (currentKey === key) {
+                    return { hotkeys: (settings[hotkeyType] as any)[currentKey], isGlobal: hotkeyType === "global" };
+                }
+            }
+        }
+
+        throw Error(`Unable to find key '${key}'.`);
     }
 }

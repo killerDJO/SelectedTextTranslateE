@@ -7,12 +7,14 @@ import { RendererLocationProvider } from "presentation/infrastructure/RendererLo
 import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { ViewOptions } from "presentation/framework/ViewOptions";
+import { IScaler } from "presentation/framework/scaling/IScaler";
 
 export abstract class ViewBase {
     private readonly subscriptions: Subscription[] = [];
 
     protected readonly window: BrowserWindow;
     protected readonly messageBus: MessageBus;
+    protected readonly scaler: IScaler;
     protected readonly isReadyToShow$: BehaviorSubject<boolean>;
 
     constructor(
@@ -21,9 +23,11 @@ export abstract class ViewBase {
         protected readonly viewOptions: ViewOptions) {
 
         this.window = new BrowserWindow(this.getWindowSettings());
-        //this.window.setMenu(null);
+        this.window.setMenu(null);
         this.isReadyToShow$ = new BehaviorSubject<boolean>(false);
         this.loadWindow();
+
+        this.scaler = this.context.scalerFactory.createScaler(viewOptions.isScalingEnabled);
 
         this.messageBus = new MessageBus(this.window);
         this.messageBus.sendValue(Messages.IsFramelessWindow, this.viewOptions.isFrameless);
@@ -49,20 +53,11 @@ export abstract class ViewBase {
 
     protected scale(): void {
         this.window.setBounds(this.scaleBounds(this.window.getBounds()));
-        this.messageBus.sendValue(Messages.ScaleFactor, this.context.scaler.scaleFactor$.value);
+        this.messageBus.sendValue(Messages.ScaleFactor, this.scaler.scaleFactor$.value);
     }
 
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
-        const width = this.context.scaler.rescale(bounds.width);
-        const height = this.context.scaler.rescale(bounds.height);
-        const widthDelta = Math.round((width - bounds.width) / 2);
-        const heightDelta = Math.round((height - bounds.height) / 2);
-        return {
-            width: width,
-            height: height,
-            x: bounds.x - widthDelta,
-            y: bounds.y - heightDelta
-        };
+        return bounds;
     }
 
     protected getCentralPosition(widthPercent: number, heightPercent: number): Electron.Rectangle {
@@ -104,16 +99,16 @@ export abstract class ViewBase {
     }
 
     private initializeSubscriptions(): void {
-        this.registerSubscription(this.context.scaler.scaleFactor$.subscribe(this.scale.bind(this)));
+        this.registerSubscription(this.scaler.scaleFactor$.subscribe(this.scale.bind(this)));
         this.messageBus.registerObservable(Messages.AccentColor, this.context.accentColorProvider.accentColor$);
         this.messageBus.getValue<Error>(Messages.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
-        this.messageBus.getValue<void>(Messages.ZoomInCommand).subscribe(() => this.context.scaler.zoomIn());
-        this.messageBus.getValue<void>(Messages.ZoomOutCommand).subscribe(() => this.context.scaler.zoomOut());
+        this.messageBus.getValue<void>(Messages.ZoomInCommand).subscribe(() => this.scaler.zoomIn());
+        this.messageBus.getValue<void>(Messages.ZoomOutCommand).subscribe(() => this.scaler.zoomOut());
         this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
         this.window.once("closed", () => this.destroy());
     }
 
-    private registerSubscription(subscription: Subscription): void {
+    protected registerSubscription(subscription: Subscription): void {
         this.subscriptions.push(subscription);
     }
 

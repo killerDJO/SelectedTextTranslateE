@@ -48,8 +48,7 @@ export class Application {
         historyView.historyRecordsRequest$
             .concatMap(request => this.historyStore.getRecords(request.limit, request.sortColumn, request.sortOrder))
             .subscribe(records => historyView.setHistoryRecords(records));
-        this.historyStore.historyUpdated$
-            .subscribe(() => historyView.notifyHistoryUpdated());
+        historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
         historyView.translateText$
             .subscribe(text => this.translateText(text, false));
     }
@@ -57,6 +56,7 @@ export class Application {
     private setupSettingsView(settingsView: SettingsView): void {
         settingsView.setSettings(this.settingsProvider.getSettings());
         settingsView.pauseHotkeys$.subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());
+        settingsView.updatedSettings$.subscribe(updatedSettings => this.settingsProvider.updateSettings(updatedSettings));
     }
 
     private setupHotkeys(): void {
@@ -72,21 +72,31 @@ export class Application {
     private createTaskbar(): void {
         this.taskbar = new Taskbar(this.storageFolderProvider, this.iconsProvider);
 
-        this.taskbar.showTranslation$.subscribe(() => this.showView(ViewNames.TranslationResult, this.setupTranslationView.bind(this)));
-        this.taskbar.showSettings$.subscribe(() => this.showView(ViewNames.Settings, this.setupSettingsView.bind(this)));
-        this.taskbar.showHistory$.subscribe(() => this.showView(ViewNames.History, this.setupHistoryView.bind(this)));
+        this.taskbar.showTranslation$.subscribe(() => this.translationView.show());
+        this.taskbar.showSettings$.subscribe(() => this.settingsView.show());
+        this.taskbar.showHistory$.subscribe(() => this.historyView.show());
     }
 
     private translateText(text: string, isForcedTranslation: boolean): void {
         this.textTranslator.translate(text, isForcedTranslation).subscribe(result => {
-            const translationView = this.showView<TranslationView>(ViewNames.TranslationResult, this.setupTranslationView.bind(this));
-            translationView.setTranslateResult(result);
+            this.translationView.show();
+            this.translationView.setTranslateResult(result);
         });
     }
 
-    private showView<TView extends ViewBase>(viewName: ViewNames, postCreateAction?: (view: TView) => void): TView {
-        const view = this.viewsRegistry.getOrCreateView<TView>(viewName, postCreateAction);
-        view.show();
-        return view;
+    private createView<TView extends ViewBase>(viewName: ViewNames, postCreateAction?: (view: TView) => void): TView {
+        return this.viewsRegistry.getOrCreateView<TView>(viewName, postCreateAction);
+    }
+
+    private get translationView(): TranslationView {
+        return this.createView<TranslationView>(ViewNames.TranslationResult, this.setupTranslationView.bind(this));
+    }
+
+    private get historyView(): HistoryView {
+        return this.createView(ViewNames.History, this.setupHistoryView.bind(this));
+    }
+
+    private get settingsView(): SettingsView {
+        return this.createView(ViewNames.Settings, this.setupSettingsView.bind(this));
     }
 }

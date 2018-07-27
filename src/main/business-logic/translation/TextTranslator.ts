@@ -63,7 +63,7 @@ export class TextTranslator {
         const MinutesInHour = 60;
         const HoursInDay = 24;
         const elapsedDays = elapsedMilliseconds / MillisecondsInSecond / SecondsInMinute / MinutesInHour / HoursInDay;
-        return elapsedDays > this.settingsProvider.getSettings().engine.historyRefreshInterval;
+        return elapsedDays > this.settingsProvider.getSettings().value.engine.historyRefreshInterval;
     }
 
     private getResponseFromService(sentence: string, isForcedTranslation: boolean): Observable<TranslateResult> {
@@ -79,7 +79,7 @@ export class TextTranslator {
     private getTranslationResponse(text: string, isForcedTranslation: boolean, hash: string): Observable<any> {
         const encodedText = encodeURIComponent(text);
         const forceTranslationArgument = isForcedTranslation ? "qc" : "qca";
-        const domain = this.settingsProvider.getSettings().engine.baseUrl;
+        const domain = this.settingsProvider.getSettings().value.engine.baseUrl;
         const urlPath = `translate_a/single?client=t&sl=en&tl=ru&hl=ru&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=${forceTranslationArgument}&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=4&tk=${hash}&q=${encodedText}`;
         return this.requestProvider.getJsonContent(`${domain}/${urlPath}`);
     }
