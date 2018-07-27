@@ -10,48 +10,53 @@ import { Hotkey } from "common/dto/settings/Hotkey";
 export class HotkeysRegistry {
 
     private areHotkeysPaused: boolean = false;
+    private currentHotkeys: HotkeySettings;
 
     public readonly translate$: Subject<void> = new Subject();
     public readonly playText$: Subject<void> = new Subject();
 
     constructor(private readonly settingsProvider: SettingsProvider) {
+        this.currentHotkeys = this.getHotkeys();
         this.settingsProvider.getSettings().subscribe(() => this.remapHotkeys());
     }
 
     public registerHotkeys(): void {
-        this.registerAllHotkeys();
+        this.registerAllHotkeys(this.currentHotkeys);
     }
 
     public pauseHotkeys(): void {
         this.areHotkeysPaused = true;
-        this.unregisterAllHotkeys();
+        this.unregisterAllHotkeys(this.currentHotkeys);
     }
 
     public resumeHotkeys(): void {
-        this.registerAllHotkeys();
+        this.registerAllHotkeys(this.currentHotkeys);
         this.areHotkeysPaused = false;
     }
 
-    private get hotkeys(): HotkeySettings {
+    private getHotkeys(): HotkeySettings {
         return this.settingsProvider.getSettings().value.hotkeys;
     }
 
     private remapHotkeys(): void {
         if (this.areHotkeysPaused) {
+            this.currentHotkeys = this.getHotkeys();
             return;
         }
-        this.unregisterAllHotkeys();
-        this.registerAllHotkeys();
+
+        this.unregisterAllHotkeys(this.currentHotkeys);
+        this.registerAllHotkeys(this.getHotkeys());
+        this.currentHotkeys = this.getHotkeys();
     }
 
-    private registerAllHotkeys(): void {
-        this.registerCommand(this.hotkeys.translate, () => this.translate$.next());
-        this.registerCommand(this.hotkeys.playText, () => this.playText$.next());
+    private registerAllHotkeys(hotkeys: HotkeySettings): void {
+        this.registerCommand(hotkeys.translate, () => this.translate$.next());
+        this.registerCommand(hotkeys.playText, () => this.playText$.next());
     }
 
-    private unregisterAllHotkeys(): void {
-        this.unregisterCommand(this.hotkeys.translate);
-        this.unregisterCommand(this.hotkeys.playText);
+    private unregisterAllHotkeys(hotkeys: HotkeySettings): void {
+        this.unregisterCommand(hotkeys.translate);
+        this.unregisterCommand(hotkeys.playText);
     }
 
     private registerCommand(hotkeys: Hotkey[], action: () => void): void {

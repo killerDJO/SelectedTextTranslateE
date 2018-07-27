@@ -72,6 +72,7 @@ export default class HotkeySettings extends Vue {
             }
         });
         this.currentCommand.hotkeys = newHotkeys;
+        this.validateCurrentHotkey();
     }
 
     public addHotkey(): void {

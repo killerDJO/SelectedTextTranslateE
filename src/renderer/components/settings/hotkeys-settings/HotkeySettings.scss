@@ -2,26 +2,18 @@
     display: inline-block;
     width: 100%;
 
-    .header {
-        position: relative;
-        display: table;
-        width: 100%;
+    $max-width: 400px;
 
-        .title {
-            display: table-cell;
-            width: 20%;
-            vertical-align: middle;
-            text-align: left;
-        }
-    
+    .header {
+        width: 100%;
+        
         .command-selector {
-            float: right;
-            width: 80%;
+            max-width: $max-width;
         }
     }
 
     .hotkeys {
-        max-width: 400px;
+        max-width: $max-width;
         margin-top: 5px;
 
         $action-column-width: 15%;
@@ -43,6 +35,11 @@
                     cursor: pointer;
                 }
             }
+
+            .no-hotkeys{
+                text-align: center;
+                color: $light-gray;
+            }
         }
     
         .hotkey-edit {
@@ -53,14 +50,21 @@
             .hotkey-input-control {
                 width: 80%;
             }
-    
+
             .add-hotkey{
                 float: right;
                 padding: 1px 6px;
                 width: calc(#{$action-column-width} + 1px)
             }
         }
-    }
 
-    
+        .global-hotkey-warning {
+            font-size: 8px;
+            margin-top: 5px;
+
+            .icon::before {
+                color: orange;
+            }
+        }
+    }
 }
