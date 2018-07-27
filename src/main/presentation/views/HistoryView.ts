@@ -17,7 +17,7 @@ export class HistoryView extends ViewBase {
             iconName: "tray",
             isFrameless: false,
             title: "History",
-            isScalingEnabled: !viewContext.viewSettings.scaling.scaleTranslationViewOnly
+            isScalingEnabled: !viewContext.scalingSettings.scaleTranslationViewOnly
         });
 
         this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.RequestHistoryRecords);
@@ -33,7 +33,7 @@ export class HistoryView extends ViewBase {
     }
 
     protected getInitialBounds(): Electron.Rectangle {
-        const historySettings = this.context.viewSettings.history;
+        const historySettings = this.context.viewsSettings.history;
         return this.getCentralPosition(historySettings.width, historySettings.height);
     }
 }

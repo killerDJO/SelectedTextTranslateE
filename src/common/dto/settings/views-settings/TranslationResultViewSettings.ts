@@ -1,9 +1,6 @@
-import { Hotkey } from "common/dto/settings/Hotkey";
-
-export interface PresentationSettings {
+export interface TranslationResultViewSettings {
     readonly visibility: ResultVisibilitySettings;
     readonly score: ScoreSettings;
-    readonly hotkeys: PresentationHotkeySettings;
 }
 
 export interface ScoreSettings {
@@ -14,9 +11,4 @@ export interface ScoreSettings {
 export interface ResultVisibilitySettings {
     readonly visibleByDefaultNumber: number;
     readonly lowScoreThreshold: number;
-}
-
-export interface PresentationHotkeySettings {
-    readonly zoomIn: Hotkey[];
-    readonly zoomOut: Hotkey[];
 }

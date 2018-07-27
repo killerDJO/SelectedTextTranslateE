@@ -5,9 +5,9 @@ import { AccentColorProvider } from "presentation/framework/AccentColorProvider"
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { RendererErrorHandler } from "presentation/infrastructure/RendererErrorHandler";
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
-import { ViewSettings } from "business-logic/settings/dto/ViewSettings";
-import { PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
 import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
+import { ViewsSettings, ScalingSettings } from "business-logic/settings/dto/Settings";
+import { RendererSettings } from "common/dto/settings/renderer-settings/RendererSettings";
 
 @injectable()
 export class ViewContext {
@@ -20,11 +20,15 @@ export class ViewContext {
     ) {
     }
 
-    public get viewSettings(): ViewSettings {
-        return this.settingsProvider.getSettings().value.view;
+    public get viewsSettings(): ViewsSettings {
+        return this.settingsProvider.getSettings().value.views;
     }
 
-    public get presentationSettings(): Observable<PresentationSettings> {
-        return this.settingsProvider.getSettings().map(settings => settings.presentation);
+    public get scalingSettings(): ScalingSettings {
+        return this.settingsProvider.getSettings().value.scaling;
+    }
+
+    public get rendererSettings(): Observable<RendererSettings> {
+        return this.settingsProvider.getSettings().map(settings => settings.renderer);
     }
 }

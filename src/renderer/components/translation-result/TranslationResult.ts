@@ -3,7 +3,7 @@ import { Component } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
-import { PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
+import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 
 import TranslationResultContent from "./content/TranslationResultContent.vue";
 import TranslationResultHeader from "./header/TranslationResultHeader.vue";
@@ -18,7 +18,7 @@ const ns = namespace("app/translationResult");
 })
 export default class TranslationResult extends Vue {
     @ns.State public translateResult!: TranslateResult;
-    @ns.State public presentationSettings!: PresentationSettings;
+    @ns.State public translationResultViewSettings!: TranslationResultViewSettings;
     @ns.State public isInitialized!: boolean;
 
     @ns.Action private readonly fetchData!: () => void;

@@ -1,8 +1,8 @@
 import { Component, Prop } from "vue-property-decorator";
 import Vue from "vue";
 
-import { PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
-import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dto/translation/TranslateResult";
+import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslateResultCategory } from "common/dto/translation/TranslateResult";
 
 import TranslationResultContentCategory from "components/translation-result/content/category/TranslationResultContentCategory.vue";
 
@@ -17,5 +17,5 @@ export default class TranslationResultContent extends Vue {
     public categories!: ReadonlyArray<TranslateResultCategory>;
 
     @Prop(Object)
-    public presentationSettings!: PresentationSettings;
+    public translationResultViewSettings!: TranslationResultViewSettings;
 }

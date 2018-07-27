@@ -5,7 +5,6 @@ export enum Channels {
 
 export enum Messages {
     AccentColor = "accent-color",
-    PresentationSettings = "presentation-settings",
     ScaleFactor = "scale-factor",
     IsFramelessWindow = "is-frameless-window",
 
@@ -24,7 +23,9 @@ export enum Messages {
     RequestHistoryRecords = "get-history-records",
     HistoryUpdated = "history-updated",
 
+    RendererSettings = "renderer-settings",
     EditableSettings = "editable-settings",
+    TranslationResultViewSettings = "translation-result-view-settings",
     EditableSettingsUpdated = "editable-settings-updated",
     PauseHotkeys = "pause-hotkeys",
 }

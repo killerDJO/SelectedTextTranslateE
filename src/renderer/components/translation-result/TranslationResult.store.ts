@@ -1,7 +1,7 @@
 import { Module } from "vuex";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
-import { PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
+import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
@@ -10,7 +10,7 @@ const messageBus = new MessageBus();
 
 interface TranslationResultState {
     translateResult: TranslateResult | null;
-    presentationSettings?: PresentationSettings;
+    translationResultViewSettings?: TranslationResultViewSettings;
     isInitialized: boolean;
 }
 
@@ -18,15 +18,15 @@ export const translationResult: Module<TranslationResultState, RootState> = {
     namespaced: true,
     state: {
         translateResult: null,
-        presentationSettings: undefined,
+        translationResultViewSettings: undefined,
         isInitialized: false
     },
     mutations: {
         setTranslateResult(state: TranslationResultState, translateResult: TranslateResult | null): void {
             state.translateResult = translateResult;
         },
-        setPresentationSettings(state: TranslationResultState, presentationSettings: PresentationSettings): void {
-            state.presentationSettings = presentationSettings;
+        setTranslationResultViewSettings(state: TranslationResultState, translationResultViewSettings: TranslationResultViewSettings): void {
+            state.translationResultViewSettings = translationResultViewSettings;
         },
         setInitialized(state: TranslationResultState): void {
             state.isInitialized = true;
@@ -35,8 +35,8 @@ export const translationResult: Module<TranslationResultState, RootState> = {
     actions: {
         fetchData({ commit }): void {
             messageBus.getValue<TranslateResult | null>(Messages.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
-            messageBus.getValue<PresentationSettings>(Messages.PresentationSettings, presentationSettings => {
-                commit("setPresentationSettings", presentationSettings);
+            messageBus.getValue<TranslationResultViewSettings>(Messages.TranslationResultViewSettings, translationResultViewSettings => {
+                commit("setTranslationResultViewSettings", translationResultViewSettings);
                 commit("setInitialized");
             });
         },

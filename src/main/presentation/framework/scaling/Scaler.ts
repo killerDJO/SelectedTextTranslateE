@@ -34,16 +34,16 @@ export class Scaler implements IScaler {
     }
 
     private get scaleFactorAdjustment(): number {
-        return this.settingsProvider.getSettings().value.view.scaling.scalingStep;
+        return this.settingsProvider.getSettings().value.scaling.scalingStep;
     }
 
     private computeInitialScaleFactor(): number {
-        const scalingSettings = this.settingsProvider.getSettings().value.view.scaling;
+        const scalingSettings = this.settingsProvider.getSettings().value.scaling;
         if (!scalingSettings.autoScale) {
             return scalingSettings.initialScaling;
         }
 
-        const verticalResolutionBaseline = this.settingsProvider.getSettings().value.view.scaling.verticalResolutionBaseline;
+        const verticalResolutionBaseline = this.settingsProvider.getSettings().value.scaling.verticalResolutionBaseline;
         const primaryDisplay = screen.getPrimaryDisplay();
         const verticalResolution = primaryDisplay.workAreaSize.height;
         return verticalResolution / verticalResolutionBaseline;

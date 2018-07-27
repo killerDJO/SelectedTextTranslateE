@@ -1,9 +1,11 @@
 import { injectable } from "inversify";
 import { BehaviorSubject } from "rxjs";
+import * as path from "path";
+import * as fs from "fs";
+import * as _ from "lodash";
 
 import { Settings } from "business-logic/settings/dto/Settings";
 import { SettingsStore } from "infrastructure/SettingsStore";
-import { Hotkey } from "common/dto/settings/Hotkey";
 import { DeepPartial } from "utils/deep-partial";
 
 @injectable()
@@ -16,7 +18,7 @@ export class SettingsProvider {
 
     public getSettings(): BehaviorSubject<Settings> {
         if (this.settings$ === null) {
-            this.settings$ = new BehaviorSubject(this.getSettingsInternal());
+            this.settings$ = new BehaviorSubject(this.getSettingsFromDefaultsFile());
         }
 
         return this.settings$;
@@ -25,57 +27,29 @@ export class SettingsProvider {
     public updateSettings(settings: DeepPartial<Settings>): void {
         this.settingsStore.setAll(settings);
         if (!!this.settings$) {
-            this.settings$.next(this.getSettingsInternal());
+            this.settings$.next(this.getSettingsFromDefaultsFile());
         }
     }
 
-    private getSettingsInternal(): Settings {
-        return {
-            presentation: {
-                score: {
-                    highThreshold: this.settingsStore.getOrSetDefault<number>("presentation.score.highThreshold", 0.05),
-                    mediumThreshold: this.settingsStore.getOrSetDefault<number>("presentation.score.mediumThreshold", 0.0025)
-                },
-                visibility: {
-                    lowScoreThreshold: this.settingsStore.getOrSetDefault<number>("presentation.visibility.lowScoreThreshold", 0.003),
-                    visibleByDefaultNumber: this.settingsStore.getOrSetDefault<number>("presentation.visibility.visibleByDefaultNumber", 7)
-                },
-                hotkeys: {
-                    zoomIn: this.settingsStore.getOrSetDefault<Hotkey[]>("presentation.hotkeys.zoomIn", [{ keys: ["Control", "+"] }]),
-                    zoomOut: this.settingsStore.getOrSetDefault<Hotkey[]>("presentation.hotkeys.zoomOut", [{ keys: ["Control", "-"] }])
-                }
-            },
-            engine: {
-                copyDelayMilliseconds: this.settingsStore.getOrSetDefault<number>("engine.copyDelayMilliseconds", 100),
-                baseUrl: this.settingsStore.getOrSetDefault<string>("engine.baseUrl", "https://translate.google.com"),
-                historyRefreshInterval: this.settingsStore.getOrSetDefault<number>("engine.historyRefreshInterval", 30)
-            },
-            view: {
-                translation: {
-                    width: this.settingsStore.getOrSetDefault<number>("view.translation.width", 300),
-                    height: this.settingsStore.getOrSetDefault<number>("view.translation.height", 400),
-                    margin: this.settingsStore.getOrSetDefault<number>("view.translation.margin", 5)
-                },
-                history: {
-                    width: this.settingsStore.getOrSetDefault<number>("view.history.width", 70),
-                    height: this.settingsStore.getOrSetDefault<number>("view.history.height", 55)
-                },
-                settings: {
-                    width: this.settingsStore.getOrSetDefault<number>("view.settings.width", 50),
-                    height: this.settingsStore.getOrSetDefault<number>("view.settings.height", 55)
-                },
-                scaling: {
-                    autoScale: this.settingsStore.getOrSetDefault<boolean>("view.scaling.autoScale", true),
-                    scaleTranslationViewOnly: this.settingsStore.getOrSetDefault<boolean>("view.scaling.scaleTranslationViewOnly", true),
-                    initialScaling: this.settingsStore.getOrSetDefault<number>("view.scaling.initialScaling", 1),
-                    scalingStep: this.settingsStore.getOrSetDefault<number>("view.scaling.scalingStep", 0.05),
-                    verticalResolutionBaseline: this.settingsStore.getOrSetDefault<number>("view.scaling.verticalResolutionBaseline", 860)
-                }
-            },
-            hotkeys: {
-                translate: this.settingsStore.getOrSetDefault<Hotkey[]>("hotkeys.translate", [{ keys: ["Control", "T"] }]),
-                playText: this.settingsStore.getOrSetDefault<Hotkey[]>("hotkeys.playText", [{ keys: ["Control", "R"] }]),
+    private getSettingsFromDefaultsFile(): Settings {
+        const defaultSettingsPath = path.resolve(__dirname, "default-settings.json");
+        const defaultSettingsContent = fs.readFileSync(defaultSettingsPath).toString("utf8");
+        const defaultSettings = JSON.parse(defaultSettingsContent);
+        const settings = this.getSettingsFromDefault(defaultSettings, "") as Settings;
+        return settings;
+    }
+
+    private getSettingsFromDefault(currentDefaultSettings: any, parentPath: string): any {
+        const currentSettings: any = {};
+        for (const key of Object.keys(currentDefaultSettings)) {
+            const currentPath = !!parentPath ? `${parentPath}.${key}` : key;
+            if (_.isPlainObject(currentDefaultSettings[key])) {
+                currentSettings[key] = this.getSettingsFromDefault(currentDefaultSettings[key], currentPath);
             }
-        };
+
+            currentSettings[key] = this.settingsStore.getOrSetDefault(currentPath, currentDefaultSettings[key]);
+        }
+
+        return currentSettings;
     }
 }

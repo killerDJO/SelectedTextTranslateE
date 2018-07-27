@@ -48,6 +48,12 @@ module.exports = (env, argv) => {
                     to: "./icons"
                 },
             ]),
+            new CopyWebpackPlugin([
+                {
+                    from: path.resolve(__dirname, "../src/main/default-settings.json"),
+                    to: "./"
+                },
+            ]),
             new webpack.NoEmitOnErrorsPlugin()
         ]
     };

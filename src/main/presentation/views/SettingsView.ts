@@ -18,7 +18,7 @@ export class SettingsView extends ViewBase {
             iconName: "tray",
             isFrameless: false,
             title: "Settings",
-            isScalingEnabled: !viewContext.viewSettings.scaling.scaleTranslationViewOnly
+            isScalingEnabled: !viewContext.scalingSettings.scaleTranslationViewOnly
         });
 
         this.pauseHotkeys$ = this.messageBus.getValue<boolean>(Messages.PauseHotkeys);
@@ -32,7 +32,7 @@ export class SettingsView extends ViewBase {
     }
 
     protected getInitialBounds(): Electron.Rectangle {
-        const settingsViewSettings = this.context.viewSettings.settings;
+        const settingsViewSettings = this.context.viewsSettings.settings;
         return this.getCentralPosition(settingsViewSettings.width, settingsViewSettings.height);
     }
 
@@ -44,11 +44,11 @@ export class SettingsView extends ViewBase {
                     translate: settings.hotkeys.translate,
                 },
                 local: {
-                    zoomIn: settings.presentation.hotkeys.zoomIn,
-                    zoomOut: settings.presentation.hotkeys.zoomOut
+                    zoomIn: settings.renderer.hotkeys.zoomIn,
+                    zoomOut: settings.renderer.hotkeys.zoomOut
                 }
             },
-            scaling: settings.view.scaling
+            scaling: settings.scaling
         };
     }
 
@@ -58,15 +58,13 @@ export class SettingsView extends ViewBase {
                 playText: settings.hotkeys.global.playText,
                 translate: settings.hotkeys.global.translate
             },
-            presentation: {
+            renderer: {
                 hotkeys: {
                     zoomIn: settings.hotkeys.local.zoomIn,
                     zoomOut: settings.hotkeys.local.zoomOut
                 }
             },
-            view: {
-                scaling: settings.scaling
-            }
+            scaling: settings.scaling
         };
     }
 }

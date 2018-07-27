@@ -2,9 +2,9 @@ import { globalShortcut } from "electron";
 import { Subject } from "rxjs";
 import { injectable } from "inversify";
 
-import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { HotkeySettings } from "business-logic/settings/dto/HotkeySettings";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";;
 import { Hotkey } from "common/dto/settings/Hotkey";
+import { HotkeySettings } from "business-logic/settings/dto/Settings";
 
 @injectable()
 export class HotkeysRegistry {

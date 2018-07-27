@@ -3,16 +3,16 @@ import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { translationResult } from "components/translation-result/TranslationResult.store";
 import { history } from "components/history/History.store";
-import { settings } from "components/settings/Settings.store"
+import { settings } from "components/settings/Settings.store";
 import { RootState } from "root.store";
 
-import { PresentationHotkeySettings, PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
+import { HotkeySettings, RendererSettings } from "common/dto/settings/renderer-settings/RendererSettings";
 
 interface ApplicationState {
     accentColor?: string;
     scaleFactor: number;
     isFrameless: boolean;
-    hotkeySettings?: PresentationHotkeySettings;
+    hotkeySettings?: HotkeySettings;
     areHotkeysPaused: boolean;
 }
 
@@ -37,7 +37,7 @@ export const app: Module<ApplicationState, RootState> = {
         setFramelessStatus(state: ApplicationState, isFrameless: boolean): void {
             state.isFrameless = isFrameless;
         },
-        setHotkeySettings(state: ApplicationState, hotkeySettings: PresentationHotkeySettings): void {
+        setHotkeySettings(state: ApplicationState, hotkeySettings: HotkeySettings): void {
             state.hotkeySettings = hotkeySettings;
         },
         setHotkeyPausedState(state: ApplicationState, areHotkeysPaused: boolean): void {
@@ -49,7 +49,7 @@ export const app: Module<ApplicationState, RootState> = {
             messageBus.getValue<string>(Messages.AccentColor, accentColor => commit("setAccentColor", accentColor));
             messageBus.getValue<number>(Messages.ScaleFactor, scaleFactor => commit("setScaleFactor", scaleFactor));
             messageBus.getValue<string>(Messages.IsFramelessWindow, isFrameless => commit("setFramelessStatus", isFrameless));
-            messageBus.getValue<PresentationSettings>(Messages.PresentationSettings, settings => commit("setHotkeySettings", settings.hotkeys));
+            messageBus.getValue<RendererSettings>(Messages.RendererSettings, rendererSettings => commit("setHotkeySettings", rendererSettings.hotkeys));
             messageBus.getValue<boolean>(Messages.PauseHotkeys, areHotkeysPaused => commit("setHotkeyPausedState", areHotkeysPaused));
         },
         zoomIn(): void {

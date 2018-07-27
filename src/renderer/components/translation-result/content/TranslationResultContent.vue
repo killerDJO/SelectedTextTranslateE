@@ -4,7 +4,7 @@
             v-for="category in categories"
             :key="category.baseForm + category.partOfSpeech"
             :category="category"
-            :presentation-settings="presentationSettings"/>
+            :translation-result-view-settings="translationResultViewSettings"/>
     </div>
 </template>
 

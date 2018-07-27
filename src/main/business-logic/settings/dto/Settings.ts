@@ -1,11 +1,46 @@
-import { PresentationSettings } from "common/dto/settings/presentation-settings/PresentationSettings";
-import { TranslationEngineSettings } from "business-logic/settings/dto/TranslationEngineSettings";
-import { ViewSettings } from "business-logic/settings/dto/ViewSettings";
-import { HotkeySettings } from "business-logic/settings/dto/HotkeySettings";
+import { RendererSettings } from "common/dto/settings/renderer-settings/RendererSettings";
+import { Hotkey } from "common/dto/settings/Hotkey";
+import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 
 export interface Settings {
-    readonly presentation: PresentationSettings;
+    readonly renderer: RendererSettings;
     readonly engine: TranslationEngineSettings;
-    readonly view: ViewSettings;
+    readonly views: ViewsSettings;
+    readonly scaling: ScalingSettings;
     readonly hotkeys: HotkeySettings;
+}
+
+export interface HotkeySettings {
+    readonly translate: Hotkey[];
+    readonly playText: Hotkey[];
+}
+
+export interface TranslationEngineSettings {
+    readonly copyDelayMilliseconds: number;
+    readonly baseUrl: string;
+    readonly historyRefreshInterval: number;
+}
+
+export interface ViewsSettings {
+    readonly translation: TranslationSettings;
+    readonly settings: ViewSize;
+    readonly history: ViewSize;
+}
+
+export interface ViewSize {
+    readonly width: number;
+    readonly height: number;
+}
+
+export interface ScalingSettings {
+    readonly verticalResolutionBaseline: number;
+    readonly scalingStep: number;
+    readonly autoScale: boolean;
+    readonly scaleTranslationViewOnly: boolean;
+    readonly initialScaling: number;
+}
+
+export interface TranslationSettings extends ViewSize {
+    readonly margin: number;
+    readonly renderer: TranslationResultViewSettings;
 }

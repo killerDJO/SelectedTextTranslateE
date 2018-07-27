@@ -31,7 +31,7 @@ export abstract class ViewBase {
 
         this.messageBus = new MessageBus(this.window);
         this.messageBus.sendValue(Messages.IsFramelessWindow, this.viewOptions.isFrameless);
-        this.messageBus.registerObservable(Messages.PresentationSettings, this.context.presentationSettings);
+        this.messageBus.registerObservable(Messages.RendererSettings, this.context.rendererSettings);
 
         this.initializeSubscriptions();
         this.window.setBounds(this.getInitialBounds());

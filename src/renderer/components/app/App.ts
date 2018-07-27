@@ -2,7 +2,7 @@ import { Component, Watch } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 import Vue from "vue";
 
-import { PresentationHotkeySettings } from "common/dto/settings/presentation-settings/PresentationSettings";
+import { HotkeySettings } from "common/dto/settings/renderer-settings/RendererSettings";
 import { HotkeysRegistry } from "components/app/services/HotkeysRegistry";
 
 const ns = namespace("app");
@@ -12,7 +12,7 @@ export default class App extends Vue {
     @ns.State public accentColor!: string;
     @ns.State public scaleFactor!: number;
     @ns.State public isFrameless!: boolean;
-    @ns.State public hotkeySettings!: PresentationHotkeySettings | undefined;
+    @ns.State public hotkeySettings!: HotkeySettings | undefined;
     @ns.State public areHotkeysPaused!: boolean;
 
     @ns.Action private readonly fetchData!: () => void;

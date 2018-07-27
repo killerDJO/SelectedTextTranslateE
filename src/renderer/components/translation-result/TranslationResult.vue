@@ -8,7 +8,7 @@
                 @play-text="playText"/>
             <translation-result-content
                 :categories="translateResult.categories"
-                :presentation-settings="presentationSettings"/>
+                :translation-result-view-settings="translationResultViewSettings"/>
         </div>
         <div v-else>Please select text to translate</div>
     </div>

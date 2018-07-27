@@ -1,0 +1,83 @@
+{
+    "renderer": {
+        "hotkeys": {
+            "zoomIn": [
+                {
+                    "keys": [
+                        "Control",
+                        "+"
+                    ]
+                },
+                {
+                    "keys": [
+                        "Control",
+                        "="
+                    ]
+                }
+            ],
+            "zoomOut": [
+                {
+                    "keys": [
+                        "Control",
+                        "-"
+                    ]
+                }
+            ]
+        }
+    },
+    "engine": {
+        "copyDelayMilliseconds": 100,
+        "baseUrl": "https://translate.google.com",
+        "historyRefreshInterval": 30
+    },
+    "scaling": {
+        "autoScale": true,
+        "initialScaling": 1,
+        "scaleTranslationViewOnly": true,
+        "scalingStep": 0.05,
+        "verticalResolutionBaseline": 860
+    },
+    "views": {
+        "translation": {
+            "width": 300,
+            "height": 400,
+            "margin": 5,
+            "renderer": {
+                "score": {
+                    "highThreshold": 0.05,
+                    "mediumThreshold": 0.0025
+                },
+                "visibility": {
+                    "lowScoreThreshold": 0.003,
+                    "visibleByDefaultNumber": 7
+                }
+            }
+        },
+        "history": {
+            "width": 70,
+            "height": 55
+        },
+        "settings": {
+            "width": 35,
+            "height": 45
+        }
+    },
+    "hotkeys": {
+        "playText": [
+            {
+                "keys": [
+                    "Control",
+                    "R"
+                ]
+            }
+        ],
+        "translate": [
+            {
+                "keys": [
+                    "Control",
+                    "T"
+                ]
+            }
+        ]
+    }
+}
