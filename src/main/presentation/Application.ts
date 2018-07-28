@@ -1,5 +1,4 @@
-import { app, ipcMain, SystemPreferences } from "electron";
-import { injectable, inject } from "inversify";
+import { injectable } from "inversify";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -7,7 +6,6 @@ import { TextTranslator } from "business-logic/translation/TextTranslator";
 import { TextExtractor } from "business-logic/translation/TextExtractor";
 import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
-import { ViewContext } from "presentation/framework/ViewContext";
 import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewsRegistry } from "presentation/views/ViewsRegistry";
@@ -17,6 +15,8 @@ import { HistoryView } from "presentation/views/HistoryView";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { SettingsView } from "presentation/views/SettingsView";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { Scaler } from "presentation/framework/scaling/Scaler";
+import { settings } from "cluster";
 
 @injectable()
 export class Application {
@@ -25,7 +25,7 @@ export class Application {
     constructor(
         private readonly textTranslator: TextTranslator,
         private readonly textPlayer: TextPlayer,
-        private readonly viewContext: ViewContext,
+        private readonly scaler: Scaler,
         private readonly hotkeysRegistry: HotkeysRegistry,
         private readonly iconsProvider: IconsProvider,
         private readonly textExtractor: TextExtractor,
@@ -55,6 +55,8 @@ export class Application {
 
     private setupSettingsView(settingsView: SettingsView): void {
         settingsView.setSettings(this.settingsProvider.getSettings());
+        settingsView.setScalingState(this.scaler.scalingState);
+        settingsView.setScaleFactor$.subscribe(scaleFactor => this.scaler.setScaleFactor(scaleFactor));
         settingsView.pauseHotkeys$.subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());
         settingsView.updatedSettings$.subscribe(updatedSettings => this.settingsProvider.updateSettings(updatedSettings));
     }

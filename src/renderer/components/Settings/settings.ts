@@ -6,11 +6,8 @@ import HotkeySettings from "components/settings/hotkeys-settings/HotkeySettings.
 import ScalingSettings from "components/settings/scaling-settings/ScalingSettings.vue";
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { EditableHotkeySettings } from "common/dto/settings/editable-settings/EditableHotkeySettings";
-
-enum SettingsGroup {
-    Scaling = 1,
-    Hotkeys = 2
-}
+import { EditableScalingSettings } from "common/dto/settings/editable-settings/EditableScalingSettings";
+import { ScalingState } from "common/dto/settings/ScalingState";
 
 const ns = namespace("app/settings");
 
@@ -22,42 +19,34 @@ const ns = namespace("app/settings");
 })
 export default class Settings extends Vue {
     @ns.State public settings!: EditableSettings | null;
+    @ns.State public scalingState!: ScalingState | null;
 
     @ns.Action private readonly setup!: () => void;
-    @ns.Action private readonly pauseHotkeys!: () => void;
-    @ns.Action private readonly enableHotkeys!: () => void;
     @ns.Action private readonly updateSettings!: (settings: EditableSettings) => void;
+    @ns.Action public readonly pauseHotkeys!: () => void;
+    @ns.Action public readonly enableHotkeys!: () => void;
 
-    public readonly SettingsGroup: typeof SettingsGroup = SettingsGroup;
-    public currentSettingsGroup: SettingsGroup = SettingsGroup.Hotkeys;
+    @ns.Action public readonly changeScaling!: (scaleFactor: number) => void;
 
     public mounted(): void {
         this.setup();
     }
 
-    public isActiveGroup(settingsGroup: SettingsGroup): boolean {
-        return this.currentSettingsGroup === settingsGroup;
-    }
-
-    public setSettingsGroup(settingsGroup: SettingsGroup): void {
-        this.currentSettingsGroup = settingsGroup;
-    }
-
     public updateHotkeySettings(hotkeySettings: EditableHotkeySettings): void {
+        this.updateEditableSettings(settings => settings.hotkeys = hotkeySettings);
+    }
+
+    public updateScalingSettings(scalingSettings: EditableScalingSettings): void {
+        this.updateEditableSettings(settings => settings.scaling = scalingSettings);
+    }
+
+    private updateEditableSettings(settingsSetting: (settings: EditableSettings) => void): void {
         if (!this.settings) {
             return;
         }
 
         const updatedSettings = _.cloneDeep(this.settings);
-        updatedSettings.hotkeys = hotkeySettings;
+        settingsSetting(updatedSettings);
         this.updateSettings(updatedSettings);
-    }
-
-    public hotkeyInputStarted(): void {
-        this.pauseHotkeys();
-    }
-
-    public hotkeyInputCompleted(): void {
-        this.enableHotkeys();
     }
 }

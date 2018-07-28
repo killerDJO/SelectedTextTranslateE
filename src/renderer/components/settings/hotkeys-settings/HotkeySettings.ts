@@ -3,6 +3,7 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 import { EditableHotkeySettings, LocalHotkeySettings, GlobalHotkeySettings } from "common/dto/settings/editable-settings/EditableHotkeySettings";
 
 import HotkeyInput from "components/settings/hotkeys-settings/hotkey-input/HotkeyInput.vue";
+import SettingsHolder from "components/settings/settings-holder/SettingsHolder.vue";
 import { Hotkey } from "common/dto/settings/Hotkey";
 
 interface Command {
@@ -14,7 +15,8 @@ interface Command {
 
 @Component({
     components: {
-        HotkeyInput
+        HotkeyInput,
+        SettingsHolder
     }
 })
 export default class HotkeySettings extends Vue {

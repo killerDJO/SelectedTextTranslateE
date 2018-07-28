@@ -16,6 +16,7 @@ export enum Messages {
 
     ZoomInCommand = "zoom-in",
     ZoomOutCommand = "zoom-out",
+    SetScaleFactorCommand = "set-scale-factor",
 
     RendererError = "renderer-error",
 
@@ -25,6 +26,7 @@ export enum Messages {
 
     RendererSettings = "renderer-settings",
     EditableSettings = "editable-settings",
+    ScalingState = "scaling-state",
     TranslationResultViewSettings = "translation-result-view-settings",
     EditableSettingsUpdated = "editable-settings-updated",
     PauseHotkeys = "pause-hotkeys",

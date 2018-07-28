@@ -31,10 +31,11 @@
         "historyRefreshInterval": 30
     },
     "scaling": {
-        "autoScale": true,
-        "initialScaling": 1,
+        "scaleFactor": 1,
         "scaleTranslationViewOnly": true,
         "scalingStep": 0.05,
+        "minScaling": 0.7,
+        "maxScaling": 2,
         "verticalResolutionBaseline": 860
     },
     "views": {

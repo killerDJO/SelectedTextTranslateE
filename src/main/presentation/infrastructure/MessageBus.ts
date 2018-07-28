@@ -40,6 +40,9 @@ export class MessageBus {
         const subject$ = new ReplaySubject<TValue>(MessageBus.ReplayMessagesNumber);
         subject$.subscribe(value => this.window.webContents.send(Channels.Observe, name, value));
         const subscription = observable$.subscribe(value => {
+            if (this.window.isDestroyed()) {
+                throw Error("Window has been destroyed. Make sure subscription is disposed properly.");
+            }
             subject$.next(value);
         });
         this.observablesRegistry[name] = subject$;

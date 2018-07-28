@@ -25,7 +25,7 @@ export class SettingsProvider {
     }
 
     public updateSettings(settings: DeepPartial<Settings>): void {
-        this.settingsStore.setAll(settings);
+        this.updateIndividualSettings(settings, "");
         if (!!this.settings$) {
             this.settings$.next(this.getSettingsFromDefaultsFile());
         }
@@ -42,14 +42,27 @@ export class SettingsProvider {
     private getSettingsFromDefault(currentDefaultSettings: any, parentPath: string): any {
         const currentSettings: any = {};
         for (const key of Object.keys(currentDefaultSettings)) {
-            const currentPath = !!parentPath ? `${parentPath}.${key}` : key;
-            if (_.isPlainObject(currentDefaultSettings[key])) {
-                currentSettings[key] = this.getSettingsFromDefault(currentDefaultSettings[key], currentPath);
-            }
-
-            currentSettings[key] = this.settingsStore.getOrSetDefault(currentPath, currentDefaultSettings[key]);
+            const currentPath = this.getCurrentPath(parentPath, key);
+            currentSettings[key] = _.isPlainObject(currentDefaultSettings[key])
+                ? this.getSettingsFromDefault(currentDefaultSettings[key], currentPath)
+                : this.settingsStore.getOrSetDefault(currentPath, currentDefaultSettings[key]);
         }
 
         return currentSettings;
+    }
+
+    private updateIndividualSettings(currentSetting: any, parentPath: string): void {
+        for (const key of Object.keys(currentSetting)) {
+            const currentPath = this.getCurrentPath(parentPath, key);
+            if (_.isPlainObject(currentSetting[key])) {
+                this.updateIndividualSettings(currentSetting[key], currentPath);
+            } else {
+                this.settingsStore.set(currentPath, currentSetting[key]);
+            }
+        }
+    }
+
+    private getCurrentPath(parentPath: string, key: string): string {
+        return !!parentPath ? `${parentPath}.${key}` : key;
     }
 }

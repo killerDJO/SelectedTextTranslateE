@@ -1,26 +1,16 @@
 <template>
   <div class="settings">
-    <div class="pane-group">
-      <div class="pane-sm sidebar">
-        <nav class="nav-group">
-          <span class="nav-group-item" :class="{'active': isActiveGroup(SettingsGroup.Scaling)}" @click="setSettingsGroup(SettingsGroup.Scaling)">
-            <span class="icon icon-resize-full"></span>
-            Scaling
-          </span>
-          <span class="nav-group-item" :class="{'active': isActiveGroup(SettingsGroup.Hotkeys)}" @click="setSettingsGroup(SettingsGroup.Hotkeys)">
-            <span class="icon icon-keyboard"></span>
-            Hotkeys
-          </span>
-        </nav>
-      </div>
-      <div class="pane" v-if="settings !== null">
-        <scaling-settings v-show="isActiveGroup(SettingsGroup.Scaling)" />
-        <hotkey-settings v-show="isActiveGroup(SettingsGroup.Hotkeys)" 
-              :hotkey-settings="settings.hotkeys"
-              @hotkey-input-started="hotkeyInputStarted"
-              @hotkey-input-completed="hotkeyInputCompleted"
-              @hotkeys-updated="updateHotkeySettings"/>
-      </div>
+    <div v-if="settings !== null">
+      <hotkey-settings
+            :hotkey-settings="settings.hotkeys"
+            @hotkey-input-started="pauseHotkeys"
+            @hotkey-input-completed="enableHotkeys"
+            @hotkeys-updated="updateHotkeySettings"/>
+      <scaling-settings 
+        :scaling-settings="settings.scaling"
+        :scaling-state="scalingState"
+        @scaling-settings-updated="updateScalingSettings"
+        @scaling-changed="changeScaling"/>
     </div>
   </div>
 </template>

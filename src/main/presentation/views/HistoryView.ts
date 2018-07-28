@@ -6,6 +6,7 @@ import { ViewContext } from "presentation/framework/ViewContext";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
 import { Messages } from "common/messaging/Messages";
+import { mapSubject } from "utils/map-subject";
 
 export class HistoryView extends ViewBase {
 
@@ -17,7 +18,7 @@ export class HistoryView extends ViewBase {
             iconName: "tray",
             isFrameless: false,
             title: "History",
-            isScalingEnabled: !viewContext.scalingSettings.scaleTranslationViewOnly
+            isScalingEnabled: mapSubject(viewContext.scalingSettings, scaling => !scaling.scaleTranslationViewOnly)
         });
 
         this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.RequestHistoryRecords);

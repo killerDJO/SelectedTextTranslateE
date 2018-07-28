@@ -1,4 +1,3 @@
 export interface EditableScalingSettings {
-    readonly autoScale: boolean;
-    readonly initialScaling: number;
+    readonly scaleTranslationViewOnly: boolean;
 }

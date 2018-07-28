@@ -7,28 +7,37 @@ import { Settings } from "business-logic/settings/dto/Settings";
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { Messages } from "common/messaging/Messages";
 import { DeepPartial } from "utils/deep-partial";
+import { mapSubject } from "utils/map-subject";
+import { ScalingState } from "common/dto/settings/ScalingState";
 
 export class SettingsView extends ViewBase {
 
     public readonly pauseHotkeys$!: Observable<boolean>;
     public readonly updatedSettings$!: Observable<DeepPartial<Settings>>;
+    public readonly setScaleFactor$!: Observable<number>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.Settings, viewContext, {
             iconName: "tray",
             isFrameless: false,
             title: "Settings",
-            isScalingEnabled: !viewContext.scalingSettings.scaleTranslationViewOnly
+            isScalingEnabled: mapSubject(viewContext.scalingSettings, scaling => !scaling.scaleTranslationViewOnly)
         });
 
         this.pauseHotkeys$ = this.messageBus.getValue<boolean>(Messages.PauseHotkeys);
         this.messageBus.registerObservable(Messages.PauseHotkeys, this.pauseHotkeys$);
         this.updatedSettings$ = this.messageBus.getValue<EditableSettings>(Messages.EditableSettingsUpdated).map(editableSettings => this.getSettings(editableSettings));
+        this.setScaleFactor$ = this.messageBus.getValue<number>(Messages.SetScaleFactorCommand);
     }
 
     public setSettings(settings$: Observable<Settings>): void {
         this.registerSubscription(
             this.messageBus.registerObservable(Messages.EditableSettings, settings$.map(this.getEditableSettings)));
+    }
+
+    public setScalingState(scalingState$: Observable<ScalingState>): void {
+        this.registerSubscription(
+            this.messageBus.registerObservable(Messages.ScalingState, scalingState$));
     }
 
     protected getInitialBounds(): Electron.Rectangle {
@@ -48,7 +57,9 @@ export class SettingsView extends ViewBase {
                     zoomOut: settings.renderer.hotkeys.zoomOut
                 }
             },
-            scaling: settings.scaling
+            scaling: {
+                scaleTranslationViewOnly: settings.scaling.scaleTranslationViewOnly
+            }
         };
     }
 
@@ -64,7 +75,9 @@ export class SettingsView extends ViewBase {
                     zoomOut: settings.hotkeys.local.zoomOut
                 }
             },
-            scaling: settings.scaling
+            scaling: {
+                scaleTranslationViewOnly: settings.scaling.scaleTranslationViewOnly
+            }
         };
     }
 }

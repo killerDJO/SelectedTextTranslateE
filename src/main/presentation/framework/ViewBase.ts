@@ -14,8 +14,10 @@ export abstract class ViewBase {
 
     protected readonly window: BrowserWindow;
     protected readonly messageBus: MessageBus;
-    protected readonly scaler: IScaler;
     protected readonly isReadyToShow$: BehaviorSubject<boolean>;
+
+    private scalerSubscription: Subscription | null = null;
+    protected scaler!: IScaler;
 
     constructor(
         public readonly viewName: ViewNames,
@@ -27,11 +29,10 @@ export abstract class ViewBase {
         this.isReadyToShow$ = new BehaviorSubject<boolean>(false);
         this.loadWindow();
 
-        this.scaler = this.context.scalerFactory.createScaler(viewOptions.isScalingEnabled);
-
         this.messageBus = new MessageBus(this.window);
         this.messageBus.sendValue(Messages.IsFramelessWindow, this.viewOptions.isFrameless);
-        this.messageBus.registerObservable(Messages.RendererSettings, this.context.rendererSettings);
+        this.registerSubscription(this.messageBus.registerObservable(Messages.RendererSettings, this.context.rendererSettings));
+        this.registerSubscription(viewOptions.isScalingEnabled.distinctUntilChanged().subscribe(isScalingEnabled => this.setScaler(isScalingEnabled)));
 
         this.initializeSubscriptions();
         this.window.setBounds(this.getInitialBounds());
@@ -49,11 +50,6 @@ export abstract class ViewBase {
 
     public isDestroyed(): boolean {
         return this.window.isDestroyed();
-    }
-
-    protected scale(): void {
-        this.window.setBounds(this.scaleBounds(this.window.getBounds()));
-        this.messageBus.sendValue(Messages.ScaleFactor, this.scaler.scaleFactor$.value);
     }
 
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
@@ -77,6 +73,18 @@ export abstract class ViewBase {
 
     protected abstract getInitialBounds(): Electron.Rectangle;
 
+    protected registerSubscription(subscription: Subscription): void {
+        this.subscriptions.push(subscription);
+    }
+
+    private setScaler(isScalingEnabled: boolean): void {
+        if (!!this.scalerSubscription) {
+            this.scalerSubscription.unsubscribe();
+        }
+        this.scaler = this.context.scalerFactory.createScaler(isScalingEnabled);
+        this.scalerSubscription = this.scaler.scaleFactor$.subscribe(scaleFactor => this.scale(scaleFactor));
+    }
+
     private getWindowSettings(): Electron.BrowserWindowConstructorOptions {
         return {
             frame: !this.viewOptions.isFrameless,
@@ -99,7 +107,6 @@ export abstract class ViewBase {
     }
 
     private initializeSubscriptions(): void {
-        this.registerSubscription(this.scaler.scaleFactor$.subscribe(this.scale.bind(this)));
         this.messageBus.registerObservable(Messages.AccentColor, this.context.accentColorProvider.accentColor$);
         this.messageBus.getValue<Error>(Messages.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
         this.messageBus.getValue<void>(Messages.ZoomInCommand).subscribe(() => this.scaler.zoomIn());
@@ -108,14 +115,20 @@ export abstract class ViewBase {
         this.window.once("closed", () => this.destroy());
     }
 
-    protected registerSubscription(subscription: Subscription): void {
-        this.subscriptions.push(subscription);
+    private scale(scaleFactor: number): void {
+        this.window.setBounds(this.scaleBounds(this.window.getBounds()));
+        this.messageBus.sendValue(Messages.ScaleFactor, scaleFactor);
     }
 
     private destroy(): void {
         for (const subscription of this.subscriptions) {
             subscription.unsubscribe();
         }
+
+        if (!!this.scalerSubscription) {
+            this.scalerSubscription.unsubscribe();
+        }
+
         this.messageBus.destroy();
     }
 }

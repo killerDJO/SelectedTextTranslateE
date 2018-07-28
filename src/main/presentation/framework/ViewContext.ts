@@ -1,4 +1,4 @@
-import { Observable } from "rxjs";
+import { Observable, BehaviorSubject } from "rxjs";
 import { injectable } from "inversify";
 
 import { AccentColorProvider } from "presentation/framework/AccentColorProvider";
@@ -8,6 +8,7 @@ import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
 import { ViewsSettings, ScalingSettings } from "business-logic/settings/dto/Settings";
 import { RendererSettings } from "common/dto/settings/renderer-settings/RendererSettings";
+import { mapSubject } from "utils/map-subject";
 
 @injectable()
 export class ViewContext {
@@ -24,8 +25,8 @@ export class ViewContext {
         return this.settingsProvider.getSettings().value.views;
     }
 
-    public get scalingSettings(): ScalingSettings {
-        return this.settingsProvider.getSettings().value.scaling;
+    public get scalingSettings(): BehaviorSubject<ScalingSettings> {
+        return mapSubject(this.settingsProvider.getSettings(), settings => settings.scaling);
     }
 
     public get rendererSettings(): Observable<RendererSettings> {

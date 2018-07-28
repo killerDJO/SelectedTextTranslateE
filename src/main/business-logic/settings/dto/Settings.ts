@@ -35,9 +35,10 @@ export interface ViewSize {
 export interface ScalingSettings {
     readonly verticalResolutionBaseline: number;
     readonly scalingStep: number;
-    readonly autoScale: boolean;
+    readonly minScaling: number;
+    readonly maxScaling: number;
     readonly scaleTranslationViewOnly: boolean;
-    readonly initialScaling: number;
+    readonly scaleFactor: number;
 }
 
 export interface TranslationSettings extends ViewSize {

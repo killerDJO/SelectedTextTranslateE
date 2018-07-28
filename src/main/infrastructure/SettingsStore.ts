@@ -18,10 +18,6 @@ export class SettingsStore {
         return this.store.get(name);
     }
 
-    public setAll(settings: {}) {
-        this.store.set(settings);
-    }
-
     public set<TValue>(name: string, value: TValue) {
         this.store.set(name, value);
     }

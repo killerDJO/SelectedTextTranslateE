@@ -20,11 +20,11 @@ export class NullScaler implements IScaler {
     public zoomOut(): void {
     }
 
-    public scale(value: number): number {
+    public scaleValue(value: number): number {
         return value;
     }
 
-    public rescale(value: number): number {
+    public rescaleValue(value: number): number {
         return value;
     }
 }

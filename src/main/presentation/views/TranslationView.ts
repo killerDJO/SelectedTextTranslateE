@@ -1,5 +1,5 @@
 import { screen } from "electron";
-import { Observable } from "rxjs";
+import { Observable, BehaviorSubject } from "rxjs";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
@@ -15,7 +15,10 @@ export class TranslationView extends ViewBase {
     public readonly forceTranslateText$!: Observable<string>;
 
     constructor(viewContext: ViewContext) {
-        super(ViewNames.TranslationResult, viewContext, { isFrameless: true, isScalingEnabled: true });
+        super(ViewNames.TranslationResult, viewContext, {
+            isFrameless: true,
+            isScalingEnabled: new BehaviorSubject(true)
+        });
 
         this.window.setAlwaysOnTop(true);
         this.window.setSkipTaskbar(true);
@@ -35,8 +38,8 @@ export class TranslationView extends ViewBase {
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
         const bottomRightX = bounds.x + bounds.width;
         const bottomRightY = bounds.y + bounds.height;
-        const width = this.scaler.rescale(bounds.width);
-        const height = this.scaler.rescale(bounds.height);
+        const width = this.scaler.rescaleValue(bounds.width);
+        const height = this.scaler.rescaleValue(bounds.height);
         return {
             width: width,
             height: height,
@@ -49,8 +52,8 @@ export class TranslationView extends ViewBase {
         const primaryDisplay = screen.getPrimaryDisplay();
 
         const translationSettings = this.context.viewsSettings.translation;
-        const width = this.scaler.scale(translationSettings.width);
-        const height = this.scaler.scale(translationSettings.height);
+        const width = this.scaler.scaleValue(translationSettings.width);
+        const height = this.scaler.scaleValue(translationSettings.height);
         return {
             width: width,
             height: height,
