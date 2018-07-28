@@ -32,7 +32,8 @@ export default class HotkeySettings extends Vue {
         ["translate", "Translate Text"],
         ["playText", "Play Text"],
         ["zoomIn", "Zoom In"],
-        ["zoomOut", "Zoom Out"]
+        ["zoomOut", "Zoom Out"],
+        ["resetZoom", "Reset Zoom"]
     ]);
 
     public currentCommand: Command | null = null;

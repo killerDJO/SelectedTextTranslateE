@@ -10,12 +10,10 @@ import { mapSubject } from "utils/map-subject";
 
 @injectable()
 export class Scaler implements IScaler {
-    private readonly previousScaleFactor$: BehaviorSubject<number>;
     public readonly scaleFactor$: BehaviorSubject<number>;
 
     constructor(private readonly settingsProvider: SettingsProvider) {
         this.scaleFactor$ = new BehaviorSubject(this.getInitialScaleFactor());
-        this.previousScaleFactor$ = new BehaviorSubject(this.scaleFactor$.value);
 
         this.scaleFactor$.subscribe(scaleFactor => this.settingsProvider.updateSettings({ scaling: { scaleFactor } }));
     }
@@ -27,6 +25,10 @@ export class Scaler implements IScaler {
         }
 
         this.changeScale(newScaleFactor);
+    }
+
+    public reset(): void {
+        this.changeScale(1);
     }
 
     public zoomOut(): void {
@@ -42,15 +44,15 @@ export class Scaler implements IScaler {
         if (scaleFactor > this.scalingSettings.maxScaling || scaleFactor < this.scalingSettings.minScaling) {
             throw Error("Invalid scale factor");
         }
-        this.scaleFactor$.next(scaleFactor);
+        this.changeScale(scaleFactor);
     }
 
     public scaleValue(value: number): number {
         return Math.round(this.scaleFactor$.value * value);
     }
 
-    public rescaleValue(value: number): number {
-        return Math.round(this.scaleFactor$.value / this.previousScaleFactor$.value * value);
+    public rescaleValue(value: number, previousScaleFactor: number): number {
+        return Math.round(this.scaleFactor$.value / previousScaleFactor * value);
     }
 
     public get scalingState(): BehaviorSubject<ScalingState> {
@@ -73,7 +75,6 @@ export class Scaler implements IScaler {
     }
 
     private changeScale(newScaleFactor: number) {
-        this.savePreviousScaleFactor();
         this.scaleFactor$.next(newScaleFactor);
     }
 
@@ -83,9 +84,5 @@ export class Scaler implements IScaler {
 
     private getInitialScaleFactor(): number {
         return this.settingsProvider.getSettings().value.scaling.scaleFactor;
-    }
-
-    private savePreviousScaleFactor(): void {
-        this.previousScaleFactor$.next(this.scaleFactor$.value);
     }
 }

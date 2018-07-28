@@ -13,4 +13,5 @@ export interface GlobalHotkeySettings {
 export interface LocalHotkeySettings {
     readonly zoomIn: Hotkey[];
     readonly zoomOut: Hotkey[];
+    readonly resetZoom: Hotkey[];
 }

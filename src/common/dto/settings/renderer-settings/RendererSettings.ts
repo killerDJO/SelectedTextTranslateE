@@ -7,4 +7,5 @@ export interface RendererSettings {
 export interface HotkeySettings {
     readonly zoomIn: Hotkey[];
     readonly zoomOut: Hotkey[];
+    readonly resetZoom: Hotkey[];
 }

@@ -18,6 +18,7 @@ export default class App extends Vue {
     @ns.Action private readonly fetchData!: () => void;
     @ns.Action private readonly zoomIn!: () => void;
     @ns.Action private readonly zoomOut!: () => void;
+    @ns.Action private readonly resetZoom!: () => void;
 
     private readonly hotkeysRegistry: HotkeysRegistry = new HotkeysRegistry();
 
@@ -55,5 +56,6 @@ export default class App extends Vue {
 
         this.hotkeysRegistry.registerHotkeys(this.hotkeySettings.zoomIn, this.zoomIn);
         this.hotkeysRegistry.registerHotkeys(this.hotkeySettings.zoomOut, this.zoomOut);
+        this.hotkeysRegistry.registerHotkeys(this.hotkeySettings.resetZoom, this.resetZoom);
     }
 }

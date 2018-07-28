@@ -111,6 +111,7 @@ export abstract class ViewBase {
         this.messageBus.getValue<Error>(Messages.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
         this.messageBus.getValue<void>(Messages.ZoomInCommand).subscribe(() => this.scaler.zoomIn());
         this.messageBus.getValue<void>(Messages.ZoomOutCommand).subscribe(() => this.scaler.zoomOut());
+        this.messageBus.getValue<void>(Messages.ResetZoomCommand).subscribe(() => this.scaler.reset());
         this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
         this.window.once("closed", () => this.destroy());
     }

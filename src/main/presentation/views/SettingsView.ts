@@ -54,7 +54,8 @@ export class SettingsView extends ViewBase {
                 },
                 local: {
                     zoomIn: settings.renderer.hotkeys.zoomIn,
-                    zoomOut: settings.renderer.hotkeys.zoomOut
+                    zoomOut: settings.renderer.hotkeys.zoomOut,
+                    resetZoom: settings.renderer.hotkeys.resetZoom
                 }
             },
             scaling: {
@@ -72,7 +73,8 @@ export class SettingsView extends ViewBase {
             renderer: {
                 hotkeys: {
                     zoomIn: settings.hotkeys.local.zoomIn,
-                    zoomOut: settings.hotkeys.local.zoomOut
+                    zoomOut: settings.hotkeys.local.zoomOut,
+                    resetZoom: settings.hotkeys.local.resetZoom
                 }
             },
             scaling: {

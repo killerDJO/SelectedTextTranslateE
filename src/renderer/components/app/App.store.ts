@@ -57,6 +57,9 @@ export const app: Module<ApplicationState, RootState> = {
         },
         zoomOut(): void {
             messageBus.sendCommand(Messages.ZoomOutCommand);
+        },
+        resetZoom(): void {
+            messageBus.sendCommand(Messages.ResetZoomCommand);
         }
     },
     modules: {

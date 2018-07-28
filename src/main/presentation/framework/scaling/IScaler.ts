@@ -5,6 +5,7 @@ export interface IScaler {
 
     zoomIn(): void;
     zoomOut(): void;
+    reset(): void;
     scaleValue(value: number): number;
-    rescaleValue(value: number): number;
+    rescaleValue(value: number, previousScaleFactor: number): number;
 }

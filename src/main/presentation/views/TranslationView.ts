@@ -10,6 +10,8 @@ import { ViewContext } from "presentation/framework/ViewContext";
 
 export class TranslationView extends ViewBase {
 
+    private currentScaleFactor: number | null = null;
+
     public readonly playText$!: Observable<string>;
     public readonly translateText$!: Observable<string>;
     public readonly forceTranslateText$!: Observable<string>;
@@ -38,8 +40,12 @@ export class TranslationView extends ViewBase {
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
         const bottomRightX = bounds.x + bounds.width;
         const bottomRightY = bounds.y + bounds.height;
-        const width = this.scaler.rescaleValue(bounds.width);
-        const height = this.scaler.rescaleValue(bounds.height);
+        const previousScaleFactor = this.currentScaleFactor || this.scaler.scaleFactor$.value;
+        const width = this.scaler.rescaleValue(bounds.width, previousScaleFactor);
+        const height = this.scaler.rescaleValue(bounds.height, previousScaleFactor);
+
+        this.setCurrentScaleFactor();
+
         return {
             width: width,
             height: height,
@@ -54,11 +60,18 @@ export class TranslationView extends ViewBase {
         const translationSettings = this.context.viewsSettings.translation;
         const width = this.scaler.scaleValue(translationSettings.width);
         const height = this.scaler.scaleValue(translationSettings.height);
+
+        this.setCurrentScaleFactor();
+
         return {
             width: width,
             height: height,
             x: primaryDisplay.workArea.width - width - translationSettings.margin,
             y: primaryDisplay.workArea.height - height - translationSettings.margin
         };
+    }
+
+    private setCurrentScaleFactor(): void {
+        this.currentScaleFactor = this.scaler.scaleFactor$.value;
     }
 }

@@ -16,6 +16,7 @@ export enum Messages {
 
     ZoomInCommand = "zoom-in",
     ZoomOutCommand = "zoom-out",
+    ResetZoomCommand = "reset-zoom",
     SetScaleFactorCommand = "set-scale-factor",
 
     RendererError = "renderer-error",

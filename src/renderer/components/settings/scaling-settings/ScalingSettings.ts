@@ -37,4 +37,11 @@ export default class ScalingSettings extends Vue {
     public set scaleFactor(value: number) {
         this.$emit(ScalingSettings.ScalingChangedEvent, value / 100);
     }
+
+    public resetScaleFactor() {
+        if (!this.scalingState) {
+            return;
+        }
+        this.$emit(ScalingSettings.ScalingChangedEvent, this.scalingState.autoScaleFactor);
+    }
 }

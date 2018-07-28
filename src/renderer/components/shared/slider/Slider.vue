@@ -1,6 +1,6 @@
 <template>
   <div class="slider-holder">
-        <span class="range-value min-value">{{minValue}}</span>
+        <span class="range-value min-value">{{minValue | percent}}</span>
         <input type="range" 
           :min="minValue"
           :max="maxValue"
@@ -8,7 +8,7 @@
           @input="$emit('input', $event.target.value)"
           :step="step"
           class="slider">
-        <span class="range-value max-value">{{maxValue}}</span>
+        <span class="range-value max-value">{{maxValue | percent}}</span>
       </div>
 </template>
 

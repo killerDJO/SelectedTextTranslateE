@@ -20,11 +20,15 @@ export class NullScaler implements IScaler {
     public zoomOut(): void {
     }
 
+    // tslint:disable-next-line:no-empty
+    public reset(): void {
+    }
+
     public scaleValue(value: number): number {
         return value;
     }
 
-    public rescaleValue(value: number): number {
+    public rescaleValue(value: number, previousScaleFactor: number): number {
         return value;
     }
 }

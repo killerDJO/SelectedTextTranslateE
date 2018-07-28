@@ -1,12 +1,13 @@
 <template>
   <settings-holder :title="'Scaling'" v-if="!!scalingState && !!currentScalingSettings">
-    <div>
-      <span>Scaling Factor - {{scalingState.scaleFactor * 100 | percent}}</span>
+    <div class="scaling-input">
+      <span>Scale Factor - {{scalingState.scaleFactor * 100 | percent}}</span>
       <slider
         :min-value="scalingState.minScaling * 100"
         :max-value="scalingState.maxScaling * 100"
         :step="scalingState.scalingStep * 100"
         v-model="scaleFactor" />
+      <span class="link-button" @click="resetScaleFactor">Set Default Scale Factor</span>
     </div>
     <div class="checkbox">
       <label>
