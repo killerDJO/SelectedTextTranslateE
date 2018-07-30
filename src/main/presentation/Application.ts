@@ -55,6 +55,7 @@ export class Application {
 
     private setupSettingsView(settingsView: SettingsView): void {
         settingsView.setSettings(this.settingsProvider.getSettings());
+        settingsView.setDefaultSettings(this.settingsProvider.getDefaultSettings());
         settingsView.setScalingState(this.scaler.scalingState);
         settingsView.setScaleFactor$.subscribe(scaleFactor => this.scaler.setScaleFactor(scaleFactor));
         settingsView.pauseHotkeys$.subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());

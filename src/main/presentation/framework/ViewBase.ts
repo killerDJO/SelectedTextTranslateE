@@ -30,8 +30,8 @@ export abstract class ViewBase {
         this.loadWindow();
 
         this.messageBus = new MessageBus(this.window);
-        this.messageBus.sendValue(Messages.IsFramelessWindow, this.viewOptions.isFrameless);
-        this.registerSubscription(this.messageBus.registerObservable(Messages.RendererSettings, this.context.rendererSettings));
+        this.messageBus.sendValue(Messages.Common.IsFramelessWindow, this.viewOptions.isFrameless);
+        this.registerSubscription(this.messageBus.registerObservable(Messages.Common.RendererSettings, this.context.rendererSettings));
         this.registerSubscription(viewOptions.isScalingEnabled.distinctUntilChanged().subscribe(isScalingEnabled => this.setScaler(isScalingEnabled)));
 
         this.initializeSubscriptions();
@@ -107,18 +107,18 @@ export abstract class ViewBase {
     }
 
     private initializeSubscriptions(): void {
-        this.messageBus.registerObservable(Messages.AccentColor, this.context.accentColorProvider.accentColor$);
-        this.messageBus.getValue<Error>(Messages.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
-        this.messageBus.getValue<void>(Messages.ZoomInCommand).subscribe(() => this.scaler.zoomIn());
-        this.messageBus.getValue<void>(Messages.ZoomOutCommand).subscribe(() => this.scaler.zoomOut());
-        this.messageBus.getValue<void>(Messages.ResetZoomCommand).subscribe(() => this.scaler.reset());
+        this.messageBus.registerObservable(Messages.Common.AccentColor, this.context.accentColorProvider.accentColor$);
+        this.messageBus.getValue<Error>(Messages.Common.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
+        this.messageBus.getValue<void>(Messages.Common.ZoomInCommand).subscribe(() => this.scaler.zoomIn());
+        this.messageBus.getValue<void>(Messages.Common.ZoomOutCommand).subscribe(() => this.scaler.zoomOut());
+        this.messageBus.getValue<void>(Messages.Common.ResetZoomCommand).subscribe(() => this.scaler.reset());
         this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
         this.window.once("closed", () => this.destroy());
     }
 
     private scale(scaleFactor: number): void {
         this.window.setBounds(this.scaleBounds(this.window.getBounds()));
-        this.messageBus.sendValue(Messages.ScaleFactor, scaleFactor);
+        this.messageBus.sendValue(Messages.Common.ScaleFactor, scaleFactor);
     }
 
     private destroy(): void {

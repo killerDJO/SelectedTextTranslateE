@@ -31,20 +31,24 @@ export class SettingsProvider {
         }
     }
 
-    private getSettingsFromDefaultsFile(): Settings {
+    public getDefaultSettings(): Settings {
         const defaultSettingsPath = path.resolve(__dirname, "default-settings.json");
         const defaultSettingsContent = fs.readFileSync(defaultSettingsPath).toString("utf8");
-        const defaultSettings = JSON.parse(defaultSettingsContent);
-        const settings = this.getSettingsFromDefault(defaultSettings, "") as Settings;
+        return JSON.parse(defaultSettingsContent) as Settings;
+    }
+
+    private getSettingsFromDefaultsFile(): Settings {
+        const defaultSettings = this.getDefaultSettings();
+        const settings = this.getSettingsByDefaultSettings(defaultSettings, "") as Settings;
         return settings;
     }
 
-    private getSettingsFromDefault(currentDefaultSettings: any, parentPath: string): any {
+    private getSettingsByDefaultSettings(currentDefaultSettings: any, parentPath: string): any {
         const currentSettings: any = {};
         for (const key of Object.keys(currentDefaultSettings)) {
             const currentPath = this.getCurrentPath(parentPath, key);
             currentSettings[key] = _.isPlainObject(currentDefaultSettings[key])
-                ? this.getSettingsFromDefault(currentDefaultSettings[key], currentPath)
+                ? this.getSettingsByDefaultSettings(currentDefaultSettings[key], currentPath)
                 : this.settingsStore.getOrSetDefault(currentPath, currentDefaultSettings[key]);
         }
 

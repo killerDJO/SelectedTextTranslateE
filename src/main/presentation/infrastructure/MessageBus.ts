@@ -1,7 +1,7 @@
-import { Observable, ReplaySubject, Subscription as RxJxSubscription } from "rxjs";
+import { Observable, ReplaySubject, Subscription as RxJsSubscription } from "rxjs";
 import { ipcMain } from "electron";
 
-import { Channels, Messages } from "common/messaging/Messages";
+import { Channels } from "common/messaging/Messages";
 
 interface Subscription {
     readonly channel: string;
@@ -32,7 +32,7 @@ export class MessageBus {
         ipcMain.on(subscription.channel, subscription.callback);
     }
 
-    public registerObservable<TValue>(name: Messages, observable$: Observable<TValue>): RxJxSubscription {
+    public registerObservable<TValue>(name: string, observable$: Observable<TValue>): RxJsSubscription {
         if (this.observablesRegistry[name]) {
             return observable$.subscribe(value => this.observablesRegistry[name].next(value));
         }
@@ -49,15 +49,15 @@ export class MessageBus {
         return subscription;
     }
 
-    public sendValue<TValue>(name: Messages, value: TValue): void {
+    public sendValue<TValue>(name: string, value: TValue): void {
         this.registerObservable(name, Observable.of(value));
     }
 
-    public sendNotification(name: Messages): void {
+    public sendNotification(name: string): void {
         this.registerObservable(name, Observable.of(null));
     }
 
-    public getValue<TValue>(name: Messages): Observable<TValue> {
+    public getValue<TValue>(name: string): Observable<TValue> {
         const subject$ = new ReplaySubject<TValue>(1);
         const subscription = this.createSubscription(Channels.Observe, (event: Electron.Event, receivedName: string, observable: TValue) => {
             if (!this.isCurrentWindowEvent(event)) {

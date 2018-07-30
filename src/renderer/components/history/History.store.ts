@@ -41,14 +41,14 @@ export const history: Module<HistoryState, RootState> = {
     },
     actions: {
         setup({ commit, dispatch }): void {
-            messageBus.getValue<HistoryRecord[]>(Messages.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
-            messageBus.getNotification(Messages.HistoryUpdated, () => dispatch("requestHistoryRecords"));
+            messageBus.getValue<HistoryRecord[]>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
+            messageBus.getNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
         },
         requestHistoryRecords({ state }): void {
-            messageBus.sendCommand<HistoryRecordsRequest>(Messages.RequestHistoryRecords, { limit: state.limit, sortColumn: state.sortColumn, sortOrder: state.sortOrder });
+            messageBus.sendCommand<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords, { limit: state.limit, sortColumn: state.sortColumn, sortOrder: state.sortOrder });
         },
         translateWord(_, word: string): void {
-            messageBus.sendCommand<string>(Messages.TranslateCommand, word);
+            messageBus.sendCommand<string>(Messages.Translation.TranslateCommand, word);
         }
     }
 };

@@ -88,7 +88,7 @@ export default class HotkeyInput extends Vue {
             return String.fromCharCode(event.keyCode);
         }
 
-        return event.key;
+        return this.remapKey(event.key);
     }
 
     private isModifierKey(event: KeyboardEvent): boolean {
@@ -97,5 +97,16 @@ export default class HotkeyInput extends Vue {
 
     private createHotkey(): Hotkey {
         return { keys: this.keys.slice() };
+    }
+
+    private remapKey(key: string): string {
+        const keysMap: { [key: string]: string } = {
+            "ArrowRight": "Right",
+            "ArrowLeft": "Left",
+            "ArrowUp": "Up",
+            "ArrowDown": "Down",
+            " ": "Space"
+        };
+        return keysMap[key] || key;
     }
 }

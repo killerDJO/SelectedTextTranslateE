@@ -5,6 +5,8 @@ import { injectable } from "inversify";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";;
 import { Hotkey } from "common/dto/settings/Hotkey";
 import { HotkeySettings } from "business-logic/settings/dto/Settings";
+import { NotificationSender } from "infrastructure/NotificationSender";
+import { Logger } from "infrastructure/Logger";
 
 @injectable()
 export class HotkeysRegistry {
@@ -15,7 +17,10 @@ export class HotkeysRegistry {
     public readonly translate$: Subject<void> = new Subject();
     public readonly playText$: Subject<void> = new Subject();
 
-    constructor(private readonly settingsProvider: SettingsProvider) {
+    constructor(
+        private readonly settingsProvider: SettingsProvider,
+        private readonly notificationSender: NotificationSender,
+        private readonly logger: Logger) {
         this.currentHotkeys = this.getHotkeys();
         this.settingsProvider.getSettings().subscribe(() => this.remapHotkeys());
     }
@@ -60,11 +65,23 @@ export class HotkeysRegistry {
     }
 
     private registerCommand(hotkeys: Hotkey[], action: () => void): void {
-        hotkeys.forEach(hotkey => globalShortcut.register(this.createAccelerator(hotkey), action));
+        hotkeys.forEach(hotkey => {
+            try {
+                globalShortcut.register(this.createAccelerator(hotkey), action);
+            } catch {
+                this.notificationSender.send("Unsupported hotkey", `This hotkeys combination is unsupported for global hotkeys: ${this.createAccelerator(hotkey)}.`);
+            }
+        });
     }
 
     private unregisterCommand(hotkeys: Hotkey[]): void {
-        hotkeys.forEach(hotkey => globalShortcut.unregister(this.createAccelerator(hotkey)));
+        hotkeys.forEach(hotkey => {
+            try {
+                globalShortcut.unregister(this.createAccelerator(hotkey));
+            } catch {
+                this.logger.warning(`Attempting to unbind unsupported hotkeys sequence: ${this.createAccelerator(hotkey)}`);
+            }
+        });
     }
 
     private createAccelerator(hotkey: Hotkey): Electron.Accelerator {

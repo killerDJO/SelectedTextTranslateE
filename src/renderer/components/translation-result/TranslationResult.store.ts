@@ -34,20 +34,20 @@ export const translationResult: Module<TranslationResultState, RootState> = {
     },
     actions: {
         fetchData({ commit }): void {
-            messageBus.getValue<TranslateResult | null>(Messages.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
-            messageBus.getValue<TranslationResultViewSettings>(Messages.TranslationResultViewSettings, translationResultViewSettings => {
+            messageBus.getValue<TranslateResult | null>(Messages.Translation.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
+            messageBus.getValue<TranslationResultViewSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => {
                 commit("setTranslationResultViewSettings", translationResultViewSettings);
                 commit("setInitialized");
             });
         },
         playText({ state }): void {
-            executeCommand(state, Messages.PlayTextCommand, translateResult => translateResult.sentence.input);
+            executeCommand(state, Messages.Translation.PlayTextCommand, translateResult => translateResult.sentence.input);
         },
         translateSuggestion({ state }): void {
-            executeCommand(state, Messages.TranslateCommand, translateResult => translateResult.sentence.suggestion);
+            executeCommand(state, Messages.Translation.TranslateCommand, translateResult => translateResult.sentence.suggestion);
         },
         forceTranslation({ state }): void {
-            executeCommand(state, Messages.ForceTranslateCommand, translateResult => translateResult.sentence.input);
+            executeCommand(state, Messages.Translation.ForceTranslateCommand, translateResult => translateResult.sentence.input);
         },
     }
 };

@@ -11,6 +11,7 @@ const messageBus = new MessageBus();
 
 interface SettingsState {
     settings: EditableSettings | null;
+    defaultSettings: EditableSettings | null;
     scalingState: ScalingState | null;
 }
 
@@ -18,11 +19,15 @@ export const settings: Module<SettingsState, RootState> = {
     namespaced: true,
     state: {
         settings: null,
-        scalingState: null
+        scalingState: null,
+        defaultSettings: null
     },
     mutations: {
         setSettings(state: SettingsState, editableSettings: EditableSettings): void {
             state.settings = editableSettings;
+        },
+        setDefaultSettings(state: SettingsState, defaultSettings: EditableSettings): void {
+            state.defaultSettings = defaultSettings;
         },
         setScalingState(state: SettingsState, scalingState: ScalingState): void {
             state.scalingState = scalingState;
@@ -30,23 +35,24 @@ export const settings: Module<SettingsState, RootState> = {
     },
     actions: {
         setup({ commit }): void {
-            messageBus.getValue<EditableSettings>(Messages.EditableSettings, editableSettings => commit("setSettings", editableSettings));
-            messageBus.getValue<ScalingState>(Messages.ScalingState, scalingState => commit("setScalingState", scalingState));
+            messageBus.getValue<EditableSettings>(Messages.Settings.EditableSettings, editableSettings => commit("setSettings", editableSettings));
+            messageBus.getValue<EditableSettings>(Messages.Settings.DefaultEditableSettings, defaultSettings => commit("setDefaultSettings", defaultSettings));
+            messageBus.getValue<ScalingState>(Messages.Settings.ScalingState, scalingState => commit("setScalingState", scalingState));
         },
         updateSettings({ state }, editableSettings: EditableSettings): void {
             if (_.isEqual(state.settings, editableSettings)) {
                 return;
             }
-            messageBus.sendCommand<EditableSettings>(Messages.EditableSettingsUpdated, editableSettings);
+            messageBus.sendCommand<EditableSettings>(Messages.Settings.EditableSettingsUpdated, editableSettings);
         },
         pauseHotkeys(): void {
-            messageBus.sendCommand<boolean>(Messages.PauseHotkeys, true);
+            messageBus.sendCommand<boolean>(Messages.Settings.PauseHotkeysRequest, true);
         },
         enableHotkeys(): void {
-            messageBus.sendCommand<boolean>(Messages.PauseHotkeys, false);
+            messageBus.sendCommand<boolean>(Messages.Settings.PauseHotkeysRequest, false);
         },
         changeScaling(_, scaleFactor: number): void {
-            messageBus.sendCommand<number>(Messages.SetScaleFactorCommand, scaleFactor);
+            messageBus.sendCommand<number>(Messages.Settings.SetScaleFactorCommand, scaleFactor);
         }
     }
 };

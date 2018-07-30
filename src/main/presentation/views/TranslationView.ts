@@ -25,16 +25,16 @@ export class TranslationView extends ViewBase {
         this.window.setAlwaysOnTop(true);
         this.window.setSkipTaskbar(true);
 
-        this.messageBus.sendValue(Messages.TranslationResultViewSettings, this.context.viewsSettings.translation.renderer);
-        this.playText$ = this.messageBus.getValue(Messages.PlayTextCommand);
-        this.translateText$ = this.messageBus.getValue(Messages.TranslateCommand);
-        this.forceTranslateText$ = this.messageBus.getValue(Messages.ForceTranslateCommand);
+        this.messageBus.sendValue(Messages.Translation.TranslationResultViewSettings, this.context.viewsSettings.translation.renderer);
+        this.playText$ = this.messageBus.getValue(Messages.Translation.PlayTextCommand);
+        this.translateText$ = this.messageBus.getValue(Messages.Translation.TranslateCommand);
+        this.forceTranslateText$ = this.messageBus.getValue(Messages.Translation.ForceTranslateCommand);
 
         this.window.on("blur", () => this.hide());
     }
 
     public setTranslateResult(translateResult: TranslateResult | null): void {
-        this.messageBus.sendValue(Messages.TranslateResult, translateResult);
+        this.messageBus.sendValue(Messages.Translation.TranslateResult, translateResult);
     }
 
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {

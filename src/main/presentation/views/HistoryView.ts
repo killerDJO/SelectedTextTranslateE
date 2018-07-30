@@ -21,16 +21,16 @@ export class HistoryView extends ViewBase {
             isScalingEnabled: mapSubject(viewContext.scalingSettings, scaling => !scaling.scaleTranslationViewOnly)
         });
 
-        this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.RequestHistoryRecords);
-        this.translateText$ = this.messageBus.getValue<string>(Messages.TranslateCommand);
+        this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
+        this.translateText$ = this.messageBus.getValue<string>(Messages.Translation.TranslateCommand);
     }
 
     public setHistoryRecords(historyRecords: HistoryRecord[]): void {
-        this.messageBus.sendValue(Messages.HistoryRecords, historyRecords);
+        this.messageBus.sendValue(Messages.History.HistoryRecords, historyRecords);
     }
 
     public subscribeToHistoryUpdate(historyUpdate$: Observable<void>): void {
-        this.registerSubscription(historyUpdate$.subscribe(() => this.messageBus.sendNotification(Messages.HistoryUpdated)));
+        this.registerSubscription(historyUpdate$.subscribe(() => this.messageBus.sendNotification(Messages.History.HistoryUpdated)));
     }
 
     protected getInitialBounds(): Electron.Rectangle {

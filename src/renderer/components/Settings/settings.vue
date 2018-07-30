@@ -1,12 +1,13 @@
 <template>
   <div class="settings">
-    <div v-if="settings !== null">
+    <div v-if="!!settings && !!defaultSettings">
       <hotkey-settings
             :hotkey-settings="settings.hotkeys"
+            :default-hotkey-settings="defaultSettings.hotkeys"
             @hotkey-input-started="pauseHotkeys"
             @hotkey-input-completed="enableHotkeys"
             @hotkeys-updated="updateHotkeySettings"/>
-      <scaling-settings 
+      <scaling-settings
         :scaling-settings="settings.scaling"
         :scaling-state="scalingState"
         @scaling-settings-updated="updateScalingSettings"

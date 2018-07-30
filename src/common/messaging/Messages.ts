@@ -3,32 +3,43 @@ export enum Channels {
     Observe = "observe"
 }
 
-export enum Messages {
-    AccentColor = "accent-color",
-    ScaleFactor = "scale-factor",
-    IsFramelessWindow = "is-frameless-window",
+export class Messages {
 
-    TranslateResult = "translate-result",
+    public static Common = class {
+        public static readonly AccentColor = "accent-color";
+        public static readonly ScaleFactor = "scale-factor";
+        public static readonly IsFramelessWindow = "is-frameless-window";
 
-    PlayTextCommand = "play-text-command",
-    TranslateCommand = "translate-command",
-    ForceTranslateCommand = "force-translate-command",
+        public static readonly ZoomInCommand = "zoom-in";
+        public static readonly ZoomOutCommand = "zoom-out";
+        public static readonly ResetZoomCommand = "reset-zoom";
+        public static readonly PauseHotkeys = "pause-hotkeys";
 
-    ZoomInCommand = "zoom-in",
-    ZoomOutCommand = "zoom-out",
-    ResetZoomCommand = "reset-zoom",
-    SetScaleFactorCommand = "set-scale-factor",
+        public static readonly RendererSettings = "renderer-settings";
 
-    RendererError = "renderer-error",
+        public static readonly RendererError = "renderer-error";
+    };
 
-    HistoryRecords = "history-records",
-    RequestHistoryRecords = "get-history-records",
-    HistoryUpdated = "history-updated",
+    public static Translation = class {
+        public static readonly TranslateResult = "translate-result";
+        public static readonly PlayTextCommand = "play-text-command";
+        public static readonly TranslateCommand = "translate-command";
+        public static readonly ForceTranslateCommand = "force-translate-command";
+        public static readonly TranslationResultViewSettings = "translation-result-view-settings";
+    };
 
-    RendererSettings = "renderer-settings",
-    EditableSettings = "editable-settings",
-    ScalingState = "scaling-state",
-    TranslationResultViewSettings = "translation-result-view-settings",
-    EditableSettingsUpdated = "editable-settings-updated",
-    PauseHotkeys = "pause-hotkeys",
+    public static History = class {
+        public static readonly HistoryRecords = "history-records";
+        public static readonly RequestHistoryRecords = "get-history-records";
+        public static readonly HistoryUpdated = "history-updated";
+    };
+
+    public static Settings = class {
+        public static readonly EditableSettings = "editable-settings";
+        public static readonly DefaultEditableSettings = "default-editable-settings";
+        public static readonly ScalingState = "scaling-state";
+        public static readonly EditableSettingsUpdated = "editable-settings-updated";
+        public static readonly PauseHotkeysRequest = "pause-hotkeys-request";
+        public static readonly SetScaleFactorCommand = "set-scale-factor";
+    };
 }

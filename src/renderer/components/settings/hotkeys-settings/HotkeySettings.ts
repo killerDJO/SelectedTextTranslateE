@@ -22,12 +22,13 @@ interface Command {
 export default class HotkeySettings extends Vue {
     @Prop(Object)
     public readonly hotkeySettings!: EditableHotkeySettings;
+    @Prop(Object)
+    public readonly defaultHotkeySettings!: EditableHotkeySettings;
 
     private static readonly HotkeyInputStartedEvent: string = "hotkey-input-started";
     private static readonly HotkeyInputCompletedEvent: string = "hotkey-input-completed";
     private static readonly HotkeysUpdatedEvent: string = "hotkeys-updated";
 
-    private readonly commands: Command[] = [];
     private readonly hotkeysDisplayName = new Map<keyof LocalHotkeySettings | keyof GlobalHotkeySettings, string>([
         ["translate", "Translate Text"],
         ["playText", "Play Text"],
@@ -36,19 +37,17 @@ export default class HotkeySettings extends Vue {
         ["resetZoom", "Reset Zoom"]
     ]);
 
-    public currentCommand: Command | null = null;
+    private commands: Command[] = [];
+    public currentCommandIndex: number = 0;
     public currentHotkey: Hotkey | null = null;
     public currentHotkeyValidationMessage: string | null = null;
+    public showResetHotkeysModal: boolean = false;
 
-    public mounted() {
-        this.createCommandsList();
-        this.currentCommand = this.commands[0];
+    public get currentCommand(): Command {
+        return this.commands[this.currentCommandIndex];
     }
 
     public get currentCommandKey(): string {
-        if (!this.currentCommand) {
-            return "";
-        }
         return this.currentCommand.key;
     }
 
@@ -57,7 +56,7 @@ export default class HotkeySettings extends Vue {
         if (!currentCommand) {
             return;
         }
-        this.currentCommand = currentCommand;
+        this.currentCommandIndex = this.commands.indexOf(currentCommand);
     }
 
     public get isAddHotkeyEnabled(): boolean {
@@ -130,7 +129,13 @@ export default class HotkeySettings extends Vue {
         this.$emit(HotkeySettings.HotkeysUpdatedEvent, updatedHotkeySettings);
     }
 
-    private createCommandsList(): void {
+    public resetHotkeySettings(): void {
+        this.$emit(HotkeySettings.HotkeysUpdatedEvent, this.defaultHotkeySettings);
+    }
+
+    @Watch("hotkeySettings", { immediate: true })
+    public createCommandsList(): void {
+        this.commands = [];
         for (const [key, value] of this.hotkeysDisplayName) {
             const hotkeySettings = _.cloneDeep(this.getHotkeySetting(key, this.hotkeySettings));
             this.commands.push({

@@ -24,20 +24,28 @@ export class SettingsView extends ViewBase {
             isScalingEnabled: mapSubject(viewContext.scalingSettings, scaling => !scaling.scaleTranslationViewOnly)
         });
 
-        this.pauseHotkeys$ = this.messageBus.getValue<boolean>(Messages.PauseHotkeys);
-        this.messageBus.registerObservable(Messages.PauseHotkeys, this.pauseHotkeys$);
-        this.updatedSettings$ = this.messageBus.getValue<EditableSettings>(Messages.EditableSettingsUpdated).map(editableSettings => this.getSettings(editableSettings));
-        this.setScaleFactor$ = this.messageBus.getValue<number>(Messages.SetScaleFactorCommand);
+        this.pauseHotkeys$ = this.messageBus.getValue<boolean>(Messages.Settings.PauseHotkeysRequest);
+        this.messageBus.registerObservable(Messages.Common.PauseHotkeys, this.pauseHotkeys$);
+        this.updatedSettings$ = this.messageBus.getValue<EditableSettings>(Messages.Settings.EditableSettingsUpdated).map(editableSettings => this.getSettings(editableSettings));
+        this.setScaleFactor$ = this.messageBus.getValue<number>(Messages.Settings.SetScaleFactorCommand);
     }
 
     public setSettings(settings$: Observable<Settings>): void {
-        this.registerSubscription(
-            this.messageBus.registerObservable(Messages.EditableSettings, settings$.map(this.getEditableSettings)));
+        this.setSettingsInternal(Messages.Settings.EditableSettings, settings$);
+    }
+
+    public setDefaultSettings(defaultSettings$: Settings): void {
+        this.setSettingsInternal(Messages.Settings.DefaultEditableSettings, Observable.of(defaultSettings$));
     }
 
     public setScalingState(scalingState$: Observable<ScalingState>): void {
         this.registerSubscription(
-            this.messageBus.registerObservable(Messages.ScalingState, scalingState$));
+            this.messageBus.registerObservable(Messages.Settings.ScalingState, scalingState$));
+    }
+
+    private setSettingsInternal(name: string, settings$: Observable<Settings>): void {
+        this.registerSubscription(
+            this.messageBus.registerObservable(name, settings$.map(this.getEditableSettings)));
     }
 
     protected getInitialBounds(): Electron.Rectangle {

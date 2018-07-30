@@ -7,6 +7,7 @@ import { root, RootState } from "root.store";
 import App from "components/app/App.vue";
 import ValidatedField from "components/shared/validated-field/ValidatedField.vue";
 import Slider from "components/shared/slider/Slider.vue";
+import ConfirmModal from "components/shared/confirm-modal/ConfirmModal.vue";
 
 import { router } from "router";
 import { MessageBus } from "communication/MessageBus";
@@ -46,6 +47,7 @@ class Bootstrapper {
     private static registerSharedComponents(): void {
         Vue.component("validated-field", ValidatedField);
         Vue.component("slider", Slider);
+        Vue.component("confirm-modal", ConfirmModal);
     }
 
     private static registerPlugins(): void {
@@ -66,7 +68,7 @@ class Bootstrapper {
     }
 
     private static sendErrorMessage(messageBus: MessageBus, error: Error): void {
-        messageBus.sendCommand<Error>(Messages.RendererError, { message: error.message, stack: error.stack, name: error.name });
+        messageBus.sendCommand<Error>(Messages.Common.RendererError, { message: error.message, stack: error.stack, name: error.name });
     }
 }
 

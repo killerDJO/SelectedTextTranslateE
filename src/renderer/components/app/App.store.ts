@@ -46,20 +46,20 @@ export const app: Module<ApplicationState, RootState> = {
     },
     actions: {
         fetchData({ commit }): void {
-            messageBus.getValue<string>(Messages.AccentColor, accentColor => commit("setAccentColor", accentColor));
-            messageBus.getValue<number>(Messages.ScaleFactor, scaleFactor => commit("setScaleFactor", scaleFactor));
-            messageBus.getValue<string>(Messages.IsFramelessWindow, isFrameless => commit("setFramelessStatus", isFrameless));
-            messageBus.getValue<RendererSettings>(Messages.RendererSettings, rendererSettings => commit("setHotkeySettings", rendererSettings.hotkeys));
-            messageBus.getValue<boolean>(Messages.PauseHotkeys, areHotkeysPaused => commit("setHotkeyPausedState", areHotkeysPaused));
+            messageBus.getValue<string>(Messages.Common.AccentColor, accentColor => commit("setAccentColor", accentColor));
+            messageBus.getValue<number>(Messages.Common.ScaleFactor, scaleFactor => commit("setScaleFactor", scaleFactor));
+            messageBus.getValue<string>(Messages.Common.IsFramelessWindow, isFrameless => commit("setFramelessStatus", isFrameless));
+            messageBus.getValue<RendererSettings>(Messages.Common.RendererSettings, rendererSettings => commit("setHotkeySettings", rendererSettings.hotkeys));
+            messageBus.getValue<boolean>(Messages.Common.PauseHotkeys, areHotkeysPaused => commit("setHotkeyPausedState", areHotkeysPaused));
         },
         zoomIn(): void {
-            messageBus.sendCommand(Messages.ZoomInCommand);
+            messageBus.sendCommand(Messages.Common.ZoomInCommand);
         },
         zoomOut(): void {
-            messageBus.sendCommand(Messages.ZoomOutCommand);
+            messageBus.sendCommand(Messages.Common.ZoomOutCommand);
         },
         resetZoom(): void {
-            messageBus.sendCommand(Messages.ResetZoomCommand);
+            messageBus.sendCommand(Messages.Common.ResetZoomCommand);
         }
     },
     modules: {

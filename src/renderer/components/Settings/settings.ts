@@ -19,6 +19,7 @@ const ns = namespace("app/settings");
 })
 export default class Settings extends Vue {
     @ns.State public settings!: EditableSettings | null;
+    @ns.State public defaultSettings!: EditableSettings | null;
     @ns.State public scalingState!: ScalingState | null;
 
     @ns.Action private readonly setup!: () => void;
