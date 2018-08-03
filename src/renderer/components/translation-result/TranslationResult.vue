@@ -10,7 +10,7 @@
                 :categories="translateResult.categories"
                 :translation-result-view-settings="translationResultViewSettings"/>
         </div>
-        <div v-else>Please select text to translate</div>
+        <div v-else class="no-text-data">No text data selected</div>
     </div>
 </template>
 
