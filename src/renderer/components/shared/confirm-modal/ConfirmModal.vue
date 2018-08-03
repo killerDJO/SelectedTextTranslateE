@@ -4,7 +4,10 @@
       <div class="modal-wrapper">
         <div class="modal-container clearfix">
           <div class="modal-header">
-            <slot name="header" />
+            <div class="header-content">
+               <slot name="header" />
+            </div>
+            <span class="modal-close icon icon-cancel" @click="close"></span>
           </div>
           <div class="modal-body">
             <slot name="body" />

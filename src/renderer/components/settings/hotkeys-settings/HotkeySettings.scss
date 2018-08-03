@@ -60,12 +60,16 @@
 
         .global-hotkey-warning {
             font-size: 11px;
-            margin-top: 5px;
+            margin: 5px 0;
             line-height: 1;
 
             .icon::before {
                 color: orange;
             }
+        }
+
+        .reset-hotkeys {
+            margin-top: 10px;
         }
     }
 }

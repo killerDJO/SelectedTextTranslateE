@@ -7,7 +7,7 @@
     height: 100%;
     background-color: rgba(0, 0, 0, .5);
     display: table;
-    transition: opacity .2s ease;
+    transition: opacity .1s ease;
 
     .modal-wrapper {
         display: table-cell;
@@ -15,24 +15,47 @@
     }
 
     .modal-container {
-        width: 300px;
+        max-width: 400px;
+        width: 80%;
         margin: 0px auto;
-        padding: 10px 30px;
         background-color: #fff;
         border-radius: $border-radius;
         box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
-        transition: all .2s ease;
+        transition: all .1s ease;
         font-family: Helvetica, Arial, sans-serif;
     
         .modal-header {
-            margin-top: 0;
+            padding: 10px;
+            font-weight: bold;
+            display: table;
+            width: 100%;
+
+            .header-content{
+                vertical-align: middle;
+                display: table-cell;
+            }
+
+            .modal-close {
+                font-size: 16px;
+                display: table-cell;
+                vertical-align: middle;
+                color: $gray;
+
+                &:hover {
+                    cursor: pointer;
+                    color: black;
+                }
+            }
         }
     
         .modal-body {
-            color: $light-gray;
+            padding: 15px 10px;
+            border-top: 1px solid $light-gray;
+            border-bottom: 1px solid $light-gray;
         }
     
         .modal-footer {
+            padding: 10px;
             float: right;
 
             .link-button {
