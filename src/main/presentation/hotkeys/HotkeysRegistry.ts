@@ -12,6 +12,7 @@ import { Logger } from "infrastructure/Logger";
 export class HotkeysRegistry {
 
     private areHotkeysPaused: boolean = false;
+    private areHotkeysSuspended: boolean = false;
     private currentHotkeys: HotkeySettings;
 
     public readonly translate$: Subject<void> = new Subject();
@@ -35,16 +36,31 @@ export class HotkeysRegistry {
     }
 
     public resumeHotkeys(): void {
-        this.registerAllHotkeys(this.currentHotkeys);
         this.areHotkeysPaused = false;
+        this.registerAllHotkeys(this.currentHotkeys);
+    }
+
+    public suspendHotkeys(): void {
+        this.areHotkeysSuspended = true;
+        this.unregisterAllHotkeys(this.currentHotkeys);
+    }
+
+    public enableHotkeys(): void {
+        this.areHotkeysSuspended = false;
+        this.registerAllHotkeys(this.currentHotkeys);
+
     }
 
     private getHotkeys(): HotkeySettings {
         return this.settingsProvider.getSettings().value.hotkeys;
     }
 
+    private get areHotkeysDisabled(): boolean {
+        return this.areHotkeysPaused || this.areHotkeysSuspended;
+    }
+
     private remapHotkeys(): void {
-        if (this.areHotkeysPaused) {
+        if (this.areHotkeysDisabled) {
             this.currentHotkeys = this.getHotkeys();
             return;
         }
@@ -55,6 +71,10 @@ export class HotkeysRegistry {
     }
 
     private registerAllHotkeys(hotkeys: HotkeySettings): void {
+        if (this.areHotkeysDisabled) {
+            return;
+        }
+
         this.registerCommand(hotkeys.translate, () => this.translate$.next());
         this.registerCommand(hotkeys.playText, () => this.playText$.next());
     }

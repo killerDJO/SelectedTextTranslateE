@@ -31,8 +31,7 @@ export class Application {
         private readonly textExtractor: TextExtractor,
         private readonly settingsProvider: SettingsProvider,
         private readonly historyStore: HistoryStore,
-        private readonly viewsRegistry: ViewsRegistry,
-        private readonly storageFolderProvider: StorageFolderProvider) {
+        private readonly viewsRegistry: ViewsRegistry) {
 
         this.createTaskbar();
         this.setupHotkeys();
@@ -58,7 +57,9 @@ export class Application {
         settingsView.setDefaultSettings(this.settingsProvider.getDefaultSettings());
         settingsView.setScalingState(this.scaler.scalingState);
         settingsView.setScaleFactor$.subscribe(scaleFactor => this.scaler.setScaleFactor(scaleFactor));
-        settingsView.pauseHotkeys$.subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());
+        settingsView.pauseHotkeys$
+            .distinctUntilChanged()
+            .subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());
         settingsView.updatedSettings$.subscribe(updatedSettings => this.settingsProvider.updateSettings(updatedSettings));
     }
 
@@ -73,11 +74,14 @@ export class Application {
     }
 
     private createTaskbar(): void {
-        this.taskbar = new Taskbar(this.storageFolderProvider, this.iconsProvider);
+        this.taskbar = new Taskbar(this.iconsProvider);
 
         this.taskbar.showTranslation$.subscribe(() => this.translationView.show());
         this.taskbar.showSettings$.subscribe(() => this.settingsView.show());
         this.taskbar.showHistory$.subscribe(() => this.historyView.show());
+        this.taskbar.isSuspended$
+            .distinctUntilChanged()
+            .subscribe(areSuspended => areSuspended ? this.hotkeysRegistry.suspendHotkeys() : this.hotkeysRegistry.enableHotkeys());
     }
 
     private translateText(text: string, isForcedTranslation: boolean): void {

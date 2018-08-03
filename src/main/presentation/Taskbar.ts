@@ -1,9 +1,8 @@
-import { Menu, Tray, shell } from "electron";
+import { Menu, Tray } from "electron";
 
-import { Subject, Observable } from "rxjs";
+import { Subject, Observable, BehaviorSubject } from "rxjs";
 import { injectable } from "inversify";
 
-import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 
 @injectable()
@@ -13,32 +12,45 @@ export class Taskbar {
     public readonly showTranslation$: Observable<void>;
     public readonly showSettings$: Subject<void>;
     public readonly showHistory$: Subject<void>;
+    public readonly isSuspended$: BehaviorSubject<boolean>;
     public readonly translateSelectedText$: Subject<void>;
 
     public constructor(
-        private readonly storageFolderProvider: StorageFolderProvider,
         private readonly iconsProvider: IconsProvider) {
-        this.createTaskBar();
-
         this.showTranslation$ = Observable.fromEventPattern((handler: () => void) => this.tray.on("click", handler));
         this.showSettings$ = new Subject();
         this.showHistory$ = new Subject();
+        this.isSuspended$ = new BehaviorSubject(false);
         this.translateSelectedText$ = new Subject();
+
+        this.createTaskBar();
+        this.isSuspended$.distinctUntilChanged().subscribe(() => this.updateTraySuspendedState());
     }
 
     private createTaskBar(): void {
         this.tray = new Tray(this.iconsProvider.getIconPath("tray"));
-        const contextMenu = Menu.buildFromTemplate([
+        this.tray.setToolTip("Selected text translate..");
+        this.tray.setContextMenu(this.createContextMenu());
+    }
+
+    private updateTraySuspendedState(): void {
+        this.tray.setImage(this.iconsProvider.getIconPath(this.isSuspended$.value ? "tray-suspended" : "tray"));
+        this.tray.setContextMenu(this.createContextMenu());
+    }
+
+    private createContextMenu(): Electron.Menu {
+        const suspendMenuItem: Electron.MenuItemConstructorOptions = this.isSuspended$.value
+            ? { label: "Enable", click: () => this.isSuspended$.next(false) }
+            : { label: "Suspend", click: () => this.isSuspended$.next(true) };
+
+        return Menu.buildFromTemplate([
             { label: "Translate from clipboard", click: () => this.translateSelectedText$.next() },
             { label: "History", click: () => this.showHistory$.next() },
             { label: "Settings", click: () => this.showSettings$.next() },
             { type: "separator" },
-            { label: "Suspend" },
-            { label: "Open storage folder", click: () => shell.openItem(this.storageFolderProvider.getPath()) },
+            suspendMenuItem,
             { type: "separator" },
             { label: "Quit", type: "normal", role: "quit" }
-        ]);
-        this.tray.setToolTip("Selected text translate..");
-        this.tray.setContextMenu(contextMenu);
+        ])
     }
 }
