@@ -1,13 +1,11 @@
 .table-striped {
-    border: 1.5px solid $table-border;
-    margin-top: 5px;
-    float: left;
+    border: $border-width solid $color-border;
     width: 100%;
     table-layout: fixed;
     border-radius: $border-radius;
 
     td:not(:last-child){
-        border-right: 1px solid $table-border;
+        border-right: $border-width solid $color-border;
     }
 
     thead {
@@ -30,17 +28,17 @@
 
     &.non-clickable {
         tr:active {
-            color: #333;
-            background-color:white;
+            color: $color-font;
+            background-color: $color-white;
 
             &:nth-child(even) {
-                background-color:#f5f5f4;
+                background-color: $color-background;
             }
         }
 
         thead tr:active {
-            color: #333;
-            background-color: #f5f5f4;
+            color: $color-font;
+            background-color: $color-background;
         }
     }
 }

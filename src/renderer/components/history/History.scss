@@ -1,8 +1,9 @@
 
 .history {
-    padding: 5px 15px 0 15px;
+    padding: $padding-small $padding-large 0 $padding-large;
 
     .results {
+        margin-top: $margin-small;
         .word-column,
         .translation-column {
             width: 37%;
@@ -19,18 +20,16 @@
 
     .header {
         position: relative;
-        box-sizing: content-box;
-        float: left;
         width: 100%;
 
         .title {
-            font-size: 1.2em;
+            font-size: $font-medium;
             font-weight: bold;
             display: inline;
         }
 
         .number-selector {
-            width: 95px;
+            width: 10rem;
             float: right;
         }
     }
@@ -39,7 +38,7 @@
         float: right;
         margin-top: 0;
         font-style: italic;
-        font-size: 0.9em;
-        color: $gray;
+        font-size: $font-small;
+        color: $color-gray;
     }
 }

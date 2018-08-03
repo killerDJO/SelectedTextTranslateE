@@ -1,43 +1,39 @@
 .settings-holder {
-    border-radius: 3px;
+    border-radius: $border-radius;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: $margin-default;
 
     > .header {
-        font-size: 16px;
-        padding-left: 10px;
+        font-size: $font-large;
+        padding-left: $margin-default;
         display: block;
         text-transform: uppercase;
         @extend %box-shadow;
-        border-top-right-radius: 3px;
-        border-top-left-radius: 3px;
+        border-top-right-radius: $border-radius;
+        border-top-left-radius: $border-radius;
 
         .icon {
             cursor: pointer;
-            color: $light-gray;
+            color: $color-light-gray;
 
             &:hover{
-                color: #000;
+                color: $color-black;
             }
         }
 
         &.collapsed {
-            background-color: #fff;
-            border-radius: 3px;
+            background-color: $color-white;
+            border-radius: $border-radius;
         }
     }
 
     > .holder {
         @extend %box-shadow;
-        background-color: #fff;
-        border-bottom-right-radius: 3px;
-        border-bottom-left-radius: 3px;
+        background-color: $color-white;
+        border-bottom-right-radius: $border-radius;
+        border-bottom-left-radius: $border-radius;
         min-width: 450px;
-        padding: 10px;
-        margin-bottom: 7px;
-    }
-
-    %box-shadow {
-        box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.75);
+        padding: $padding-default;
+        margin-bottom: $margin-default;
     }
 }

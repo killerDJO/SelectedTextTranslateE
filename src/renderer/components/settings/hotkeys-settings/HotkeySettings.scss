@@ -14,7 +14,7 @@
 
     .hotkeys {
         max-width: $max-width;
-        margin-top: 5px;
+        margin-top: $margin-small;
 
         $action-column-width: 15%;
 
@@ -28,23 +28,22 @@
             .action-column {
                 width: $action-column-width;
                 text-align: center;
-                padding: 2px 0;
-    
+
                 .remove-hotkey:hover{
-                    color: red;
+                    color: $color-error;
                     cursor: pointer;
                 }
             }
 
             .no-hotkeys{
                 text-align: center;
-                color: $light-gray;
+                color: $color-light-gray;
             }
         }
     
         .hotkey-edit {
             display: inline-block;
-            margin-top: 5px;
+            margin-top: $margin-small;
             width: 100%;
             
             .hotkey-input-control {
@@ -54,22 +53,21 @@
             .add-hotkey{
                 float: right;
                 padding: 1px 6px;
-                width: calc(#{$action-column-width} + 1px)
+                width: calc(#{$action-column-width} + #{$border-width})
             }
         }
 
         .global-hotkey-warning {
-            font-size: 11px;
-            margin: 5px 0;
-            line-height: 1;
+            font-size: $font-small;
+            margin: $margin-small 0;
 
             .icon::before {
-                color: orange;
+                color: $color-warning;
             }
         }
 
         .reset-hotkeys {
-            margin-top: 10px;
+            margin-top: $margin-default;
         }
     }
 }

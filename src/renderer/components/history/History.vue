@@ -1,6 +1,6 @@
 <template>
   <div class="history clearfix">
-    <div class="header">
+    <div class="header clearfix">
       <p class="title">Translation History</p>
       <select class="form-control number-selector" v-model="limit$">
         <option v-for="option in limitOptions" v-bind:value="option.value" v-bind:key="option.value">

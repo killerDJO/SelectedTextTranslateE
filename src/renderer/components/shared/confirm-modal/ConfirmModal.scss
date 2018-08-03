@@ -18,14 +18,15 @@
         max-width: 400px;
         width: 80%;
         margin: 0px auto;
-        background-color: #fff;
+        background-color: $color-white;
         border-radius: $border-radius;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+        //box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
+        @extend %box-shadow;
         transition: all .1s ease;
         font-family: Helvetica, Arial, sans-serif;
     
         .modal-header {
-            padding: 10px;
+            padding: $padding-default;
             font-weight: bold;
             display: table;
             width: 100%;
@@ -36,10 +37,10 @@
             }
 
             .modal-close {
-                font-size: 16px;
+                font-size: $font-large;
                 display: table-cell;
                 vertical-align: middle;
-                color: $gray;
+                color: $color-gray;
 
                 &:hover {
                     cursor: pointer;
@@ -49,13 +50,13 @@
         }
     
         .modal-body {
-            padding: 15px 10px;
-            border-top: 1px solid $light-gray;
-            border-bottom: 1px solid $light-gray;
+            padding: $padding-large $padding-default;
+            border-top: $border-width solid $color-border;
+            border-bottom: $border-width solid $color-border;
         }
     
         .modal-footer {
-            padding: 10px;
+            padding: $padding-default;
             float: right;
 
             .link-button {

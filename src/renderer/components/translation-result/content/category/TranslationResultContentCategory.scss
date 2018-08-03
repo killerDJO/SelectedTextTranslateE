@@ -1,49 +1,52 @@
 .category {
-    padding-bottom: 10px;
+    padding-bottom: $padding-default;
     float: left;
     clear: both;
 
     .category-header{
         .part-of-speech {
             font-style: italic;
-            color: $gray;
+            color: $color-gray;
         }
     }
 
+    $score-unit: 8px;
+    $score-margin: 4px;
+    $score-hight: 7px;
+
     .category-entry {
         white-space: nowrap;
-        padding-top: 4px;
+        padding-top: $padding-small;
 
-        .reverse-translations{
+        .reverse-translations {
             font-style: italic;
-            color: $gray;
-            padding-left: 2px;
+            color: $color-gray;
         }
 
         .score {
             display: inline-block;
-            height: 7px;
-            background-color: $light-gray;
-            margin-right: 2px;
+            height: $score-hight;
+            background-color: $color-light-gray;
+            margin-right: $score-margin;
 
             &.high {
-                width: 24px;
+                width: $score-unit * 3;
             }
 
             &.medium {
-                width: 16px;
-                margin-left: 8px;
+                width: $score-unit * 2;
+                margin-left: $score-unit;
             }
 
             &.low {
-                width: 8px;
-                margin-left: 16px;
+                width: $score-unit;
+                margin-left: $score-unit * 2;
             }
         }
     }
 
     .expand {
-        margin-left: 30px;
-        margin-top: 4px;
+        margin-left: $score-unit * 3 + $score-margin;
+        margin-top: $padding-small;
     }
 }

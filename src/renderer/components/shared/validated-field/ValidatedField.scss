@@ -8,7 +8,7 @@
 
     &.error {
         /deep/ input[type="text"] {
-            border-color: red;
+            border-color: $color-error;
         }
     }
 }

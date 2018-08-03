@@ -1,11 +1,11 @@
 .header {
     height: 50px;
-    padding-left: 15px;
-    padding-right: 3px;
-    padding-top: 5px;
+    padding-left: $padding-large;
+    padding-right: $padding-small;
+    padding-top: $padding-small;
     line-height: 20px;
     box-sizing: border-box;
-    border-bottom: 1px solid $light-gray;
+    border-bottom: $border-width solid $color-light-gray;
     white-space: nowrap;
 
     .translation {
@@ -14,7 +14,7 @@
 
     .origin {
         font-size: $font-small;
-        color: $gray;
+        color: $color-gray;
         display: inline-block;
         margin-left: 2px;
     }
@@ -37,7 +37,7 @@
 
     .header-actions {
         font-size: $font-small;
-        color: $gray;
+        color: $color-gray;
         display: inline-block;
     }
 }

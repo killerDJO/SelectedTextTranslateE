@@ -1,12 +1,16 @@
 @import "tooltip";
 @import "table";
 
+body {
+    color: $color-font;
+}
+
 input {
     cursor: initial;
 }
 
 .form-control {
-    padding: 0 10px;
+    padding: 0 $padding-default;
 }
 
 button:disabled {
@@ -28,13 +32,13 @@ button:disabled {
 }
 
 .link-button {
-    font-size: 10px;
-    color: $gray;
+    font-size: $font-small;
+    color: $color-gray;
     text-decoration: underline;
     cursor: pointer;
     display: inline-block;
 
     &:hover{
-        color: black;
+        color: $color-black;
     }
 }

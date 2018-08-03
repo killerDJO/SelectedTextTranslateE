@@ -1,9 +1,27 @@
-$gray: rgb(119, 119, 119);
-$light-gray: rgb(170, 170, 170);
-$table-border: #ddd;
+$color-font: #333;
+$color-gray: #777;
+$color-light-gray: #aaa;
+$color-border: #ddd;
+$color-background: #f5f5f4;
+$color-black: #000;
+$color-white: #fff;
+$color-error: #f00;
+$color-warning: orange;
 
 $font-large: 16px;
 $font-medium: 12px;
 $font-small: 10px;
 
 $border-radius: 3px;
+$border-width: 1px;
+
+$padding-default: 10px;
+$padding-small: 5px;
+$padding-large: 15px;
+
+$margin-default: 10px;
+$margin-small: 5px;
+
+%box-shadow {
+    box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.75);
+}

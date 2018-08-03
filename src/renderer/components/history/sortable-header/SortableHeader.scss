@@ -5,7 +5,7 @@
     .icon {
         position: absolute;
         right: 6px;
-        color: $gray;
+        color: $color-gray;
 
         &.icon-up-dir {
             top: -1px;
@@ -19,7 +19,7 @@
         }
 
         &.active {
-            color: black;
+            color: $color-black;
         }
     }
 }
