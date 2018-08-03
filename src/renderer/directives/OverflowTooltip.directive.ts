@@ -3,7 +3,7 @@ import { DirectiveOptions, VNodeDirective } from "vue";
 import Directive from "decorators/VueDirective";
 import { TooltipBase } from "directives/TooltipBase";
 
-@Directive()
+@Directive("overflow-tooltip")
 export class OverflowTooltip extends TooltipBase implements DirectiveOptions {
 
     protected getTooltipContent(element: HTMLElement): string {

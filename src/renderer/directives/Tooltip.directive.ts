@@ -8,7 +8,7 @@ export interface TooltipBinding {
     readonly showOnFocus: string | null;
 }
 
-@Directive()
+@Directive("tooltip")
 export class Tooltip extends TooltipBase implements DirectiveOptions {
 
     public bind(element: HTMLElement, binding: VNodeDirective): void {

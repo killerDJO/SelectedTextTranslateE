@@ -1,7 +1,7 @@
 <template>
   <settings-holder :title="'Scaling'" v-if="!!scalingState && !!currentScalingSettings">
     <div class="scaling-input">
-      <span>Scale Factor - {{scalingState.scaleFactor * 100 | percent}}</span>
+      <span>Current Scale Factor - {{scalingState.scaleFactor * 100 | percent}}</span>
       <slider
         :min-value="scalingState.minScaling * 100"
         :max-value="scalingState.maxScaling * 100"
