@@ -1,7 +1,8 @@
 import { Cache, CacheClass } from "memory-cache";
 import { DOMParser } from "xmldom";
 import safeEval = require("safe-eval");
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
+import { single, tap, map } from "rxjs/operators";
 import { injectable } from "inversify";
 
 import { TranslationConfig } from "business-logic/translation/dto/TranslationConfig";
@@ -29,20 +30,21 @@ export class TranslatePageParser {
 
         const cachedTranslationConfig = this.cache.get(this.cacheKey);
         if (cachedTranslationConfig !== null) {
-            return Observable.of(cachedTranslationConfig);
+            return of(cachedTranslationConfig);
         }
 
-        return this.getUpdatedTranslationConfig()
-            .single()
-            .do(() => this.logger.info("Translation config has been updated."))
-            .do(translationConfig => this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds));
+        return this.getUpdatedTranslationConfig().pipe(
+            single(),
+            tap(() => this.logger.info("Translation config has been updated.")),
+            tap(translationConfig => this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds))
+        );
     }
 
     private getUpdatedTranslationConfig(): Observable<TranslationConfig> {
-        return this.requestProvider.getStringContent(this.settingsProvider.getSettings().value.engine.baseUrl).map(html => {
+        return this.requestProvider.getStringContent(this.settingsProvider.getSettings().value.engine.baseUrl).pipe(map(html => {
             const scriptContent = this.extractScriptContentFromHtml(html);
             return this.extractConfig(scriptContent);
-        });
+        }));
 
     }
 

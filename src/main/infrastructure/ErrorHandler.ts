@@ -2,12 +2,10 @@ import { injectable } from "inversify";
 import { dialog, shell } from "electron";
 
 import { Logger } from "infrastructure/Logger";
-import { NotificationSender } from "infrastructure/NotificationSender";
-
 
 @injectable()
 export class ErrorHandler {
-    constructor(private readonly logger: Logger, private readonly notificationSender: NotificationSender) {
+    constructor(private readonly logger: Logger) {
     }
 
     public initialize(): void {

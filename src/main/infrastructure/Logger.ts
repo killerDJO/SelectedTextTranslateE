@@ -8,7 +8,6 @@ import "winston-daily-rotate-file";
 
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 
-
 @injectable()
 export class Logger {
     private readonly transport: winston.DailyRotateFileTransportInstance;

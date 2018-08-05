@@ -1,5 +1,6 @@
-import { Observable, ReplaySubject, Subscription as RxJsSubscription } from "rxjs";
+import { Observable, ReplaySubject, Subscription as RxJsSubscription, of } from "rxjs";
 import { ipcMain } from "electron";
+import { take } from "rxjs/operators";
 
 import { Channels } from "common/messaging/Messages";
 
@@ -24,7 +25,7 @@ export class MessageBus {
 
             if (!!this.observablesRegistry[receivedName]) {
                 this.observablesRegistry[receivedName]
-                    .take(MessageBus.ReplayMessagesNumber)
+                    .pipe(take(MessageBus.ReplayMessagesNumber))
                     .subscribe(value => this.window.webContents.send(Channels.Observe, receivedName, value));
             }
         });
@@ -50,11 +51,11 @@ export class MessageBus {
     }
 
     public sendValue<TValue>(name: string, value: TValue): void {
-        this.registerObservable(name, Observable.of(value));
+        this.registerObservable(name, of(value));
     }
 
     public sendNotification(name: string): void {
-        this.registerObservable(name, Observable.of(null));
+        this.registerObservable(name, of(null));
     }
 
     public getValue<TValue>(name: string): Observable<TValue> {

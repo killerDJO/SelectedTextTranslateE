@@ -1,4 +1,5 @@
 import { Observable, BehaviorSubject } from "rxjs";
+import { map } from "rxjs/operators";
 import { injectable } from "inversify";
 
 import { AccentColorProvider } from "presentation/framework/AccentColorProvider";
@@ -30,6 +31,6 @@ export class ViewContext {
     }
 
     public get rendererSettings(): Observable<RendererSettings> {
-        return this.settingsProvider.getSettings().map(settings => settings.renderer);
+        return this.settingsProvider.getSettings().pipe(map(settings => settings.renderer));
     }
 }

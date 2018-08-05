@@ -1,6 +1,6 @@
 import { Menu, Tray } from "electron";
-
-import { Subject, Observable, BehaviorSubject } from "rxjs";
+import { Subject, Observable, BehaviorSubject, fromEventPattern } from "rxjs";
+import { distinctUntilChanged } from "rxjs/operators";
 import { injectable } from "inversify";
 
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
@@ -17,14 +17,14 @@ export class Taskbar {
 
     public constructor(
         private readonly iconsProvider: IconsProvider) {
-        this.showTranslation$ = Observable.fromEventPattern((handler: () => void) => this.tray.on("click", handler));
+        this.showTranslation$ = fromEventPattern((handler: () => void) => this.tray.on("click", handler));
         this.showSettings$ = new Subject();
         this.showHistory$ = new Subject();
         this.isSuspended$ = new BehaviorSubject(false);
         this.translateSelectedText$ = new Subject();
 
         this.createTaskBar();
-        this.isSuspended$.distinctUntilChanged().subscribe(() => this.updateTraySuspendedState());
+        this.isSuspended$.pipe(distinctUntilChanged()).subscribe(() => this.updateTraySuspendedState());
     }
 
     private createTaskBar(): void {

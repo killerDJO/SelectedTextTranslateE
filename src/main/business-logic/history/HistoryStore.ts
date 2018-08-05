@@ -1,4 +1,5 @@
 import { Observable, AsyncSubject, Subject } from "rxjs";
+import { tap, map, single, concatMap } from "rxjs/operators";
 import { Database } from "sqlite3";
 import * as path from "path";
 import { injectable } from "inversify";
@@ -38,9 +39,10 @@ export class HistoryStore {
                 $IsForcedTranslation: isForcedTranslation ? 1 : 0,
                 $CreatedDate: currentTime,
                 $UpdatedDate: currentTime
-            })
-            .do(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is saved to dictionary.`))
-            .do(() => this.notifyAboutUpdate());
+            }).pipe(
+                tap(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is saved to dictionary.`)),
+                tap(() => this.notifyAboutUpdate())
+            );
     }
 
     public updateTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<void> {
@@ -52,9 +54,10 @@ export class HistoryStore {
                 $Json: JSON.stringify(translateResult),
                 $IsForcedTranslation: isForcedTranslation ? 1 : 0,
                 $UpdatedDate: currentTime
-            })
-            .do(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is updated in dictionary.`))
-            .do(() => this.notifyAboutUpdate());
+            }).pipe(
+                tap(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is updated in dictionary.`)),
+                tap(() => this.notifyAboutUpdate())
+            );
     }
 
     public incrementTranslationsNumber(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<void> {
@@ -65,9 +68,10 @@ export class HistoryStore {
                 $Sentence: translateResult.sentence.input,
                 $IsForcedTranslation: isForcedTranslation ? 1 : 0,
                 $Date: currentTime
-            })
-            .do(() => this.logger.info(`Translations number for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is incremented.`))
-            .do(() => this.notifyAboutUpdate());
+            }).pipe(
+                tap(() => this.logger.info(`Translations number for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is incremented.`)),
+                tap(() => this.notifyAboutUpdate())
+            );
     }
 
     public getRecord(sentence: string, isForcedTranslation: boolean): Observable<HistoryRecord | null> {
@@ -77,8 +81,9 @@ export class HistoryStore {
                 {
                     $Sentence: sentence,
                     $IsForcedTranslation: isForcedTranslation ? 1 : 0,
-                })
-            .map(result => !!result.length ? this.createHistoryRecord(result[0]) : null);
+                }).pipe(
+                    map(result => !!result.length ? this.createHistoryRecord(result[0]) : null)
+                );
     }
 
     public getRecords(limit: number, sortColumn: SortColumn, sortOrder: SortOrder): Observable<HistoryRecord[]> {
@@ -97,8 +102,9 @@ export class HistoryStore {
                  LIMIT ${limit}`,
                 {
                     $IsForcedTranslation: 0
-                })
-            .map(result => result.map(this.createHistoryRecord.bind(this)));
+                }).pipe(
+                    map(result => result.map(this.createHistoryRecord.bind(this)))
+                );
     }
 
     private notifyAboutUpdate(): void {
@@ -131,17 +137,22 @@ export class HistoryStore {
         const CreateDictionaryTableIndexQuery = "CREATE INDEX IF NOT EXISTS IX_TranslationHistory_Count on TranslationHistory(Count)";
 
         return this.sqLiteProvider
-            .openDatabase(path.join(this.storageFolderProvider.getPath(), "stt.db"))
-            .concatMap(database => this.sqLiteProvider.executeNonQuery(database, CreateDictionaryTableQuery), database => database)
-            .concatMap(database => this.sqLiteProvider.executeNonQuery(database, CreateDictionaryTableIndexQuery), database => database)
-            .single();
+            .openDatabase(path.join(this.storageFolderProvider.getPath(), "stt.db")).pipe(
+                concatMap(database => this.sqLiteProvider.executeNonQuery(database, CreateDictionaryTableQuery), database => database),
+                concatMap(database => this.sqLiteProvider.executeNonQuery(database, CreateDictionaryTableIndexQuery), database => database),
+                single()
+            );
     }
 
     private executeNonQuery(query: string, params?: any): Observable<void> {
-        return this.database$.concatMap(database => this.sqLiteProvider.executeNonQuery(database, query, params));
+        return this.database$.pipe(
+            concatMap(database => this.sqLiteProvider.executeNonQuery(database, query, params))
+        );
     }
 
     private executeReader(query: string, params?: any): Observable<any[]> {
-        return this.database$.concatMap(database => this.sqLiteProvider.executeReader(database, query, params));
+        return this.database$.pipe(
+            concatMap(database => this.sqLiteProvider.executeReader(database, query, params))
+        );
     }
 }

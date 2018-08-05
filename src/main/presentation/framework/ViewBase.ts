@@ -1,5 +1,5 @@
 import { BrowserWindow, screen } from "electron";
-import { BehaviorSubject, Subscription, Observable } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
 
 import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { Messages } from "common/messaging/Messages";
@@ -8,6 +8,7 @@ import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { ViewOptions } from "presentation/framework/ViewOptions";
 import { IScaler } from "presentation/framework/scaling/IScaler";
+import { distinctUntilChanged, filter } from "rxjs/operators";
 
 export abstract class ViewBase {
     private readonly subscriptions: Subscription[] = [];
@@ -32,14 +33,14 @@ export abstract class ViewBase {
         this.messageBus = new MessageBus(this.window);
         this.messageBus.sendValue(Messages.Common.IsFramelessWindow, this.viewOptions.isFrameless);
         this.registerSubscription(this.messageBus.registerObservable(Messages.Common.RendererSettings, this.context.rendererSettings));
-        this.registerSubscription(viewOptions.isScalingEnabled.distinctUntilChanged().subscribe(isScalingEnabled => this.setScaler(isScalingEnabled)));
+        this.registerSubscription(viewOptions.isScalingEnabled.pipe(distinctUntilChanged()).subscribe(isScalingEnabled => this.setScaler(isScalingEnabled)));
 
         this.initializeSubscriptions();
         this.window.setBounds(this.getInitialBounds());
     }
 
     public show(): void {
-        this.isReadyToShow$.filter(isReady => isReady).subscribe(() => {
+        this.isReadyToShow$.pipe(filter(isReady => isReady)).subscribe(() => {
             setTimeout(() => this.window.show(), 75);
         });
     }

@@ -1,7 +1,7 @@
 import { Database } from "sqlite3";
-import { Data } from "electron";
 import { Observable } from "rxjs";
 import { injectable } from "inversify";
+import { concatMap } from "rxjs/operators";
 
 @injectable()
 export class SqLiteProvider {
@@ -15,9 +15,10 @@ export class SqLiteProvider {
             });
         });
 
-        return database$
-            .concatMap(database => this.executeNonQuery(database, "PRAGMA synchronous = OFF"), database => database)
-            .concatMap(database => this.executeNonQuery(database, "PRAGMA journal_mode = MEMORY"), database => database);
+        return database$.pipe(
+            concatMap(database => this.executeNonQuery(database, "PRAGMA synchronous = OFF"), database => database),
+            concatMap(database => this.executeNonQuery(database, "PRAGMA journal_mode = MEMORY"), database => database)
+        );
     }
 
     public executeNonQuery(database: Database, query: string, params?: any): Observable<void> {

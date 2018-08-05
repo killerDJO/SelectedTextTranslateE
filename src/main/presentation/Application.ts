@@ -1,11 +1,11 @@
 import { injectable } from "inversify";
+import { concatMap, distinctUntilChanged } from "rxjs/operators";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
 import { TextTranslator } from "business-logic/translation/TextTranslator";
 import { TextExtractor } from "business-logic/translation/TextExtractor";
 import { TextPlayer } from "business-logic/translation/TextPlayer";
-import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewsRegistry } from "presentation/views/ViewsRegistry";
@@ -16,7 +16,6 @@ import { HistoryStore } from "business-logic/history/HistoryStore";
 import { SettingsView } from "presentation/views/SettingsView";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { Scaler } from "presentation/framework/scaling/Scaler";
-import { settings } from "cluster";
 
 @injectable()
 export class Application {
@@ -45,7 +44,7 @@ export class Application {
 
     private setupHistoryView(historyView: HistoryView): void {
         historyView.historyRecordsRequest$
-            .concatMap(request => this.historyStore.getRecords(request.limit, request.sortColumn, request.sortOrder))
+            .pipe(concatMap(request => this.historyStore.getRecords(request.limit, request.sortColumn, request.sortOrder)))
             .subscribe(records => historyView.setHistoryRecords(records));
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
         historyView.translateText$
@@ -58,7 +57,7 @@ export class Application {
         settingsView.setScalingState(this.scaler.scalingState);
         settingsView.setScaleFactor$.subscribe(scaleFactor => this.scaler.setScaleFactor(scaleFactor));
         settingsView.pauseHotkeys$
-            .distinctUntilChanged()
+            .pipe(distinctUntilChanged())
             .subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());
         settingsView.updatedSettings$.subscribe(updatedSettings => this.settingsProvider.updateSettings(updatedSettings));
     }
@@ -66,10 +65,10 @@ export class Application {
     private setupHotkeys(): void {
         this.hotkeysRegistry.registerHotkeys();
         this.hotkeysRegistry.translate$
-            .concatMap(() => this.textExtractor.getSelectedText())
+            .pipe(concatMap(() => this.textExtractor.getSelectedText()))
             .subscribe(text => this.translateText(text, false));
         this.hotkeysRegistry.playText$
-            .concatMap(() => this.textExtractor.getSelectedText())
+            .pipe(concatMap(() => this.textExtractor.getSelectedText()))
             .subscribe(text => this.textPlayer.playText(text));
     }
 
@@ -80,7 +79,7 @@ export class Application {
         this.taskbar.showSettings$.subscribe(() => this.settingsView.show());
         this.taskbar.showHistory$.subscribe(() => this.historyView.show());
         this.taskbar.isSuspended$
-            .distinctUntilChanged()
+            .pipe(distinctUntilChanged())
             .subscribe(areSuspended => areSuspended ? this.hotkeysRegistry.suspendHotkeys() : this.hotkeysRegistry.enableHotkeys());
     }
 

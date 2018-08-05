@@ -1,4 +1,5 @@
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
+import { map } from "rxjs/operators";
 
 import { ViewNames } from "common/ViewNames";
 import { ViewBase } from "presentation/framework/ViewBase";
@@ -26,7 +27,8 @@ export class SettingsView extends ViewBase {
 
         this.pauseHotkeys$ = this.messageBus.getValue<boolean>(Messages.Settings.PauseHotkeysRequest);
         this.messageBus.registerObservable(Messages.Common.PauseHotkeys, this.pauseHotkeys$);
-        this.updatedSettings$ = this.messageBus.getValue<EditableSettings>(Messages.Settings.EditableSettingsUpdated).map(editableSettings => this.getSettings(editableSettings));
+        this.updatedSettings$ = this.messageBus.getValue<EditableSettings>(Messages.Settings.EditableSettingsUpdated)
+            .pipe(map(editableSettings => this.getSettings(editableSettings)));
         this.setScaleFactor$ = this.messageBus.getValue<number>(Messages.Settings.SetScaleFactorCommand);
     }
 
@@ -35,7 +37,7 @@ export class SettingsView extends ViewBase {
     }
 
     public setDefaultSettings(defaultSettings$: Settings): void {
-        this.setSettingsInternal(Messages.Settings.DefaultEditableSettings, Observable.of(defaultSettings$));
+        this.setSettingsInternal(Messages.Settings.DefaultEditableSettings, of(defaultSettings$));
     }
 
     public setScalingState(scalingState$: Observable<ScalingState>): void {
@@ -45,7 +47,7 @@ export class SettingsView extends ViewBase {
 
     private setSettingsInternal(name: string, settings$: Observable<Settings>): void {
         this.registerSubscription(
-            this.messageBus.registerObservable(name, settings$.map(this.getEditableSettings)));
+            this.messageBus.registerObservable(name, settings$.pipe(map(this.getEditableSettings))));
     }
 
     protected getInitialBounds(): Electron.Rectangle {

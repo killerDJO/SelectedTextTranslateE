@@ -6,14 +6,14 @@ clean();
 package();
 
 function package() {
-    packager(packageConfig, (err, appPaths) => {
-        if (err) {
+    packager(packageConfig)
+        .then(() => {
+            console.log(`App has been packaged.`);
+        })
+        .catch(reason => {
             console.log(`\n${chalk.yellow('`electron-packager`')} says...\n`)
-            console.log(err + '\n')
-        } else {
-            console.log(`App has been packaged.`)
-        }
-    })
+            console.log(reason + '\n')
+        });
 }
 
 function clean() {
