@@ -1,4 +1,6 @@
 import * as winston from "winston";
+import * as Transport from "winston-transport";
+import { Format } from "logform";
 import { shell } from "electron";
 import { injectable } from "inversify";
 import * as path from "path";
@@ -10,18 +12,23 @@ import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 
 @injectable()
 export class Logger {
-    private readonly transport: winston.DailyRotateFileTransportInstance;
+    private readonly logger: winston.Logger;
+    private readonly transport: Transport;
     private readonly logsDirectory: string;
 
-    constructor(private readonly storageFolderProvider: StorageFolderProvider) {
+    constructor(storageFolderProvider: StorageFolderProvider) {
         this.logsDirectory = path.join(storageFolderProvider.getPath(), "logs");
         const logFilePath = path.join(this.logsDirectory, "log.%DATE%.txt");
-        this.transport = new winston.transports.DailyRotateFile({
+        this.transport = new (winston.transports as any).DailyRotateFile({
             filename: logFilePath,
-            json: false,
         });
 
-        winston.configure({ transports: [this.transport] });
+        this.logger = winston.createLogger({
+            format: this.getLogFormat(),
+            transports: [
+                this.transport
+            ]
+        });
     }
 
     public openLogFolder(): void {
@@ -33,21 +40,31 @@ export class Logger {
     }
 
     public async flush(): Promise<void> {
-        (this.transport as any).close();
-        return new Promise<void>((resolve, reject) => {
+        if (!!this.transport.close) {
+            this.transport.close();
+        }
+
+        return new Promise<void>((resolve) => {
             this.transport.on("finish", resolve);
         });
     }
 
     public info(message: string): void {
-        winston.info(message);
+        this.logger.info(message);
     }
 
     public warning(message: string): void {
-        winston.warn(message);
+        this.logger.warn(message);
     }
 
     public error(message: string, error: Error): void {
-        winston.error(`${message}. Error: "${error.message}". Stack trace: "${error.stack}"`);
+        this.logger.error(`${message}. Error: "${error.message}". Stack trace: "${error.stack}"`);
+    }
+
+    private getLogFormat(): Format {
+        const recordFormat = winston.format.printf(info => {
+            return `${info.timestamp}; ${info.level.toUpperCase()}; ${info.message}`;
+        });
+        return winston.format.combine(winston.format.timestamp(), recordFormat);
     }
 }

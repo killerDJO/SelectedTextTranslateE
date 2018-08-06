@@ -3,6 +3,7 @@
     "defaultSeverity": "warning",
     "extends": "tslint:all",
     "rules": {
+        "file-name-casing": false,
         "cyclomatic-complexity": true,
         "newline-before-return": false,
         "no-parameter-properties": false,
