@@ -1,6 +1,6 @@
-import { Observable, of } from "rxjs";
+import { Observable, of, empty } from "rxjs";
 import { injectable } from "inversify";
-import { concatMap, tap, map } from "rxjs/operators";
+import { concatMap, tap, map, catchError } from "rxjs/operators";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Logger } from "infrastructure/Logger";
@@ -11,6 +11,7 @@ import { RequestProvider } from "data-access/RequestProvider";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { NotificationSender } from "infrastructure/NotificationSender";
 
 @injectable()
 export class TextTranslator {
@@ -19,6 +20,7 @@ export class TextTranslator {
         private readonly hashProvider: HashProvider,
         private readonly historyStore: HistoryStore,
         private readonly responseParser: TranslationResponseParser,
+        private readonly notificationSender: NotificationSender,
         private readonly logger: Logger,
         private readonly settingsProvider: SettingsProvider) {
     }
@@ -71,7 +73,8 @@ export class TextTranslator {
     private getResponseFromService(sentence: string, isForcedTranslation: boolean): Observable<TranslateResult> {
         return this.hashProvider.computeHash(sentence).pipe(
             concatMap(hash => this.getTranslationResponse(sentence, isForcedTranslation, hash)),
-            map(response => this.responseParser.parse(response, sentence))
+            map(response => this.responseParser.parse(response, sentence)),
+            catchError(error => this.notificationSender.showNonCriticalError<TranslateResult>("Error parsing translation response", error))
         );
     }
 

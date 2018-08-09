@@ -1,5 +1,6 @@
 import { isArray } from "util";
 import { injectable } from "inversify";
+import * as _ from "lodash";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
@@ -33,7 +34,12 @@ import { TranslateResultCategoryEntry } from "common/dto/translation/TranslateRe
 // ]
 @injectable()
 export class TranslationResponseParser {
+
     public parse(root: any, input: string): TranslateResult {
+        if (!_.isArray(root)) {
+            throw Error("root is not an array");
+        }
+
         const sentence = this.parseSentence(root, input);
         const categories = this.parseTranslateCategories(root);
         return new TranslateResult(sentence, categories);

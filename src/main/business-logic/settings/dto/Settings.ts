@@ -19,6 +19,8 @@ export interface TranslationEngineSettings {
     readonly copyDelayMilliseconds: number;
     readonly baseUrl: string;
     readonly historyRefreshInterval: number;
+    readonly userAgent: string;
+    readonly requestTimeout: number;
 }
 
 export interface ViewsSettings {

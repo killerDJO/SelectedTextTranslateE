@@ -29,6 +29,7 @@
     "electron-store": "2.0.0",
     "ffi": "2.2.0",
     "fs": "0.0.1-security",
+    "https": "^1.0.0",
     "inversify": "4.13.0",
     "lame": "1.2.4",
     "memory-cache": "0.2.0",

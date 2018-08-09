@@ -36,7 +36,9 @@
     "engine": {
         "copyDelayMilliseconds": 100,
         "baseUrl": "https://translate.google.com",
-        "historyRefreshInterval": 30
+        "historyRefreshInterval": 30,
+        "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36",
+        "requestTimeout": 10000
     },
     "scaling": {
         "scaleFactor": 1,

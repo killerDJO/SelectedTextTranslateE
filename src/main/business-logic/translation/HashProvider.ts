@@ -1,6 +1,6 @@
 import { Observable } from "rxjs";
 import { injectable } from "inversify";
-import { single, map } from "rxjs/operators";
+import { map, take } from "rxjs/operators";
 
 import { TranslatePageParser } from "business-logic/translation/TranslatePageParser";
 import { TranslationConfig } from "business-logic/translation/dto/TranslationConfig";
@@ -12,7 +12,7 @@ export class HashProvider {
 
     public computeHash(text: string): Observable<string> {
         return this.translatePageParser.getTranslationConfig().pipe(
-            single(),
+            take(1),
             map(translationConfig => this.computeHashWithConfig(text, translationConfig))
         );
     }

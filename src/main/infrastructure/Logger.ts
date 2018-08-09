@@ -58,7 +58,7 @@ export class Logger {
     }
 
     public error(message: string, error: Error): void {
-        this.logger.error(`${message}. Error: "${error.message}". Stack trace: "${error.stack}"`);
+        this.logger.error(`${message} | Error: "${error.message}" | Stack trace: "${error.stack}"`);
     }
 
     private getLogFormat(): Format {

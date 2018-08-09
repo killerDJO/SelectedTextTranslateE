@@ -1,8 +1,13 @@
 import { Notification } from "electron";
 import { injectable } from "inversify";
+import { Logger } from "infrastructure/Logger";
+import { Observable, empty } from "rxjs";
 
 @injectable()
 export class NotificationSender {
+    constructor(private readonly logger: Logger) {
+    }
+
     public async send(title: string, message: string, clickHandler?: () => void): Promise<void> {
         if (!Notification.isSupported()) {
             return;
@@ -21,5 +26,11 @@ export class NotificationSender {
 
             notification.show();
         });
+    }
+
+    public showNonCriticalError<TResult>(message: string, error: Error, details: string = "[No details]"): Observable<TResult> {
+        this.send(message, "Click to open error log to see details.", () => this.logger.openLogFolder());
+        this.logger.error(`${message} | ${details}`, error);
+        return empty();
     }
 }

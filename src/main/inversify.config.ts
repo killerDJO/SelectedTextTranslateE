@@ -60,7 +60,7 @@ class Binder {
         this.container.bind<HashProvider>(HashProvider).toSelf();
         this.container.bind<TextExtractor>(TextExtractor).toSelf();
         this.container.bind<TextTranslator>(TextTranslator).toSelf();
-        this.container.bind<TranslatePageParser>(TranslatePageParser).toSelf();
+        this.container.bind<TranslatePageParser>(TranslatePageParser).toSelf().inSingletonScope();
         this.container.bind<TranslationResponseParser>(TranslationResponseParser).toSelf();
         this.container.bind<TextPlayer>(TextPlayer).toSelf();
         this.container.bind<SettingsProvider>(SettingsProvider).toSelf().inSingletonScope();

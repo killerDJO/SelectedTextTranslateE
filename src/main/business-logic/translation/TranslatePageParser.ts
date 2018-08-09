@@ -2,13 +2,14 @@ import { Cache, CacheClass } from "memory-cache";
 import { DOMParser } from "xmldom";
 import safeEval = require("safe-eval");
 import { Observable, of } from "rxjs";
-import { single, tap, map } from "rxjs/operators";
+import { tap, map, take, catchError } from "rxjs/operators";
 import { injectable } from "inversify";
 
 import { TranslationConfig } from "business-logic/translation/dto/TranslationConfig";
 import { Logger } from "infrastructure/Logger";
 import { RequestProvider } from "data-access/RequestProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { NotificationSender } from "infrastructure/NotificationSender";
 
 @injectable()
 export class TranslatePageParser {
@@ -19,6 +20,7 @@ export class TranslatePageParser {
     constructor(
         private readonly requestProvider: RequestProvider,
         private readonly logger: Logger,
+        private readonly notificationSender: NotificationSender,
         private readonly settingsProvider: SettingsProvider) {
         const MinutesInHour = 60;
         const SecondsInMinute = 60;
@@ -34,9 +36,10 @@ export class TranslatePageParser {
         }
 
         return this.getUpdatedTranslationConfig().pipe(
-            single(),
+            take(1),
             tap(() => this.logger.info("Translation config has been updated.")),
-            tap(translationConfig => this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds))
+            tap(translationConfig => this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds)),
+            catchError(error => this.notificationSender.showNonCriticalError<TranslationConfig>("Unable to parse translation page", error))
         );
     }
 
@@ -45,7 +48,6 @@ export class TranslatePageParser {
             const scriptContent = this.extractScriptContentFromHtml(html);
             return this.extractConfig(scriptContent);
         }));
-
     }
 
     private extractScriptContentFromHtml(html: string): string {
@@ -70,7 +72,7 @@ export class TranslatePageParser {
 
         const tkk1 = parseInt(tkkItems[0], 10);
         const tkk2 = parseInt(tkkItems[1], 10);
-        return new TranslationConfig(421762, 1847392056);
+        return new TranslationConfig(tkk1, tkk2);
     }
 
     private findScriptContent(node: Node): string | null {

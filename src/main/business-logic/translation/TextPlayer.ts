@@ -11,6 +11,7 @@ import Speaker = require("speaker");
 import { RequestProvider } from "data-access/RequestProvider";
 import { HashProvider } from "business-logic/translation/HashProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { Logger } from "infrastructure/Logger";
 
 @injectable()
 export class TextPlayer {
@@ -20,12 +21,14 @@ export class TextPlayer {
     constructor(
         private readonly requestProvider: RequestProvider,
         private readonly hashProvider: HashProvider,
-        private readonly settingsProvider: SettingsProvider) {
+        private readonly settingsProvider: SettingsProvider,
+        private readonly logger: Logger) {
 
         this.tempFilePath = path.resolve(app.getPath("temp"), "STT_audio.mp3");
     }
 
     public playText(text: string): void {
+        this.logger.info(`Playing text '${text}'`);
         this.getAudioContent(text)
             .pipe(concatMap(content => this.saveContentToTempFile(content)))
             .subscribe(() => this.playTempFile());
