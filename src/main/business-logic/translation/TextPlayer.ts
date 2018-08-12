@@ -4,14 +4,13 @@ import { concatMap, map } from "rxjs/operators";
 import * as path from "path";
 import * as fs from "fs";
 import { app } from "electron";
-import { Decoder } from "lame";
-import { Readable } from "stream";
-import Speaker = require("speaker");
 
 import { RequestProvider } from "data-access/RequestProvider";
 import { HashProvider } from "business-logic/translation/HashProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { Logger } from "infrastructure/Logger";
+
+import * as nativeExtensions from "native/native-extensions.node";
 
 @injectable()
 export class TextPlayer {
@@ -31,7 +30,7 @@ export class TextPlayer {
         this.logger.info(`Playing text '${text}'`);
         this.getAudioContent(text)
             .pipe(concatMap(content => this.saveContentToTempFile(content)))
-            .subscribe(() => this.playTempFile());
+            .subscribe(() => nativeExtensions.playFile(this.tempFilePath));
     }
 
     private saveContentToTempFile(content: Buffer): Observable<void> {
@@ -45,13 +44,5 @@ export class TextPlayer {
             map(hash => `${this.settingsProvider.getSettings().value.engine.baseUrl}/translate_tts?tl=en&client=t&q=${encodedText}&tk=${hash}`),
             concatMap(url => this.requestProvider.getBinaryContent(url))
         );
-    }
-
-    private playTempFile(): void {
-        fs.createReadStream(this.tempFilePath)
-            .pipe(new Decoder())
-            .on("format", function(this: Readable, format: any) {
-                this.pipe(new Speaker(format));
-            });
     }
 }

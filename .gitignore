@@ -1,6 +1,3 @@
 node_modules
-dist/main
-dist/renderer
-dist/package
 src/**/*.js
 *.js.map

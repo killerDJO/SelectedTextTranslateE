@@ -17,6 +17,9 @@
         "paths": {
             "common/*": [
                 "../common/*"
+            ],
+            "native/*": [
+                "../../dist/app/native/*"
             ]
         },
         "plugins": [

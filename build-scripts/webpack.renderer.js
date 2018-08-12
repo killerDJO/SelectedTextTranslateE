@@ -8,7 +8,7 @@ const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === "production";
-    const destinationPath = "../dist/renderer";
+    const destinationPath = "../dist/app/renderer";
     const rendererPath = "../src/renderer";
 
     const scssFrameworkFile = path.resolve(__dirname, rendererPath, "css-framework/framework.scss");
@@ -106,7 +106,7 @@ module.exports = (env, argv) => {
         config.devtool = "inline-source-map";
     }
     else {
-        config.devtool = "source-map";
+        config.devtool = false;
     }
 
     return config;

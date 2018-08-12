@@ -1,0 +1,5 @@
+*.node
+app/main
+app/renderer
+package
+installer

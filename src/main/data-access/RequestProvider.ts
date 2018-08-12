@@ -1,10 +1,9 @@
 import axios from "axios";
-import { Observable, defer, from, empty } from "rxjs";
+import { Observable, defer, from } from "rxjs";
 import { injectable } from "inversify";
 import { map, catchError } from "rxjs/operators";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { NotificationSender } from "infrastructure/NotificationSender";
-import { Logger } from "infrastructure/Logger";
 
 @injectable()
 export class RequestProvider {

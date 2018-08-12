@@ -2,42 +2,56 @@ const path = require("path");
 const webpack = require("webpack");
 const CleanWebpackPlugin = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
-const nodeExternals = require("webpack-node-externals");
-const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
+const package = require("../package.json");
+const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
+
+const destinationPath = path.resolve(__dirname, "../dist/app/main");
 
 module.exports = (env, argv) => {
     const isProduction = argv.mode === "production";
     const config = {
         entry: path.resolve(__dirname, "../src/main/app.ts"),
         output: {
-            path: path.resolve(__dirname, "../dist/main"),
+            path: destinationPath,
             filename: "[name].build.js",
             libraryTarget: "commonjs2"
         },
         module: {
             rules: [
                 {
+                    test: /FileStreamRotator\.js$/,
+                    loader: "string-replace-loader",
+                    options: {
+                        search: "_rtn = require\\(full_path\\);",
+                        replace: "throw Error('MODULE_NOT_FOUND');",
+                        flags: "g",
+                        strict: true
+                    }
+                },
+                {
                     test: /\.ts$/,
                     loader: "ts-loader",
                     exclude: /node_modules/,
+                },
+                {
+                    test: /\.node$/,
+                    use: 'node-loader'
                 }
             ]
         },
+        target: "electron-main",
         node: false,
         resolve: {
-            extensions: [".ts"],
+            extensions: [".ts", ".js"],
             plugins: [
                 new TsconfigPathsPlugin({ configFile: "./src/main/tsconfig.json" })
             ]
         },
-        optimization: {
-            minimize: false
-        },
-        externals: [nodeExternals()],
+        externals: [...Object.keys(package.devDependencies)],
         plugins: [
             new CleanWebpackPlugin(
                 [
-                    path.resolve(__dirname, "../dist/main")
+                    destinationPath
                 ],
                 {
                     allowExternal: true
@@ -59,7 +73,7 @@ module.exports = (env, argv) => {
     };
 
     if (isProduction) {
-        config.devtool = "source-map";
+        config.devtool = false;
     }
     else {
         config.devtool = "inline-source-map";

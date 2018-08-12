@@ -1,7 +1,7 @@
 import { Container } from "inversify";
 
 import { RequestProvider } from "data-access/RequestProvider";
-import { SqLiteProvider } from "data-access/SqLiteProvider";
+import { DatastoreProvider } from "data-access/DatastoreProvider";
 
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { HashProvider } from "business-logic/translation/HashProvider";
@@ -52,7 +52,7 @@ class Binder {
 
     private bindDataAccess(): void {
         this.container.bind<RequestProvider>(RequestProvider).toSelf();
-        this.container.bind<SqLiteProvider>(SqLiteProvider).toSelf();
+        this.container.bind<DatastoreProvider>(DatastoreProvider).toSelf();
     }
 
     private bindBusinessLogic(): void {

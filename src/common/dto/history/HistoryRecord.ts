@@ -1,13 +1,11 @@
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 
-export class HistoryRecord {
-    constructor(
-        public readonly sentence: string,
-        public readonly isForcedTranslation: boolean,
-        public readonly translateResult: TranslateResult,
-        public readonly translationsNumber: number,
-        public readonly createdDate: Date,
-        public readonly updatedDate: Date,
-        public readonly lastTranslatedDate: Date) {
-    }
+export interface HistoryRecord {
+    readonly sentence: string;
+    readonly isForcedTranslation: boolean;
+    readonly translateResult: TranslateResult;
+    readonly translationsNumber: number;
+    readonly createdDate: Date;
+    readonly updatedDate: Date;
+    readonly lastTranslatedDate: Date;
 }

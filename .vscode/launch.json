@@ -8,10 +8,11 @@
             "type": "node",
             "request": "launch",
             "protocol": "inspector",
+            "outputCapture": "std",
             "name": "Debugn Main Process",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
             "cwd": "${workspaceRoot}",
-            "program": "${workspaceFolder}/dist/main/main.build.js",
+            "program": "${workspaceFolder}/dist/app/main/main.build.js",
             "sourceMaps": true
         },
         {
@@ -20,7 +21,7 @@
             "request": "launch",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "runtimeArgs": [
-                "${workspaceFolder}/dist/main/main.build.js",
+                "${workspaceFolder}/dist/app/main/main.build.js",
                 "--remote-debugging-port=9222"
             ],
             "timeout": 20000,
