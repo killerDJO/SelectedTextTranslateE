@@ -7,7 +7,7 @@ import { DevToolsLoader } from "presentation/infrastructure/DevToolsLoader";
 import { ErrorHandler } from "infrastructure/ErrorHandler";
 import { Logger } from "infrastructure/Logger";
 import { Application } from "presentation/Application";
-import { Installer } from "installer";
+import { Installer } from "install/Installer";
 
 const logger = container.get<Logger>(Logger);
 

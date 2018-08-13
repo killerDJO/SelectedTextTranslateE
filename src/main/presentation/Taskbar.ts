@@ -9,27 +9,23 @@ import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 export class Taskbar {
     private tray!: Tray;
 
-    public readonly showTranslation$: Observable<void>;
-    public readonly showSettings$: Subject<void>;
-    public readonly showHistory$: Subject<void>;
-    public readonly isSuspended$: BehaviorSubject<boolean>;
-    public readonly translateSelectedText$: Subject<void>;
+    public readonly showSettings$: Subject<void> = new Subject();
+    public readonly showHistory$: Subject<void> = new Subject();
+    public readonly checkForUpdates$: Subject<void> = new Subject();
+    public readonly isSuspended$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+    public readonly translateSelectedText$: Subject<void> = new Subject();
 
     public constructor(
         private readonly iconsProvider: IconsProvider) {
-        this.showTranslation$ = fromEventPattern((handler: () => void) => this.tray.on("click", handler));
-        this.showSettings$ = new Subject();
-        this.showHistory$ = new Subject();
-        this.isSuspended$ = new BehaviorSubject(false);
-        this.translateSelectedText$ = new Subject();
-
         this.createTaskBar();
+
+        fromEventPattern((handler: () => void) => this.tray.on("click", handler)).subscribe(() => this.translateSelectedText$.next());
         this.isSuspended$.pipe(distinctUntilChanged()).subscribe(() => this.updateTraySuspendedState());
     }
 
     private createTaskBar(): void {
         this.tray = new Tray(this.iconsProvider.getIconPath("tray"));
-        this.tray.setToolTip("Selected text translate [Updated]..");
+        this.tray.setToolTip("Selected text translate..");
         this.tray.setContextMenu(this.createContextMenu());
     }
 
@@ -49,6 +45,7 @@ export class Taskbar {
             { label: "Settings", click: () => this.showSettings$.next() },
             { type: "separator" },
             suspendMenuItem,
+            { label: "Check for updates", click: () => this.checkForUpdates$.next() },
             { type: "separator" },
             { label: "Quit", type: "normal", role: "quit" }
         ])

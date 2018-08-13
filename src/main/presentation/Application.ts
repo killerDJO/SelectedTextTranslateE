@@ -16,6 +16,7 @@ import { HistoryStore } from "business-logic/history/HistoryStore";
 import { SettingsView } from "presentation/views/SettingsView";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { Scaler } from "presentation/framework/scaling/Scaler";
+import { Updater } from "install/Updater";
 
 @injectable()
 export class Application {
@@ -30,7 +31,8 @@ export class Application {
         private readonly textExtractor: TextExtractor,
         private readonly settingsProvider: SettingsProvider,
         private readonly historyStore: HistoryStore,
-        private readonly viewsRegistry: ViewsRegistry) {
+        private readonly viewsRegistry: ViewsRegistry,
+        private readonly updater: Updater) {
 
         this.createTaskbar();
         this.setupHotkeys();
@@ -75,7 +77,6 @@ export class Application {
     private createTaskbar(): void {
         this.taskbar = new Taskbar(this.iconsProvider);
 
-        this.taskbar.showTranslation$.subscribe(() => this.translationView.show());
         this.taskbar.translateSelectedText$
             .pipe(concatMap(() => this.textExtractor.getSelectedText()))
             .subscribe(text => this.translateText(text, false));
@@ -84,6 +85,7 @@ export class Application {
         this.taskbar.isSuspended$
             .pipe(distinctUntilChanged())
             .subscribe(areSuspended => areSuspended ? this.hotkeysRegistry.suspendHotkeys() : this.hotkeysRegistry.enableHotkeys());
+        this.taskbar.checkForUpdates$.subscribe(() => this.updater.checkForUpdate());
     }
 
     private translateText(text: string, isForcedTranslation: boolean): void {

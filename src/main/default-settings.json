@@ -90,5 +90,8 @@
                 ]
             }
         ]
+    },
+    "update": {
+        "feedUrl": "https://github.com/killerDJO/SelectedTextTranslateE"
     }
 }

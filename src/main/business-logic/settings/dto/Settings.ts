@@ -8,6 +8,7 @@ export interface Settings {
     readonly views: ViewsSettings;
     readonly scaling: ScalingSettings;
     readonly hotkeys: HotkeySettings;
+    readonly update: UpdateSettings;
 }
 
 export interface HotkeySettings {
@@ -46,4 +47,8 @@ export interface ScalingSettings {
 export interface TranslationSettings extends ViewSize {
     readonly margin: number;
     readonly renderer: TranslationResultViewSettings;
+}
+
+export interface UpdateSettings {
+    readonly feedUrl: string;
 }
