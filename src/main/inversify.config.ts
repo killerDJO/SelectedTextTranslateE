@@ -29,6 +29,7 @@ import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewsRegistry } from "presentation/views/ViewsRegistry";
 import { NullScaler } from "presentation/framework/scaling/NullScaler";
 import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
+import { Installer } from "installer";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -46,6 +47,7 @@ class Binder {
         this.container.bind<StorageFolderProvider>(StorageFolderProvider).toSelf();
         this.container.bind<NotificationSender>(NotificationSender).toSelf();
         this.container.bind<Logger>(Logger).toSelf().inSingletonScope();
+        this.container.bind<Installer>(Installer).toSelf().inSingletonScope();
         this.container.bind<ErrorHandler>(ErrorHandler).toSelf().inSingletonScope();
         this.container.bind<SettingsStore>(SettingsStore).toSelf().inSingletonScope();
     }

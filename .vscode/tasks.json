@@ -18,9 +18,23 @@
             "problemMatcher": []
         },
         {
+            "label": "renderer: build-prod",
+            "type": "npm",
+            "script": "renderer-build-prod",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
             "label": "main: build-dev",
             "type": "npm",
             "script": "main-build-dev",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "main: build-prod",
+            "type": "npm",
+            "script": "main-build-prod",
             "group": "build",
             "problemMatcher": []
         },
@@ -32,16 +46,23 @@
             "problemMatcher": []
         },
         {
-            "label": "pack: dev",
+            "label": "pack",
             "type": "npm",
-            "script": "pack-dev",
+            "script": "pack",
             "group": "build",
             "problemMatcher": []
         },
         {
-            "label": "pack: prod",
+            "label": "create-installer",
             "type": "npm",
-            "script": "pack-prod",
+            "script": "create-installer",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "native: rebuild",
+            "type": "npm",
+            "script": "native-rebuild",
             "group": "build",
             "problemMatcher": []
         },

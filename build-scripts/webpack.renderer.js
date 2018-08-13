@@ -21,6 +21,7 @@ module.exports = (env, argv) => {
             libraryTarget: "commonjs2"
         },
         node: false,
+        target: "electron-renderer",
         module: {
             rules: [
                 {
@@ -71,7 +72,6 @@ module.exports = (env, argv) => {
                 new TsconfigPathsPlugin({ configFile: "./src/renderer/tsconfig.json" })
             ]
         },
-        externals: ["electron"],
         plugins: [
             new VueLoaderPlugin(),
             new MiniCssExtractPlugin({

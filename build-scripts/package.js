@@ -1,16 +1,17 @@
-const packager = require('electron-packager');
-const path = require('path');
-const del = require('del');
+const packager = require("electron-packager");
+const path = require("path");
+const del = require("del");
 
 const packageConfig = {
-    arch: 'x64',
+    arch: "x64",
     asar: true,
-    dir: path.join(__dirname, '../'),
-    icon: path.join(__dirname, '../dist/app/main/icons/tray.ico'),
+    dir: path.join(__dirname, "../"),
+    icon: path.join(__dirname, "../dist/app/main/icons/tray.ico"),
     ignore: pathsFilter,
-    out: path.join(__dirname, '../dist/package'),
+    executableName: "Selected Text Translate",
+    out: path.join(__dirname, "../dist/package"),
     overwrite: true,
-    platform: 'win32'
+    platform: "win32"
 }
 
 clean();
@@ -22,8 +23,8 @@ function package() {
             console.log(`App has been packaged.`);
         })
         .catch(reason => {
-            console.log(`\n${console.log('`electron-packager`')} says...\n`)
-            console.log(reason + '\n')
+            console.log(`\n${console.log("`electron-packager`")} says...\n`)
+            console.log(reason + "\n")
         });
 }
 

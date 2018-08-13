@@ -76,6 +76,9 @@ export class Application {
         this.taskbar = new Taskbar(this.iconsProvider);
 
         this.taskbar.showTranslation$.subscribe(() => this.translationView.show());
+        this.taskbar.translateSelectedText$
+            .pipe(concatMap(() => this.textExtractor.getSelectedText()))
+            .subscribe(text => this.translateText(text, false));
         this.taskbar.showSettings$.subscribe(() => this.settingsView.show());
         this.taskbar.showHistory$.subscribe(() => this.historyView.show());
         this.taskbar.isSuspended$

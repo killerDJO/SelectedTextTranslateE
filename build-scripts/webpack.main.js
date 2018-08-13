@@ -19,16 +19,6 @@ module.exports = (env, argv) => {
         module: {
             rules: [
                 {
-                    test: /FileStreamRotator\.js$/,
-                    loader: "string-replace-loader",
-                    options: {
-                        search: "_rtn = require\\(full_path\\);",
-                        replace: "throw Error('MODULE_NOT_FOUND');",
-                        flags: "g",
-                        strict: true
-                    }
-                },
-                {
                     test: /\.ts$/,
                     loader: "ts-loader",
                     exclude: /node_modules/,
