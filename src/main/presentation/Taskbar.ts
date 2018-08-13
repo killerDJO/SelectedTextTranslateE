@@ -29,7 +29,7 @@ export class Taskbar {
 
     private createTaskBar(): void {
         this.tray = new Tray(this.iconsProvider.getIconPath("tray"));
-        this.tray.setToolTip("Selected text translate..");
+        this.tray.setToolTip("Selected text translate [Updated]..");
         this.tray.setContextMenu(this.createContextMenu());
     }
 

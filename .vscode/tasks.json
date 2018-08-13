@@ -46,14 +46,14 @@
             "problemMatcher": []
         },
         {
-            "label": "pack",
+            "label": "create: package",
             "type": "npm",
             "script": "pack",
             "group": "build",
             "problemMatcher": []
         },
         {
-            "label": "create-installer",
+            "label": "create: installer",
             "type": "npm",
             "script": "create-installer",
             "group": "build",
@@ -88,6 +88,13 @@
                 "main: watch",
                 "renderer: watch"
             ]
+        },
+        {
+            "label": "create: release",
+            "group": "build",
+            "type": "npm",
+            "script": "create-release",
+            "problemMatcher": []
         }
     ]
 }

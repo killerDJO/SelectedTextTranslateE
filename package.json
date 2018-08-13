@@ -1,7 +1,7 @@
 {
   "name": "selected-text-translate",
   "productName": "Selected Text Translate",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Util to translate selected text.",
   "main": "dist/app/main/main.build.js",
   "author": "killerDJO",
@@ -15,7 +15,7 @@
     "main-watch-dev": "webpack --config ./build-scripts/webpack.main.js --watch --mode=development",
     "full-build-dev": "npm run main-build-dev && npm run renderer-build-dev",
     "full-build-prod": "npm run main-build-prod && npm run renderer-build-prod",
-    "pack-prod": "npm run full-build-prod && npm run pack",
+    "create-release": "npm run full-build-prod && npm run pack && npm run create-installer",
     "pack": "node build-scripts/package.js",
     "create-installer": "node build-scripts/create-installer.js",
     "native-rebuild": "node build-scripts/build-native.js"

@@ -8,6 +8,7 @@ const installerConfig = {
     exe: "Selected Text Translate.exe",
     setupExe: "Selected Text Translate Setup.exe",
     iconUrl: path.join(__dirname, "../dist/app/main/icons/tray.ico"),
+    remoteReleases: "https://github.com/killerDJO/SelectedTextTranslateE",
     noMsi: true
 };
 
