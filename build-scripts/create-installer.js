@@ -2,13 +2,15 @@ const electronInstaller = require("electron-winstaller");
 const path = require("path");
 const del = require("del");
 
+const platformAndArch = `${process.platform}-${process.arch}`
+
 const installerConfig = {
-    appDirectory: path.join(__dirname, "../dist/package/Selected Text Translate-win32-x64"),
+    appDirectory: path.join(__dirname, `../dist/package/Selected Text Translate-${platformAndArch}`),
     outputDirectory: path.join(__dirname, "../dist/installer"),
     exe: "Selected Text Translate.exe",
-    setupExe: "Selected Text Translate Setup.exe",
+    title: `Selected Text Translate Setup`,
+    setupExe: `Selected Text Translate Setup.exe`,
     iconUrl: path.join(__dirname, "../dist/app/main/icons/tray.ico"),
-    remoteReleases: "https://github.com/killerDJO/SelectedTextTranslateE",
     noMsi: true
 };
 

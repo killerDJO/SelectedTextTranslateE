@@ -1,5 +1,5 @@
-import { Menu, Tray } from "electron";
-import { Subject, Observable, BehaviorSubject, fromEventPattern } from "rxjs";
+import { Menu, Tray, app, dialog } from "electron";
+import { Subject, BehaviorSubject, fromEventPattern } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 import { injectable } from "inversify";
 
@@ -47,7 +47,17 @@ export class Taskbar {
             suspendMenuItem,
             { label: "Check for updates", click: () => this.checkForUpdates$.next() },
             { type: "separator" },
+            { label: "About", click: () => this.showAbout() },
             { label: "Quit", type: "normal", role: "quit" }
-        ])
+        ]);
+    }
+
+    private showAbout(): void {
+        const dialogOpts = {
+            type: "info",
+            title: "About",
+            message: `Current version is ${app.getVersion()}.`,
+        };
+        dialog.showMessageBox(dialogOpts);
     }
 }

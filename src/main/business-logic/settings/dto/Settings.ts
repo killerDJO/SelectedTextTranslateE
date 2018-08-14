@@ -51,4 +51,5 @@ export interface TranslationSettings extends ViewSize {
 
 export interface UpdateSettings {
     readonly feedUrl: string;
+    readonly releasesUrl: string;
 }

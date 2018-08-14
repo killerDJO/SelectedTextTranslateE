@@ -92,6 +92,7 @@
         ]
     },
     "update": {
-        "feedUrl": "https://github.com/killerDJO/SelectedTextTranslateE"
+        "feedUrl": "https://update.electronjs.org/killerDJO/SelectedTextTranslateE",
+        "releasesUrl": "https://github.com/killerDJO/SelectedTextTranslateE/releases"
     }
 }
