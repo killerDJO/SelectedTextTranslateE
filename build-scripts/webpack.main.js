@@ -25,7 +25,7 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.node$/,
-                    use: 'node-loader'
+                    use: 'native-ext-loader'
                 }
             ]
         },

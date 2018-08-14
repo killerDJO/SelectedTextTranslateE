@@ -24,7 +24,7 @@ function runNodeGyp() {
 function copyBindingToDist() {
     const fileName = "native-extensions.node";
     const bindingPath = path.join(nativeExtensionsPath, "build/Release", fileName);
-    const distPath = path.join("dist/app/native", fileName);
+    const distPath = path.join(nativeExtensionsPath, fileName);
     fs.createReadStream(bindingPath).pipe(fs.createWriteStream(distPath));
     console.log(`Generated binding copied to the ${distPath}`);
 }
