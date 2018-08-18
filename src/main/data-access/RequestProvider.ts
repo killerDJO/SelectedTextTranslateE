@@ -41,7 +41,7 @@ export class RequestProvider {
                 timeout: this.requestTimeout
             }));
         }).pipe(
-            catchError(error => this.notificationSender.showNonCriticalError("Network error has occurred.", error, `URL: ${url}`))
+            catchError(error => this.notificationSender.showAndRethrowNonCriticalError("Network error has occurred.", error, `URL: ${url}`))
         );
     }
 }

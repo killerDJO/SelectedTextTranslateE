@@ -36,6 +36,18 @@ void BroadcastCopyCommand(const v8::FunctionCallbackInfo<v8::Value> &args)
     }
 }
 
+void CheckMCIError(MCIERROR errorCode, v8::Isolate *isolate)
+{
+    if (errorCode != 0)
+    {
+        const int ErrorDescriptionLength = 256;
+        char errorDescription[ErrorDescriptionLength];
+        mciGetErrorStringA(errorCode, errorDescription, ErrorDescriptionLength);
+        isolate->ThrowException(v8::Exception::TypeError(
+            v8::String::NewFromUtf8(isolate, string(errorDescription).c_str())));
+    }
+}
+
 void PlayFile(const v8::FunctionCallbackInfo<v8::Value> &args)
 {
     v8::Isolate *isolate = args.GetIsolate();
@@ -58,13 +70,13 @@ void PlayFile(const v8::FunctionCallbackInfo<v8::Value> &args)
     const string filePath = string(*nan_string);
 
     const string openFileCommand = "open " + filePath + " type mpegvideo alias " + string(AUDIO_FILE_NAME);
-    mciSendStringA(openFileCommand.c_str(), nullptr, 0, nullptr);
+    CheckMCIError(mciSendStringA(openFileCommand.c_str(), nullptr, 0, nullptr), isolate);
 
     const string playAudioCommand = "play " + string(AUDIO_FILE_NAME) + " wait";
-    mciSendStringA(playAudioCommand.c_str(), nullptr, 0, nullptr);
+    CheckMCIError(mciSendStringA(playAudioCommand.c_str(), nullptr, 0, nullptr), isolate);
 
     const string closeAudioCommand = "close " + string(AUDIO_FILE_NAME);
-    mciSendStringA(closeAudioCommand.c_str(), nullptr, 0, nullptr);
+    CheckMCIError(mciSendStringA(closeAudioCommand.c_str(), nullptr, 0, nullptr), isolate);
 }
 
 void Initialize(v8::Local<v8::Object> exports)

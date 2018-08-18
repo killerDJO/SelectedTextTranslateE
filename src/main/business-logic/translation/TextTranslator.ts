@@ -37,7 +37,7 @@ export class TextTranslator {
         return this.historyStore.getRecord(sanitizedSentence, isForcedTranslation).pipe(
             concatMap(historyRecord => this.getTranslateResult(sentence, isForcedTranslation, historyRecord)),
             tap<TranslateResult>(translateResult => this.historyStore.incrementTranslationsNumber(translateResult, isForcedTranslation).subscribe()),
-            catchError(error => this.notificationSender.showNonCriticalError<TranslateResult | null>("Error translating text", error))
+            catchError(error => this.notificationSender.showAndRethrowNonCriticalError<TranslateResult | null>("Error translating text", error))
         );
     }
 
@@ -75,7 +75,7 @@ export class TextTranslator {
         return this.hashProvider.computeHash(sentence).pipe(
             concatMap(hash => this.getTranslationResponse(sentence, isForcedTranslation, hash)),
             map(response => this.responseParser.parse(response, sentence)),
-            catchError(error => this.notificationSender.showNonCriticalError<TranslateResult>("Error parsing translation response", error))
+            catchError(error => this.notificationSender.showAndRethrowNonCriticalError<TranslateResult>("Error parsing translation response", error))
         );
     }
 

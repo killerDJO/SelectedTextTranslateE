@@ -39,7 +39,7 @@ export class TranslatePageParser {
             take(1),
             tap(() => this.logger.info("Translation config has been updated.")),
             tap(translationConfig => this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds)),
-            catchError(error => this.notificationSender.showNonCriticalError<TranslationConfig>("Unable to parse translation page", error))
+            catchError(error => this.notificationSender.showAndRethrowNonCriticalError<TranslationConfig>("Unable to parse translation page", error))
         );
     }
 
