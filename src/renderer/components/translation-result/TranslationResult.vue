@@ -1,6 +1,10 @@
 <template>
     <div class="translate-result" v-if="isInitialized">
-        <div v-if="hasResult">
+        <div v-if="isInProgress" class="loading-holder">
+            <span class="loading-indicator"/>
+            <span>Translating text...</span>
+        </div>
+        <div v-else-if="hasResult">
             <translation-result-header
                 :sentence="translateResult.sentence"
                 @translate-suggestion="translateSuggestion"

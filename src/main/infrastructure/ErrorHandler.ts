@@ -23,7 +23,7 @@ export class ErrorHandler {
         this.openMessageBox();
         this.logger.info("Application shutdown due to main process error.");
         await this.logger.flush();
-        process.exit();
+        process.exit(1);
     }
 
     private openMessageBox(): void {

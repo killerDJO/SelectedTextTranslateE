@@ -40,7 +40,7 @@ export class Logger {
         }
 
         return new Promise<void>((resolve) => {
-            this.transport.on("finish", resolve);
+            this.transport.on("flush", resolve);
         });
     }
 

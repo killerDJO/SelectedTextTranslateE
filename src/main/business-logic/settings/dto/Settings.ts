@@ -25,7 +25,7 @@ export interface TranslationEngineSettings {
 }
 
 export interface ViewsSettings {
-    readonly translation: TranslationSettings;
+    readonly translation: TranslationViewSettings;
     readonly settings: ViewSize;
     readonly history: ViewSize;
     readonly engine: ViewsEngineSettings;
@@ -49,8 +49,9 @@ export interface ScalingSettings {
     readonly scaleFactor: number;
 }
 
-export interface TranslationSettings extends ViewSize {
+export interface TranslationViewSettings extends ViewSize {
     readonly margin: number;
+    readonly loadingDelay: number;
     readonly renderer: TranslationResultViewSettings;
 }
 

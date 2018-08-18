@@ -12,6 +12,7 @@ interface TranslationResultState {
     translateResult: TranslateResult | null;
     translationResultViewSettings?: TranslationResultViewSettings;
     isInitialized: boolean;
+    isInProgress: boolean;
 }
 
 export const translationResult: Module<TranslationResultState, RootState> = {
@@ -19,17 +20,22 @@ export const translationResult: Module<TranslationResultState, RootState> = {
     state: {
         translateResult: null,
         translationResultViewSettings: undefined,
-        isInitialized: false
+        isInitialized: false,
+        isInProgress: false
     },
     mutations: {
         setTranslateResult(state: TranslationResultState, translateResult: TranslateResult | null): void {
             state.translateResult = translateResult;
+            state.isInProgress = false;
         },
         setTranslationResultViewSettings(state: TranslationResultState, translationResultViewSettings: TranslationResultViewSettings): void {
             state.translationResultViewSettings = translationResultViewSettings;
         },
         setInitialized(state: TranslationResultState): void {
             state.isInitialized = true;
+        },
+        setInProgress(state: TranslationResultState): void {
+            state.isInProgress = true;
         }
     },
     actions: {
@@ -39,6 +45,7 @@ export const translationResult: Module<TranslationResultState, RootState> = {
                 commit("setTranslationResultViewSettings", translationResultViewSettings);
                 commit("setInitialized");
             });
+            messageBus.getNotification(Messages.Translation.SetInProgress, () => commit("setInProgress"));
         },
         playText({ state }): void {
             executeCommand(state, Messages.Translation.PlayTextCommand, translateResult => translateResult.sentence.input);

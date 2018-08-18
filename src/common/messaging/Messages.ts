@@ -22,6 +22,7 @@ export class Messages {
     };
 
     public static Translation = class {
+        public static readonly SetInProgress = "set-in-progress";
         public static readonly TranslateResult = "translate-result";
         public static readonly PlayTextCommand = "play-text-command";
         public static readonly TranslateCommand = "translate-command";

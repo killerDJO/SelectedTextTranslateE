@@ -53,6 +53,7 @@
             "width": 300,
             "height": 400,
             "margin": 5,
+            "loadingDelay": 500,
             "renderer": {
                 "score": {
                     "highThreshold": 0.05,

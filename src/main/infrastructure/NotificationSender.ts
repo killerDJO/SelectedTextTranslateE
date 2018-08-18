@@ -31,6 +31,6 @@ export class NotificationSender {
     public showNonCriticalError<TResult>(message: string, error: Error, details: string = "[No details]"): Observable<TResult> {
         this.send(message, "Click to open error log to see details.", () => this.logger.openLogFolder());
         this.logger.error(`${message} | ${details}`, error);
-        return empty();
+        throw error;
     }
 }

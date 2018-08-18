@@ -36,7 +36,8 @@ export class TextTranslator {
 
         return this.historyStore.getRecord(sanitizedSentence, isForcedTranslation).pipe(
             concatMap(historyRecord => this.getTranslateResult(sentence, isForcedTranslation, historyRecord)),
-            tap<TranslateResult>(translateResult => this.historyStore.incrementTranslationsNumber(translateResult, isForcedTranslation).subscribe())
+            tap<TranslateResult>(translateResult => this.historyStore.incrementTranslationsNumber(translateResult, isForcedTranslation).subscribe()),
+            catchError(error => this.notificationSender.showNonCriticalError<TranslateResult | null>("Error translating text", error))
         );
     }
 

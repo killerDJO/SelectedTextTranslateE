@@ -11,6 +11,7 @@ import { ViewContext } from "presentation/framework/ViewContext";
 export class TranslationView extends ViewBase {
 
     private currentScaleFactor: number | null = null;
+    private inProgressTimeout: NodeJS.Timer | null = null;
 
     public readonly playText$!: Observable<string>;
     public readonly translateText$!: Observable<string>;
@@ -33,8 +34,23 @@ export class TranslationView extends ViewBase {
         this.window.on("blur", () => this.hide());
     }
 
+    public setInProgress(): void {
+        this.inProgressTimeout = setTimeout(
+            () => {
+                this.messageBus.sendNotification(Messages.Translation.SetInProgress);
+                this.show();
+            },
+            this.context.viewsSettings.translation.loadingDelay);
+    }
+
     public setTranslateResult(translateResult: TranslateResult | null): Subject<void> {
+        this.cancelProgressTimeout();
         return this.messageBus.sendValue(Messages.Translation.TranslateResult, translateResult);
+    }
+
+    public hide(): void {
+        this.cancelProgressTimeout();
+        super.hide();
     }
 
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
@@ -69,6 +85,13 @@ export class TranslationView extends ViewBase {
             x: primaryDisplay.workArea.width - width - translationSettings.margin,
             y: primaryDisplay.workArea.height - height - translationSettings.margin
         };
+    }
+
+    private cancelProgressTimeout() {
+        if (!!this.inProgressTimeout) {
+            clearTimeout(this.inProgressTimeout);
+            this.inProgressTimeout = null;
+        }
     }
 
     private setCurrentScaleFactor(): void {

@@ -1,4 +1,4 @@
-import { app, powerSaveBlocker } from "electron";
+import { app } from "electron";
 // tslint:disable-next-line:no-import-side-effect
 import "reflect-metadata";
 
@@ -8,8 +8,6 @@ import { ErrorHandler } from "infrastructure/ErrorHandler";
 import { Logger } from "infrastructure/Logger";
 import { Application } from "presentation/Application";
 import { Installer } from "install/Installer";
-
-powerSaveBlocker.start('prevent-app-suspension');
 
 const logger = container.get<Logger>(Logger);
 

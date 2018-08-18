@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { concatMap, distinctUntilChanged } from "rxjs/operators";
+import { concatMap, distinctUntilChanged, catchError } from "rxjs/operators";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -17,6 +17,9 @@ import { SettingsView } from "presentation/views/SettingsView";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { Scaler } from "presentation/framework/scaling/Scaler";
 import { Updater } from "install/Updater";
+import { empty } from "rxjs";
+import { TranslateResult } from "common/dto/translation/TranslateResult";
+import { catchErrorWithEmptyResult } from 'utils/catch-error-with-empty-result';
 
 @injectable()
 export class Application {
@@ -66,9 +69,7 @@ export class Application {
 
     private setupHotkeys(): void {
         this.hotkeysRegistry.registerHotkeys();
-        this.hotkeysRegistry.translate$
-            .pipe(concatMap(() => this.textExtractor.getSelectedText()))
-            .subscribe(text => this.translateText(text, false));
+        this.hotkeysRegistry.translate$.subscribe(() => this.translateSelectedText());
         this.hotkeysRegistry.playText$
             .pipe(concatMap(() => this.textExtractor.getSelectedText()))
             .subscribe(text => this.textPlayer.playText(text));
@@ -77,9 +78,7 @@ export class Application {
     private createTaskbar(): void {
         this.taskbar = new Taskbar(this.iconsProvider);
 
-        this.taskbar.translateSelectedText$
-            .pipe(concatMap(() => this.textExtractor.getSelectedText()))
-            .subscribe(text => this.translateText(text, false));
+        this.taskbar.translateSelectedText$.subscribe(() => this.translateSelectedText());
         this.taskbar.showSettings$.subscribe(() => this.settingsView.show());
         this.taskbar.showHistory$.subscribe(() => this.historyView.show());
         this.taskbar.isSuspended$
@@ -88,10 +87,20 @@ export class Application {
         this.taskbar.checkForUpdates$.subscribe(() => this.updater.checkForUpdate());
     }
 
+    private translateSelectedText(): void {
+        this.translationView.setInProgress();
+        this.textExtractor
+            .getSelectedText()
+            .subscribe(text => this.translateText(text, false));
+    }
+
     private translateText(text: string, isForcedTranslation: boolean): void {
-        this.textTranslator.translate(text, isForcedTranslation).subscribe(result => {
-            this.translationView.setTranslateResult(result).subscribe(() => this.translationView.show());
-        });
+        this.textTranslator
+            .translate(text, isForcedTranslation)
+            .pipe(catchErrorWithEmptyResult(() => this.translationView.hide()))
+            .subscribe(result => {
+                this.translationView.setTranslateResult(result).subscribe(() => this.translationView.show());
+            });
     }
 
     private createView<TView extends ViewBase>(viewName: ViewNames, postCreateAction?: (view: TView) => void): TView {

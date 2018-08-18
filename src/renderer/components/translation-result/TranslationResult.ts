@@ -20,6 +20,7 @@ export default class TranslationResult extends Vue {
     @ns.State public translateResult!: TranslateResult;
     @ns.State public translationResultViewSettings!: TranslationResultViewSettings;
     @ns.State public isInitialized!: boolean;
+    @ns.State public isInProgress!: boolean;
 
     @ns.Action private readonly fetchData!: () => void;
     @ns.Action public readonly playText!: () => void;
