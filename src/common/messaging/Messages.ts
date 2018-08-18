@@ -43,5 +43,6 @@ export class Messages {
         public static readonly EditableSettingsUpdated = "editable-settings-updated";
         public static readonly PauseHotkeysRequest = "pause-hotkeys-request";
         public static readonly SetScaleFactorCommand = "set-scale-factor";
+        public static readonly OpenSettingsFile = "open-settings-file";
     };
 }

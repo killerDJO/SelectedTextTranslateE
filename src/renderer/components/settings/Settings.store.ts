@@ -53,6 +53,9 @@ export const settings: Module<SettingsState, RootState> = {
         },
         changeScaling(_, scaleFactor: number): void {
             messageBus.sendCommand<number>(Messages.Settings.SetScaleFactorCommand, scaleFactor);
+        },
+        openSettingsFile(): void {
+            messageBus.sendCommand<void>(Messages.Settings.OpenSettingsFile);
         }
     }
 };

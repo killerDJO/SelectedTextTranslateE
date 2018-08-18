@@ -65,6 +65,7 @@ export class Application {
             .pipe(distinctUntilChanged())
             .subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());
         settingsView.updatedSettings$.subscribe(updatedSettings => this.settingsProvider.updateSettings(updatedSettings));
+        settingsView.openSettingsFile$.subscribe(() => this.settingsProvider.openInEditor());
     }
 
     private setupHotkeys(): void {

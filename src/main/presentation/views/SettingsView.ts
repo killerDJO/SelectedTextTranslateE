@@ -16,6 +16,7 @@ export class SettingsView extends ViewBase {
     public readonly pauseHotkeys$!: Observable<boolean>;
     public readonly updatedSettings$!: Observable<DeepPartial<Settings>>;
     public readonly setScaleFactor$!: Observable<number>;
+    public readonly openSettingsFile$!: Observable<void>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.Settings, viewContext, {
@@ -30,6 +31,7 @@ export class SettingsView extends ViewBase {
         this.updatedSettings$ = this.messageBus.getValue<EditableSettings>(Messages.Settings.EditableSettingsUpdated)
             .pipe(map(editableSettings => this.getSettings(editableSettings)));
         this.setScaleFactor$ = this.messageBus.getValue<number>(Messages.Settings.SetScaleFactorCommand);
+        this.openSettingsFile$ = this.messageBus.getValue<void>(Messages.Settings.OpenSettingsFile);
     }
 
     public setSettings(settings$: Observable<Settings>): void {

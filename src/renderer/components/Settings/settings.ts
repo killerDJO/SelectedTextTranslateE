@@ -26,6 +26,7 @@ export default class Settings extends Vue {
     @ns.Action private readonly updateSettings!: (settings: EditableSettings) => void;
     @ns.Action public readonly pauseHotkeys!: () => void;
     @ns.Action public readonly enableHotkeys!: () => void;
+    @ns.Action public readonly openSettingsFile!: () => void;
 
     @ns.Action public readonly changeScaling!: (scaleFactor: number) => void;
 

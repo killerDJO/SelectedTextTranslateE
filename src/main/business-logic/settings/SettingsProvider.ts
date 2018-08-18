@@ -7,6 +7,7 @@ import * as _ from "lodash";
 import { Settings } from "business-logic/settings/dto/Settings";
 import { SettingsStore } from "infrastructure/SettingsStore";
 import { DeepPartial } from "utils/deep-partial";
+import { shell } from "electron";
 
 @injectable()
 export class SettingsProvider {
@@ -35,6 +36,10 @@ export class SettingsProvider {
         const defaultSettingsPath = path.resolve(__dirname, "default-settings.json");
         const defaultSettingsContent = fs.readFileSync(defaultSettingsPath).toString("utf8");
         return JSON.parse(defaultSettingsContent) as Settings;
+    }
+
+    public openInEditor(): void {
+        this.settingsStore.openInEditor();
     }
 
     private getSettingsFromDefaultsFile(): Settings {

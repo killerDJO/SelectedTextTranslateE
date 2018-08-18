@@ -21,4 +21,8 @@ export class SettingsStore {
     public set<TValue>(name: string, value: TValue) {
         this.store.set(name, value);
     }
+
+    public openInEditor(): void {
+        this.store.openInEditor();
+    }
 }

@@ -12,6 +12,7 @@
         :scaling-state="scalingState"
         @scaling-settings-updated="updateScalingSettings"
         @scaling-changed="changeScaling"/>
+      <span class="link-button pull-right" @click="openSettingsFile">Open Settings File</span>
     </div>
   </div>
 </template>
