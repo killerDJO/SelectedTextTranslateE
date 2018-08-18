@@ -42,12 +42,12 @@ export class SettingsView extends ViewBase {
 
     public setScalingState(scalingState$: Observable<ScalingState>): void {
         this.registerSubscription(
-            this.messageBus.registerObservable(Messages.Settings.ScalingState, scalingState$));
+            this.messageBus.registerObservable(Messages.Settings.ScalingState, scalingState$).subscription);
     }
 
     private setSettingsInternal(name: string, settings$: Observable<Settings>): void {
         this.registerSubscription(
-            this.messageBus.registerObservable(name, settings$.pipe(map(this.getEditableSettings))));
+            this.messageBus.registerObservable(name, settings$.pipe(map(this.getEditableSettings))).subscription);
     }
 
     protected getInitialBounds(): Electron.Rectangle {

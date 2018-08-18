@@ -12,6 +12,7 @@ import { distinctUntilChanged, filter } from "rxjs/operators";
 
 export abstract class ViewBase {
     private readonly subscriptions: Subscription[] = [];
+    private readonly showDelayMilliseconds: number;
 
     protected readonly window: BrowserWindow;
     protected readonly messageBus: MessageBus;
@@ -25,6 +26,8 @@ export abstract class ViewBase {
         protected readonly context: ViewContext,
         protected readonly viewOptions: ViewOptions) {
 
+        this.showDelayMilliseconds = context.viewsSettings.engine.showDelayMilliseconds;
+
         this.window = new BrowserWindow(this.getWindowSettings());
         this.window.setMenu(null);
         this.isReadyToShow$ = new BehaviorSubject<boolean>(false);
@@ -32,7 +35,7 @@ export abstract class ViewBase {
 
         this.messageBus = new MessageBus(this.window);
         this.messageBus.sendValue(Messages.Common.IsFramelessWindow, this.viewOptions.isFrameless);
-        this.registerSubscription(this.messageBus.registerObservable(Messages.Common.RendererSettings, this.context.rendererSettings));
+        this.registerSubscription(this.messageBus.registerObservable(Messages.Common.RendererSettings, this.context.rendererSettings).subscription);
         this.registerSubscription(viewOptions.isScalingEnabled.pipe(distinctUntilChanged()).subscribe(isScalingEnabled => this.setScaler(isScalingEnabled)));
 
         this.initializeSubscriptions();
@@ -40,8 +43,16 @@ export abstract class ViewBase {
     }
 
     public show(): void {
+        if (this.window.isVisible()) {
+            return;
+        }
+
+        // Show offscreen to pre-render and prevent flickering
         this.isReadyToShow$.pipe(filter(isReady => isReady)).subscribe(() => {
-            setTimeout(() => this.window.show(), 75);
+            const { x, y, width, height } = this.window.getBounds();
+            this.window.setPosition(-width, -height);
+            this.window.show();
+            setTimeout(() => this.window.setPosition(x, y), this.showDelayMilliseconds);
         });
     }
 

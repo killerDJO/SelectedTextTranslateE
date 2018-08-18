@@ -71,6 +71,9 @@
         "settings": {
             "width": 35,
             "height": 45
+        },
+        "engine": {
+            "showDelayMilliseconds": 50
         }
     },
     "hotkeys": {

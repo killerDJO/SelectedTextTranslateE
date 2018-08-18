@@ -1,6 +1,7 @@
 export enum Channels {
     Subscribe = "subscribe",
-    Observe = "observe"
+    Observe = "observe",
+    Received = "received"
 }
 
 export class Messages {

@@ -28,6 +28,11 @@ export interface ViewsSettings {
     readonly translation: TranslationSettings;
     readonly settings: ViewSize;
     readonly history: ViewSize;
+    readonly engine: ViewsEngineSettings;
+}
+
+export interface ViewsEngineSettings {
+    readonly showDelayMilliseconds: number;
 }
 
 export interface ViewSize {

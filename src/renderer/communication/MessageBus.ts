@@ -1,14 +1,16 @@
 import { ipcRenderer } from "electron";
 import { Channels, Messages } from "common/messaging/Messages";
+import { Message } from "common/messaging/Message";
 
 export class MessageBus {
 
     public getValue<TValue>(name: Messages, callback: (value: TValue) => void): void {
-        ipcRenderer.on(Channels.Observe, (sender: Electron.EventEmitter, receivedName: string, value: TValue) => {
-            if (receivedName !== name) {
+        ipcRenderer.on(Channels.Observe, (sender: Electron.EventEmitter, message: Message, value: TValue) => {
+            if (message.name !== name) {
                 return;
             }
             callback(value);
+            ipcRenderer.send(Channels.Received, message);
         });
         ipcRenderer.send(Channels.Subscribe, name);
     }

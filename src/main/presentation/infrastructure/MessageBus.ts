@@ -1,94 +1,128 @@
-import { Observable, ReplaySubject, Subscription as RxJsSubscription, of } from "rxjs";
+import { Observable, ReplaySubject, Subscription as RxJsSubscription, of, Subject } from "rxjs";
 import { ipcMain } from "electron";
 import { take } from "rxjs/operators";
 
 import { Channels } from "common/messaging/Messages";
+import { Message } from "common/messaging/Message";
 
-interface Subscription {
+interface IpcSubscription {
     readonly channel: string;
     readonly callback: Function;
 }
 
-export class MessageBus {
-    private static readonly ReplayMessagesNumber: number = 1;
+interface MessageRegistration {
+    readonly value: any;
+    readonly received$: Subject<void>;
+}
 
-    private readonly observablesRegistry: { [key: string]: ReplaySubject<any> };
-    private readonly subscriptions: Subscription[] = [];
+export interface RegistrationResult {
+    readonly subscription: RxJsSubscription;
+    readonly received$: Subject<void>;
+}
+
+export class MessageBus {
+    private readonly messageQueue: Map<string, Map<string, MessageRegistration>> = new Map();
+    private readonly ipcSubscriptions: IpcSubscription[] = [];
 
     constructor(private readonly window: Electron.BrowserWindow) {
-        this.observablesRegistry = {};
-
-        const subscription = this.createSubscription(Channels.Subscribe, (event: Electron.Event, receivedName: string) => {
-            if (!this.isCurrentWindowEvent(event)) {
-                return;
-            }
-
-            if (!!this.observablesRegistry[receivedName]) {
-                this.observablesRegistry[receivedName]
-                    .pipe(take(MessageBus.ReplayMessagesNumber))
-                    .subscribe(value => this.window.webContents.send(Channels.Observe, receivedName, value));
-            }
-        });
-
-        ipcMain.on(subscription.channel, subscription.callback);
+        this.createSubscription(Channels.Subscribe, (_, name: string) => this.handleSubscribe(name));
+        this.createSubscription(Channels.Received, (_, message: Message) => this.handleReceived(message));
     }
 
-    public registerObservable<TValue>(name: string, observable$: Observable<TValue>): RxJsSubscription {
-        if (this.observablesRegistry[name]) {
-            return observable$.subscribe(value => this.observablesRegistry[name].next(value));
-        }
-
-        const subject$ = new ReplaySubject<TValue>(MessageBus.ReplayMessagesNumber);
-        subject$.subscribe(value => this.window.webContents.send(Channels.Observe, name, value));
+    public registerObservable<TValue>(name: string, observable$: Observable<TValue>): RegistrationResult {
+        const received$ = new Subject<void>();
         const subscription = observable$.subscribe(value => {
             if (this.window.isDestroyed()) {
                 throw Error("Window has been destroyed. Make sure subscription is disposed properly.");
             }
-            subject$.next(value);
+
+            const message = this.createMessage(name);
+            const messages = this.messageQueue.get(name) || new Map();
+            messages.set(message.id, { value: value, received$: received$ });
+            this.messageQueue.set(name, messages);
+
+            this.window.webContents.send(Channels.Observe, message, value);
         });
-        this.observablesRegistry[name] = subject$;
-        return subscription;
+
+        return {
+            subscription: subscription,
+            received$: received$
+        };
     }
 
-    public sendValue<TValue>(name: string, value: TValue): void {
-        this.registerObservable(name, of(value));
+    public sendValue<TValue>(name: string, value: TValue): Subject<void> {
+        return this.registerObservable(name, of(value)).received$;
     }
 
-    public sendNotification(name: string): void {
-        this.registerObservable(name, of(null));
+    public sendNotification(name: string): Subject<void> {
+        return this.registerObservable(name, of(null)).received$;
     }
 
     public getValue<TValue>(name: string): Observable<TValue> {
         const subject$ = new ReplaySubject<TValue>(1);
-        const subscription = this.createSubscription(Channels.Observe, (event: Electron.Event, receivedName: string, observable: TValue) => {
-            if (!this.isCurrentWindowEvent(event)) {
-                return;
-            }
-
+        this.createSubscription(Channels.Observe, (event: Electron.Event, receivedName: string, observable: TValue) => {
             if (receivedName !== name) {
                 return;
             }
 
             subject$.next(observable);
         });
-        ipcMain.on(subscription.channel, subscription.callback);
 
         return subject$;
     }
 
     public destroy(): void {
-        for (const subscription of this.subscriptions) {
+        for (const subscription of this.ipcSubscriptions) {
             ipcMain.removeListener(subscription.channel, subscription.callback);
         }
     }
 
-    private createSubscription<TValue>(channel: string, callback: (event: Electron.Event, receivedName: string, value: TValue) => void): Subscription {
-        const subscription: Subscription = { channel, callback };
-        this.subscriptions.push(subscription);
-        return subscription;
+    private handleSubscribe(name: string): void {
+        const messages = this.messageQueue.get(name);
+        if (!messages) {
+            return;
+        }
+
+        for (const [id, messageRegistration] of messages) {
+            this.window.webContents.send(Channels.Observe, { id: id, name: name }, messageRegistration.value);
+        }
+    }
+
+    private handleReceived(message: Message): void {
+        const messages = this.messageQueue.get(message.name);
+        if (!messages) {
+            return;
+        }
+
+        const messageRegistration = messages.get(message.id);
+        if (!!messageRegistration) {
+            messages.delete(message.id);
+            messageRegistration.received$.next();
+            messageRegistration.received$.complete();
+        }
+    }
+
+    private createSubscription(channel: string, callback: (event: Electron.Event, ...args: any[]) => void): void {
+        const subscriptionCallback = (event: Electron.Event, ...args: any[]) => {
+            if (!this.isCurrentWindowEvent(event)) {
+                return;
+            }
+
+            callback(event, ...args);
+        };
+        ipcMain.on(channel, subscriptionCallback);
+        this.ipcSubscriptions.push({ channel: channel, callback: subscriptionCallback });
     }
 
     private isCurrentWindowEvent(event: Electron.Event): boolean {
         return event.sender.id === this.window.webContents.id;
     }
-} 
+
+    private createMessage(name: string): Message {
+        const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        return {
+            id: id,
+            name: name,
+        };
+    }
+}

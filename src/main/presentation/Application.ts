@@ -90,8 +90,7 @@ export class Application {
 
     private translateText(text: string, isForcedTranslation: boolean): void {
         this.textTranslator.translate(text, isForcedTranslation).subscribe(result => {
-            this.translationView.show();
-            this.translationView.setTranslateResult(result);
+            this.translationView.setTranslateResult(result).subscribe(() => this.translationView.show());
         });
     }
 

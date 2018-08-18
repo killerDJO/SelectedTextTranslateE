@@ -1,5 +1,5 @@
 import { screen } from "electron";
-import { Observable, BehaviorSubject } from "rxjs";
+import { Observable, BehaviorSubject, Subject } from "rxjs";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
@@ -33,8 +33,8 @@ export class TranslationView extends ViewBase {
         this.window.on("blur", () => this.hide());
     }
 
-    public setTranslateResult(translateResult: TranslateResult | null): void {
-        this.messageBus.sendValue(Messages.Translation.TranslateResult, translateResult);
+    public setTranslateResult(translateResult: TranslateResult | null): Subject<void> {
+        return this.messageBus.sendValue(Messages.Translation.TranslateResult, translateResult);
     }
 
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
