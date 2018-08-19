@@ -8,7 +8,7 @@ import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { ViewOptions } from "presentation/framework/ViewOptions";
 import { IScaler } from "presentation/framework/scaling/IScaler";
-import { distinctUntilChanged, filter } from "rxjs/operators";
+import { distinctUntilChanged, filter, first } from "rxjs/operators";
 
 export abstract class ViewBase {
     private readonly subscriptions: Subscription[] = [];
@@ -17,6 +17,7 @@ export abstract class ViewBase {
     protected readonly window: BrowserWindow;
     protected readonly messageBus: MessageBus;
     protected readonly isReadyToShow$: BehaviorSubject<boolean>;
+    protected readonly isShowInProgress$: BehaviorSubject<boolean>;
 
     private scalerSubscription: Subscription | null = null;
     protected scaler!: IScaler;
@@ -31,6 +32,7 @@ export abstract class ViewBase {
         this.window = new BrowserWindow(this.getWindowSettings());
         this.window.setMenu(null);
         this.isReadyToShow$ = new BehaviorSubject<boolean>(false);
+        this.isShowInProgress$ = new BehaviorSubject<boolean>(false);
         this.loadWindow();
 
         this.messageBus = new MessageBus(this.window);
@@ -48,16 +50,24 @@ export abstract class ViewBase {
         }
 
         // Show offscreen to pre-render and prevent flickering
-        this.isReadyToShow$.pipe(filter(isReady => isReady)).subscribe(() => {
+        this.isReadyToShow$.pipe(first(isReady => isReady)).subscribe(() => {
+            this.isShowInProgress$.next(true);
             const { x, y, width, height } = this.window.getBounds();
             this.window.setPosition(-width, -height);
             this.window.show();
-            setTimeout(() => this.window.setPosition(x, y), this.showDelayMilliseconds);
+            setTimeout(
+                () => {
+                    this.window.setPosition(x, y);
+                    this.isShowInProgress$.next(false);
+                },
+                this.showDelayMilliseconds);
         });
     }
 
     public hide(): void {
-        this.window.hide();
+        this.onShowCompleted(() => {
+            this.window.hide();
+        });
     }
 
     public isDestroyed(): boolean {
@@ -87,6 +97,10 @@ export abstract class ViewBase {
 
     protected registerSubscription(subscription: Subscription): void {
         this.subscriptions.push(subscription);
+    }
+
+    private onShowCompleted(callback: () => void) {
+        return this.isShowInProgress$.pipe(first(isInProgress => !isInProgress)).subscribe(callback);
     }
 
     private setScaler(isScalingEnabled: boolean): void {
@@ -129,8 +143,10 @@ export abstract class ViewBase {
     }
 
     private scale(scaleFactor: number): void {
-        this.window.setBounds(this.scaleBounds(this.window.getBounds()));
-        this.messageBus.sendValue(Messages.Common.ScaleFactor, scaleFactor);
+        this.onShowCompleted(() => {
+            this.window.setBounds(this.scaleBounds(this.window.getBounds()));
+            this.messageBus.sendValue(Messages.Common.ScaleFactor, scaleFactor);
+        });
     }
 
     private destroy(): void {
