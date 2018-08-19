@@ -7,6 +7,7 @@ import { TranslationResultViewSettings } from "common/dto/settings/views-setting
 
 import TranslationResultContent from "./content/TranslationResultContent.vue";
 import TranslationResultHeader from "./header/TranslationResultHeader.vue";
+import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 
 const ns = namespace("app/translationResult");
 
@@ -21,6 +22,7 @@ export default class TranslationResult extends Vue {
     @ns.State public translationResultViewSettings!: TranslationResultViewSettings;
     @ns.State public isInitialized!: boolean;
     @ns.State public isInProgress!: boolean;
+    @ns.State public defaultView!: TranslateResultViews;
 
     @ns.Action private readonly fetchData!: () => void;
     @ns.Action public readonly playText!: () => void;

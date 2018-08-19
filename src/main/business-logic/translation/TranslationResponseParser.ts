@@ -2,12 +2,7 @@ import { isArray } from "util";
 import { injectable } from "inversify";
 import * as _ from "lodash";
 
-import { TranslateResult } from "common/dto/translation/TranslateResult";
-import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
-import { TranslateResultCategory } from "common/dto/translation/TranslateResultCategory";
-import { TranslateResultCategoryEntry } from "common/dto/translation/TranslateResultCategoryEntry";
-import { TranslateResultDefinitionCategory } from "common/dto/translation/TranslateResultDefinitionCategory";
-import { TranslateResultDefinitionCategoryEntry } from "common/dto/translation/TranslateResultDefinitionCategoryEntry";
+import { TranslateResult, TranslateResultSentence, TranslateResultCategory, TranslateResultCategoryEntry, TranslateResultDefinitionCategory, TranslateResultDefinitionCategoryEntry } from "common/dto/translation/TranslateResult";
 
 // Relevant response has the following format
 // [

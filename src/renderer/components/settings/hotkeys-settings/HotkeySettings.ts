@@ -32,6 +32,7 @@ export default class HotkeySettings extends Vue {
     private readonly hotkeysDisplayName = new Map<keyof LocalHotkeySettings | keyof GlobalHotkeySettings, string>([
         ["translate", "Translate Text"],
         ["playText", "Play Text"],
+        ["showDefinition", "Show Definition"],
         ["zoomIn", "Zoom In"],
         ["zoomOut", "Zoom Out"],
         ["resetZoom", "Reset Zoom"]

@@ -13,7 +13,8 @@
             <translation-result-content
                 :categories="translateResult.categories"
                 :definitions="translateResult.definitions"
-                :translation-result-view-settings="translationResultViewSettings"/>
+                :translation-result-view-settings="translationResultViewSettings"
+                :default-view="defaultView"/>
         </div>
         <div v-else class="no-text-data">No text data selected</div>
     </div>

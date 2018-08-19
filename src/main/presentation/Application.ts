@@ -19,6 +19,8 @@ import { Scaler } from "presentation/framework/scaling/Scaler";
 import { Updater } from "install/Updater";
 import { NotificationSender } from "infrastructure/NotificationSender";
 
+import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+
 @injectable()
 export class Application {
     private taskbar!: Taskbar;
@@ -70,6 +72,7 @@ export class Application {
     private setupHotkeys(): void {
         this.hotkeysRegistry.registerHotkeys();
         this.hotkeysRegistry.translate$.subscribe(() => this.translateSelectedText());
+        this.hotkeysRegistry.showDefinition$.subscribe(() => this.translateSelectedText(TranslateResultViews.Definition));
         this.hotkeysRegistry.playText$
             .pipe(concatMap(() => this.textExtractor.getSelectedText()))
             .subscribe(text => this.playText(text));
@@ -87,11 +90,11 @@ export class Application {
         this.taskbar.checkForUpdates$.subscribe(() => this.updater.checkForUpdate());
     }
 
-    private translateSelectedText(): void {
+    private translateSelectedText(defaultView: TranslateResultViews = TranslateResultViews.Translation): void {
         this.translationView.setInProgress();
         this.textExtractor
             .getSelectedText()
-            .subscribe(text => this.translateText(text, false));
+            .subscribe(text => this.translateText(text, false, defaultView));
     }
 
     private playText(text: string): void {
@@ -102,11 +105,11 @@ export class Application {
             });
     }
 
-    private translateText(text: string, isForcedTranslation: boolean): void {
+    private translateText(text: string, isForcedTranslation: boolean, defaultView: TranslateResultViews = TranslateResultViews.Translation): void {
         this.textTranslator
             .translate(text, isForcedTranslation)
             .subscribe(
-                result => this.translationView.setTranslateResult(result).subscribe(() => this.translationView.show()),
+                result => this.translationView.setTranslateResult(result, defaultView).subscribe(() => this.translationView.show()),
                 error => {
                     this.notificationSender.showNonCriticalError("Error translating text", error);
                     this.translationView.hide();

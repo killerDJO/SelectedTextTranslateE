@@ -8,6 +8,9 @@ import { ViewBase } from "presentation/framework/ViewBase";
 import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "presentation/framework/ViewContext";
 
+import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
+
 export class TranslationView extends ViewBase {
 
     private currentScaleFactor: number | null = null;
@@ -31,7 +34,7 @@ export class TranslationView extends ViewBase {
         this.translateText$ = this.messageBus.getValue(Messages.Translation.TranslateCommand);
         this.forceTranslateText$ = this.messageBus.getValue(Messages.Translation.ForceTranslateCommand);
 
-        //this.window.on("blur", () => this.hide());
+        this.window.on("blur", () => this.hide());
     }
 
     public setInProgress(): void {
@@ -43,9 +46,9 @@ export class TranslationView extends ViewBase {
             this.context.viewsSettings.translation.loadingDelay);
     }
 
-    public setTranslateResult(translateResult: TranslateResult | null): Subject<void> {
+    public setTranslateResult(translateResult: TranslateResult | null, defaultView: TranslateResultViews): Subject<void> {
         this.cancelProgressTimeout();
-        return this.messageBus.sendValue(Messages.Translation.TranslateResult, translateResult);
+        return this.messageBus.sendValue<TranslateResultCommand>(Messages.Translation.TranslateResult, { translateResult, defaultView });
     }
 
     public hide(): void {

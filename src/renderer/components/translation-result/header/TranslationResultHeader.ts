@@ -1,7 +1,7 @@
 import Vue from "vue";
 
 import { Component, Prop } from "vue-property-decorator";
-import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
+import { TranslateResultSentence } from "common/dto/translation/TranslateResult";
 
 @Component
 export default class TranslationResultHeader extends Vue {

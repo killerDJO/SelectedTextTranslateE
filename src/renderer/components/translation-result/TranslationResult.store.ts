@@ -1,6 +1,8 @@
 import { Module } from "vuex";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
+import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
 import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
@@ -13,6 +15,7 @@ interface TranslationResultState {
     translationResultViewSettings?: TranslationResultViewSettings;
     isInitialized: boolean;
     isInProgress: boolean;
+    defaultView: TranslateResultViews;
 }
 
 export const translationResult: Module<TranslationResultState, RootState> = {
@@ -21,11 +24,13 @@ export const translationResult: Module<TranslationResultState, RootState> = {
         translateResult: null,
         translationResultViewSettings: undefined,
         isInitialized: false,
-        isInProgress: false
+        isInProgress: false,
+        defaultView: TranslateResultViews.Translation
     },
     mutations: {
-        setTranslateResult(state: TranslationResultState, translateResult: TranslateResult | null): void {
-            state.translateResult = translateResult;
+        setTranslateResult(state: TranslationResultState, translateResultCommand: TranslateResultCommand): void {
+            state.translateResult = translateResultCommand.translateResult;
+            state.defaultView = translateResultCommand.defaultView;
             state.isInProgress = false;
         },
         setTranslationResultViewSettings(state: TranslationResultState, translationResultViewSettings: TranslationResultViewSettings): void {
@@ -40,7 +45,7 @@ export const translationResult: Module<TranslationResultState, RootState> = {
     },
     actions: {
         fetchData({ commit }): void {
-            messageBus.getValue<TranslateResult | null>(Messages.Translation.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
+            messageBus.getValue<TranslateResultCommand>(Messages.Translation.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
             messageBus.getValue<TranslationResultViewSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => {
                 commit("setTranslationResultViewSettings", translationResultViewSettings);
                 commit("setInitialized");

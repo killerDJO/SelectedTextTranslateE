@@ -93,6 +93,14 @@
                     "T"
                 ]
             }
+        ],
+        "showDefinition": [
+            {
+                "keys": [
+                    "Control",
+                    "D"
+                ]
+            }
         ]
     },
     "update": {

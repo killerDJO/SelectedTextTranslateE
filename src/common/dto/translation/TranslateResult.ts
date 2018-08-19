@@ -1,15 +1,48 @@
-import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
-import { TranslateResultCategory } from "common/dto/translation/TranslateResultCategory";
-import { TranslateResultDefinitionCategory } from "common/dto/translation/TranslateResultDefinitionCategory";
-
-export { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
-export { TranslateResultCategory } from "common/dto/translation/TranslateResultCategory";
-export { TranslateResultCategoryEntry } from "common/dto/translation/TranslateResultCategoryEntry";
-
 export class TranslateResult {
     constructor(
         public readonly sentence: TranslateResultSentence,
         public readonly categories: ReadonlyArray<TranslateResultCategory>,
         public readonly definitions: ReadonlyArray<TranslateResultDefinitionCategory>) {
+    }
+}
+
+export class TranslateResultSentence {
+    constructor(
+        public readonly input: string,
+        public readonly translation: string | null,
+        public readonly origin: string | null,
+        public readonly suggestion: string | null) {
+    }
+}
+
+export class TranslateResultCategory {
+    constructor(
+        public readonly partOfSpeech: string,
+        public readonly baseForm: string,
+        public readonly entries: ReadonlyArray<TranslateResultCategoryEntry>) {
+    }
+}
+
+export class TranslateResultCategoryEntry {
+    constructor(
+        public readonly word: string,
+        public readonly reverseTranslations: ReadonlyArray<string>,
+        public readonly score: number) {
+    }
+}
+
+export class TranslateResultDefinitionCategory {
+    constructor(
+        public readonly partOfSpeech: string,
+        public readonly baseForm: string,
+        public readonly entries: ReadonlyArray<TranslateResultDefinitionCategoryEntry>) {
+    }
+}
+
+export class TranslateResultDefinitionCategoryEntry {
+    constructor(
+        public readonly definition: string,
+        public readonly sample: string,
+        public readonly synonyms: ReadonlyArray<string>) {
     }
 }

@@ -8,6 +8,7 @@ export interface EditableHotkeySettings {
 export interface GlobalHotkeySettings {
     readonly translate: Hotkey[];
     readonly playText: Hotkey[];
+    readonly showDefinition: Hotkey[];
 }
 
 export interface LocalHotkeySettings {

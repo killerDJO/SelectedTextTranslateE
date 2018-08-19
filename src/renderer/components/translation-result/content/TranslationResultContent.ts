@@ -2,11 +2,11 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 import Vue from "vue";
 
 import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
-import { TranslateResultCategory } from "common/dto/translation/TranslateResult";
+import { TranslateResultCategory, TranslateResultDefinitionCategory } from "common/dto/translation/TranslateResult";
+import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 
 import TranslationResultContentCategory from "components/translation-result/content/category/TranslationResultContentCategory.vue";
 import TranslationResultDefinitionCategory from "components/translation-result/content/definitions/TranslationResultDefinitionCategory.vue";
-import { TranslateResultDefinitionCategory } from "common/dto/translation/TranslateResultDefinitionCategory";
 
 @Component({
     components: {
@@ -25,7 +25,12 @@ export default class TranslationResultContent extends Vue {
     @Prop(Object)
     public translationResultViewSettings!: TranslationResultViewSettings;
 
-    public showDefinitions: boolean = false;
+    @Prop(String)
+    public defaultView!: TranslateResultViews;
+
+    public TranslateResultViews: typeof TranslateResultViews = TranslateResultViews;
+
+    public currentView: TranslateResultViews = TranslateResultViews.Translation;
 
     public get hasCategories(): boolean {
         return !!this.categories.length;
@@ -35,11 +40,16 @@ export default class TranslationResultContent extends Vue {
         return !!this.definitions.length;
     }
 
-    @Watch("hasDefinitions")
-    @Watch("hasCategories")
-    public checkInitialView(): void {
-        if (!this.hasCategories && this.hasDefinitions) {
-            this.showDefinitions = true;
+    @Watch("defaultView")
+    @Watch("categories")
+    @Watch("definitions")
+    public initializeCurrentView() {
+        if (!this.hasCategories && this.hasDefinitions && this.defaultView === TranslateResultViews.Translation) {
+            this.currentView = TranslateResultViews.Definition;
+        } else if (!this.hasDefinitions && this.defaultView === TranslateResultViews.Definition) {
+            this.currentView = TranslateResultViews.Translation;
+        } else {
+            this.currentView = this.defaultView;
         }
     }
 }
