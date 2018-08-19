@@ -6,31 +6,64 @@ import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultSentence } from "common/dto/translation/TranslateResultSentence";
 import { TranslateResultCategory } from "common/dto/translation/TranslateResultCategory";
 import { TranslateResultCategoryEntry } from "common/dto/translation/TranslateResultCategoryEntry";
+import { TranslateResultDefinitionCategory } from "common/dto/translation/TranslateResultDefinitionCategory";
+import { TranslateResultDefinitionCategoryEntry } from "common/dto/translation/TranslateResultDefinitionCategoryEntry";
 
 // Relevant response has the following format
 // [
-//  [
-//      ["<translation>", "<original text>"],
-//      [null, null, "<transliteration>"]
-//  ],
-//  [
-//      [
-//          "<part_of_speech>",
-//          [<irrelevant>],
-//          [
-//              ["<variant_1>", ["<reverse_translation_1>", "<reverse_translation_2>", ..], null, <score>],
-//              ....
-//          ],
-//          "<base_form>",
-//          <irrelevant>
-//      ],
-//  ],
-//  <irrelevant>,
-//  <irrelevant>,
-//  <irrelevant>,
-//  <irrelevant>,
-//  <irrelevant>,
-//  [<irrelevant>, <suggestion>, <irrelevant>, null, null, <irrelevant>],
+// 0:  [
+//         ["<translation>", "<original text>"],
+//         [null, null, "<transliteration>"]
+//     ],
+// 1:  [
+//         [
+//             "<part_of_speech>",
+//             [<irrelevant>],
+//             [
+//                 ["<variant_1>", ["<reverse_translation_1>", "<reverse_translation_2>", ..], null, <score>],
+//                 ....
+//             ],
+//             "<base_form>",
+//             <irrelevant>
+//         ],
+//         ...
+//     ],
+// 2:  <irrelevant>,
+// 3:  <irrelevant>,
+// 4:  <irrelevant>,
+// 5:  <irrelevant>,
+// 6:  <irrelevant>,
+// 7:  [<irrelevant>, <suggestion>, <irrelevant>, null, null, <irrelevant>],
+// 8:  <irrelevant>,
+// 9:  <irrelevant>,
+// 10: <irrelevant>,
+// 11: [
+//         [
+//             "<part_of_speech>",
+//             [
+//                 [
+//                     "<definition_id>",
+//                     "<definition_synonyms>"
+//                 ],
+//                 ....
+//             ]
+//         ],
+//         ....
+//     ]
+// 12: [
+//         [
+//             "<part_of_speech>",
+//             [
+//                 [
+//                     "<definition>",
+//                     "<definition_id>",
+//                     "<sample>"
+//                 ],
+//                 ....
+//             ]
+//         ],
+//         ....
+//     ]
 // ]
 @injectable()
 export class TranslationResponseParser {
@@ -42,7 +75,8 @@ export class TranslationResponseParser {
 
         const sentence = this.parseSentence(root, input);
         const categories = this.parseTranslateCategories(root);
-        return new TranslateResult(sentence, categories);
+        const definitions = this.parseDefinitions(root);
+        return new TranslateResult(sentence, categories, definitions);
     }
 
     private parseSentence(root: any, input: string): TranslateResultSentence {
@@ -92,5 +126,52 @@ export class TranslationResponseParser {
         }
 
         return categoriesResponse;
+    }
+
+    private parseDefinitions(root: any): ReadonlyArray<TranslateResultDefinitionCategory> {
+        if (!isArray(root[12])) {
+            return [];
+        }
+
+        const synonyms = this.parseDefinitionSynonyms(root);
+
+        const definitionCategories: TranslateResultDefinitionCategory[] = [];
+        for (const definitionCategory of root[12]) {
+            const partOfSpeech: string = definitionCategory[0];
+
+            const definitionCategoryEntries: TranslateResultDefinitionCategoryEntry[] = [];
+            if (isArray(definitionCategory[1])) {
+                for (const definitionCategoryEntry of definitionCategory[1]) {
+                    const definition = definitionCategoryEntry[0];
+                    const id = definitionCategoryEntry[1];
+                    const sample = definitionCategoryEntry[2];
+                    const categoryEntrySynonyms = synonyms.get(id) || [];
+                    definitionCategoryEntries.push(new TranslateResultDefinitionCategoryEntry(definition, sample, categoryEntrySynonyms));
+                }
+            }
+
+            definitionCategories.push(new TranslateResultDefinitionCategory(partOfSpeech, definitionCategoryEntries));
+        }
+
+        return definitionCategories;
+    }
+
+    private parseDefinitionSynonyms(root: any): Map<string, string[]> {
+        const synonyms = new Map<string, string[]>();
+        if (!isArray(root[11])) {
+            return synonyms;
+        }
+
+        for (const definitionCategory of root[11]) {
+            if (isArray(definitionCategory[1])) {
+                for (const definitionCategoryEntry of definitionCategory[1]) {
+                    const categoryEntrySynonyms = definitionCategoryEntry[0];
+                    const id = definitionCategoryEntry[1];
+                    synonyms.set(id, categoryEntrySynonyms);
+                }
+            }
+        }
+
+        return synonyms;
     }
 }
