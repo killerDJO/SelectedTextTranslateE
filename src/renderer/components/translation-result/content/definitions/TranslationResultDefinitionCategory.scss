@@ -1,0 +1,38 @@
+.definitions {
+    padding-bottom: $padding-default;
+    float: left;
+    clear: both;
+
+    .definition-header{
+        .part-of-speech {
+            font-style: italic;
+            color: $color-gray;
+        }
+    }
+
+    .definition-entry {
+        white-space: nowrap;
+        padding-top: $padding-small;
+        padding-left: $padding-large;
+
+        .definition {
+            font-size: 11px;
+        }
+
+        .sample,
+        .synonyms {
+            font-style: italic;
+            color: $color-gray;
+            font-size: $font-small;
+        }
+
+        .sample {
+            &::before {
+                content: open-quote;
+            }
+            &::after {
+                content: close-quote;
+            }
+        }
+    }
+}

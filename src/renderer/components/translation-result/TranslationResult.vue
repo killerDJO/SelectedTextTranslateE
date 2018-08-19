@@ -12,6 +12,7 @@
                 @play-text="playText"/>
             <translation-result-content
                 :categories="translateResult.categories"
+                :definitions="translateResult.definitions"
                 :translation-result-view-settings="translationResultViewSettings"/>
         </div>
         <div v-else class="no-text-data">No text data selected</div>

@@ -1,8 +1,8 @@
 export class TranslateResultDefinitionCategoryEntry {
     constructor(
-        private readonly definition: string,
-        private readonly sample: string,
-        private readonly synonyms: ReadonlyArray<string>
+        public readonly definition: string,
+        public readonly sample: string,
+        public readonly synonyms: ReadonlyArray<string>
     ) {
     }
 }

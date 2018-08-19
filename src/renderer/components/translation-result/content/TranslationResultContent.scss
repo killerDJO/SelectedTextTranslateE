@@ -1,7 +1,12 @@
 .content {
     padding-left: $padding-large;
     padding-right: $padding-small;
-    padding-top: $padding-default;
+    padding-top: $padding-small;
     font-size: $font-medium;
     float: left;
+
+    .show-definitions {
+        padding-bottom: $padding-small;
+        float: left;
+    }
 }

@@ -60,7 +60,8 @@ import { TranslateResultDefinitionCategoryEntry } from "common/dto/translation/T
 //                     "<sample>"
 //                 ],
 //                 ....
-//             ]
+//             ],
+//             "<base_form>"
 //         ],
 //         ....
 //     ]
@@ -138,6 +139,7 @@ export class TranslationResponseParser {
         const definitionCategories: TranslateResultDefinitionCategory[] = [];
         for (const definitionCategory of root[12]) {
             const partOfSpeech: string = definitionCategory[0];
+            const baseForm: string = definitionCategory[2];
 
             const definitionCategoryEntries: TranslateResultDefinitionCategoryEntry[] = [];
             if (isArray(definitionCategory[1])) {
@@ -150,7 +152,7 @@ export class TranslationResponseParser {
                 }
             }
 
-            definitionCategories.push(new TranslateResultDefinitionCategory(partOfSpeech, definitionCategoryEntries));
+            definitionCategories.push(new TranslateResultDefinitionCategory(partOfSpeech, baseForm, definitionCategoryEntries));
         }
 
         return definitionCategories;

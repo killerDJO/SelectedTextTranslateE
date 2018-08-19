@@ -31,7 +31,7 @@ export class TranslationView extends ViewBase {
         this.translateText$ = this.messageBus.getValue(Messages.Translation.TranslateCommand);
         this.forceTranslateText$ = this.messageBus.getValue(Messages.Translation.ForceTranslateCommand);
 
-        this.window.on("blur", () => this.hide());
+        //this.window.on("blur", () => this.hide());
     }
 
     public setInProgress(): void {
