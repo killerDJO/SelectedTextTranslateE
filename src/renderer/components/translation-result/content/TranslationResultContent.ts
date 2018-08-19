@@ -40,6 +40,10 @@ export default class TranslationResultContent extends Vue {
         return !!this.definitions.length;
     }
 
+    public mounted() {
+        this.initializeCurrentView();
+    }
+
     @Watch("defaultView")
     @Watch("categories")
     @Watch("definitions")
