@@ -3,7 +3,7 @@ import { Observable, defer, from } from "rxjs";
 import { injectable } from "inversify";
 import { map, catchError } from "rxjs/operators";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { NotificationSender } from "infrastructure/NotificationSender";
+import { Logger } from "infrastructure/Logger";
 
 @injectable()
 export class RequestProvider {
@@ -11,7 +11,7 @@ export class RequestProvider {
     private readonly requestTimeout: number;
 
     constructor(
-        private readonly notificationSender: NotificationSender,
+        private readonly logger: Logger,
         settingsProvider: SettingsProvider) {
 
         const settings = settingsProvider.getSettings().value;
@@ -40,8 +40,6 @@ export class RequestProvider {
                 },
                 timeout: this.requestTimeout
             }));
-        }).pipe(
-            catchError(error => this.notificationSender.showAndRethrowNonCriticalError("Network error has occurred.", error, `URL: ${url}`))
-        );
+        });
     }
 }

@@ -20,7 +20,6 @@ export class TextTranslator {
         private readonly hashProvider: HashProvider,
         private readonly historyStore: HistoryStore,
         private readonly responseParser: TranslationResponseParser,
-        private readonly notificationSender: NotificationSender,
         private readonly logger: Logger,
         private readonly settingsProvider: SettingsProvider) {
     }
@@ -36,8 +35,7 @@ export class TextTranslator {
 
         return this.historyStore.getRecord(sanitizedSentence, isForcedTranslation).pipe(
             concatMap(historyRecord => this.getTranslateResult(sentence, isForcedTranslation, historyRecord)),
-            tap<TranslateResult>(translateResult => this.historyStore.incrementTranslationsNumber(translateResult, isForcedTranslation).subscribe()),
-            catchError(error => this.notificationSender.showAndRethrowNonCriticalError<TranslateResult | null>("Error translating text", error))
+            tap<TranslateResult>(translateResult => this.historyStore.incrementTranslationsNumber(translateResult, isForcedTranslation).subscribe())
         );
     }
 
@@ -74,8 +72,7 @@ export class TextTranslator {
     private getResponseFromService(sentence: string, isForcedTranslation: boolean): Observable<TranslateResult> {
         return this.hashProvider.computeHash(sentence).pipe(
             concatMap(hash => this.getTranslationResponse(sentence, isForcedTranslation, hash)),
-            map(response => this.responseParser.parse(response, sentence)),
-            catchError(error => this.notificationSender.showAndRethrowNonCriticalError<TranslateResult>("Error parsing translation response", error))
+            map(response => this.responseParser.parse(response, sentence))
         );
     }
 

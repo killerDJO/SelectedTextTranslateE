@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { concatMap, distinctUntilChanged, catchError } from "rxjs/operators";
+import { concatMap, distinctUntilChanged } from "rxjs/operators";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -17,9 +17,7 @@ import { SettingsView } from "presentation/views/SettingsView";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { Scaler } from "presentation/framework/scaling/Scaler";
 import { Updater } from "install/Updater";
-import { empty } from "rxjs";
-import { TranslateResult } from "common/dto/translation/TranslateResult";
-import { catchErrorWithEmptyResult } from 'utils/catch-error-with-empty-result';
+import { NotificationSender } from "infrastructure/NotificationSender";
 
 @injectable()
 export class Application {
@@ -33,6 +31,7 @@ export class Application {
         private readonly iconsProvider: IconsProvider,
         private readonly textExtractor: TextExtractor,
         private readonly settingsProvider: SettingsProvider,
+        private readonly notificationSender: NotificationSender,
         private readonly historyStore: HistoryStore,
         private readonly viewsRegistry: ViewsRegistry,
         private readonly updater: Updater) {
@@ -42,7 +41,7 @@ export class Application {
     }
 
     private setupTranslationView(translationView: TranslationView): void {
-        translationView.playText$.subscribe(text => this.textPlayer.playText(text));
+        translationView.playText$.subscribe(text => this.playText(text));
         translationView.translateText$.subscribe(text => this.translateText(text, false));
         translationView.forceTranslateText$.subscribe(text => this.translateText(text, true));
     }
@@ -73,7 +72,7 @@ export class Application {
         this.hotkeysRegistry.translate$.subscribe(() => this.translateSelectedText());
         this.hotkeysRegistry.playText$
             .pipe(concatMap(() => this.textExtractor.getSelectedText()))
-            .subscribe(text => this.textPlayer.playText(text));
+            .subscribe(text => this.playText(text));
     }
 
     private createTaskbar(): void {
@@ -95,13 +94,24 @@ export class Application {
             .subscribe(text => this.translateText(text, false));
     }
 
+    private playText(text: string): void {
+        this.textPlayer
+            .playText(text)
+            .subscribe({
+                error: error => this.notificationSender.showNonCriticalError("Error playing text", error)
+            });
+    }
+
     private translateText(text: string, isForcedTranslation: boolean): void {
         this.textTranslator
             .translate(text, isForcedTranslation)
-            .pipe(catchErrorWithEmptyResult(() => this.translationView.hide()))
-            .subscribe(result => {
-                this.translationView.setTranslateResult(result).subscribe(() => this.translationView.show());
-            });
+            .subscribe(
+                result => this.translationView.setTranslateResult(result).subscribe(() => this.translationView.show()),
+                error => {
+                    this.notificationSender.showNonCriticalError("Error translating text", error);
+                    this.translationView.hide();
+                }
+            );
     }
 
     private createView<TView extends ViewBase>(viewName: ViewNames, postCreateAction?: (view: TView) => void): TView {

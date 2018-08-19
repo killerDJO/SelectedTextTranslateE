@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { Observable, bindNodeCallback } from "rxjs";
+import { Observable, bindNodeCallback, of } from "rxjs";
 import { concatMap, map } from "rxjs/operators";
 import * as path from "path";
 import * as fs from "fs";
@@ -12,7 +12,6 @@ import { Logger } from "infrastructure/Logger";
 
 import * as nativeExtensions from "native/native-extensions.node";
 import { NotificationSender } from "infrastructure/NotificationSender";
-import { catchErrorWithEmptyResult } from "utils/catch-error-with-empty-result";
 
 @injectable()
 export class TextPlayer {
@@ -23,20 +22,18 @@ export class TextPlayer {
         private readonly requestProvider: RequestProvider,
         private readonly hashProvider: HashProvider,
         private readonly settingsProvider: SettingsProvider,
-        private readonly notificationSender: NotificationSender,
         private readonly logger: Logger) {
 
         this.tempFilePath = path.resolve(app.getPath("temp"), "STT_audio.mp3");
     }
 
-    public playText(text: string): void {
+    public playText(text: string): Observable<void> {
         this.logger.info(`Playing text '${text}'`);
-        this.getAudioContent(text)
+        return this.getAudioContent(text)
             .pipe(
                 concatMap(content => this.saveContentToTempFile(content)),
-                catchErrorWithEmptyResult(error => this.showPlayTextError(error))
-            )
-            .subscribe(() => this.playFile(text));
+                concatMap(() => of(this.playFile(text)))
+            );
     }
 
     private saveContentToTempFile(content: Buffer): Observable<void> {
@@ -45,16 +42,8 @@ export class TextPlayer {
     }
 
     private playFile(text: string): void {
-        try {
-            nativeExtensions.playFile(this.tempFilePath);
-            this.logger.info(`End playing text '${text}'`);
-        } catch (error) {
-            this.showPlayTextError(error);
-        }
-    }
-
-    private showPlayTextError(error: Error) {
-        this.notificationSender.showNonCriticalError("Error playing text", error);
+        nativeExtensions.playFile(this.tempFilePath);
+        this.logger.info(`End playing text '${text}'`);
     }
 
     private getAudioContent(text: string): Observable<Buffer> {

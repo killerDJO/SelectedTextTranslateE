@@ -28,13 +28,8 @@ export class NotificationSender {
         });
     }
 
-    public showAndRethrowNonCriticalError<TResult>(message: string, error: Error, details: string = "[No details]"): Observable<TResult> {
-        this.showAndRethrowNonCriticalError(message, error, details);
-        throw error;
-    }
-
-    public showNonCriticalError<TResult>(message: string, error: Error, details: string = "[No details]"): void {
+    public showNonCriticalError(message: string, error: Error): void {
         this.send(message, "Click to open error log to see details.", () => this.logger.openLogFolder());
-        this.logger.error(`${message} | ${details}`, error);
+        this.logger.error(`${message}`, error);
     }
 }

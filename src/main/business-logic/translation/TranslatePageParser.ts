@@ -20,7 +20,6 @@ export class TranslatePageParser {
     constructor(
         private readonly requestProvider: RequestProvider,
         private readonly logger: Logger,
-        private readonly notificationSender: NotificationSender,
         private readonly settingsProvider: SettingsProvider) {
         const MinutesInHour = 60;
         const SecondsInMinute = 60;
@@ -38,8 +37,7 @@ export class TranslatePageParser {
         return this.getUpdatedTranslationConfig().pipe(
             take(1),
             tap(() => this.logger.info("Translation config has been updated.")),
-            tap(translationConfig => this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds)),
-            catchError(error => this.notificationSender.showAndRethrowNonCriticalError<TranslationConfig>("Unable to parse translation page", error))
+            tap(translationConfig => this.cache.put(this.cacheKey, translationConfig, this.refreshIntervalMilliseconds))
         );
     }
 
