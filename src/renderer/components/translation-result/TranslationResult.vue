@@ -17,7 +17,10 @@
                 :translation-result-view-settings="translationResultViewSettings"
                 :default-view="defaultView"/>
         </div>
-        <div v-else class="no-text-data">No text data selected</div>
+        <div v-else>
+            <div  class="no-text-data">No text data selected</div>
+            <translation-input @translate-text="translateText"/>
+        </div>
     </div>
 </template>
 

@@ -7,6 +7,7 @@ import { TranslationResultViewSettings } from "common/dto/settings/views-setting
 
 import TranslationResultContent from "./content/TranslationResultContent.vue";
 import TranslationResultHeader from "./header/TranslationResultHeader.vue";
+import TranslationInput from "./translation-input/TranslationInput.vue";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 
 const ns = namespace("app/translationResult");
@@ -14,7 +15,8 @@ const ns = namespace("app/translationResult");
 @Component({
     components: {
         TranslationResultContent,
-        TranslationResultHeader
+        TranslationResultHeader,
+        TranslationInput
     }
 })
 export default class TranslationResult extends Vue {

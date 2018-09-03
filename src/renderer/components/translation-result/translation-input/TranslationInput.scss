@@ -1,0 +1,9 @@
+.translation-input{
+    padding: $padding-default 25px;
+    text-align: center;
+
+    > label {
+        font-size: $font-medium;
+        margin-bottom: 0;
+    }
+}
