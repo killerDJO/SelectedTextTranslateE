@@ -1,7 +1,8 @@
 <template>
     <div class="header">
-        <div class="translation">{{ sentence.translation }}</div>
-        <i class="play" @click="playText"></i><div class="origin">{{ sentence.origin }}</div>
+        <div class="translation" >{{ sentence.translation }}</div>
+        <i class="play" @click="playText"></i>
+        <div class="origin" @blur="translateText($event.target.innerText)" @keydown.enter.prevent="translateText($event.target.innerText)" contenteditable="true">{{ sentence.origin }}</div>
         <div class="header-actions">
             <span v-if="isInputCorrected">(corrected from <a class="link-button" @click="forceTranslation">{{sentence.input}})</a></span>
             <span v-if="hasSuggestion">(maybe you meant <a class="link-button" @click="translateSuggestion">{{sentence.suggestion}})</a></span>

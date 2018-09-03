@@ -26,6 +26,7 @@ export default class TranslationResult extends Vue {
 
     @ns.Action private readonly fetchData!: () => void;
     @ns.Action public readonly playText!: () => void;
+    @ns.Action public readonly translateText!: (text: string) => void;
     @ns.Action public readonly translateSuggestion!: () => void;
     @ns.Action public readonly forceTranslation!: () => void;
 

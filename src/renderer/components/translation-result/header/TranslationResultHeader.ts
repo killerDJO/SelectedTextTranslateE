@@ -32,4 +32,10 @@ export default class TranslationResultHeader extends Vue {
     public forceTranslation(): void {
         this.$emit("force-translation");
     }
+
+    public translateText(text: string): void {
+        if (text !== this.sentence.origin && !!text) {
+            this.$emit("translate-text", text);
+        }
+    }
 }

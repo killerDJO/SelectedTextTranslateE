@@ -9,6 +9,7 @@
                 :sentence="translateResult.sentence"
                 @translate-suggestion="translateSuggestion"
                 @force-translation="forceTranslation"
+                @translate-text="translateText"
                 @play-text="playText"/>
             <translation-result-content
                 :categories="translateResult.categories"

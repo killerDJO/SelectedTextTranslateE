@@ -55,12 +55,18 @@ export const translationResult: Module<TranslationResultState, RootState> = {
         playText({ state }): void {
             executeCommand(state, Messages.Translation.PlayTextCommand, translateResult => translateResult.sentence.input);
         },
-        translateSuggestion({ state }): void {
+        translateSuggestion({ commit, state }): void {
+            commit("setInProgress");
             executeCommand(state, Messages.Translation.TranslateCommand, translateResult => translateResult.sentence.suggestion);
         },
-        forceTranslation({ state }): void {
+        forceTranslation({ commit, state }): void {
+            commit("setInProgress");
             executeCommand(state, Messages.Translation.ForceTranslateCommand, translateResult => translateResult.sentence.input);
         },
+        translateText({ commit }, text: string): void {
+            commit("setInProgress");
+            messageBus.sendCommand(Messages.Translation.TranslateCommand, text);
+        }
     }
 };
 
