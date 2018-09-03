@@ -34,7 +34,7 @@ export class TranslationView extends ViewBase {
         this.translateText$ = this.messageBus.getValue(Messages.Translation.TranslateCommand);
         this.forceTranslateText$ = this.messageBus.getValue(Messages.Translation.ForceTranslateCommand);
 
-        // this.window.on("blur", () => this.hide());
+        this.window.on("blur", () => this.hide());
     }
 
     public setInProgress(): void {
@@ -44,7 +44,7 @@ export class TranslationView extends ViewBase {
 
         this.inProgressTimeout = setTimeout(
             () => {
-                this.messageBus.sendNotification(Messages.Translation.SetInProgress);
+                this.messageBus.sendNotification(Messages.Translation.InProgressCommand);
                 this.show();
                 this.inProgressTimeout = null;
             },
@@ -54,6 +54,12 @@ export class TranslationView extends ViewBase {
     public setTranslateResult(translateResult: TranslateResult | null, defaultView: TranslateResultViews): Subject<void> {
         this.cancelProgressTimeout();
         return this.messageBus.sendValue<TranslateResultCommand>(Messages.Translation.TranslateResult, { translateResult, defaultView });
+    }
+
+    public showTextInput(): void {
+        this.cancelProgressTimeout();
+        this.messageBus.sendNotification(Messages.Translation.ShowInputCommand);
+        this.show();
     }
 
     public hide(): void {

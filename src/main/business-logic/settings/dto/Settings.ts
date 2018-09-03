@@ -15,6 +15,7 @@ export interface HotkeySettings {
     readonly translate: Hotkey[];
     readonly showDefinition: Hotkey[];
     readonly playText: Hotkey[];
+    readonly inputText: Hotkey[];
 }
 
 export interface TranslationEngineSettings {

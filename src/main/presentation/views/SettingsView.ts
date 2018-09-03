@@ -62,7 +62,8 @@ export class SettingsView extends ViewBase {
                 global: {
                     playText: settings.hotkeys.playText,
                     translate: settings.hotkeys.translate,
-                    showDefinition: settings.hotkeys.showDefinition
+                    showDefinition: settings.hotkeys.showDefinition,
+                    inputText: settings.hotkeys.inputText
                 },
                 local: {
                     zoomIn: settings.renderer.hotkeys.zoomIn,
@@ -81,7 +82,8 @@ export class SettingsView extends ViewBase {
             hotkeys: {
                 playText: settings.hotkeys.global.playText,
                 translate: settings.hotkeys.global.translate,
-                showDefinition: settings.hotkeys.global.showDefinition
+                showDefinition: settings.hotkeys.global.showDefinition,
+                inputText: settings.hotkeys.global.inputText
             },
             renderer: {
                 hotkeys: {

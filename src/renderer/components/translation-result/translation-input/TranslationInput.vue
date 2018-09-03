@@ -1,7 +1,7 @@
 <template>
     <div class="translation-input form-group">
         <label>Input text and press Enter to translate</label>
-        <input class="form-control" type="text" v-model="text" @keydown.enter="translate()"/>
+        <input class="form-control" type="text" v-auto-focus autofocus v-model="text" @keydown.enter="translate()"/>
     </div>
 </template>
 

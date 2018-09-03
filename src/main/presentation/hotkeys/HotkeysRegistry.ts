@@ -18,6 +18,7 @@ export class HotkeysRegistry {
     public readonly translate$: Subject<void> = new Subject();
     public readonly playText$: Subject<void> = new Subject();
     public readonly showDefinition$: Subject<void> = new Subject();
+    public readonly inputText$: Subject<void> = new Subject();
 
     constructor(
         private readonly settingsProvider: SettingsProvider,
@@ -78,12 +79,14 @@ export class HotkeysRegistry {
 
         this.registerCommand(hotkeys.translate, () => this.translate$.next());
         this.registerCommand(hotkeys.playText, () => this.playText$.next());
+        this.registerCommand(hotkeys.inputText, () => this.inputText$.next());
         this.registerCommand(hotkeys.showDefinition, () => this.showDefinition$.next());
     }
 
     private unregisterAllHotkeys(hotkeys: HotkeySettings): void {
         this.unregisterCommand(hotkeys.translate);
         this.unregisterCommand(hotkeys.playText);
+        this.unregisterCommand(hotkeys.inputText);
         this.unregisterCommand(hotkeys.showDefinition);
     }
 

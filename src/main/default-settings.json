@@ -101,6 +101,15 @@
                     "D"
                 ]
             }
+        ],
+        "inputText": [
+            {
+                "keys": [
+                    "Control",
+                    "Shift",
+                    "T"
+                ]
+            }
         ]
     },
     "update": {

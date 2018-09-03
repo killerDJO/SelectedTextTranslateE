@@ -76,6 +76,7 @@ export class Application {
         this.hotkeysRegistry.playText$
             .pipe(concatMap(() => this.textExtractor.getSelectedText()))
             .subscribe(text => this.playText(text));
+        this.hotkeysRegistry.inputText$.subscribe(() => this.translationView.showTextInput());
     }
 
     private createTaskbar(): void {

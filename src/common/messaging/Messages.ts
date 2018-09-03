@@ -20,10 +20,11 @@ export class Messages {
     };
 
     public static Translation = class {
-        public static readonly SetInProgress = "set-in-progress";
+        public static readonly InProgressCommand = "set-in-progress";
         public static readonly TranslateResult = "translate-result";
         public static readonly PlayTextCommand = "play-text-command";
         public static readonly TranslateCommand = "translate-command";
+        public static readonly ShowInputCommand = "input-text-command";
         public static readonly ForceTranslateCommand = "force-translate-command";
         public static readonly TranslationResultViewSettings = "translation-result-view-settings";
     };

@@ -4,6 +4,9 @@
             <span class="loading-indicator"/>
             <span>Translating text...</span>
         </div>
+        <div v-else-if="showInput">
+            <translation-input @translate-text="translateText"/>
+        </div>
         <div v-else-if="hasResult">
             <translation-result-header
                 :sentence="translateResult.sentence"

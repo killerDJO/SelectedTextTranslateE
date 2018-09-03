@@ -9,6 +9,7 @@ export interface GlobalHotkeySettings {
     readonly translate: Hotkey[];
     readonly playText: Hotkey[];
     readonly showDefinition: Hotkey[];
+    readonly inputText: Hotkey[];
 }
 
 export interface LocalHotkeySettings {

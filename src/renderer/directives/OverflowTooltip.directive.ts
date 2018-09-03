@@ -1,4 +1,4 @@
-import { DirectiveOptions, VNodeDirective } from "vue";
+import { DirectiveOptions } from "vue";
 
 import Directive from "decorators/VueDirective";
 import { TooltipBase } from "directives/TooltipBase";

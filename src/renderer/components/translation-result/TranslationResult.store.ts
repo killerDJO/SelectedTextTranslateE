@@ -15,6 +15,7 @@ interface TranslationResultState {
     translationResultViewSettings?: TranslationResultViewSettings;
     isInitialized: boolean;
     isInProgress: boolean;
+    showInput: boolean;
     defaultView: TranslateResultViews;
 }
 
@@ -25,6 +26,7 @@ export const translationResult: Module<TranslationResultState, RootState> = {
         translationResultViewSettings: undefined,
         isInitialized: false,
         isInProgress: false,
+        showInput: false,
         defaultView: TranslateResultViews.Translation
     },
     mutations: {
@@ -32,6 +34,7 @@ export const translationResult: Module<TranslationResultState, RootState> = {
             state.translateResult = translateResultCommand.translateResult;
             state.defaultView = translateResultCommand.defaultView;
             state.isInProgress = false;
+            state.showInput = false;
         },
         setTranslationResultViewSettings(state: TranslationResultState, translationResultViewSettings: TranslationResultViewSettings): void {
             state.translationResultViewSettings = translationResultViewSettings;
@@ -41,6 +44,10 @@ export const translationResult: Module<TranslationResultState, RootState> = {
         },
         setInProgress(state: TranslationResultState): void {
             state.isInProgress = true;
+            state.showInput = false;
+        },
+        setShowInput(state: TranslationResultState): void {
+            state.showInput = true;
         }
     },
     actions: {
@@ -50,7 +57,8 @@ export const translationResult: Module<TranslationResultState, RootState> = {
                 commit("setTranslationResultViewSettings", translationResultViewSettings);
                 commit("setInitialized");
             });
-            messageBus.getNotification(Messages.Translation.SetInProgress, () => commit("setInProgress"));
+            messageBus.getNotification(Messages.Translation.InProgressCommand, () => commit("setInProgress"));
+            messageBus.getNotification(Messages.Translation.ShowInputCommand, () => commit("setShowInput"));
         },
         playText({ state }): void {
             executeCommand(state, Messages.Translation.PlayTextCommand, translateResult => translateResult.sentence.input);
