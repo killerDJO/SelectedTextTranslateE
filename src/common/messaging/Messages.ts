@@ -14,10 +14,8 @@ export class Messages {
         public static readonly ZoomInCommand = "zoom-in";
         public static readonly ZoomOutCommand = "zoom-out";
         public static readonly ResetZoomCommand = "reset-zoom";
-        public static readonly PauseHotkeys = "pause-hotkeys";
 
         public static readonly RendererSettings = "renderer-settings";
-
         public static readonly RendererError = "renderer-error";
     };
 

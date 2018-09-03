@@ -13,7 +13,6 @@ export default class App extends Vue {
     @ns.State public scaleFactor!: number;
     @ns.State public isFrameless!: boolean;
     @ns.State public hotkeySettings!: HotkeySettings | undefined;
-    @ns.State public areHotkeysPaused!: boolean;
 
     @ns.Action private readonly fetchData!: () => void;
     @ns.Action private readonly zoomIn!: () => void;
@@ -29,6 +28,7 @@ export default class App extends Vue {
 
     public mounted(): void {
         this.$children.forEach(child => child.$on("hook:updated", this.repaintLayout.bind(this)));
+        this.registerHotkeys();
     }
 
     public repaintLayout(): void {
@@ -45,12 +45,11 @@ export default class App extends Vue {
     }
 
     @Watch("hotkeySettings", { deep: true })
-    @Watch("areHotkeysPaused")
-    public hotkeySettingsChanged() {
+    public registerHotkeys() {
         this.hotkeysRegistry.unregisterAllHotkeys();
         this.hotkeysRegistry.registerDevToolsHotkey();
 
-        if (!this.hotkeySettings || this.areHotkeysPaused) {
+        if (!this.hotkeySettings) {
             return;
         }
 

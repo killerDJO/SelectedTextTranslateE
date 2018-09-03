@@ -27,7 +27,6 @@ export class SettingsView extends ViewBase {
         });
 
         this.pauseHotkeys$ = this.messageBus.getValue<boolean>(Messages.Settings.PauseHotkeysRequest);
-        this.messageBus.registerObservable(Messages.Common.PauseHotkeys, this.pauseHotkeys$);
         this.updatedSettings$ = this.messageBus.getValue<EditableSettings>(Messages.Settings.EditableSettingsUpdated)
             .pipe(map(editableSettings => this.getSettings(editableSettings)));
         this.setScaleFactor$ = this.messageBus.getValue<number>(Messages.Settings.SetScaleFactorCommand);

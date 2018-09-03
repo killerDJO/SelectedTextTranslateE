@@ -13,7 +13,6 @@ interface ApplicationState {
     scaleFactor: number;
     isFrameless: boolean;
     hotkeySettings?: HotkeySettings;
-    areHotkeysPaused: boolean;
 }
 
 const messageBus = new MessageBus();
@@ -25,7 +24,6 @@ export const app: Module<ApplicationState, RootState> = {
         scaleFactor: 1,
         isFrameless: false,
         hotkeySettings: undefined,
-        areHotkeysPaused: false
     },
     mutations: {
         setAccentColor(state: ApplicationState, accentColor: string): void {
@@ -40,9 +38,6 @@ export const app: Module<ApplicationState, RootState> = {
         setHotkeySettings(state: ApplicationState, hotkeySettings: HotkeySettings): void {
             state.hotkeySettings = hotkeySettings;
         },
-        setHotkeyPausedState(state: ApplicationState, areHotkeysPaused: boolean): void {
-            state.areHotkeysPaused = areHotkeysPaused;
-        }
     },
     actions: {
         fetchData({ commit }): void {
@@ -50,7 +45,6 @@ export const app: Module<ApplicationState, RootState> = {
             messageBus.getValue<number>(Messages.Common.ScaleFactor, scaleFactor => commit("setScaleFactor", scaleFactor));
             messageBus.getValue<string>(Messages.Common.IsFramelessWindow, isFrameless => commit("setFramelessStatus", isFrameless));
             messageBus.getValue<RendererSettings>(Messages.Common.RendererSettings, rendererSettings => commit("setHotkeySettings", rendererSettings.hotkeys));
-            messageBus.getValue<boolean>(Messages.Common.PauseHotkeys, areHotkeysPaused => commit("setHotkeyPausedState", areHotkeysPaused));
         },
         zoomIn(): void {
             messageBus.sendCommand(Messages.Common.ZoomInCommand);
