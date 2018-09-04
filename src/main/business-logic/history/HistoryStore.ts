@@ -45,13 +45,13 @@ export class HistoryStore {
         );
     }
 
-    public updateTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<void> {
+    public updateTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean, skipStatistic: boolean): Observable<void> {
         const currentTime = new Date();
         const update$ = this.datastoreProvider.update(this.datastore, { sentence: translateResult.sentence.input, isForcedTranslation: isForcedTranslation }, {
             sentence: translateResult.sentence.input.trim(),
             translateResult: translateResult,
             isForcedTranslation: isForcedTranslation,
-            updatedDate: currentTime,
+            updatedDate: skipStatistic ? undefined : currentTime
         });
 
         return update$.pipe(

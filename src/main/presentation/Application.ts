@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { concatMap, distinctUntilChanged, delay } from "rxjs/operators";
+import { concatMap, distinctUntilChanged } from "rxjs/operators";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -20,7 +20,7 @@ import { Updater } from "install/Updater";
 import { NotificationSender } from "infrastructure/NotificationSender";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslationViewBase } from 'presentation/views/TranslationViewBase';
+import { TranslationViewBase } from "presentation/views/TranslationViewBase";
 
 @injectable()
 export class Application {
@@ -43,10 +43,10 @@ export class Application {
         this.setupHotkeys();
     }
 
-    private setupTranslationView(translationView: TranslationViewBase): void {
+    private setupTranslationView(translationView: TranslationViewBase, skipStatistic: boolean): void {
         translationView.playText$.subscribe(text => this.playText(text));
-        translationView.translateText$.subscribe(text => this.translateText(text, false, translationView));
-        translationView.forceTranslateText$.subscribe(text => this.translateText(text, true, translationView));
+        translationView.translateText$.subscribe(text => this.translateText(text, false, skipStatistic, translationView));
+        translationView.forceTranslateText$.subscribe(text => this.translateText(text, true, skipStatistic, translationView));
     }
 
     private setupHistoryView(historyView: HistoryView): void {
@@ -55,7 +55,7 @@ export class Application {
             .subscribe(records => historyView.setHistoryRecords(records));
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
 
-        this.setupTranslationView(historyView);
+        this.setupTranslationView(historyView, true);
     }
 
     private setupSettingsView(settingsView: SettingsView): void {
@@ -95,7 +95,7 @@ export class Application {
     private translateSelectedText(defaultView: TranslateResultViews = TranslateResultViews.Translation): void {
         this.textExtractor
             .getSelectedText()
-            .subscribe(text => this.translateText(text, false, this.translationView, defaultView));
+            .subscribe(text => this.translateText(text, false, false, this.translationView, defaultView));
     }
 
     private playText(text: string): void {
@@ -106,10 +106,10 @@ export class Application {
             });
     }
 
-    private translateText(text: string, isForcedTranslation: boolean, targetView: TranslationViewBase, defaultTranslateResultView: TranslateResultViews = TranslateResultViews.Translation): void {
+    private translateText(text: string, isForcedTranslation: boolean, skipStatistic: boolean, targetView: TranslationViewBase, defaultTranslateResultView: TranslateResultViews = TranslateResultViews.Translation): void {
         targetView.showProgressIndicator();
         this.textTranslator
-            .translate(text, isForcedTranslation)
+            .translate(text, isForcedTranslation, skipStatistic)
             .subscribe(
                 result => targetView.setTranslateResult(result, defaultTranslateResultView),
                 error => {
@@ -124,7 +124,7 @@ export class Application {
     }
 
     private get translationView(): TranslationView {
-        return this.createView<TranslationView>(ViewNames.Translation, this.setupTranslationView.bind(this));
+        return this.createView<TranslationView>(ViewNames.Translation, view => this.setupTranslationView(view, false));
     }
 
     private get historyView(): HistoryView {

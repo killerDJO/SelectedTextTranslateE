@@ -1,6 +1,6 @@
-import { Observable, of, empty } from "rxjs";
+import { Observable, of } from "rxjs";
 import { injectable } from "inversify";
-import { concatMap, tap, map, catchError } from "rxjs/operators";
+import { concatMap, tap, map } from "rxjs/operators";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Logger } from "infrastructure/Logger";
@@ -11,7 +11,6 @@ import { RequestProvider } from "data-access/RequestProvider";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { NotificationSender } from "infrastructure/NotificationSender";
 
 @injectable()
 export class TextTranslator {
@@ -24,7 +23,7 @@ export class TextTranslator {
         private readonly settingsProvider: SettingsProvider) {
     }
 
-    public translate(sentence: string, isForcedTranslation: boolean): Observable<TranslateResult | null> {
+    public translate(sentence: string, isForcedTranslation: boolean, skipStatistic: boolean): Observable<TranslateResult | null> {
         this.logger.info(`Translating text: "${sentence}".`);
 
         const sanitizedSentence = this.sanitizeSentence(sentence);
@@ -34,12 +33,12 @@ export class TextTranslator {
         }
 
         return this.historyStore.getRecord(sanitizedSentence, isForcedTranslation).pipe(
-            concatMap(historyRecord => this.getTranslateResult(sentence, isForcedTranslation, historyRecord)),
-            tap<TranslateResult>(translateResult => this.historyStore.incrementTranslationsNumber(translateResult, isForcedTranslation).subscribe())
+            concatMap(historyRecord => this.getTranslateResult(sentence, isForcedTranslation, historyRecord, skipStatistic)),
+            tap<TranslateResult>(translateResult => !skipStatistic ? this.historyStore.incrementTranslationsNumber(translateResult, isForcedTranslation).subscribe() : undefined)
         );
     }
 
-    private getTranslateResult(sentence: string, isForcedTranslation: boolean, historyRecord: HistoryRecord | null): Observable<TranslateResult> {
+    private getTranslateResult(sentence: string, isForcedTranslation: boolean, historyRecord: HistoryRecord | null, skipStatistic: boolean): Observable<TranslateResult> {
         const translateResult$ = this
             .getResponseFromService(sentence, isForcedTranslation)
             .pipe(tap(() => this.logger.info(`Serving translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" from service.`)));
@@ -51,7 +50,7 @@ export class TextTranslator {
 
         if (this.isHistoryRecordExpired(historyRecord)) {
             return translateResult$
-                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, isForcedTranslation), translateResult => translateResult));
+                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, isForcedTranslation, skipStatistic), translateResult => translateResult));
         }
 
         this.logger.info(`Serving translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" from dictionary.`);
