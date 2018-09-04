@@ -9,6 +9,9 @@ export default class TranslationResultHeader extends Vue {
     @Prop(Object)
     public sentence!: TranslateResultSentence;
 
+    @Prop(Boolean)
+    public isEmbedded!: boolean;
+
     public playText(): void {
         this.$emit("play-text");
     }

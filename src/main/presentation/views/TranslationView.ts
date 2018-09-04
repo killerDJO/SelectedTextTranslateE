@@ -1,24 +1,15 @@
 import { screen } from "electron";
-import { Observable, BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 
-import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
-
-import { ViewBase } from "presentation/framework/ViewBase";
 import { ViewNames } from "common/ViewNames";
+
 import { ViewContext } from "presentation/framework/ViewContext";
+import { TranslationViewBase } from "presentation/views/TranslationViewBase";
 
-import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
-
-export class TranslationView extends ViewBase {
+export class TranslationView extends TranslationViewBase {
 
     private currentScaleFactor: number | null = null;
-    private inProgressTimeout: NodeJS.Timer | null = null;
-
-    public readonly playText$!: Observable<string>;
-    public readonly translateText$!: Observable<string>;
-    public readonly forceTranslateText$!: Observable<string>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.Translation, viewContext, {
@@ -29,42 +20,12 @@ export class TranslationView extends ViewBase {
         this.window.setAlwaysOnTop(true);
         this.window.setSkipTaskbar(true);
 
-        this.messageBus.sendValue(Messages.Translation.TranslationResultViewSettings, this.context.viewsSettings.translation.renderer);
-        this.playText$ = this.messageBus.getValue(Messages.Translation.PlayTextCommand);
-        this.translateText$ = this.messageBus.getValue(Messages.Translation.TranslateCommand);
-        this.forceTranslateText$ = this.messageBus.getValue(Messages.Translation.ForceTranslateCommand);
-
-        //this.window.on("blur", () => this.hide());
-    }
-
-    public setInProgress(): void {
-        if (!!this.inProgressTimeout) {
-            return;
-        }
-
-        this.inProgressTimeout = setTimeout(
-            () => {
-                this.messageBus.sendNotification(Messages.Translation.InProgressCommand);
-                this.show();
-                this.inProgressTimeout = null;
-            },
-            this.context.viewsSettings.translation.loadingDelay);
-    }
-
-    public setTranslateResult(translateResult: TranslateResult | null, defaultView: TranslateResultViews): Subject<void> {
-        this.cancelProgressTimeout();
-        return this.messageBus.sendValue<TranslateResultCommand>(Messages.Translation.TranslateResult, { translateResult, defaultView });
+        this.window.on("blur", () => this.hide());
     }
 
     public showTextInput(): void {
-        this.cancelProgressTimeout();
         this.messageBus.sendNotification(Messages.Translation.ShowInputCommand);
         this.show();
-    }
-
-    public hide(): void {
-        this.cancelProgressTimeout();
-        super.hide();
     }
 
     protected scaleBounds(bounds: Electron.Rectangle): Electron.Rectangle {
@@ -99,13 +60,6 @@ export class TranslationView extends ViewBase {
             x: primaryDisplay.workArea.width - width - translationSettings.margin,
             y: primaryDisplay.workArea.height - height - translationSettings.margin
         };
-    }
-
-    private cancelProgressTimeout() {
-        if (!!this.inProgressTimeout) {
-            clearTimeout(this.inProgressTimeout);
-            this.inProgressTimeout = null;
-        }
     }
 
     private setCurrentScaleFactor(): void {

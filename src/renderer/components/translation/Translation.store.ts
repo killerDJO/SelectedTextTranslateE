@@ -7,6 +7,7 @@ import { TranslationResultViewSettings } from "common/dto/settings/views-setting
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
+import { remote } from "electron";
 
 const messageBus = new MessageBus();
 
@@ -36,6 +37,11 @@ export const translation: Module<TranslationState, RootState> = {
             state.isInProgress = false;
             state.showInput = false;
         },
+        clearTranslateResult(state: TranslationState): void {
+            state.translateResult = null;
+            state.isInProgress = false;
+            state.showInput = false;
+        },
         setTranslationResultViewSettings(state: TranslationState, translationResultViewSettings: TranslationResultViewSettings): void {
             state.translationResultViewSettings = translationResultViewSettings;
         },
@@ -52,13 +58,15 @@ export const translation: Module<TranslationState, RootState> = {
     },
     actions: {
         fetchData({ commit }): void {
+            messageBus.getNotification(Messages.Translation.InProgressCommand, () => commit("setInProgress"));
             messageBus.getValue<TranslateResultCommand>(Messages.Translation.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
             messageBus.getValue<TranslationResultViewSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => {
                 commit("setTranslationResultViewSettings", translationResultViewSettings);
                 commit("setInitialized");
             });
-            messageBus.getNotification(Messages.Translation.InProgressCommand, () => commit("setInProgress"));
             messageBus.getNotification(Messages.Translation.ShowInputCommand, () => commit("setShowInput"));
+
+            remote.getCurrentWindow().on("hide", () => commit("clearTranslateResult"));
         },
         playText({ state }): void {
             executeCommand(state, Messages.Translation.PlayTextCommand, translateResult => translateResult.sentence.input);

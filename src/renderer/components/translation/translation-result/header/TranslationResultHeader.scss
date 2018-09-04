@@ -1,12 +1,15 @@
 .header {
     height: 50px;
-    padding-left: $padding-large;
     padding-right: $padding-small;
     padding-top: $padding-small;
     line-height: 20px;
     box-sizing: border-box;
     border-bottom: $border-width solid $color-light-gray;
     white-space: nowrap;
+
+    &:not(.is-embedded) {
+        padding-left: $padding-large;
+    }
 
     .translation {
         font-size: $font-large;

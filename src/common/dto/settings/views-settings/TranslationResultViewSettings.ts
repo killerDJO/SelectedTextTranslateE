@@ -1,6 +1,7 @@
 export interface TranslationResultViewSettings {
     readonly visibility: ResultVisibilitySettings;
     readonly score: ScoreSettings;
+    readonly showLoaderDelay: number;
 }
 
 export interface ScoreSettings {

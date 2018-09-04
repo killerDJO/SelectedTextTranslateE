@@ -1,5 +1,5 @@
 <template>
-    <div class="content">
+    <div class="content" :class="{'is-embedded': isEmbedded}">
         <span class="link-button show-definitions" @click="currentView = TranslateResultViews.Definition" v-if="currentView === TranslateResultViews.Translation && hasDefinitions">Show Definitions</span>
         <span class="link-button show-definitions" @click="currentView = TranslateResultViews.Translation" v-if="currentView === TranslateResultViews.Definition && hasCategories">Show Translations</span>
         <translation-result-content-category

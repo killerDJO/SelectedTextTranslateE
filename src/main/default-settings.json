@@ -53,7 +53,6 @@
             "width": 300,
             "height": 400,
             "margin": 5,
-            "loadingDelay": 500,
             "renderer": {
                 "score": {
                     "highThreshold": 0.05,
@@ -62,7 +61,8 @@
                 "visibility": {
                     "lowScoreThreshold": 0.003,
                     "visibleByDefaultNumber": 7
-                }
+                },
+                "showLoaderDelay": 400
             }
         },
         "history": {

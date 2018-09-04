@@ -53,7 +53,6 @@ export interface ScalingSettings {
 
 export interface TranslationViewSettings extends ViewSize {
     readonly margin: number;
-    readonly loadingDelay: number;
     readonly renderer: TranslationResultViewSettings;
 }
 
