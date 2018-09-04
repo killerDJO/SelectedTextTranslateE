@@ -1,7 +1,7 @@
 import { Module } from "vuex";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
-import { translationResult } from "components/translation-result/TranslationResult.store";
+import { translation } from "components/translation/Translation.store";
 import { history } from "components/history/History.store";
 import { settings } from "components/settings/Settings.store";
 import { RootState } from "root.store";
@@ -57,7 +57,7 @@ export const app: Module<ApplicationState, RootState> = {
         }
     },
     modules: {
-        translationResult,
+        translation,
         history,
         settings
     }

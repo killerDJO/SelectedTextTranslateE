@@ -2,16 +2,16 @@ import Router from "vue-router";
 
 import { ViewNames } from "common/ViewNames";
 
-import TranslationResult from "./components/translation-result/TranslationResult.vue";
+import Translation from "./components/translation/Translation.vue";
 import Settings from "./components/settings/Settings.vue";
 import History from "./components/history/History.vue";
 
 export const router = new Router({
     routes: [
         {
-            path: `/${ViewNames.TranslationResult}`,
-            name: ViewNames.TranslationResult,
-            component: TranslationResult
+            path: `/${ViewNames.Translation}`,
+            name: ViewNames.Translation,
+            component: Translation
         },
         {
             path: `/${ViewNames.Settings}`,
@@ -25,7 +25,7 @@ export const router = new Router({
         },
         {
             path: "*",
-            redirect: `/${ViewNames.TranslationResult}`
+            redirect: `/${ViewNames.Translation}`
         }
     ]
 });

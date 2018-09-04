@@ -5,8 +5,8 @@ import { TranslationResultViewSettings } from "common/dto/settings/views-setting
 import { TranslateResultCategory, TranslateResultDefinitionCategory } from "common/dto/translation/TranslateResult";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 
-import TranslationResultContentCategory from "components/translation-result/content/category/TranslationResultContentCategory.vue";
-import TranslationResultDefinitionCategory from "components/translation-result/content/definitions/TranslationResultDefinitionCategory.vue";
+import TranslationResultContentCategory from "components/translation/translation-result/content/category/TranslationResultContentCategory.vue";
+import TranslationResultDefinitionCategory from "components/translation/translation-result/content/definitions/TranslationResultDefinitionCategory.vue";
 
 @Component({
     components: {

@@ -12,7 +12,7 @@ export class ViewsRegistry {
     private readonly viewsCache: Map<ViewNames, ViewBase> = new Map<ViewNames, ViewBase>();
 
     private readonly viewFactories: Map<ViewNames, (viewContext: ViewContext) => ViewBase> = new Map<ViewNames, (viewContext: ViewContext) => ViewBase>([
-        [ViewNames.TranslationResult, viewContext => new TranslationView(viewContext)],
+        [ViewNames.Translation, viewContext => new TranslationView(viewContext)],
         [ViewNames.History, viewContext => new HistoryView(viewContext)],
         [ViewNames.Settings, viewContext => new SettingsView(viewContext)]
     ]);

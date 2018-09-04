@@ -21,7 +21,7 @@ export class TranslationView extends ViewBase {
     public readonly forceTranslateText$!: Observable<string>;
 
     constructor(viewContext: ViewContext) {
-        super(ViewNames.TranslationResult, viewContext, {
+        super(ViewNames.Translation, viewContext, {
             isFrameless: true,
             isScalingEnabled: new BehaviorSubject(true)
         });
@@ -34,7 +34,7 @@ export class TranslationView extends ViewBase {
         this.translateText$ = this.messageBus.getValue(Messages.Translation.TranslateCommand);
         this.forceTranslateText$ = this.messageBus.getValue(Messages.Translation.ForceTranslateCommand);
 
-        this.window.on("blur", () => this.hide());
+        //this.window.on("blur", () => this.hide());
     }
 
     public setInProgress(): void {

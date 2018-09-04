@@ -10,7 +10,7 @@ import { RootState } from "root.store";
 
 const messageBus = new MessageBus();
 
-interface TranslationResultState {
+interface TranslationState {
     translateResult: TranslateResult | null;
     translationResultViewSettings?: TranslationResultViewSettings;
     isInitialized: boolean;
@@ -19,7 +19,7 @@ interface TranslationResultState {
     defaultView: TranslateResultViews;
 }
 
-export const translationResult: Module<TranslationResultState, RootState> = {
+export const translation: Module<TranslationState, RootState> = {
     namespaced: true,
     state: {
         translateResult: null,
@@ -30,23 +30,23 @@ export const translationResult: Module<TranslationResultState, RootState> = {
         defaultView: TranslateResultViews.Translation
     },
     mutations: {
-        setTranslateResult(state: TranslationResultState, translateResultCommand: TranslateResultCommand): void {
+        setTranslateResult(state: TranslationState, translateResultCommand: TranslateResultCommand): void {
             state.translateResult = translateResultCommand.translateResult;
             state.defaultView = translateResultCommand.defaultView;
             state.isInProgress = false;
             state.showInput = false;
         },
-        setTranslationResultViewSettings(state: TranslationResultState, translationResultViewSettings: TranslationResultViewSettings): void {
+        setTranslationResultViewSettings(state: TranslationState, translationResultViewSettings: TranslationResultViewSettings): void {
             state.translationResultViewSettings = translationResultViewSettings;
         },
-        setInitialized(state: TranslationResultState): void {
+        setInitialized(state: TranslationState): void {
             state.isInitialized = true;
         },
-        setInProgress(state: TranslationResultState): void {
+        setInProgress(state: TranslationState): void {
             state.isInProgress = true;
             state.showInput = false;
         },
-        setShowInput(state: TranslationResultState): void {
+        setShowInput(state: TranslationState): void {
             state.showInput = true;
         }
     },
@@ -78,7 +78,7 @@ export const translationResult: Module<TranslationResultState, RootState> = {
     }
 };
 
-function executeCommand(state: TranslationResultState, commandName: Messages, inputGetter: (translateResult: TranslateResult) => string | null): void {
+function executeCommand(state: TranslationState, commandName: Messages, inputGetter: (translateResult: TranslateResult) => string | null): void {
     if (state.translateResult === null) {
         return;
     }

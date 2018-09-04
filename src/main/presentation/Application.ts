@@ -123,7 +123,7 @@ export class Application {
     }
 
     private get translationView(): TranslationView {
-        return this.createView<TranslationView>(ViewNames.TranslationResult, this.setupTranslationView.bind(this));
+        return this.createView<TranslationView>(ViewNames.Translation, this.setupTranslationView.bind(this));
     }
 
     private get historyView(): HistoryView {

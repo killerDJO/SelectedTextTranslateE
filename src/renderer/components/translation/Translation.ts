@@ -5,21 +5,19 @@ import { namespace } from "vuex-class";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 
-import TranslationResultContent from "./content/TranslationResultContent.vue";
-import TranslationResultHeader from "./header/TranslationResultHeader.vue";
+import TranslationResult from "./translation-result/TranslationResult.vue";
 import TranslationInput from "./translation-input/TranslationInput.vue";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 
-const ns = namespace("app/translationResult");
+const ns = namespace("app/translation");
 
 @Component({
     components: {
-        TranslationResultContent,
-        TranslationResultHeader,
+        TranslationResult,
         TranslationInput
     }
 })
-export default class TranslationResult extends Vue {
+export default class Translation extends Vue {
     @ns.State public translateResult!: TranslateResult;
     @ns.State public translationResultViewSettings!: TranslationResultViewSettings;
     @ns.State public isInitialized!: boolean;
