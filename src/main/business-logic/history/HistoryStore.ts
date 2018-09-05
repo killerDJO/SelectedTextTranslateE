@@ -65,7 +65,7 @@ export class HistoryStore {
         const currentTime = new Date();
         const increment$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
-            { sentence: translateResult.sentence.input.trim(), isForcedTranslation: isForcedTranslation },
+            { sentence: translateResult.sentence.input, isForcedTranslation: isForcedTranslation },
             { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime } });
 
         return increment$.pipe(
@@ -76,7 +76,7 @@ export class HistoryStore {
 
     public getRecord(sentence: string, isForcedTranslation: boolean): Observable<HistoryRecord | null> {
         return this.datastoreProvider
-            .find<HistoryRecord>(this.datastore, { sentence: sentence.trim(), isForcedTranslation: isForcedTranslation })
+            .find<HistoryRecord>(this.datastore, { sentence: sentence, isForcedTranslation: isForcedTranslation })
             .pipe(
                 map(result => !!result.length ? result[0] : null)
             );
@@ -106,7 +106,7 @@ export class HistoryStore {
     public setStarredStatus(sentence: string, isForcedTranslation: boolean, isStarred: boolean): Observable<HistoryRecord> {
         const setStarredStatus$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
-            { sentence: sentence.trim(), isForcedTranslation: isForcedTranslation },
+            { sentence: sentence, isForcedTranslation: isForcedTranslation },
             { $set: { isStarred: isStarred } });
 
         return setStarredStatus$.pipe(

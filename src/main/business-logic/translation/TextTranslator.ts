@@ -33,7 +33,7 @@ export class TextTranslator {
         }
 
         return this.historyStore.getRecord(sanitizedSentence, isForcedTranslation).pipe(
-            concatMap(historyRecord => this.getTranslateResult(sentence, isForcedTranslation, historyRecord, skipStatistic)),
+            concatMap(historyRecord => this.getTranslateResult(sanitizedSentence, isForcedTranslation, historyRecord, skipStatistic)),
             tap<HistoryRecord>(historyRecord => !skipStatistic ? this.historyStore.incrementTranslationsNumber(historyRecord.translateResult, isForcedTranslation).subscribe() : undefined)
         );
     }

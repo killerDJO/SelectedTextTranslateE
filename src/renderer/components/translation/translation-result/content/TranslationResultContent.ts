@@ -48,8 +48,6 @@ export default class TranslationResultContent extends Vue {
     }
 
     @Watch("defaultView")
-    @Watch("categories")
-    @Watch("definitions")
     public initializeCurrentView() {
         if (!this.hasCategories && this.hasDefinitions && this.defaultView === TranslateResultViews.Translation) {
             this.currentView = TranslateResultViews.Definition;

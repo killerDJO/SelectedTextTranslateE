@@ -1,6 +1,5 @@
 import { Observable, Subject } from "rxjs";
 
-import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { Messages } from "common/messaging/Messages";
 
 import { ViewBase } from "presentation/framework/ViewBase";

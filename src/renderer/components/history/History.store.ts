@@ -73,9 +73,6 @@ export const history: Module<HistoryState, RootState> = {
             }
 
             state.translateResultHistoryRecord = translateResultCommand.historyRecord;
-            if (translateResultCommand.defaultView) {
-                state.defaultView = translateResultCommand.defaultView;
-            }
             state.isTranslationInProgress = false;
             state.isTranslationVisible = true;
         },

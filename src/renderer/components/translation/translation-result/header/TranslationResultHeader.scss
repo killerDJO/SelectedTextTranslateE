@@ -11,6 +11,16 @@
         padding-left: $padding-large;
     }
 
+    .icon-star,
+    .icon-star-empty {
+        cursor: pointer;
+        font-size: $font-medium;
+    }
+
+    .icon-star {
+        color: $color-star;
+    }
+
     .translation {
         font-size: $font-large;
     }
@@ -27,8 +37,8 @@
     .play {
         position: relative;
         top: 0.5px;
-        width: 8px;
-        height: 8px;
+        width: 10px;
+        height: 10px;
         cursor: pointer;
         background-size: contain;
         background-repeat: no-repeat;
