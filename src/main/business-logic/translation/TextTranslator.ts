@@ -23,7 +23,7 @@ export class TextTranslator {
         private readonly settingsProvider: SettingsProvider) {
     }
 
-    public translate(sentence: string, isForcedTranslation: boolean, skipStatistic: boolean): Observable<TranslateResult | null> {
+    public translate(sentence: string, isForcedTranslation: boolean, skipStatistic: boolean): Observable<HistoryRecord | null> {
         this.logger.info(`Translating text: "${sentence}".`);
 
         const sanitizedSentence = this.sanitizeSentence(sentence);
@@ -34,27 +34,27 @@ export class TextTranslator {
 
         return this.historyStore.getRecord(sanitizedSentence, isForcedTranslation).pipe(
             concatMap(historyRecord => this.getTranslateResult(sentence, isForcedTranslation, historyRecord, skipStatistic)),
-            tap<TranslateResult>(translateResult => !skipStatistic ? this.historyStore.incrementTranslationsNumber(translateResult, isForcedTranslation).subscribe() : undefined)
+            tap<HistoryRecord>(historyRecord => !skipStatistic ? this.historyStore.incrementTranslationsNumber(historyRecord.translateResult, isForcedTranslation).subscribe() : undefined)
         );
     }
 
-    private getTranslateResult(sentence: string, isForcedTranslation: boolean, historyRecord: HistoryRecord | null, skipStatistic: boolean): Observable<TranslateResult> {
+    private getTranslateResult(sentence: string, isForcedTranslation: boolean, historyRecord: HistoryRecord | null, skipStatistic: boolean): Observable<HistoryRecord> {
         const translateResult$ = this
             .getResponseFromService(sentence, isForcedTranslation)
             .pipe(tap(() => this.logger.info(`Serving translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" from service.`)));
 
         if (historyRecord === null) {
             return translateResult$
-                .pipe(concatMap(translateResult => this.historyStore.addTranslateResult(translateResult, isForcedTranslation), translateResult => translateResult));
+                .pipe(concatMap(translateResult => this.historyStore.addTranslateResult(translateResult, isForcedTranslation)));
         }
 
         if (this.isHistoryRecordExpired(historyRecord)) {
             return translateResult$
-                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, isForcedTranslation, skipStatistic), translateResult => translateResult));
+                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, isForcedTranslation, skipStatistic)));
         }
 
         this.logger.info(`Serving translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" from dictionary.`);
-        return of(historyRecord.translateResult);
+        return of(historyRecord);
     }
 
     private isHistoryRecordExpired(historyRecord: HistoryRecord): boolean {

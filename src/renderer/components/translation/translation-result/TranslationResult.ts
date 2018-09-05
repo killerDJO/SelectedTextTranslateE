@@ -1,12 +1,12 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 
-import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 
 import TranslationResultContent from "./content/TranslationResultContent.vue";
 import TranslationResultHeader from "./header/TranslationResultHeader.vue";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 @Component({
     components: {
@@ -15,7 +15,7 @@ import { TranslateResultViews } from "common/dto/translation/TranslateResultView
     }
 })
 export default class TranslationResult extends Vue {
-    @Prop(Object) public translateResult!: TranslateResult;
+    @Prop(Object) public historyRecord!: HistoryRecord | null;
     @Prop(Object) public translationResultViewSettings!: TranslationResultViewSettings;
     @Prop(Boolean) public isInProgress!: boolean;
     @Prop(String) public defaultView!: TranslateResultViews;
@@ -44,6 +44,10 @@ export default class TranslationResult extends Vue {
         this.$emit("force-translation");
     }
 
+    public setStarredStatus(isStarred: boolean): void {
+        this.$emit("set-starred-status", { record: this.historyRecord, isStarred });
+    }
+
     @Watch("isInProgress", { immediate: true })
     public progressStatusChanged(): void {
 
@@ -63,6 +67,6 @@ export default class TranslationResult extends Vue {
     }
 
     private get hasTranslateResult(): boolean {
-        return !!this.translateResult;
+        return !!this.historyRecord;
     }
 }

@@ -1,6 +1,10 @@
 <template>
     <div class="header" :class="{'is-embedded': isEmbedded}">
-        <div class="translation" >{{ sentence.translation }}</div>
+        <div class="translation">
+            <span class="icon icon-star" v-if="historyRecord.isStarred" @click="setStarredStatus(false)"></span>
+            <span class="icon icon-star-empty" v-else @click="setStarredStatus(true)"></span>
+            {{ sentence.translation }}
+        </div>
         <i class="play" @click="playText"></i>
         <div class="origin" @blur="translateText($event.target.innerText)" @keydown.enter.prevent="translateText($event.target.innerText)" contenteditable="true">{{ sentence.origin }}</div>
         <div class="header-actions">

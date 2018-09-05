@@ -2,12 +2,12 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 
-import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 
 import TranslationResult from "./translation-result/TranslationResult.vue";
 import TranslationInput from "./translation-input/TranslationInput.vue";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 const ns = namespace("app/translation");
 
@@ -18,7 +18,7 @@ const ns = namespace("app/translation");
     }
 })
 export default class Translation extends Vue {
-    @ns.State public translateResult!: TranslateResult;
+    @ns.State public historyRecord!: HistoryRecord | null;
     @ns.State public translationResultViewSettings!: TranslationResultViewSettings;
     @ns.State public isInitialized!: boolean;
     @ns.State public isInProgress!: boolean;
@@ -30,6 +30,7 @@ export default class Translation extends Vue {
     @ns.Action public readonly translateText!: (text: string) => void;
     @ns.Action public readonly translateSuggestion!: () => void;
     @ns.Action public readonly forceTranslation!: () => void;
+    @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
 
     constructor() {
         super();
@@ -37,6 +38,6 @@ export default class Translation extends Vue {
     }
 
     public get hasResult(): boolean {
-        return this.translateResult !== null;
+        return this.historyRecord !== null;
     }
 }

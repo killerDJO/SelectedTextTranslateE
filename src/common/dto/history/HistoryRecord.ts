@@ -8,5 +8,5 @@ export interface HistoryRecord {
     readonly createdDate: Date;
     readonly updatedDate: Date;
     readonly lastTranslatedDate: Date;
-    readonly isStarred: boolean;
+    isStarred: boolean;
 }

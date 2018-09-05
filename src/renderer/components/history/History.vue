@@ -43,14 +43,15 @@
       <div v-if="isTranslationVisible" class="translation-result-holder">
         <translation-result
               :default-view="defaultView"
-              :translate-result="translateResult"
+              :history-record="translateResultHistoryRecord"
               :is-in-progress="isTranslationInProgress"
               :translation-result-view-settings="translationResultViewSettings"
               :is-embedded="true"
               @translate-suggestion="translateSuggestion"
               @force-translation="forceTranslation"
               @translate-text="translateText"
-              @play-text="playText"/>
+              @play-text="playText"
+              @set-starred-status="setStarredStatus"/>
       </div>
       <p class="results-footer">Showing {{historyRecords.length}} records</p>
     </div>

@@ -6,15 +6,16 @@
         </div>
         <div v-else>
             <translation-result-header
-                :sentence="translateResult.sentence"
+                :history-record="historyRecord"
                 :is-embedded="isEmbedded"
                 @translate-suggestion="translateSuggestion"
                 @force-translation="forceTranslation"
                 @translate-text="translateText"
-                @play-text="playText"/>
+                @play-text="playText"
+                @set-starred-status="setStarredStatus"/>
             <translation-result-content
-                :categories="translateResult.categories"
-                :definitions="translateResult.definitions"
+                :categories="historyRecord.translateResult.categories"
+                :definitions="historyRecord.translateResult.definitions"
                 :translation-result-view-settings="translationResultViewSettings"
                 :default-view="defaultView"
                 :is-embedded="isEmbedded"/>

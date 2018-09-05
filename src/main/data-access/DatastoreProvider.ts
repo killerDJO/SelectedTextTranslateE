@@ -19,21 +19,21 @@ export class DatastoreProvider {
         });
     }
 
-    public insert<TDocument>(datastore: Datastore, document: TDocument): Observable<void> {
-        return new Observable<void>(observer => {
+    public insert<TDocument>(datastore: Datastore, document: TDocument): Observable<TDocument> {
+        return new Observable<TDocument>(observer => {
             datastore.insert(document, (error) => {
                 this.handleError(error);
-                observer.next();
+                observer.next(document);
                 observer.complete();
             });
         });
     }
 
-    public update(datastore: Datastore, query: any, updateQuery: any): Observable<void> {
-        return new Observable<void>(observer => {
-            datastore.update(query, updateQuery, {}, (error) => {
+    public update<TDocument>(datastore: Datastore, query: any, updateQuery: any): Observable<TDocument> {
+        return new Observable<TDocument>(observer => {
+            datastore.update(query, updateQuery, { multi: false, returnUpdatedDocs: true }, (error: Error, _: number, affectedDocument: any) => {
                 this.handleError(error);
-                observer.next();
+                observer.next(affectedDocument);
                 observer.complete();
             });
         });

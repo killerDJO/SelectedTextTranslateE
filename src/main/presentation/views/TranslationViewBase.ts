@@ -10,6 +10,8 @@ import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
 import { ViewOptions } from "presentation/framework/ViewOptions";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { StarCommand } from "common/dto/translation/StarCommand";
 
 export abstract class TranslationViewBase extends ViewBase {
     protected inProgressTimeout: NodeJS.Timer | null = null;
@@ -17,6 +19,7 @@ export abstract class TranslationViewBase extends ViewBase {
     public readonly playText$!: Observable<string>;
     public readonly translateText$!: Observable<string>;
     public readonly forceTranslateText$!: Observable<string>;
+    public starTranslateResult$: Observable<StarCommand>;
 
     constructor(viewName: ViewNames, context: ViewContext, viewOptions: ViewOptions) {
         super(viewName, context, viewOptions);
@@ -25,6 +28,7 @@ export abstract class TranslationViewBase extends ViewBase {
         this.playText$ = this.messageBus.getValue(Messages.Translation.PlayTextCommand);
         this.translateText$ = this.messageBus.getValue(Messages.Translation.TranslateCommand);
         this.forceTranslateText$ = this.messageBus.getValue(Messages.Translation.ForceTranslateCommand);
+        this.starTranslateResult$ = this.messageBus.getValue<StarCommand>(Messages.Translation.StarTranslateResult);
     }
 
     public showProgressIndicator(): void {
@@ -32,7 +36,11 @@ export abstract class TranslationViewBase extends ViewBase {
         this.show();
     }
 
-    public setTranslateResult(translateResult: TranslateResult | null, defaultTranslateResultView: TranslateResultViews): Subject<void> {
-        return this.messageBus.sendValue<TranslateResultCommand>(Messages.Translation.TranslateResult, { translateResult, defaultView: defaultTranslateResultView });
+    public setTranslateResult(historyRecord: HistoryRecord | null, defaultTranslateResultView: TranslateResultViews): Subject<void> {
+        return this.messageBus.sendValue<TranslateResultCommand>(Messages.Translation.TranslateResult, { historyRecord, defaultView: defaultTranslateResultView });
+    }
+
+    public updateTranslateResult(historyRecord: HistoryRecord | null): Subject<void> {
+        return this.messageBus.sendValue<TranslateResultCommand>(Messages.Translation.TranslateResult, { historyRecord });
     }
 }

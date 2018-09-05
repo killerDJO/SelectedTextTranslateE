@@ -26,7 +26,7 @@ export default class History extends Vue {
     @ns.State public sortOrder!: SortOrder;
     @ns.State public starredOnly!: boolean;
 
-    @ns.State public translateResult!: TranslateResult;
+    @ns.State public translateResultHistoryRecord!: HistoryRecord | null;
     @ns.State public translationResultViewSettings!: TranslationResultViewSettings;
     @ns.State public isTranslationInProgress!: boolean;
     @ns.State public isTranslationVisible!: boolean;

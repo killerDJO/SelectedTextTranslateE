@@ -28,12 +28,12 @@ export class Messages {
         public static readonly TranslateCommand = "translate-command";
         public static readonly ForceTranslateCommand = "force-translate-command";
         public static readonly TranslationResultViewSettings = "translation-result-view-settings";
+        public static readonly StarTranslateResult = "star-translate-result";
     };
 
     public static History = class {
         public static readonly HistoryRecords = "history-records";
         public static readonly RequestHistoryRecords = "get-history-records";
-        public static readonly StarRecord = "star-history-record";
         public static readonly HistoryUpdated = "history-updated";
     };
 

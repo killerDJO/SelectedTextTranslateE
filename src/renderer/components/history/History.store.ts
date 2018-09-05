@@ -7,7 +7,7 @@ import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { SortColumn } from "common/dto/history/SortColumn";
-import { StarRequest } from "common/dto/history/StarRequest";
+import { StarCommand } from "common/dto/translation/StarCommand";
 import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
@@ -21,7 +21,7 @@ interface HistoryState {
     sortColumn: SortColumn;
     sortOrder: SortOrder;
 
-    translateResult?: TranslateResult;
+    translateResultHistoryRecord: HistoryRecord | null;
     translationResultViewSettings?: TranslationResultViewSettings;
     defaultView: TranslateResultViews;
     isTranslationInProgress: boolean;
@@ -40,7 +40,7 @@ export const history: Module<HistoryState, RootState> = {
 
         defaultView: TranslateResultViews.Translation,
         translationResultViewSettings: undefined,
-        translateResult: undefined,
+        translateResultHistoryRecord: null,
         isTranslationInProgress: false,
         isTranslationVisible: false
     },
@@ -68,17 +68,20 @@ export const history: Module<HistoryState, RootState> = {
             state.isTranslationVisible = true;
         },
         setTranslateResult(state: HistoryState, translateResultCommand: TranslateResultCommand): void {
-            if (translateResultCommand.translateResult === null) {
+            if (translateResultCommand.historyRecord === null) {
                 throw Error("Translation from history returned null");
             }
 
-            state.translateResult = translateResultCommand.translateResult;
+            state.translateResultHistoryRecord = translateResultCommand.historyRecord;
+            if (translateResultCommand.defaultView) {
+                state.defaultView = translateResultCommand.defaultView;
+            }
             state.isTranslationInProgress = false;
             state.isTranslationVisible = true;
         },
         hideTranslation(state: HistoryState): void {
             state.isTranslationVisible = false;
-            state.translateResult = undefined;
+            state.translateResultHistoryRecord = null;
         }
     },
     actions: {
@@ -109,15 +112,15 @@ export const history: Module<HistoryState, RootState> = {
             messageBus.sendCommand(Messages.Translation.TranslateCommand, text);
         },
         setStarredStatus(_, request: { record: HistoryRecord; isStarred: boolean }): void {
-            messageBus.sendCommand<StarRequest>(Messages.History.StarRecord, { sentence: request.record.sentence, isForcedTranslation: request.record.isForcedTranslation, isStarred: request.isStarred });
+            messageBus.sendCommand<StarCommand>(Messages.Translation.StarTranslateResult, { sentence: request.record.sentence, isForcedTranslation: request.record.isForcedTranslation, isStarred: request.isStarred });
         }
     }
 };
 
 function executeTranslationCommand(state: HistoryState, commandName: Messages, inputGetter: (translateResult: TranslateResult) => string | null): void {
-    if (!state.translateResult) {
+    if (!state.translateResultHistoryRecord) {
         return;
     }
 
-    messageBus.sendCommand(commandName, inputGetter(state.translateResult));
+    messageBus.sendCommand(commandName, inputGetter(state.translateResultHistoryRecord.translateResult));
 }

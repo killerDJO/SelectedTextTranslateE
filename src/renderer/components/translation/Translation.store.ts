@@ -8,11 +8,13 @@ import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
 import { remote } from "electron";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { StarCommand } from "common/dto/translation/StarCommand";
 
 const messageBus = new MessageBus();
 
 interface TranslationState {
-    translateResult: TranslateResult | null;
+    historyRecord: HistoryRecord | null;
     translationResultViewSettings?: TranslationResultViewSettings;
     isInitialized: boolean;
     isInProgress: boolean;
@@ -23,7 +25,7 @@ interface TranslationState {
 export const translation: Module<TranslationState, RootState> = {
     namespaced: true,
     state: {
-        translateResult: null,
+        historyRecord: null,
         translationResultViewSettings: undefined,
         isInitialized: false,
         isInProgress: false,
@@ -32,13 +34,15 @@ export const translation: Module<TranslationState, RootState> = {
     },
     mutations: {
         setTranslateResult(state: TranslationState, translateResultCommand: TranslateResultCommand): void {
-            state.translateResult = translateResultCommand.translateResult;
-            state.defaultView = translateResultCommand.defaultView;
+            state.historyRecord = translateResultCommand.historyRecord;
+            if (translateResultCommand.defaultView) {
+                state.defaultView = translateResultCommand.defaultView;
+            }
             state.isInProgress = false;
             state.showInput = false;
         },
         clearTranslateResult(state: TranslationState): void {
-            state.translateResult = null;
+            state.historyRecord = null;
             state.isInProgress = false;
             state.showInput = false;
         },
@@ -82,14 +86,17 @@ export const translation: Module<TranslationState, RootState> = {
         translateText({ commit }, text: string): void {
             commit("setInProgress");
             messageBus.sendCommand(Messages.Translation.TranslateCommand, text);
+        },
+        setStarredStatus(_, request: { record: HistoryRecord; isStarred: boolean }): void {
+            messageBus.sendCommand<StarCommand>(Messages.Translation.StarTranslateResult, { sentence: request.record.sentence, isForcedTranslation: request.record.isForcedTranslation, isStarred: request.isStarred });
         }
     }
 };
 
 function executeCommand(state: TranslationState, commandName: Messages, inputGetter: (translateResult: TranslateResult) => string | null): void {
-    if (state.translateResult === null) {
+    if (state.historyRecord === null) {
         return;
     }
 
-    messageBus.sendCommand(commandName, inputGetter(state.translateResult));
+    messageBus.sendCommand(commandName, inputGetter(state.historyRecord.translateResult));
 }

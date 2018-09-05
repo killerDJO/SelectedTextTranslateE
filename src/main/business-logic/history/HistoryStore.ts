@@ -1,5 +1,5 @@
 import { Observable, Subject } from "rxjs";
-import { tap, map } from "rxjs/operators";
+import { tap, map, concatMap } from "rxjs/operators";
 import * as Datastore from "nedb";
 import { injectable } from "inversify";
 
@@ -27,10 +27,10 @@ export class HistoryStore {
         return this.historyUpdatedSubject$;
     }
 
-    public addTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<void> {
+    public addTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<HistoryRecord> {
         const currentTime = new Date();
         const insert$ = this.datastoreProvider.insert<HistoryRecord>(this.datastore, {
-            sentence: translateResult.sentence.input.trim(),
+            sentence: translateResult.sentence.input,
             translateResult: translateResult,
             translationsNumber: 0,
             isForcedTranslation: isForcedTranslation,
@@ -46,13 +46,13 @@ export class HistoryStore {
         );
     }
 
-    public updateTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean, skipStatistic: boolean): Observable<void> {
+    public updateTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean, skipStatistic: boolean): Observable<HistoryRecord> {
         const currentTime = new Date();
-        const update$ = this.datastoreProvider.update(this.datastore, { sentence: translateResult.sentence.input, isForcedTranslation: isForcedTranslation }, {
-            sentence: translateResult.sentence.input.trim(),
-            translateResult: translateResult,
-            isForcedTranslation: isForcedTranslation,
-            updatedDate: skipStatistic ? undefined : currentTime
+        const update$ = this.datastoreProvider.update<HistoryRecord>(this.datastore, { sentence: translateResult.sentence.input, isForcedTranslation: isForcedTranslation }, {
+            $set: {
+                translateResult: translateResult,
+                updatedDate: skipStatistic ? undefined : currentTime
+            }
         });
 
         return update$.pipe(
@@ -61,9 +61,9 @@ export class HistoryStore {
         );
     }
 
-    public incrementTranslationsNumber(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<void> {
+    public incrementTranslationsNumber(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<HistoryRecord> {
         const currentTime = new Date();
-        const increment$ = this.datastoreProvider.update(
+        const increment$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
             { sentence: translateResult.sentence.input.trim(), isForcedTranslation: isForcedTranslation },
             { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime } });
@@ -103,8 +103,8 @@ export class HistoryStore {
             .findPaged<HistoryRecord>(this.datastore, searchQuery, sortQuery, limit);
     }
 
-    public setStarredStatus(sentence: string, isForcedTranslation: boolean, isStarred: boolean): Observable<void> {
-        const setStarredStatus$ = this.datastoreProvider.update(
+    public setStarredStatus(sentence: string, isForcedTranslation: boolean, isStarred: boolean): Observable<HistoryRecord> {
+        const setStarredStatus$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
             { sentence: sentence.trim(), isForcedTranslation: isForcedTranslation },
             { $set: { isStarred: isStarred } });

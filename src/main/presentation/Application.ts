@@ -47,15 +47,15 @@ export class Application {
         translationView.playText$.subscribe(text => this.playText(text));
         translationView.translateText$.subscribe(text => this.translateText(text, false, skipStatistic, translationView));
         translationView.forceTranslateText$.subscribe(text => this.translateText(text, true, skipStatistic, translationView));
+        translationView.starTranslateResult$
+            .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest.sentence, starRequest.isForcedTranslation, starRequest.isStarred)))
+            .subscribe(historyRecord => translationView.updateTranslateResult(historyRecord));
     }
 
     private setupHistoryView(historyView: HistoryView): void {
         historyView.historyRecordsRequest$
             .pipe(concatMap(request => this.historyStore.getRecords(request.limit, request.sortColumn, request.sortOrder, request.starredOnly)))
             .subscribe(records => historyView.setHistoryRecords(records));
-        historyView.starRequest$
-            .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest.sentence, starRequest.isForcedTranslation, starRequest.isStarred)))
-            .subscribe();
 
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
 

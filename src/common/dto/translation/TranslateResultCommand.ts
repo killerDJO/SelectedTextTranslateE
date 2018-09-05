@@ -1,7 +1,7 @@
-import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 export interface TranslateResultCommand {
-    readonly translateResult: TranslateResult | null;
-    readonly defaultView: TranslateResultViews;
+    readonly historyRecord: HistoryRecord | null;
+    readonly defaultView?: TranslateResultViews;
 }

@@ -1,19 +1,24 @@
 import Vue from "vue";
 
 import { Component, Prop } from "vue-property-decorator";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslateResultSentence } from "common/dto/translation/TranslateResult";
 
 @Component
 export default class TranslationResultHeader extends Vue {
 
     @Prop(Object)
-    public sentence!: TranslateResultSentence;
+    public historyRecord!: HistoryRecord;
 
     @Prop(Boolean)
     public isEmbedded!: boolean;
 
     public playText(): void {
         this.$emit("play-text");
+    }
+
+    public get sentence(): TranslateResultSentence {
+        return this.historyRecord.translateResult.sentence;
     }
 
     public get isInputCorrected(): boolean {
@@ -34,6 +39,10 @@ export default class TranslationResultHeader extends Vue {
 
     public forceTranslation(): void {
         this.$emit("force-translation");
+    }
+
+    public setStarredStatus(isStarred: boolean): void {
+        this.$emit("set-starred-status", isStarred);
     }
 
     public translateText(text: string): void {
