@@ -2,12 +2,11 @@ import { Observable } from "rxjs";
 
 import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "presentation/framework/ViewContext";
-import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
-import { StarCommand } from "common/dto/translation/StarCommand";
 import { Messages } from "common/messaging/Messages";
 import { mapSubject } from "utils/map-subject";
 import { TranslationViewBase } from "presentation/views/TranslationViewBase";
+import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
 
 export class HistoryView extends TranslationViewBase {
 
@@ -24,7 +23,7 @@ export class HistoryView extends TranslationViewBase {
         this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
     }
 
-    public setHistoryRecords(historyRecords: HistoryRecord[]): void {
+    public setHistoryRecords(historyRecords: HistoryRecordsResponse): void {
         this.messageBus.sendValue(Messages.History.HistoryRecords, historyRecords);
     }
 

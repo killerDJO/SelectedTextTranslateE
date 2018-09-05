@@ -8,11 +8,6 @@
             <input type="checkbox" v-model="starredOnly$"> Starred Only
           </label>
         </div>
-        <select class="form-control number-selector" v-model="limit$">
-          <option v-for="option in limitOptions" v-bind:value="option.value" v-bind:key="option.value">
-            {{ option.text }}
-          </option>
-        </select>
       </div>
       <div class="translation-results-header" v-if="isTranslationVisible">
         <span class="icon icon-cancel" @click="hideTranslation"></span>
@@ -53,7 +48,17 @@
               @play-text="playText"
               @set-starred-status="setStarredStatus"/>
       </div>
-      <p class="results-footer">Showing {{historyRecords.length}} records</p>
+      <div class="results-footer" v-if="totalRecords !== 0">
+        <p class="records-count">{{totalRecords}} records</p>
+        <paginate
+          v-model="pageNumber$"
+          :page-count="pageCount"
+          :prev-text="'Prev'"
+          :next-text="'Next'"
+          :container-class="'pagination'"
+          :break-view-text="'...'">
+        </paginate>
+      </div>
     </div>
   </div>
 </template>

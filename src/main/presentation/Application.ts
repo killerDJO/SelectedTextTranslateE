@@ -54,7 +54,7 @@ export class Application {
 
     private setupHistoryView(historyView: HistoryView): void {
         historyView.historyRecordsRequest$
-            .pipe(concatMap(request => this.historyStore.getRecords(request.limit, request.sortColumn, request.sortOrder, request.starredOnly)))
+            .pipe(concatMap(request => this.historyStore.getRecords(request.pageNumber, request.sortColumn, request.sortOrder, request.starredOnly)))
             .subscribe(records => historyView.setHistoryRecords(records));
 
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);

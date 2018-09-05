@@ -1,7 +1,7 @@
 import { Component, Prop, Watch } from "vue-property-decorator";
 import Vue from "vue";
 
-import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultCategory, TranslateResultDefinitionCategory } from "common/dto/translation/TranslateResult";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 
@@ -23,7 +23,7 @@ export default class TranslationResultContent extends Vue {
     public definitions!: ReadonlyArray<TranslateResultDefinitionCategory>;
 
     @Prop(Object)
-    public translationResultViewSettings!: TranslationResultViewSettings;
+    public translationResultViewSettings!: TranslationViewRendererSettings;
 
     @Prop(String)
     public defaultView!: TranslateResultViews;

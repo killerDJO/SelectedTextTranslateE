@@ -2,7 +2,7 @@ import { Component, Prop } from "vue-property-decorator";
 import Vue from "vue";
 
 import { TranslateResultCategory, TranslateResultCategoryEntry } from "common/dto/translation/TranslateResult";
-import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 
 @Component
 export default class TranslationResultContentCategory extends Vue {
@@ -11,7 +11,7 @@ export default class TranslationResultContentCategory extends Vue {
     public category!: TranslateResultCategory;
 
     @Prop(Object)
-    public translationResultViewSettings!: TranslationResultViewSettings;
+    public translationResultViewSettings!: TranslationViewRendererSettings;
 
     public isExpanded: boolean = false;
 

@@ -4,9 +4,8 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SortColumn } from "common/dto/history/SortColumn";
 import { SortOrder } from "common/dto/history/SortOrder";
 
-import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResult } from "common/dto/translation/TranslateResult";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
@@ -21,18 +20,20 @@ const ns = namespace("app/history");
 })
 export default class History extends Vue {
     @ns.State public historyRecords!: HistoryRecord[];
-    @ns.State public limit!: number;
+    @ns.State public pageNumber!: number;
+    @ns.State public pageSize!: number;
+    @ns.State public totalRecords!: number;
     @ns.State public sortColumn!: SortColumn;
     @ns.State public sortOrder!: SortOrder;
     @ns.State public starredOnly!: boolean;
 
     @ns.State public translateResultHistoryRecord!: HistoryRecord | null;
-    @ns.State public translationResultViewSettings!: TranslationResultViewSettings;
+    @ns.State public translationResultViewSettings!: TranslationViewRendererSettings;
     @ns.State public isTranslationInProgress!: boolean;
     @ns.State public isTranslationVisible!: boolean;
     @ns.State public defaultView!: TranslateResultViews;
 
-    @ns.Mutation private readonly setLimit!: (limit: number) => void;
+    @ns.Mutation private readonly setPageNumber!: (pageNumber: number) => void;
     @ns.Mutation private readonly setSortColumn!: (sortColumn: SortColumn) => void;
     @ns.Mutation private readonly setSortOrder!: (sortOrder: SortOrder) => void;
     @ns.Mutation private readonly setStarredOnly!: (starredOnly: boolean) => void;
@@ -49,14 +50,6 @@ export default class History extends Vue {
     @ns.Action public readonly forceTranslation!: () => void;
 
     public SortColumn: typeof SortColumn = SortColumn;
-
-    public limitOptions = [
-        { text: "Last 25", value: 25 },
-        { text: "Last 50", value: 50 },
-        { text: "Last 100", value: 100 },
-        { text: "Last 200", value: 200 },
-        { text: "All", value: 1000 }
-    ];
 
     public mounted() {
         this.setup();
@@ -77,11 +70,11 @@ export default class History extends Vue {
         return this.sortOrder;
     }
 
-    public set limit$(value: number) {
-        this.setLimit(value);
+    public set pageNumber$(value: number) {
+        this.setPageNumber(value);
     }
-    public get limit$(): number {
-        return this.limit;
+    public get pageNumber$(): number {
+        return this.pageNumber;
     }
 
     public set starredOnly$(value: boolean) {
@@ -91,7 +84,11 @@ export default class History extends Vue {
         return this.starredOnly;
     }
 
-    @Watch("limit")
+    public get pageCount(): number {
+        return Math.ceil(this.totalRecords / this.pageSize);
+    }
+
+    @Watch("pageNumber")
     @Watch("sortColumn")
     @Watch("sortOrder")
     @Watch("starredOnly")

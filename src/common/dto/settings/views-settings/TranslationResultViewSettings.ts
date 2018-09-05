@@ -1,4 +1,4 @@
-export interface TranslationResultViewSettings {
+export interface TranslationViewRendererSettings {
     readonly visibility: ResultVisibilitySettings;
     readonly score: ScoreSettings;
     readonly showLoaderDelay: number;

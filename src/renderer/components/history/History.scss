@@ -91,11 +91,17 @@
 
         .results-footer {
             grid-row: 3;
-            text-align: right;
-            margin-top: 0;
-            font-style: italic;
-            font-size: $font-small;
-            color: $color-gray;
+
+            .pagination {
+                float: right;
+            }
+
+            .records-count {
+                display: inline;
+                font-style: italic;
+                font-size: $font-small;
+                color: $color-gray;
+            }
         }
     }
 }

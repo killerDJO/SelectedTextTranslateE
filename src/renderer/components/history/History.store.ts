@@ -2,13 +2,14 @@ import { Module } from "vuex";
 
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
+import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { SortColumn } from "common/dto/history/SortColumn";
 import { StarCommand } from "common/dto/translation/StarCommand";
-import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
@@ -16,13 +17,15 @@ import { TranslateResultCommand } from "common/dto/translation/TranslateResultCo
 const messageBus = new MessageBus();
 
 interface HistoryState {
-    historyRecords: HistoryRecord[];
-    limit: number;
+    historyRecords: ReadonlyArray<HistoryRecord>;
+    pageNumber: number;
+    pageSize: number;
+    totalRecords: number;
     sortColumn: SortColumn;
     sortOrder: SortOrder;
 
     translateResultHistoryRecord: HistoryRecord | null;
-    translationResultViewSettings?: TranslationResultViewSettings;
+    translationResultViewSettings?: TranslationViewRendererSettings;
     defaultView: TranslateResultViews;
     isTranslationInProgress: boolean;
     isTranslationVisible: boolean;
@@ -33,7 +36,9 @@ export const history: Module<HistoryState, RootState> = {
     namespaced: true,
     state: {
         historyRecords: [],
-        limit: 25,
+        pageNumber: 1,
+        pageSize: 0,
+        totalRecords: 0,
         sortColumn: SortColumn.LastTranslatedDate,
         sortOrder: SortOrder.Desc,
         starredOnly: false,
@@ -45,11 +50,14 @@ export const history: Module<HistoryState, RootState> = {
         isTranslationVisible: false
     },
     mutations: {
-        setRecords(state: HistoryState, historyRecords: HistoryRecord[]): void {
-            state.historyRecords = historyRecords;
+        setRecords(state: HistoryState, historyRecordsResponse: HistoryRecordsResponse): void {
+            state.historyRecords = historyRecordsResponse.records;
+            state.pageNumber = historyRecordsResponse.pageNumber;
+            state.pageSize = historyRecordsResponse.pageSize;
+            state.totalRecords = historyRecordsResponse.totalRecords;
         },
-        setLimit(state: HistoryState, limit: number): void {
-            state.limit = limit;
+        setPageNumber(state: HistoryState, pageNumber: number): void {
+            state.pageNumber = pageNumber;
         },
         setSortColumn(state: HistoryState, sortColumn: SortColumn): void {
             state.sortColumn = sortColumn;
@@ -60,7 +68,7 @@ export const history: Module<HistoryState, RootState> = {
         setStarredOnly(state: HistoryState, starredOnly: boolean): void {
             state.starredOnly = starredOnly;
         },
-        setTranslationResultViewSettings(state: HistoryState, translationResultViewSettings: TranslationResultViewSettings): void {
+        setTranslationResultViewSettings(state: HistoryState, translationResultViewSettings: TranslationViewRendererSettings): void {
             state.translationResultViewSettings = translationResultViewSettings;
         },
         setTranslationInProgress(state: HistoryState): void {
@@ -83,15 +91,15 @@ export const history: Module<HistoryState, RootState> = {
     },
     actions: {
         setup({ commit, dispatch }): void {
-            messageBus.getValue<HistoryRecord[]>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
+            messageBus.getValue<HistoryRecordsResponse>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
             messageBus.getNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
 
-            messageBus.getValue<TranslationResultViewSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
+            messageBus.getValue<TranslationViewRendererSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
             messageBus.getValue<TranslateResultCommand>(Messages.Translation.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
             messageBus.getNotification(Messages.Translation.InProgressCommand, () => commit("setTranslationInProgress"));
         },
         requestHistoryRecords({ state }): void {
-            messageBus.sendCommand<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords, { limit: state.limit, sortColumn: state.sortColumn, sortOrder: state.sortOrder, starredOnly: state.starredOnly });
+            messageBus.sendCommand<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords, { pageNumber: state.pageNumber, sortColumn: state.sortColumn, sortOrder: state.sortOrder, starredOnly: state.starredOnly });
         },
         playText({ state }): void {
             executeTranslationCommand(state, Messages.Translation.PlayTextCommand, translateResult => translateResult.sentence.input);

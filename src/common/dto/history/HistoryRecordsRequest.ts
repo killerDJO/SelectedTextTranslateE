@@ -4,6 +4,6 @@ import { SortOrder } from "common/dto/history/SortOrder";
 export interface HistoryRecordsRequest {
     sortColumn: SortColumn;
     sortOrder: SortOrder;
-    limit: number;
+    pageNumber: number;
     starredOnly: boolean;
 }

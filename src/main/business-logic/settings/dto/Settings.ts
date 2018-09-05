@@ -1,10 +1,11 @@
 import { RendererSettings } from "common/dto/settings/renderer-settings/RendererSettings";
 import { Hotkey } from "common/dto/settings/Hotkey";
-import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 
 export interface Settings {
     readonly renderer: RendererSettings;
     readonly engine: TranslationEngineSettings;
+    readonly history: HistorySettings;
     readonly views: ViewsSettings;
     readonly scaling: ScalingSettings;
     readonly hotkeys: HotkeySettings;
@@ -53,7 +54,12 @@ export interface ScalingSettings {
 
 export interface TranslationViewSettings extends ViewSize {
     readonly margin: number;
-    readonly renderer: TranslationResultViewSettings;
+    readonly renderer: TranslationViewRendererSettings;
+}
+
+export interface HistorySettings extends ViewSize {
+    readonly pageSize: number;
+    readonly databaseName: string;
 }
 
 export interface UpdateSettings {

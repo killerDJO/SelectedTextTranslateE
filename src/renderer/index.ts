@@ -2,6 +2,8 @@ import { webFrame } from "electron";
 import Vue from "vue";
 import Vuex from "vuex";
 import Router from "vue-router";
+import * as Paginate from "vuejs-paginate";
+
 import { root, RootState } from "root.store";
 
 import App from "components/app/App.vue";
@@ -48,6 +50,7 @@ class Bootstrapper {
         Vue.component("validated-field", ValidatedField);
         Vue.component("slider", Slider);
         Vue.component("confirm-modal", ConfirmModal);
+        Vue.component("paginate", Paginate);
     }
 
     private static registerPlugins(): void {

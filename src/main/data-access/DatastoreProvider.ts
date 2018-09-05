@@ -49,9 +49,19 @@ export class DatastoreProvider {
         });
     }
 
-    public findPaged<TResult>(datastore: Datastore, query: any, sortQuery: any, limit: number): Observable<TResult[]> {
+    public count(datastore: Datastore, query: any): Observable<number> {
+        return new Observable<number>(observer => {
+            datastore.count(query, (error, count) => {
+                this.handleError(error);
+                observer.next(count);
+                observer.complete();
+            });
+        });
+    }
+
+    public findPaged<TResult>(datastore: Datastore, query: any, sortQuery: any, pageNumber: number, pageSize: number): Observable<TResult[]> {
         return new Observable<TResult[]>(observer => {
-            datastore.find<TResult>(query).sort(sortQuery).limit(limit).exec((error, records) => {
+            datastore.find<TResult>(query).sort(sortQuery).skip((pageNumber - 1) * pageSize).limit(pageSize).exec((error, records) => {
                 this.handleError(error);
                 observer.next(records);
                 observer.complete();

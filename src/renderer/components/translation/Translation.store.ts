@@ -3,7 +3,7 @@ import { Module } from "vuex";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
-import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
@@ -15,7 +15,7 @@ const messageBus = new MessageBus();
 
 interface TranslationState {
     historyRecord: HistoryRecord | null;
-    translationResultViewSettings?: TranslationResultViewSettings;
+    translationResultViewSettings?: TranslationViewRendererSettings;
     isInitialized: boolean;
     isInProgress: boolean;
     showInput: boolean;
@@ -46,7 +46,7 @@ export const translation: Module<TranslationState, RootState> = {
             state.isInProgress = false;
             state.showInput = false;
         },
-        setTranslationResultViewSettings(state: TranslationState, translationResultViewSettings: TranslationResultViewSettings): void {
+        setTranslationResultViewSettings(state: TranslationState, translationResultViewSettings: TranslationViewRendererSettings): void {
             state.translationResultViewSettings = translationResultViewSettings;
         },
         setInitialized(state: TranslationState): void {
@@ -64,7 +64,7 @@ export const translation: Module<TranslationState, RootState> = {
         fetchData({ commit }): void {
             messageBus.getNotification(Messages.Translation.InProgressCommand, () => commit("setInProgress"));
             messageBus.getValue<TranslateResultCommand>(Messages.Translation.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
-            messageBus.getValue<TranslationResultViewSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => {
+            messageBus.getValue<TranslationViewRendererSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => {
                 commit("setTranslationResultViewSettings", translationResultViewSettings);
                 commit("setInitialized");
             });

@@ -5,10 +5,13 @@ import { injectable } from "inversify";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
 import { SortColumn } from "common/dto/history/SortColumn";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { Logger } from "infrastructure/Logger";
 import { DatastoreProvider } from "data-access/DatastoreProvider";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { HistorySettings } from "business-logic/settings/dto/Settings";
 
 @injectable()
 export class HistoryStore {
@@ -16,11 +19,15 @@ export class HistoryStore {
     private readonly datastore: Datastore;
     private readonly historyUpdatedSubject$: Subject<void> = new Subject();
 
+    private readonly historySettings: HistorySettings;
+
     constructor(
         private readonly datastoreProvider: DatastoreProvider,
+        private readonly settingsProvider: SettingsProvider,
         private readonly logger: Logger) {
 
-        this.datastore = this.datastoreProvider.openDatabase("history.db");
+        this.historySettings = this.settingsProvider.getSettings().value.history;
+        this.datastore = this.datastoreProvider.openDatabase(this.historySettings.databaseName);
     }
 
     public get historyUpdated$(): Observable<void> {
@@ -82,7 +89,7 @@ export class HistoryStore {
             );
     }
 
-    public getRecords(limit: number, sortColumn: SortColumn, sortOrder: SortOrder, starredOnly: boolean): Observable<HistoryRecord[]> {
+    public getRecords(pageNumber: number, sortColumn: SortColumn, sortOrder: SortOrder, starredOnly: boolean): Observable<HistoryRecordsResponse> {
         const sortColumnMap = {
             [SortColumn.Input]: "sentence",
             [SortColumn.TimesTranslated]: "translationsNumber",
@@ -99,8 +106,21 @@ export class HistoryStore {
             searchQuery.isStarred = true;
         }
 
+        const count$ = this.datastoreProvider.count(this.datastore, searchQuery);
+        const pageSize = this.historySettings.pageSize;
+
         return this.datastoreProvider
-            .findPaged<HistoryRecord>(this.datastore, searchQuery, sortQuery, limit);
+            .findPaged<HistoryRecord>(this.datastore, searchQuery, sortQuery, pageNumber, pageSize).pipe(
+                concatMap(historyRecords => count$.pipe(map(count => { return { historyRecords, count }; }))),
+                map(historyRecordsWithCount => {
+                    return {
+                        records: historyRecordsWithCount.historyRecords,
+                        pageNumber: pageNumber,
+                        pageSize: pageSize,
+                        totalRecords: historyRecordsWithCount.count
+                    };
+                })
+            );
     }
 
     public setStarredStatus(sentence: string, isForcedTranslation: boolean, isStarred: boolean): Observable<HistoryRecord> {
