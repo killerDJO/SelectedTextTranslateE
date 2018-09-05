@@ -5,4 +5,5 @@ export interface HistoryRecordsRequest {
     sortColumn: SortColumn;
     sortOrder: SortOrder;
     limit: number;
+    starredOnly: boolean;
 }

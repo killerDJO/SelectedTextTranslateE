@@ -23,10 +23,17 @@
             grid-row: 1;
             position: relative;
             width: 100%;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            grid-column-gap: $padding-default;
 
             .number-selector {
                 width: 10rem;
-                float: right;
+            }
+
+            .title {
+                text-align: left;
+                grid-column: 1;
             }
         }
 
@@ -38,7 +45,7 @@
                 font-size: $font-large;
 
                 &:hover {
-                    color: red;
+                    color: $color-error;
                 }
             }
         }
@@ -47,9 +54,24 @@
             grid-row: 2;
             margin-top: $margin-small;
 
+            tbody tr:hover {
+                background-color: #eee;
+            }
+
             .word-column,
             .translation-column {
                 width: 37%;
+            }
+
+            .word-column {
+                .icon-star,
+                .icon-star-empty {
+                    cursor: pointer;
+                }
+
+                .icon-star {
+                    color: $color-star;
+                }
             }
     
             .times-column {

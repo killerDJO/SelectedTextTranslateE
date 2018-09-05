@@ -3,6 +3,11 @@
     <div class="grid-holder" :class="{'translation-visible': isTranslationVisible}">
       <div class="results-header clearfix">
         <p class="title">Translation History</p>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" v-model="starredOnly$"> Starred Only
+          </label>
+        </div>
         <select class="form-control number-selector" v-model="limit$">
           <option v-for="option in limitOptions" v-bind:value="option.value" v-bind:key="option.value">
             {{ option.text }}
@@ -13,7 +18,7 @@
         <span class="icon icon-cancel" @click="hideTranslation"></span>
         <p class="title">Translation</p>
       </div>
-      <table class="table-striped results">
+      <table class="table-striped results non-clickable">
         <thead>
           <tr>
             <sortable-header class="word-column" :sort-column="SortColumn.Input" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Word</sortable-header>
@@ -24,7 +29,11 @@
         </thead>
         <tbody>
           <tr v-for="record in historyRecords" :key="record.sentence" @click="translateText(record.sentence)">
-            <td class="word-column" v-overflow-tooltip>{{record.sentence}}</td>
+            <td class="word-column" v-overflow-tooltip>
+              <span class="icon icon-star" v-if="record.isStarred" @click.stop="setStarredStatus({record: record, isStarred: false})"></span>
+              <span class="icon icon-star-empty" v-else @click.stop="setStarredStatus({record: record, isStarred: true})"></span>
+              {{record.sentence}}
+            </td>
             <td class="translation-column" v-overflow-tooltip>{{record.translateResult.sentence.translation}}</td>
             <td class="times-column">{{record.translationsNumber}}</td>
             <td class="last-translated-column" v-overflow-tooltip>{{record.lastTranslatedDate | date-time}}</td>

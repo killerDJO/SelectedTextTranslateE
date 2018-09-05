@@ -51,8 +51,12 @@ export class Application {
 
     private setupHistoryView(historyView: HistoryView): void {
         historyView.historyRecordsRequest$
-            .pipe(concatMap(request => this.historyStore.getRecords(request.limit, request.sortColumn, request.sortOrder)))
+            .pipe(concatMap(request => this.historyStore.getRecords(request.limit, request.sortColumn, request.sortOrder, request.starredOnly)))
             .subscribe(records => historyView.setHistoryRecords(records));
+        historyView.starRequest$
+            .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest.sentence, starRequest.isForcedTranslation, starRequest.isStarred)))
+            .subscribe();
+
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
 
         this.setupTranslationView(historyView, true);

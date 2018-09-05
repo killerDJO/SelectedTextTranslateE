@@ -7,11 +7,11 @@ import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { SortColumn } from "common/dto/history/SortColumn";
+import { StarRequest } from "common/dto/history/StarRequest";
 import { TranslationResultViewSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
-import { stat } from "fs";
 
 const messageBus = new MessageBus();
 
@@ -26,6 +26,7 @@ interface HistoryState {
     defaultView: TranslateResultViews;
     isTranslationInProgress: boolean;
     isTranslationVisible: boolean;
+    starredOnly: boolean;
 }
 
 export const history: Module<HistoryState, RootState> = {
@@ -35,6 +36,7 @@ export const history: Module<HistoryState, RootState> = {
         limit: 25,
         sortColumn: SortColumn.LastTranslatedDate,
         sortOrder: SortOrder.Desc,
+        starredOnly: false,
 
         defaultView: TranslateResultViews.Translation,
         translationResultViewSettings: undefined,
@@ -54,6 +56,9 @@ export const history: Module<HistoryState, RootState> = {
         },
         setSortOrder(state: HistoryState, sortOrder: SortOrder): void {
             state.sortOrder = sortOrder;
+        },
+        setStarredOnly(state: HistoryState, starredOnly: boolean): void {
+            state.starredOnly = starredOnly;
         },
         setTranslationResultViewSettings(state: HistoryState, translationResultViewSettings: TranslationResultViewSettings): void {
             state.translationResultViewSettings = translationResultViewSettings;
@@ -86,7 +91,7 @@ export const history: Module<HistoryState, RootState> = {
             messageBus.getNotification(Messages.Translation.InProgressCommand, () => commit("setTranslationInProgress"));
         },
         requestHistoryRecords({ state }): void {
-            messageBus.sendCommand<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords, { limit: state.limit, sortColumn: state.sortColumn, sortOrder: state.sortOrder });
+            messageBus.sendCommand<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords, { limit: state.limit, sortColumn: state.sortColumn, sortOrder: state.sortOrder, starredOnly: state.starredOnly });
         },
         playText({ state }): void {
             executeTranslationCommand(state, Messages.Translation.PlayTextCommand, translateResult => translateResult.sentence.input);
@@ -102,6 +107,9 @@ export const history: Module<HistoryState, RootState> = {
         translateText({ commit }, text: string): void {
             commit("setTranslationInProgress");
             messageBus.sendCommand(Messages.Translation.TranslateCommand, text);
+        },
+        setStarredStatus(_, request: { record: HistoryRecord; isStarred: boolean }): void {
+            messageBus.sendCommand<StarRequest>(Messages.History.StarRecord, { sentence: request.record.sentence, isForcedTranslation: request.record.isForcedTranslation, isStarred: request.isStarred });
         }
     }
 };

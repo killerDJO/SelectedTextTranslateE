@@ -29,14 +29,15 @@ export class HistoryStore {
 
     public addTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<void> {
         const currentTime = new Date();
-        const insert$ = this.datastoreProvider.insert(this.datastore, {
+        const insert$ = this.datastoreProvider.insert<HistoryRecord>(this.datastore, {
             sentence: translateResult.sentence.input.trim(),
             translateResult: translateResult,
             translationsNumber: 0,
             isForcedTranslation: isForcedTranslation,
             createdDate: currentTime,
             updatedDate: currentTime,
-            lastTranslatedDate: currentTime
+            lastTranslatedDate: currentTime,
+            isStarred: false
         });
 
         return insert$.pipe(
@@ -68,7 +69,7 @@ export class HistoryStore {
             { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime } });
 
         return increment$.pipe(
-            tap(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is incremented.`)),
+            tap(() => this.logger.info(`Translations number for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is incremented.`)),
             tap(() => this.notifyAboutUpdate())
         );
     }
@@ -81,7 +82,7 @@ export class HistoryStore {
             );
     }
 
-    public getRecords(limit: number, sortColumn: SortColumn, sortOrder: SortOrder): Observable<HistoryRecord[]> {
+    public getRecords(limit: number, sortColumn: SortColumn, sortOrder: SortOrder, starredOnly: boolean): Observable<HistoryRecord[]> {
         const sortColumnMap = {
             [SortColumn.Input]: "sentence",
             [SortColumn.TimesTranslated]: "translationsNumber",
@@ -91,8 +92,27 @@ export class HistoryStore {
 
         const sortQuery: any = {};
         sortQuery[sortColumnMap[sortColumn]] = sortOrder === SortOrder.Asc ? 1 : -1;
+
+        const searchQuery: any = {};
+        searchQuery.isForcedTranslation = false;
+        if (starredOnly) {
+            searchQuery.isStarred = true;
+        }
+
         return this.datastoreProvider
-            .findPaged<HistoryRecord>(this.datastore, { isForcedTranslation: false }, sortQuery, limit);
+            .findPaged<HistoryRecord>(this.datastore, searchQuery, sortQuery, limit);
+    }
+
+    public setStarredStatus(sentence: string, isForcedTranslation: boolean, isStarred: boolean): Observable<void> {
+        const setStarredStatus$ = this.datastoreProvider.update(
+            this.datastore,
+            { sentence: sentence.trim(), isForcedTranslation: isForcedTranslation },
+            { $set: { isStarred: isStarred } });
+
+        return setStarredStatus$.pipe(
+            tap(() => this.logger.info(`Translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" has changed its starred status to ${isStarred}.`)),
+            tap(() => this.notifyAboutUpdate())
+        );
     }
 
     private notifyAboutUpdate(): void {

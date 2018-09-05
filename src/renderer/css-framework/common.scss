@@ -20,9 +20,11 @@ button:disabled {
 .checkbox {
     line-height: 1;
     margin: 0;
+    display: flex;
 
     label {
         display: block;
+        margin: 2px 1px;
 
         input[type="checkbox"] {
             position: relative;

@@ -33,6 +33,7 @@ export class Messages {
     public static History = class {
         public static readonly HistoryRecords = "history-records";
         public static readonly RequestHistoryRecords = "get-history-records";
+        public static readonly StarRecord = "star-history-record";
         public static readonly HistoryUpdated = "history-updated";
     };
 

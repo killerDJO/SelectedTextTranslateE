@@ -4,6 +4,7 @@ import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
+import { StarRequest } from "common/dto/history/StarRequest";
 import { Messages } from "common/messaging/Messages";
 import { mapSubject } from "utils/map-subject";
 import { TranslationViewBase } from "presentation/views/TranslationViewBase";
@@ -11,7 +12,7 @@ import { TranslationViewBase } from "presentation/views/TranslationViewBase";
 export class HistoryView extends TranslationViewBase {
 
     public historyRecordsRequest$!: Observable<HistoryRecordsRequest>;
-    public translateText$!: Observable<string>;
+    public starRequest$: Observable<StarRequest>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.History, viewContext, {
@@ -22,7 +23,7 @@ export class HistoryView extends TranslationViewBase {
         });
 
         this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
-        this.translateText$ = this.messageBus.getValue<string>(Messages.Translation.TranslateCommand);
+        this.starRequest$ = this.messageBus.getValue<StarRequest>(Messages.History.StarRecord);
     }
 
     public setHistoryRecords(historyRecords: HistoryRecord[]): void {

@@ -24,6 +24,7 @@ export default class History extends Vue {
     @ns.State public limit!: number;
     @ns.State public sortColumn!: SortColumn;
     @ns.State public sortOrder!: SortOrder;
+    @ns.State public starredOnly!: boolean;
 
     @ns.State public translateResult!: TranslateResult;
     @ns.State public translationResultViewSettings!: TranslationResultViewSettings;
@@ -34,11 +35,13 @@ export default class History extends Vue {
     @ns.Mutation private readonly setLimit!: (limit: number) => void;
     @ns.Mutation private readonly setSortColumn!: (sortColumn: SortColumn) => void;
     @ns.Mutation private readonly setSortOrder!: (sortOrder: SortOrder) => void;
+    @ns.Mutation private readonly setStarredOnly!: (starredOnly: boolean) => void;
 
     @ns.Mutation public readonly hideTranslation!: () => void;
 
     @ns.Action private readonly setup!: () => void;
     @ns.Action private readonly requestHistoryRecords!: () => void;
+    @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
 
     @ns.Action public readonly playText!: () => void;
     @ns.Action public readonly translateText!: (text: string) => void;
@@ -81,9 +84,17 @@ export default class History extends Vue {
         return this.limit;
     }
 
+    public set starredOnly$(value: boolean) {
+        this.setStarredOnly(value);
+    }
+    public get starredOnly$(): boolean {
+        return this.starredOnly;
+    }
+
     @Watch("limit")
     @Watch("sortColumn")
     @Watch("sortOrder")
+    @Watch("starredOnly")
     public refreshRecords(): void {
         this.requestHistoryRecords();
     }
