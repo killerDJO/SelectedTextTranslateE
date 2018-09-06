@@ -61,6 +61,7 @@ export const translation: Module<TranslationState, RootState> = {
         },
         setShowInput(state: TranslationState): void {
             state.showInput = true;
+            state.historyRecord = null;
         }
     },
     actions: {
