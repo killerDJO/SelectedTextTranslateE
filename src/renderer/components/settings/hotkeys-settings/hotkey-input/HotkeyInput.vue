@@ -9,7 +9,7 @@
       @focus="onFocus"
       @blur="onBlur"
       @drop="preventDefault"/>
-    <span class="icon icon-keyboard"></span>
+    <span class="icon icon-keyboard" title="Press desired keys while focused on this field"></span>
   </div>
 </template>
 

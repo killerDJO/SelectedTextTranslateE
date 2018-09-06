@@ -1,12 +1,12 @@
 <template>
     <div class="header" :class="{'is-embedded': isEmbedded}">
         <div class="translation">
-            <span class="icon icon-star" v-if="historyRecord.isStarred" @click="setStarredStatus(false)"></span>
-            <span class="icon icon-star-empty" v-else @click="setStarredStatus(true)"></span>
+            <span class="icon icon-star" v-if="historyRecord.isStarred" @click="setStarredStatus(false)" title="Unmark Translation"></span>
+            <span class="icon icon-star-empty" v-else @click="setStarredStatus(true)" title="Mark Translation"></span>
             <span v-if="!!sentence.translation"> {{ sentence.translation }} </span>
             <span v-else class="no-translation"> No Translation </span>
         </div>
-        <i class="play" @click="playText"></i>
+        <i class="play" @click="playText" title="Play Origin"></i>
         <div class="origin" @blur="translateText($event.target.innerText)" @keydown.enter.prevent="translateText($event.target.innerText)" contenteditable="true">{{ sentence.origin }}</div>
         <div class="header-actions">
             <span v-if="isInputCorrected">(corrected from <a class="link-button" @click="forceTranslation">{{sentence.input}})</a></span>

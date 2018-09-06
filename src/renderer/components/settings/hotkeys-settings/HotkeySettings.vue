@@ -11,7 +11,7 @@
         </div>
         <div v-if="currentCommand !== null" class="hotkeys">
           <div class="global-hotkey-warning" v-show="currentCommand.isGlobal">
-            <span class="icon icon-attention">This hotkey is global and may conflict with hotkeys from other applications.</span>
+            <span class="icon icon-attention" title="Warning">This hotkey is global and may conflict with hotkeys from other applications.</span>
           </div>
           <table class="table-striped non-clickable hotkeys-list">
             <thead>

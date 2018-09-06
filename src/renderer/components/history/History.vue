@@ -25,8 +25,8 @@
         <tbody v-if="historyRecords.length !== 0">
           <tr v-for="record in historyRecords" :key="record.sentence + record.isForcedTranslation" @click="translateText(record.sentence)">
             <td class="word-column" v-overflow-tooltip>
-              <span class="icon icon-star" v-if="record.isStarred" @click.stop="setStarredStatus({record: record, isStarred: false})"></span>
-              <span class="icon icon-star-empty" v-else @click.stop="setStarredStatus({record: record, isStarred: true})"></span>
+              <span class="icon icon-star" v-if="record.isStarred" @click.stop="setStarredStatus({record: record, isStarred: false})" title="Unmark Translation"></span>
+              <span class="icon icon-star-empty" v-else @click.stop="setStarredStatus({record: record, isStarred: true})" title="Mark Translation"></span>
               {{record.sentence}}
               <span class="icon icon-flash" v-if="record.isForcedTranslation" title="Forced Translation"></span>
             </td>
