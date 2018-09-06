@@ -11,7 +11,7 @@ import { Installer } from "install/Installer";
 
 const logger = container.get<Logger>(Logger);
 
-if (app.makeSingleInstance(() => undefined)) {
+if (!app.requestSingleInstanceLock()) {
     app.quit();
 }
 
