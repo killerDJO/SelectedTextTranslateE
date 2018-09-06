@@ -32,7 +32,7 @@ export class TextPlayer {
         return this.getAudioContent(text)
             .pipe(
                 concatMap(content => this.saveContentToTempFile(content)),
-                concatMap(() => of(this.playFile(text)))
+                concatMap(() => this.playFile(text))
             );
     }
 
@@ -41,9 +41,18 @@ export class TextPlayer {
         return writeFileAsObservable(this.tempFilePath, content);
     }
 
-    private playFile(text: string): void {
-        nativeExtensions.playFile(this.tempFilePath);
-        this.logger.info(`End playing text '${text}'`);
+    private playFile(text: string): Observable<void> {
+        return new Observable<void>(observer => {
+            nativeExtensions.playFile(this.tempFilePath, error => {
+                if (!!error) {
+                    observer.error(new Error(error));
+                } else {
+                    this.logger.info(`End playing text '${text}'`);
+                    observer.next();
+                    observer.complete();
+                }
+            });
+        });
     }
 
     private getAudioContent(text: string): Observable<Buffer> {
