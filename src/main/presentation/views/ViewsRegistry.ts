@@ -21,12 +21,21 @@ export class ViewsRegistry {
     }
 
     public getOrCreateView<TView extends ViewBase>(name: ViewNames, postCreateAction?: (view: TView) => void): TView {
-        const existingView = this.viewsCache.get(name);
-        if (existingView === undefined || existingView.isDestroyed()) {
+        const existingView = this.getView(name);
+        if (existingView === null) {
             this.viewsCache.set(name, this.createView<TView>(name, postCreateAction));
         }
 
         return this.viewsCache.get(name) as TView;
+    }
+
+    public getView<TView extends ViewBase>(name: ViewNames): TView | null {
+        const existingView = this.viewsCache.get(name) || null;
+        if (existingView === null || existingView.isDestroyed()) {
+            return null;
+        }
+
+        return existingView as TView;
     }
 
     private createView<TView extends ViewBase>(name: ViewNames, postCreateAction?: (view: TView) => void): TView {

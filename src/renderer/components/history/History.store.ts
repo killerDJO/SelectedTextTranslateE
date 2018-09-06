@@ -85,6 +85,14 @@ export const history: Module<HistoryState, RootState> = {
             state.isTranslationVisible = true;
         },
         updateTranslateResult(state: HistoryState, historyRecord: HistoryRecord): void {
+            if (state.translateResultHistoryRecord === null) {
+                return;
+            }
+
+            if (state.translateResultHistoryRecord.sentence !== historyRecord.sentence || state.translateResultHistoryRecord.isForcedTranslation !== historyRecord.isForcedTranslation) {
+                return;
+            }
+
             state.translateResultHistoryRecord = historyRecord;
         },
         hideTranslation(state: HistoryState): void {

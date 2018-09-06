@@ -21,6 +21,7 @@ import { NotificationSender } from "infrastructure/NotificationSender";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslationViewBase } from "presentation/views/TranslationViewBase";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 @injectable()
 export class Application {
@@ -43,13 +44,13 @@ export class Application {
         this.setupHotkeys();
     }
 
-    private setupTranslationView(translationView: TranslationViewBase, skipStatistic: boolean): void {
-        translationView.playText$.subscribe(text => this.playText(text));
-        translationView.translateText$.subscribe(text => this.translateText(text, false, skipStatistic, translationView));
-        translationView.forceTranslateText$.subscribe(text => this.translateText(text, true, skipStatistic, translationView));
-        translationView.starTranslateResult$
-            .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest.sentence, starRequest.isForcedTranslation, starRequest.isStarred)))
-            .subscribe(historyRecord => translationView.updateTranslateResult(historyRecord));
+    private setupTranslationView(translationView: TranslationViewBase): void {
+        this.setupTranslationViewBase(translationView, false, historyRecord => {
+            const historyView = this.viewsRegistry.getView<HistoryView>(ViewNames.History);
+            if (historyView !== null) {
+                historyView.updateTranslateResult(historyRecord);
+            }
+        });
     }
 
     private setupHistoryView(historyView: HistoryView): void {
@@ -59,7 +60,21 @@ export class Application {
 
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
 
-        this.setupTranslationView(historyView, true);
+        this.setupTranslationViewBase(historyView, true);
+    }
+
+    private setupTranslationViewBase(translationViewBase: TranslationViewBase, skipStatistic: boolean, starCallback?: (historyRecord: HistoryRecord) => void): void {
+        translationViewBase.playText$.subscribe(text => this.playText(text));
+        translationViewBase.translateText$.subscribe(text => this.translateText(text, false, skipStatistic, translationViewBase));
+        translationViewBase.forceTranslateText$.subscribe(text => this.translateText(text, true, skipStatistic, translationViewBase));
+        translationViewBase.starTranslateResult$
+            .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest.sentence, starRequest.isForcedTranslation, starRequest.isStarred)))
+            .subscribe(historyRecord => {
+                translationViewBase.updateTranslateResult(historyRecord);
+                if (!!starCallback) {
+                    starCallback(historyRecord);
+                }
+            });
     }
 
     private setupSettingsView(settingsView: SettingsView): void {
@@ -128,14 +143,14 @@ export class Application {
     }
 
     private get translationView(): TranslationView {
-        return this.createView<TranslationView>(ViewNames.Translation, view => this.setupTranslationView(view, false));
+        return this.createView<TranslationView>(ViewNames.Translation, view => this.setupTranslationView(view));
     }
 
     private get historyView(): HistoryView {
-        return this.createView(ViewNames.History, this.setupHistoryView.bind(this));
+        return this.createView(ViewNames.History, view => this.setupHistoryView(view));
     }
 
     private get settingsView(): SettingsView {
-        return this.createView(ViewNames.Settings, this.setupSettingsView.bind(this));
+        return this.createView(ViewNames.Settings, view => this.setupSettingsView(view));
     }
 }

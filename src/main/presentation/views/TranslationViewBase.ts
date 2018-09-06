@@ -18,7 +18,7 @@ export abstract class TranslationViewBase extends ViewBase {
     public readonly playText$!: Observable<string>;
     public readonly translateText$!: Observable<string>;
     public readonly forceTranslateText$!: Observable<string>;
-    public starTranslateResult$: Observable<StarCommand>;
+    public readonly starTranslateResult$: Observable<StarCommand>;
 
     constructor(viewName: ViewNames, context: ViewContext, viewOptions: ViewOptions) {
         super(viewName, context, viewOptions);
