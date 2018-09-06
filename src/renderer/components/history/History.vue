@@ -34,7 +34,7 @@
               <span v-if="!!record.translateResult.sentence.translation">{{record.translateResult.sentence.translation}}</span>
               <span v-else class="no-translation">No Translation</span>
             </td>
-            <td class="times-column">{{record.translationsNumber}}</td>
+            <td class="times-column">{{record.translationsNumber !== 0 ? record.translationsNumber : "-"}}</td>
             <td class="last-translated-column" v-overflow-tooltip>{{record.lastTranslatedDate | date-time}}</td>
           </tr>
         </tbody>

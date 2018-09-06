@@ -57,4 +57,8 @@ export default class TranslationResultContent extends Vue {
             this.currentView = this.defaultView;
         }
     }
+
+    public translate(text: string): void {
+        this.$emit("translate", text);
+    }
 }

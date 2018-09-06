@@ -57,6 +57,10 @@ export default class TranslationResultContentCategory extends Vue {
         return "low";
     }
 
+    public translate(text: string): void {
+        this.$emit("translate", text);
+    }
+
     private getInitiallyVisibleEntries(): ReadonlyArray<TranslateResultCategoryEntry> {
         return this.category.entries.filter(this.isVisibleEntry, this);
     }

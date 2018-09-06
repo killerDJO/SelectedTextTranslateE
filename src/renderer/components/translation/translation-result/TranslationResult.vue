@@ -18,7 +18,8 @@
                 :definitions="historyRecord.translateResult.definitions"
                 :translation-result-view-settings="translationResultViewSettings"
                 :default-view="defaultView"
-                :is-embedded="isEmbedded"/>
+                :is-embedded="isEmbedded"
+                @translate="translateText"/>
         </div>
     </div>
 </template>

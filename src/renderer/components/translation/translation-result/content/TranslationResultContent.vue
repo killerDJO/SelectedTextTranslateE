@@ -7,7 +7,8 @@
             v-for="category in categories"
             :key="category.baseForm + category.partOfSpeech"
             :category="category"
-            :translation-result-view-settings="translationResultViewSettings"/>
+            :translation-result-view-settings="translationResultViewSettings"
+            @translate="translate"/>
         <translation-result-definition-category
             v-if="currentView === TranslateResultViews.Definition"
             v-for="definitionCategory in definitions"

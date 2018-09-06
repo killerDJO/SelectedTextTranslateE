@@ -21,6 +21,11 @@
         .reverse-translations {
             font-style: italic;
             color: $color-gray;
+
+            .reverse-translation:hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
         }
 
         .score {
