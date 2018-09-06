@@ -101,7 +101,6 @@ export class HistoryStore {
         sortQuery[sortColumnMap[sortColumn]] = sortOrder === SortOrder.Asc ? 1 : -1;
 
         const searchQuery: any = {};
-        searchQuery.isForcedTranslation = false;
         if (starredOnly) {
             searchQuery.isStarred = true;
         }
@@ -111,15 +110,14 @@ export class HistoryStore {
 
         return this.datastoreProvider
             .findPaged<HistoryRecord>(this.datastore, searchQuery, sortQuery, pageNumber, pageSize).pipe(
-                concatMap(historyRecords => count$.pipe(map(count => { return { historyRecords, count }; }))),
-                map(historyRecordsWithCount => {
+                concatMap(historyRecords => count$.pipe(map(count => {
                     return {
-                        records: historyRecordsWithCount.historyRecords,
+                        records: historyRecords,
                         pageNumber: pageNumber,
                         pageSize: pageSize,
-                        totalRecords: historyRecordsWithCount.count
+                        totalRecords: count
                     };
-                })
+                })))
             );
     }
 

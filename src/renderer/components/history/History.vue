@@ -23,11 +23,12 @@
           </tr>
         </thead>
         <tbody v-if="historyRecords.length !== 0">
-          <tr v-for="record in historyRecords" :key="record.sentence" @click="translateText(record.sentence)">
+          <tr v-for="record in historyRecords" :key="record.sentence + record.isForcedTranslation" @click="translateText(record.sentence)">
             <td class="word-column" v-overflow-tooltip>
               <span class="icon icon-star" v-if="record.isStarred" @click.stop="setStarredStatus({record: record, isStarred: false})"></span>
               <span class="icon icon-star-empty" v-else @click.stop="setStarredStatus({record: record, isStarred: true})"></span>
               {{record.sentence}}
+              <span class="icon icon-flash" v-if="record.isForcedTranslation" title="Forced Translation"></span>
             </td>
             <td class="translation-column" v-overflow-tooltip>
               <span v-if="!!record.translateResult.sentence.translation">{{record.translateResult.sentence.translation}}</span>
