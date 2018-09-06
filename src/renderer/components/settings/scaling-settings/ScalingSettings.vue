@@ -11,7 +11,7 @@
     </div>
     <div class="checkbox">
       <label>
-        <input type="checkbox" v-model="currentScalingSettings.scaleTranslationViewOnly"> Scale Translation View Only
+        <input type="checkbox" v-model="currentScalingSettings.scaleTranslationViewOnly"><span>Scale Translation View Only</span>
       </label>
     </div>
   </settings-holder>

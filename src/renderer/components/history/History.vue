@@ -3,9 +3,9 @@
     <div class="grid-holder" :class="{'translation-visible': isTranslationVisible}">
       <div class="results-header clearfix">
         <p class="title">Translation History</p>
-        <div class="checkbox">
+        <div class="checkbox starred-checkbox">
           <label>
-            <input type="checkbox" v-model="starredOnly$"> Starred Only
+            <span>Starred Only</span> <input type="checkbox" v-model="starredOnly$">
           </label>
         </div>
       </div>
@@ -22,16 +22,26 @@
             <sortable-header class="last-translated-column" :sort-column="SortColumn.LastTranslatedDate" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Last Translated</sortable-header>
           </tr>
         </thead>
-        <tbody>
+        <tbody v-if="historyRecords.length !== 0">
           <tr v-for="record in historyRecords" :key="record.sentence" @click="translateText(record.sentence)">
             <td class="word-column" v-overflow-tooltip>
               <span class="icon icon-star" v-if="record.isStarred" @click.stop="setStarredStatus({record: record, isStarred: false})"></span>
               <span class="icon icon-star-empty" v-else @click.stop="setStarredStatus({record: record, isStarred: true})"></span>
               {{record.sentence}}
             </td>
-            <td class="translation-column" v-overflow-tooltip>{{record.translateResult.sentence.translation}}</td>
+            <td class="translation-column" v-overflow-tooltip>
+              <span v-if="!!record.translateResult.sentence.translation">{{record.translateResult.sentence.translation}}</span>
+              <span v-else class="no-translation">No Translation</span>
+            </td>
             <td class="times-column">{{record.translationsNumber}}</td>
             <td class="last-translated-column" v-overflow-tooltip>{{record.lastTranslatedDate | date-time}}</td>
+          </tr>
+        </tbody>
+        <tbody v-else>
+          <tr>
+            <td colspan="4" class="no-records-available">
+              No {{starredOnly ? "Starred": ""}} History Records Avialable
+            </td>
           </tr>
         </tbody>
       </table>

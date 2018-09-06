@@ -578,10 +578,6 @@ input[type="search"] {
 }
 
 input[type="radio"],
-input[type="checkbox"] {
-  margin: 4px 0 0;
-  line-height: normal;
-}
 
 .form-control {
   display: inline-block;
@@ -608,24 +604,11 @@ textarea {
   margin-bottom: 10px;
 }
 
-.radio,
-.checkbox {
-  position: relative;
-  display: block;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-.radio label,
-.checkbox label {
-  padding-left: 20px;
-  margin-bottom: 0;
-  font-weight: normal;
-}
+.radio
+.radio label
 
 .radio input[type="radio"],
-.radio-inline input[type="radio"],
-.checkbox input[type="checkbox"],
-.checkbox-inline input[type="checkbox"] {
+.radio-inline input[type="radio"] {
   position: absolute;
   margin-left: -20px;
   margin-top: 4px;

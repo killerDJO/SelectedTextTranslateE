@@ -23,6 +23,11 @@
 
     .translation {
         font-size: $font-large;
+
+        .no-translation {
+            font-style: italic;
+            color: $color-gray;
+        }
     }
 
     .origin {

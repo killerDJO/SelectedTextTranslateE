@@ -24,11 +24,15 @@
             position: relative;
             width: 100%;
             display: grid;
-            grid-template-columns: 1fr auto auto;
-            grid-column-gap: $padding-default;
+            grid-template-columns: 1fr auto;
 
             .number-selector {
                 width: 10rem;
+            }
+
+            .starred-checkbox {
+                margin-top: 1px;
+                margin-right: -1px;
             }
 
             .title {
@@ -63,6 +67,11 @@
                 width: 37%;
             }
 
+            .translation-column .no-translation {
+                font-style: italic;
+                color: $color-gray;
+            }
+
             .word-column {
                 .icon-star,
                 .icon-star-empty {
@@ -80,6 +89,11 @@
 
             .last-translated-column {
                 width: 16%;
+            }
+
+            .no-records-available {
+                text-align: center;
+                font-style: italic;
             }
         }
 

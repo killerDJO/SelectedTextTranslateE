@@ -24,6 +24,7 @@ export class Messages {
 
         public static readonly InProgressCommand = "set-in-progress";
         public static readonly TranslateResult = "translate-result";
+        public static readonly UpdateTranslateResult = "update-translate-result";
         public static readonly PlayTextCommand = "play-text-command";
         public static readonly TranslateCommand = "translate-command";
         public static readonly ForceTranslateCommand = "force-translate-command";

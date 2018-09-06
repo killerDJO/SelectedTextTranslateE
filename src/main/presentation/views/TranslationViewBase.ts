@@ -39,7 +39,7 @@ export abstract class TranslationViewBase extends ViewBase {
         return this.messageBus.sendValue<TranslateResultCommand>(Messages.Translation.TranslateResult, { historyRecord, defaultView: defaultTranslateResultView });
     }
 
-    public updateTranslateResult(historyRecord: HistoryRecord | null): Subject<void> {
-        return this.messageBus.sendValue<TranslateResultCommand>(Messages.Translation.TranslateResult, { historyRecord });
+    public updateTranslateResult(historyRecord: HistoryRecord): Subject<void> {
+        return this.messageBus.sendValue<HistoryRecord>(Messages.Translation.UpdateTranslateResult, historyRecord);
     }
 }

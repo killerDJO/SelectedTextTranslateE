@@ -84,6 +84,9 @@ export const history: Module<HistoryState, RootState> = {
             state.isTranslationInProgress = false;
             state.isTranslationVisible = true;
         },
+        updateTranslateResult(state: HistoryState, historyRecord: HistoryRecord): void {
+            state.translateResultHistoryRecord = historyRecord;
+        },
         hideTranslation(state: HistoryState): void {
             state.isTranslationVisible = false;
             state.translateResultHistoryRecord = null;
@@ -96,6 +99,7 @@ export const history: Module<HistoryState, RootState> = {
 
             messageBus.getValue<TranslationViewRendererSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
             messageBus.getValue<TranslateResultCommand>(Messages.Translation.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
+            messageBus.getValue<HistoryRecord>(Messages.Translation.UpdateTranslateResult, historyRecord => commit("updateTranslateResult", historyRecord));
             messageBus.getNotification(Messages.Translation.InProgressCommand, () => commit("setTranslationInProgress"));
         },
         requestHistoryRecords({ state }): void {
