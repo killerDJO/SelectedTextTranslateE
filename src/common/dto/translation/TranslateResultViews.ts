@@ -1,4 +1,5 @@
 export enum TranslateResultViews {
     Translation = "translation",
-    Definition = "definition"
+    Definition = "definition",
+    Statistic = "statistic"
 }

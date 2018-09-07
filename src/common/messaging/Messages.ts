@@ -29,7 +29,6 @@ export class Messages {
         public static readonly UpdateTranslateResult = "update-translate-result";
         public static readonly PlayTextCommand = "play-text-command";
         public static readonly TranslateCommand = "translate-command";
-        public static readonly ForceTranslateCommand = "force-translate-command";
         public static readonly TranslationResultViewSettings = "translation-result-view-settings";
         public static readonly StarTranslateResult = "star-translate-result";
     };

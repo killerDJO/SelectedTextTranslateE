@@ -55,6 +55,7 @@
               :is-embedded="true"
               @translate-suggestion="translateSuggestion"
               @force-translation="forceTranslation"
+              @refresh-translation="refreshTranslation"
               @translate-text="translateText"
               @play-text="playText"
               @set-starred-status="setStarredStatus"/>

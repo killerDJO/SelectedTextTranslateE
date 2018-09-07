@@ -11,6 +11,7 @@
             :translation-result-view-settings="translationResultViewSettings"
             @translate-suggestion="translateSuggestion"
             @force-translation="forceTranslation"
+            @refresh-translation="refreshTranslation"
             @translate-text="translateText"
             @play-text="playText"
             @set-starred-status="setStarredStatus"/>

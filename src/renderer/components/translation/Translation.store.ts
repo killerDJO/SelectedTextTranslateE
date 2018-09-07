@@ -1,7 +1,7 @@
 import { Module, ActionContext } from "vuex";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResultResponse } from "common/dto/translation/TranslateResultCommand";
+import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";

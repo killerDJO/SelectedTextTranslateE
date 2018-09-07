@@ -7,7 +7,8 @@ import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "presentation/framework/ViewContext";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResultResponse } from "common/dto/translation/TranslateResultCommand";
+import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
+import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { ViewOptions } from "presentation/framework/ViewOptions";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { StarCommand } from "common/dto/translation/StarCommand";
@@ -16,8 +17,7 @@ export abstract class TranslateResultView extends ViewBase {
     protected inProgressTimeout: NodeJS.Timer | null = null;
 
     public readonly playText$!: Observable<string>;
-    public readonly translateText$!: Observable<string>;
-    public readonly forceTranslateText$!: Observable<string>;
+    public readonly translateText$!: Observable<TranslationRequest>;
     public readonly starTranslateResult$: Observable<StarCommand>;
 
     constructor(viewName: ViewNames, context: ViewContext, viewOptions: ViewOptions) {
@@ -25,8 +25,7 @@ export abstract class TranslateResultView extends ViewBase {
 
         this.messageBus.sendValue(Messages.TranslateResult.TranslationResultViewSettings, this.context.viewsSettings.translation.renderer);
         this.playText$ = this.messageBus.getValue(Messages.TranslateResult.PlayTextCommand);
-        this.translateText$ = this.messageBus.getValue(Messages.TranslateResult.TranslateCommand);
-        this.forceTranslateText$ = this.messageBus.getValue(Messages.TranslateResult.ForceTranslateCommand);
+        this.translateText$ = this.messageBus.getValue<TranslationRequest>(Messages.TranslateResult.TranslateCommand);
         this.starTranslateResult$ = this.messageBus.getValue<StarCommand>(Messages.TranslateResult.StarTranslateResult);
     }
 

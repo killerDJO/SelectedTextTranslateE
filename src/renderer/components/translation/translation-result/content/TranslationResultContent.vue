@@ -1,19 +1,26 @@
 <template>
     <div class="content" :class="{'is-embedded': isEmbedded}">
-        <span class="link-button show-definitions" @click="currentView = TranslateResultViews.Definition" v-if="currentView === TranslateResultViews.Translation && hasDefinitions">Show Definitions</span>
-        <span class="link-button show-definitions" @click="currentView = TranslateResultViews.Translation" v-if="currentView === TranslateResultViews.Definition && hasCategories">Show Translations</span>
+        <div class="change-actions">
+            <span class="link-button change-action" @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions">Show Definitions</span>
+            <span class="link-button change-action" @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories">Show Translations</span>
+            <span class="link-button change-action" @click="currentView = TranslateResultViews.Statistic" v-if="currentView !== TranslateResultViews.Statistic && !firstTimeTranslation">Statistic</span>
+        </div>
         <translation-result-content-category
             v-if="currentView === TranslateResultViews.Translation"
-            v-for="category in categories"
+            v-for="category in historyRecord.translateResult.categories"
             :key="category.baseForm + category.partOfSpeech"
             :category="category"
             :translation-result-view-settings="translationResultViewSettings"
             @translate="translate"/>
         <translation-result-definition-category
             v-if="currentView === TranslateResultViews.Definition"
-            v-for="definitionCategory in definitions"
+            v-for="definitionCategory in historyRecord.translateResult.definitions"
             :key="definitionCategory.baseForm + definitionCategory.partOfSpeech"
             :definitionCategory="definitionCategory"/>
+        <translation-result-statistic
+            v-if="currentView === TranslateResultViews.Statistic"
+            :history-record="historyRecord"
+            @refresh-translation="refreshTranslation"/>
     </div>
 </template>
 

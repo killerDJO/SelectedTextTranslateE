@@ -59,5 +59,9 @@
         font-size: $font-small;
         color: $color-gray;
         display: inline-block;
+
+        .link-button {
+            vertical-align: bottom;
+        }
     }
 }

@@ -11,6 +11,7 @@ import { RequestProvider } from "data-access/RequestProvider";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 
 @injectable()
 export class TextTranslator {
@@ -23,22 +24,22 @@ export class TextTranslator {
         private readonly settingsProvider: SettingsProvider) {
     }
 
-    public translate(sentence: string, isForcedTranslation: boolean, skipStatistic: boolean): Observable<HistoryRecord | null> {
-        this.logger.info(`Translating text: "${sentence}".`);
+    public translate({ text, isForcedTranslation, refreshCache }: TranslationRequest, skipStatistic: boolean): Observable<HistoryRecord | null> {
+        this.logger.info(`Translating text: "${text}".`);
 
-        const sanitizedSentence = this.sanitizeSentence(sentence);
+        const sanitizedSentence = this.sanitizeSentence(text);
 
         if (sanitizedSentence === "") {
             return of(null);
         }
 
         return this.historyStore.getRecord(sanitizedSentence, isForcedTranslation).pipe(
-            concatMap(historyRecord => this.getTranslateResult(sanitizedSentence, isForcedTranslation, historyRecord, skipStatistic)),
-            tap<HistoryRecord>(historyRecord => !skipStatistic ? this.historyStore.incrementTranslationsNumber(historyRecord.translateResult, isForcedTranslation).subscribe() : undefined)
+            concatMap(historyRecord => this.getTranslateResult(sanitizedSentence, isForcedTranslation, refreshCache, historyRecord, skipStatistic)),
+            concatMap(historyRecord => !skipStatistic ? this.historyStore.incrementTranslationsNumber(historyRecord.translateResult, isForcedTranslation) : of(historyRecord))
         );
     }
 
-    private getTranslateResult(sentence: string, isForcedTranslation: boolean, historyRecord: HistoryRecord | null, skipStatistic: boolean): Observable<HistoryRecord> {
+    private getTranslateResult(sentence: string, isForcedTranslation: boolean, refreshCache: boolean, historyRecord: HistoryRecord | null, skipStatistic: boolean): Observable<HistoryRecord> {
         const translateResult$ = this
             .getResponseFromService(sentence, isForcedTranslation)
             .pipe(tap(() => this.logger.info(`Serving translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" from service.`)));
@@ -48,7 +49,7 @@ export class TextTranslator {
                 .pipe(concatMap(translateResult => this.historyStore.addTranslateResult(translateResult, isForcedTranslation)));
         }
 
-        if (this.isHistoryRecordExpired(historyRecord)) {
+        if (refreshCache || this.isHistoryRecordExpired(historyRecord)) {
             return translateResult$
                 .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, isForcedTranslation, skipStatistic)));
         }
@@ -75,8 +76,8 @@ export class TextTranslator {
         );
     }
 
-    private sanitizeSentence(sentence: string): string {
-        return sentence.trim();
+    private sanitizeSentence(sentence: string | null): string {
+        return (sentence || "").trim();
     }
 
     private getTranslationResponse(text: string, isForcedTranslation: boolean, hash: string): Observable<any> {

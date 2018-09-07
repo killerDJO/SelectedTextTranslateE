@@ -9,7 +9,7 @@ import { RootState } from "root.store";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { SortColumn } from "common/dto/history/SortColumn";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResultResponse } from "common/dto/translation/TranslateResultCommand";
+import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
 
 const messageBus = new MessageBus();

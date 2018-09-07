@@ -1,8 +1,9 @@
-import { ActionContext } from "vuex";
+import { ActionContext, Commit } from "vuex";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResultResponse } from "common/dto/translation/TranslateResultCommand";
+import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
+import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
@@ -54,29 +55,47 @@ export const translateResultActions = {
         messageBus.getValue<TranslationViewRendererSettings>(Messages.TranslateResult.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
     },
     playText({ state }: ActionContext<TranslateResultState, RootState>): void {
-        executeCommand(state, Messages.TranslateResult.PlayTextCommand, translateResult => translateResult.sentence.input);
+        executeCommand<string>(state, Messages.TranslateResult.PlayTextCommand, historyRecord => historyRecord.sentence);
     },
     translateSuggestion({ commit, state }: ActionContext<TranslateResultState, RootState>): void {
-        commit("setTranslationInProgress");
-        executeCommand(state, Messages.TranslateResult.TranslateCommand, translateResult => translateResult.sentence.suggestion);
+        executeCommandWithProgress<TranslationRequest>(
+            state,
+            commit,
+            Messages.TranslateResult.TranslateCommand,
+            historyRecord => ({ text: historyRecord.translateResult.sentence.suggestion, isForcedTranslation: false, refreshCache: false }));
     },
     forceTranslation({ commit, state }: ActionContext<TranslateResultState, RootState>): void {
-        commit("setTranslationInProgress");
-        executeCommand(state, Messages.TranslateResult.ForceTranslateCommand, translateResult => translateResult.sentence.input);
+        executeCommandWithProgress<TranslationRequest>(
+            state,
+            commit,
+            Messages.TranslateResult.TranslateCommand,
+            historyRecord => ({ text: historyRecord.sentence, isForcedTranslation: true, refreshCache: false }));
+    },
+    refreshTranslation({ commit, state }: ActionContext<TranslateResultState, RootState>): void {
+        executeCommandWithProgress<TranslationRequest>(
+            state,
+            commit,
+            Messages.TranslateResult.TranslateCommand,
+            historyRecord => ({ text: historyRecord.sentence, isForcedTranslation: historyRecord.isForcedTranslation, refreshCache: true }));
     },
     translateText({ commit }: ActionContext<TranslateResultState, RootState>, text: string): void {
         commit("setTranslationInProgress");
-        messageBus.sendCommand(Messages.TranslateResult.TranslateCommand, text);
+        messageBus.sendCommand<TranslationRequest>(Messages.TranslateResult.TranslateCommand, { text, isForcedTranslation: false, refreshCache: false });
     },
     setStarredStatus(_: ActionContext<TranslateResultState, RootState>, request: { record: HistoryRecord; isStarred: boolean }): void {
         messageBus.sendCommand<StarCommand>(Messages.TranslateResult.StarTranslateResult, { sentence: request.record.sentence, isForcedTranslation: request.record.isForcedTranslation, isStarred: request.isStarred });
     }
 };
 
-function executeCommand(state: TranslateResultState, commandName: Messages, inputGetter: (translateResult: TranslateResult) => string | null): void {
+function executeCommand<TRequest>(state: TranslateResultState, commandName: Messages, inputGetter: (historyRecord: HistoryRecord) => TRequest): void {
     if (state.translationHistoryRecord === null) {
         return;
     }
 
-    messageBus.sendCommand(commandName, inputGetter(state.translationHistoryRecord.translateResult));
+    messageBus.sendCommand<TRequest>(commandName, inputGetter(state.translationHistoryRecord));
+}
+
+function executeCommandWithProgress<TRequest>(state: TranslateResultState, commit: Commit, commandName: Messages, inputGetter: (historyRecord: HistoryRecord) => TRequest): void {
+    commit("setTranslationInProgress");
+    executeCommand<TRequest>(state, commandName, inputGetter);
 }

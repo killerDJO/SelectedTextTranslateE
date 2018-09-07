@@ -48,6 +48,7 @@ export default class History extends Vue {
     @ns.Action public readonly translateText!: (text: string) => void;
     @ns.Action public readonly translateSuggestion!: () => void;
     @ns.Action public readonly forceTranslation!: () => void;
+    @ns.Action public readonly refreshTranslation!: () => void;
 
     public SortColumn: typeof SortColumn = SortColumn;
 

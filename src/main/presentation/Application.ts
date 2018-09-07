@@ -22,6 +22,7 @@ import { NotificationSender } from "infrastructure/NotificationSender";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 
 @injectable()
 export class Application {
@@ -65,8 +66,7 @@ export class Application {
 
     private setupTranslateResultView(translateResultView: TranslateResultView, skipStatistic: boolean, starCallback?: (historyRecord: HistoryRecord) => void): void {
         translateResultView.playText$.subscribe(text => this.playText(text));
-        translateResultView.translateText$.subscribe(text => this.translateText(text, false, skipStatistic, translateResultView));
-        translateResultView.forceTranslateText$.subscribe(text => this.translateText(text, true, skipStatistic, translateResultView));
+        translateResultView.translateText$.subscribe(request => this.translateText(request, skipStatistic, translateResultView));
         translateResultView.starTranslateResult$
             .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest.sentence, starRequest.isForcedTranslation, starRequest.isStarred)))
             .subscribe(historyRecord => {
@@ -114,7 +114,7 @@ export class Application {
     private translateSelectedText(defaultView: TranslateResultViews = TranslateResultViews.Translation): void {
         this.textExtractor
             .getSelectedText()
-            .subscribe(text => this.translateText(text, false, false, this.translationView, defaultView));
+            .subscribe(text => this.translateText({ text, isForcedTranslation: false, refreshCache: false }, false, this.translationView, defaultView));
     }
 
     private playText(text: string): void {
@@ -125,10 +125,10 @@ export class Application {
             });
     }
 
-    private translateText(text: string, isForcedTranslation: boolean, skipStatistic: boolean, targetView: TranslateResultView, defaultTranslateResultView: TranslateResultViews = TranslateResultViews.Translation): void {
+    private translateText(translationRequest: TranslationRequest, skipStatistic: boolean, targetView: TranslateResultView, defaultTranslateResultView: TranslateResultViews = TranslateResultViews.Translation): void {
         targetView.showProgressIndicator();
         this.textTranslator
-            .translate(text, isForcedTranslation, skipStatistic)
+            .translate(translationRequest, skipStatistic)
             .subscribe(
                 result => targetView.setTranslateResult(result, defaultTranslateResultView),
                 error => {

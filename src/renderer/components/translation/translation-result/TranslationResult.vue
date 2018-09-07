@@ -14,12 +14,12 @@
                 @play-text="playText"
                 @set-starred-status="setStarredStatus"/>
             <translation-result-content
-                :categories="historyRecord.translateResult.categories"
-                :definitions="historyRecord.translateResult.definitions"
+                :history-record="historyRecord"
                 :translation-result-view-settings="translationResultViewSettings"
                 :default-view="defaultView"
                 :is-embedded="isEmbedded"
-                @translate="translateText"/>
+                @translate="translateText"
+                @refresh-translation="refreshTranslation"/>
         </div>
     </div>
 </template>

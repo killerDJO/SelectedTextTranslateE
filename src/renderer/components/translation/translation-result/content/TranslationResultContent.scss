@@ -8,8 +8,12 @@
         padding-left: $padding-large;
     }
 
-    .show-definitions {
-        padding-bottom: $padding-small;
-        float: left;
+    .change-actions {
+        margin-bottom: $margin-small;
+
+        .change-action {
+            padding-bottom: $padding-small;
+            margin-right: $margin-small;
+        }
     }
 }
