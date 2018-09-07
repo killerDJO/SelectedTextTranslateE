@@ -47,6 +47,7 @@ export abstract class ViewBase {
     public show(): void {
         if (this.window.isVisible()) {
             this.window.restore();
+            this.window.moveTop();
             return;
         }
 

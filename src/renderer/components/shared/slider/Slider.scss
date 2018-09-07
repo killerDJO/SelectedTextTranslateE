@@ -1,13 +1,12 @@
 .slider-holder {
-    display: table;
+    display: flex;
     width: 100%;
+    align-items: center;
 
-    $slider-height: 25px;
+    $slider-height: $padding-small;
 
     .range-value {
-        display: table-cell;
-        width: 1%;
-        vertical-align: middle;
+        line-height: 1;
 
         &.min-value {
             padding-right: $padding-small;
@@ -27,7 +26,6 @@
         opacity: 0.7;
         transition: opacity .2s;
         border-radius: $border-radius;
-        display: table-cell;
     
         &:hover {
             opacity: 1;
@@ -35,11 +33,11 @@
     
         &::-webkit-slider-thumb {
             -webkit-appearance: none;
-            width: $slider-height;
-            height: $slider-height;
+            width: $slider-height*3;
+            height: $slider-height*3;
             background: $color-gray;
             cursor: pointer;
-            border-radius: $border-radius;
+            border-radius: 50%;
         }
     }
 }

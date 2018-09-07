@@ -1,3 +1,14 @@
 .scaling-input {
-    margin-bottom: $margin-default;
+    .slider-holder {
+        margin-top: $margin-small;
+    }
+
+    .current-scale-factor {
+        font-style: italic;
+    }
+}
+
+.reset-label {
+    font-size: $font-small;
+    vertical-align: text-bottom;
 }

@@ -1,39 +1,31 @@
+$items-size: 400px;
+
 .settings-holder {
     border-radius: $border-radius;
     width: 100%;
     margin-bottom: $margin-default;
 
-    > .header {
-        font-size: $font-large;
-        padding-left: $margin-default;
-        display: block;
-        text-transform: uppercase;
-        @extend %box-shadow;
-        border-top-right-radius: $border-radius;
-        border-top-left-radius: $border-radius;
-
-        .icon {
-            cursor: pointer;
-            color: $color-light-gray;
-
-            &:hover{
-                color: $color-black;
-            }
-        }
-
-        &.collapsed {
-            background-color: $color-white;
-            border-radius: $border-radius;
-        }
+    > .settings-title {
+        font-size: $font-big;
+        margin-bottom: $margin-small;
     }
 
     > .holder {
         @extend %box-shadow;
         background-color: $color-white;
-        border-bottom-right-radius: $border-radius;
-        border-bottom-left-radius: $border-radius;
-        min-width: 450px;
+        border-radius: $border-radius;
+        min-width: $items-size + $margin-large;
         padding: $padding-default;
         margin-bottom: $margin-default;
+    }
+
+    /deep/ .settings-separator {
+        border-top: $border-width solid $color-border;
+        width: calc(100% + #{ 2 * $margin-default });
+        margin: $margin-default #{-$margin-default};
+    }
+
+    /deep/ .settings-item {
+        max-width: $items-size;
     }
 }

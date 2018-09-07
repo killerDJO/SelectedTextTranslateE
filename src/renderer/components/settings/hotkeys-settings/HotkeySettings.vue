@@ -38,13 +38,14 @@
             </validated-field>
             <button class="btn btn-mini btn-default add-hotkey" @click="addHotkey" :disabled="!isAddHotkeyEnabled">Add</button>
           </div>
-          <span class="reset-hotkeys link-button" @click="showResetHotkeysModal = true">Reset Hotkey Settings</span>
-          <confirm-modal :show.sync="showResetHotkeysModal" @confirm="resetHotkeySettings">
-            <span slot="header">Are you sure you want to reset hotkeys?</span>
-            <span slot="body">You'll loose all your current hotkeys settings permanently.</span>
-          </confirm-modal>
         </div>
       </div>
+      <div class="settings-separator"/>
+      <span class="reset-hotkeys link-button" @click="showResetHotkeysModal = true">Reset Hotkey Settings</span>
+      <confirm-modal :show.sync="showResetHotkeysModal" @confirm="resetHotkeySettings">
+        <span slot="header">Are you sure you want to reset hotkeys?</span>
+        <span slot="body">You'll loose all your current hotkeys settings permanently.</span>
+      </confirm-modal>
     </div>
   </settings-holder>
 </template>

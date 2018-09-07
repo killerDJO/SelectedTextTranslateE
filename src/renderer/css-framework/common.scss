@@ -39,6 +39,7 @@ button:disabled {
     text-decoration: underline;
     cursor: pointer;
     display: inline-block;
+    vertical-align: text-bottom;
 
     &:hover{
         color: $color-black;

@@ -2,18 +2,11 @@
     display: inline-block;
     width: 100%;
 
-    $max-width: 400px;
-
     .header {
         width: 100%;
-        
-        .command-selector {
-            max-width: $max-width;
-        }
     }
 
     .hotkeys {
-        max-width: $max-width;
         margin-top: $margin-small;
 
         $action-column-width: 15%;

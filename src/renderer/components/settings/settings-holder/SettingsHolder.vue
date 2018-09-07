@@ -1,11 +1,7 @@
 <template>
   <div class="settings-holder">
-    <div class="header" :class="{'collapsed': !isExpanded}" @click="toggleExpandedState">
-      <span class="icon icon-up-open" v-if="isExpanded"></span>
-      <span class="icon icon-down-open" v-else></span>
-      {{title}}
-    </div>
-    <div class="holder" v-show="isExpanded">
+    <div class="settings-title">{{title}}</div>
+    <div class="holder">
       <slot />
     </div>
   </div>
