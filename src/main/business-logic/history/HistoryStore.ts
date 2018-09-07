@@ -41,6 +41,8 @@ export class HistoryStore {
             translateResult: translateResult,
             translationsNumber: 0,
             isForcedTranslation: isForcedTranslation,
+            sourceLanguage: "en",
+            targetLanguage: "ru",
             createdDate: currentTime,
             updatedDate: currentTime,
             lastTranslatedDate: currentTime,
