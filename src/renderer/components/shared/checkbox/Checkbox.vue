@@ -1,7 +1,7 @@
 <template>
   <div class="checkbox">
       <label>
-        <span v-if="leftToRight">{{label}}</span><input type="checkbox" v-model="isChecked$" v-tab-index><span v-if="!leftToRight">{{label}}</span>
+        <span v-if="leftToRight">{{label}}</span><input type="checkbox" class="form-checkbox" v-model="isChecked$" v-tab-index><span v-if="!leftToRight">{{label}}</span>
       </label>
     </div>
 </template>
