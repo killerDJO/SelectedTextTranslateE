@@ -9,13 +9,9 @@
         v-model="scaleFactor" />
     </div>
     <div class="settings-separator"/>
-    <span class="link-button" @click="resetScaleFactor">Set Default Scale Factor</span><span class="reset-label"> - change to {{scalingState.autoScaleFactor * 100 | percent}}</span>
+    <span class="link-button" @click="resetScaleFactor" v-tab-index>Set Default Scale Factor</span><span class="reset-label"> - change to {{scalingState.autoScaleFactor * 100 | percent}}</span>
     <div class="settings-separator"/>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" v-model="currentScalingSettings.scaleTranslationViewOnly"><span>Scale Translation View Only</span>
-      </label>
-    </div>
+    <checkbox v-model="currentScalingSettings.scaleTranslationViewOnly" :label="'Scale Translation View Only'" />
   </settings-holder>
 </template>
 

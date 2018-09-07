@@ -10,6 +10,7 @@ import App from "components/app/App.vue";
 import ValidatedField from "components/shared/validated-field/ValidatedField.vue";
 import Slider from "components/shared/slider/Slider.vue";
 import ConfirmModal from "components/shared/confirm-modal/ConfirmModal.vue";
+import Checkbox from "components/shared/checkbox/Checkbox.vue";
 
 import { router } from "router";
 import { MessageBus } from "communication/MessageBus";
@@ -51,6 +52,7 @@ class Bootstrapper {
         Vue.component("slider", Slider);
         Vue.component("confirm-modal", ConfirmModal);
         Vue.component("paginate", Paginate);
+        Vue.component("checkbox", Checkbox);
     }
 
     private static registerPlugins(): void {

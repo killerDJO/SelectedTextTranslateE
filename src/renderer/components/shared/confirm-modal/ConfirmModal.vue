@@ -13,11 +13,12 @@
             <slot name="body" />
           </div>
           <div class="modal-footer clearfix">
-              <span class="link-button" @click="close">Cancel</span>
-              <button class="btn btn-default" @click="confirm">Confirm</button>
+              <span class="link-button" @click="close" v-tab-index>Cancel</span>
+              <button class="btn btn-default" @click="confirm" v-tab-index v-auto-focus>Confirm</button>
           </div>
         </div>
       </div>
+      <div v-tab-guard/>
     </div>
   </transition>
 </template>

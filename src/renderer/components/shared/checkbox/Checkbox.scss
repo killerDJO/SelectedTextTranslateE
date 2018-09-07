@@ -1,0 +1,15 @@
+.checkbox {
+    line-height: 1;
+    display: flex;
+
+    label {
+        display: flex;
+        margin: 0;
+        overflow: visible;
+        align-items: center;
+
+        :first-child {
+            margin-right: $margin-small;
+        }
+    }
+}

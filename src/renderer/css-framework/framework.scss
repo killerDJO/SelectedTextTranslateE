@@ -8,6 +8,7 @@ $color-white: #fff;
 $color-error: #f00;
 $color-warning: orange;
 $color-star: #ffd66e;
+$color-outline: #6db3fd;
 
 $font-large: 16px;
 $font-big: 14px;
@@ -24,6 +25,8 @@ $padding-large: 15px;
 $margin-large: 15px;
 $margin-default: 10px;
 $margin-small: 5px;
+
+$outline-width: 2px;
 
 %box-shadow {
     box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.75);

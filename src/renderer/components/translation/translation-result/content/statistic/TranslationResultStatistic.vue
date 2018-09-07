@@ -4,7 +4,7 @@
         <div class="item">First Translated<span class="item-value"> - {{historyRecord.createdDate | date-time}}</span></div>
         <div class="item">Last Translated<span class="item-value"> - {{historyRecord.lastTranslatedDate | date-time}}</span></div>
         <div class="item">Last Updated<span class="item-value"> - {{historyRecord.updatedDate | date-time}}</span></div>
-        <span class="link-button" @click="refreshTranslation">Refresh</span>
+        <span class="link-button" @click="refreshTranslation" v-tab-index>Refresh</span>
     </div>
 </template>
 

@@ -1,7 +1,8 @@
 <template>
   <div class="slider-holder">
         <span class="range-value min-value">{{minValue | percent}}</span>
-        <input type="range" 
+        <input type="range"
+          v-tab-index
           :min="minValue"
           :max="maxValue"
           :value="value"

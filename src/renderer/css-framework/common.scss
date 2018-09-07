@@ -6,6 +6,13 @@ body {
     color: $color-font;
 }
 
+.focusable:focus,
+.focusable:active {
+    box-shadow: 0 0 0 $outline-width $color-outline;
+    border-radius: $border-radius;
+    outline: none;
+}
+
 input {
     cursor: initial;
 }
@@ -16,21 +23,6 @@ input {
 
 button:disabled {
     opacity: 0.5;
-}
-
-.checkbox {
-    line-height: 1;
-    display: flex;
-
-    label {
-        display: flex;
-        margin: 0;
-        align-items: center;
-
-        :first-child {
-            margin-right: $margin-small;
-        }
-    }
 }
 
 .link-button {

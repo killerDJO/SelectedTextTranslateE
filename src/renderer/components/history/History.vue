@@ -3,11 +3,7 @@
     <div class="grid-holder" :class="{'translation-visible': isTranslationVisible}">
       <div class="results-header clearfix">
         <p class="title">Translation History</p>
-        <div class="checkbox starred-checkbox">
-          <label>
-            <span>Starred Only</span> <input type="checkbox" v-model="starredOnly$">
-          </label>
-        </div>
+        <checkbox class="starred-checkbox" v-model="starredOnly$" :label="'Starred Only'" :left-to-right="true" />
       </div>
       <div class="translation-results-header" v-if="isTranslationVisible">
         <span class="icon icon-cancel" @click="hideTranslation"></span>

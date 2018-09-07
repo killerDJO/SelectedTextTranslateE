@@ -1,6 +1,7 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 
 import { Hotkey } from "common/dto/settings/Hotkey";
+import * as _ from "lodash";
 
 @Component
 export default class HotkeyInput extends Vue {
@@ -24,6 +25,12 @@ export default class HotkeyInput extends Vue {
 
     public onKeyDown(event: KeyboardEvent): void {
         if (event.repeat) {
+            return;
+        }
+
+        if (this.isNavigationSequence(this.keys.concat([event.key]))) {
+            this.keys = [];
+            this.isInputInProgress = false;
             return;
         }
 
@@ -108,5 +115,12 @@ export default class HotkeyInput extends Vue {
             " ": "Space"
         };
         return keysMap[key] || key;
+    }
+
+    private isNavigationSequence(keys: string[]): boolean {
+        const tabKey = "Tab";
+        const shiftKey = "Shift";
+
+        return _.isEqual([tabKey], keys) || _.isEqual([shiftKey, tabKey], keys);
     }
 }

@@ -1,9 +1,9 @@
 <template>
     <div class="content" :class="{'is-embedded': isEmbedded}">
         <div class="change-actions">
-            <span class="link-button change-action" @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions">Show Definitions</span>
-            <span class="link-button change-action" @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories">Show Translations</span>
-            <span class="link-button change-action" @click="currentView = TranslateResultViews.Statistic" v-if="currentView !== TranslateResultViews.Statistic && !firstTimeTranslation">Statistic</span>
+            <span class="link-button change-action" @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions" v-tab-index>Show Definitions</span>
+            <span class="link-button change-action" @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories" v-tab-index>Show Translations</span>
+            <span class="link-button change-action" @click="currentView = TranslateResultViews.Statistic" v-if="currentView !== TranslateResultViews.Statistic && !firstTimeTranslation" v-tab-index>Statistic</span>
         </div>
         <translation-result-content-category
             v-if="currentView === TranslateResultViews.Translation"

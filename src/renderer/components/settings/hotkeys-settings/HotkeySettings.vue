@@ -23,7 +23,7 @@
             <tbody>
               <tr class="hotkey" v-for="hotkey in currentCommand.hotkeys" :key="createHotkeyString(hotkey)">
                 <td class="hotkey-column">{{createHotkeyString(hotkey)}}</td>
-                <td class="action-column"><span class="icon icon-cancel remove-hotkey" title="Remove hotkey" @click="removeHotkey(hotkey)"></span></td>
+                <td class="action-column"><span class="icon icon-cancel remove-hotkey" title="Remove hotkey" @click="removeHotkey(hotkey)" v-tab-index></span></td>
               </tr>
               <tr v-if="currentCommand.hotkeys.length === 0">
                 <td colspan="2" class="no-hotkeys">
@@ -36,12 +36,12 @@
             <validated-field :validation-message="currentHotkeyValidationMessage" class="hotkey-input-control">
               <hotkey-input :hotkey.sync="currentHotkey" @input-started="hotkeyInputStarted" @input-completed="hotkeyInputCompleted"/>
             </validated-field>
-            <button class="btn btn-mini btn-default add-hotkey" @click="addHotkey" :disabled="!isAddHotkeyEnabled">Add</button>
+            <button class="btn btn-mini btn-default add-hotkey" @click="addHotkey" :disabled="!isAddHotkeyEnabled" v-tab-index>Add</button>
           </div>
         </div>
       </div>
       <div class="settings-separator"/>
-      <span class="reset-hotkeys link-button" @click="showResetHotkeysModal = true">Reset Hotkey Settings</span>
+      <span class="reset-hotkeys link-button" @click="showResetHotkeysModal = true" v-tab-index>Reset Hotkey Settings</span>
       <confirm-modal :show.sync="showResetHotkeysModal" @confirm="resetHotkeySettings">
         <span slot="header">Are you sure you want to reset hotkeys?</span>
         <span slot="body">You'll loose all your current hotkeys settings permanently.</span>
