@@ -25,6 +25,7 @@ export interface TranslationEngineSettings {
     readonly historyRefreshInterval: number;
     readonly userAgent: string;
     readonly requestTimeout: number;
+    readonly playVolume: number;
 }
 
 export interface ViewsSettings {

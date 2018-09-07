@@ -12,6 +12,9 @@
         :scaling-state="scalingState"
         @scaling-settings-updated="updateScalingSettings"
         @scaling-changed="changeScaling"/>
+      <play-settings
+        :play-settings="settings.play"
+        @play-settings-updated="updatePlaySettings"/>
       <span class="link-button pull-right" @click="openSettingsFile">Open Settings File</span>
     </div>
   </div>

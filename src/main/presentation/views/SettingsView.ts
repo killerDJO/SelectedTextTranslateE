@@ -73,6 +73,9 @@ export class SettingsView extends ViewBase {
             },
             scaling: {
                 scaleTranslationViewOnly: settings.scaling.scaleTranslationViewOnly
+            },
+            play: {
+                playVolume: settings.engine.playVolume
             }
         };
     }
@@ -94,6 +97,9 @@ export class SettingsView extends ViewBase {
             },
             scaling: {
                 scaleTranslationViewOnly: settings.scaling.scaleTranslationViewOnly
+            },
+            engine: {
+                playVolume: settings.play.playVolume
             }
         };
     }

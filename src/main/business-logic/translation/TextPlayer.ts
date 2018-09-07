@@ -43,7 +43,8 @@ export class TextPlayer {
 
     private playFile(text: string): Observable<void> {
         return new Observable<void>(observer => {
-            nativeExtensions.playFile(this.tempFilePath, error => {
+            const volume = this.settingsProvider.getSettings().value.engine.playVolume;
+            nativeExtensions.playFile(this.tempFilePath, volume, error => {
                 if (!!error) {
                     observer.error(new Error(error));
                 } else {

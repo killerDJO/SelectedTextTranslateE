@@ -3,7 +3,7 @@ declare module "*.node" {
     export = value;
 
     interface NativeExtensions {
-        playFile(filePath: string, callback: (error: string | null) => void): void;
+        playFile(filePath: string, volume: number, callback: (error: string | null) => void): void;
         broadcastCopyCommand(): void;
     }
 }

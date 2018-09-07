@@ -8,11 +8,13 @@ class PlayFileAsyncWorker : public Nan::AsyncWorker
 {
   public:
     string filePath;
+    int volume;
 
-    PlayFileAsyncWorker(string filePath, Nan::Callback *callback)
+    PlayFileAsyncWorker(string filePath, int volume, Nan::Callback *callback)
         : Nan::AsyncWorker(callback)
     {
         this->filePath = filePath;
+        this->volume = volume;
     }
 
     void Execute()
@@ -20,6 +22,10 @@ class PlayFileAsyncWorker : public Nan::AsyncWorker
         const string AUDIO_FILE_NAME = "STT_audio";
         const string openFileCommand = "open " + filePath + " type mpegvideo alias " + AUDIO_FILE_NAME;
         CheckMCIError(mciSendStringA(openFileCommand.c_str(), nullptr, 0, nullptr));
+
+        const int targetVolume = volume * 10;
+        const string setVolumeCommand = "setaudio " + AUDIO_FILE_NAME + " volume to " + to_string(targetVolume);
+        CheckMCIError(mciSendStringA(setVolumeCommand.c_str(), nullptr, 0, nullptr));
 
         const string playAudioCommand = "play " + AUDIO_FILE_NAME + " wait";
         CheckMCIError(mciSendStringA(playAudioCommand.c_str(), nullptr, 0, nullptr));
