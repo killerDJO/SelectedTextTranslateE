@@ -4,10 +4,10 @@
             <translation-input @translate-text="translateText"/>
         </div>
         <translation-result
-            v-else-if="hasResult || isInProgress"
-            :default-view="defaultView"
-            :history-record="historyRecord"
-            :is-in-progress="isInProgress"
+            v-else-if="hasResult || isTranslationInProgress"
+            :default-view="defaultTranslateResultView"
+            :history-record="translationHistoryRecord"
+            :is-in-progress="isTranslationInProgress"
             :translation-result-view-settings="translationResultViewSettings"
             @translate-suggestion="translateSuggestion"
             @force-translation="forceTranslation"

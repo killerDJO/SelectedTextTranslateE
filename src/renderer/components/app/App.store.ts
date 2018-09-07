@@ -40,7 +40,7 @@ export const app: Module<ApplicationState, RootState> = {
         },
     },
     actions: {
-        fetchData({ commit }): void {
+        setup({ commit }): void {
             messageBus.getValue<string>(Messages.Common.AccentColor, accentColor => commit("setAccentColor", accentColor));
             messageBus.getValue<number>(Messages.Common.ScaleFactor, scaleFactor => commit("setScaleFactor", scaleFactor));
             messageBus.getValue<string>(Messages.Common.IsFramelessWindow, isFrameless => commit("setFramelessStatus", isFrameless));

@@ -1,107 +1,54 @@
-import { Module } from "vuex";
+import { Module, ActionContext } from "vuex";
 
-import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
-import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
 import { remote } from "electron";
-import { HistoryRecord } from "common/dto/history/HistoryRecord";
-import { StarCommand } from "common/dto/translation/StarCommand";
+import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
 
 const messageBus = new MessageBus();
 
-interface TranslationState {
-    historyRecord: HistoryRecord | null;
-    translationResultViewSettings?: TranslationViewRendererSettings;
-    isInitialized: boolean;
-    isInProgress: boolean;
+interface TranslationState extends TranslateResultState {
     showInput: boolean;
-    defaultView: TranslateResultViews;
 }
 
 export const translation: Module<TranslationState, RootState> = {
     namespaced: true,
     state: {
-        historyRecord: null,
-        translationResultViewSettings: undefined,
-        isInitialized: false,
-        isInProgress: false,
-        showInput: false,
-        defaultView: TranslateResultViews.Translation
+        translationHistoryRecord: null,
+        translationResultViewSettings: null,
+        isTranslationInProgress: false,
+        defaultTranslateResultView: TranslateResultViews.Translation,
+        showInput: false
     },
     mutations: {
+        ...translateResultMutations,
         setTranslateResult(state: TranslationState, translateResultCommand: TranslateResultCommand): void {
-            state.historyRecord = translateResultCommand.historyRecord;
-            if (translateResultCommand.defaultView) {
-                state.defaultView = translateResultCommand.defaultView;
-            }
-            state.isInProgress = false;
+            translateResultMutations.setTranslateResult(state, translateResultCommand);
             state.showInput = false;
-        },
-        updateTranslateResult(state: TranslationState, historyRecord: HistoryRecord): void {
-            state.historyRecord = historyRecord;
         },
         clearTranslateResult(state: TranslationState): void {
-            state.historyRecord = null;
-            state.isInProgress = false;
+            state.translationHistoryRecord = null;
+            state.isTranslationInProgress = false;
             state.showInput = false;
         },
-        setTranslationResultViewSettings(state: TranslationState, translationResultViewSettings: TranslationViewRendererSettings): void {
-            state.translationResultViewSettings = translationResultViewSettings;
-        },
-        setInitialized(state: TranslationState): void {
-            state.isInitialized = true;
-        },
-        setInProgress(state: TranslationState): void {
-            state.isInProgress = true;
+        setTranslationInProgress(state: TranslationState): void {
+            translateResultMutations.setTranslationInProgress(state);
             state.showInput = false;
         },
         setShowInput(state: TranslationState): void {
             state.showInput = true;
-            state.historyRecord = null;
+            state.translationHistoryRecord = null;
         }
     },
     actions: {
-        fetchData({ commit }): void {
-            messageBus.getNotification(Messages.Translation.InProgressCommand, () => commit("setInProgress"));
-            messageBus.getValue<TranslateResultCommand>(Messages.Translation.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
-            messageBus.getValue<HistoryRecord>(Messages.Translation.UpdateTranslateResult, historyRecord => commit("updateTranslateResult", historyRecord));
-            messageBus.getValue<TranslationViewRendererSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => {
-                commit("setTranslationResultViewSettings", translationResultViewSettings);
-                commit("setInitialized");
-            });
-            messageBus.getNotification(Messages.Translation.ShowInputCommand, () => commit("setShowInput"));
-
-            remote.getCurrentWindow().on("hide", () => commit("clearTranslateResult"));
-        },
-        playText({ state }): void {
-            executeCommand(state, Messages.Translation.PlayTextCommand, translateResult => translateResult.sentence.input);
-        },
-        translateSuggestion({ commit, state }): void {
-            commit("setInProgress");
-            executeCommand(state, Messages.Translation.TranslateCommand, translateResult => translateResult.sentence.suggestion);
-        },
-        forceTranslation({ commit, state }): void {
-            commit("setInProgress");
-            executeCommand(state, Messages.Translation.ForceTranslateCommand, translateResult => translateResult.sentence.input);
-        },
-        translateText({ commit }, text: string): void {
-            commit("setInProgress");
-            messageBus.sendCommand(Messages.Translation.TranslateCommand, text);
-        },
-        setStarredStatus(_, request: { record: HistoryRecord; isStarred: boolean }): void {
-            messageBus.sendCommand<StarCommand>(Messages.Translation.StarTranslateResult, { sentence: request.record.sentence, isForcedTranslation: request.record.isForcedTranslation, isStarred: request.isStarred });
+        ...translateResultActions,
+        setup(context): void {
+            translateResultActions.setup(context);
+            messageBus.getNotification(Messages.Translation.ShowInputCommand, () => context.commit("setShowInput"));
+            remote.getCurrentWindow().on("hide", () => context.commit("clearTranslateResult"));
         }
     }
 };
-
-function executeCommand(state: TranslationState, commandName: Messages, inputGetter: (translateResult: TranslateResult) => string | null): void {
-    if (state.historyRecord === null) {
-        return;
-    }
-
-    messageBus.sendCommand(commandName, inputGetter(state.historyRecord.translateResult));
-}

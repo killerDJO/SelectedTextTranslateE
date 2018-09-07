@@ -27,11 +27,11 @@ export default class History extends Vue {
     @ns.State public sortOrder!: SortOrder;
     @ns.State public starredOnly!: boolean;
 
-    @ns.State public translateResultHistoryRecord!: HistoryRecord | null;
-    @ns.State public translationResultViewSettings!: TranslationViewRendererSettings;
+    @ns.State public translationHistoryRecord!: HistoryRecord | null;
+    @ns.State public translationResultViewSettings!: TranslationViewRendererSettings | null;
     @ns.State public isTranslationInProgress!: boolean;
     @ns.State public isTranslationVisible!: boolean;
-    @ns.State public defaultView!: TranslateResultViews;
+    @ns.State public defaultTranslateResultView!: TranslateResultViews;
 
     @ns.Mutation private readonly setPageNumber!: (pageNumber: number) => void;
     @ns.Mutation private readonly setSortColumn!: (sortColumn: SortColumn) => void;

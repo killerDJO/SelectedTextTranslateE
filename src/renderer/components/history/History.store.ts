@@ -8,28 +8,22 @@ import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { SortColumn } from "common/dto/history/SortColumn";
-import { StarCommand } from "common/dto/translation/StarCommand";
-import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResult } from "common/dto/translation/TranslateResult";
 import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
+import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
 
 const messageBus = new MessageBus();
 
-interface HistoryState {
+interface HistoryState extends TranslateResultState {
     historyRecords: ReadonlyArray<HistoryRecord>;
     pageNumber: number;
     pageSize: number;
     totalRecords: number;
     sortColumn: SortColumn;
     sortOrder: SortOrder;
-
-    translateResultHistoryRecord: HistoryRecord | null;
-    translationResultViewSettings?: TranslationViewRendererSettings;
-    defaultView: TranslateResultViews;
-    isTranslationInProgress: boolean;
-    isTranslationVisible: boolean;
     starredOnly: boolean;
+
+    isTranslationVisible: boolean;
 }
 
 export const history: Module<HistoryState, RootState> = {
@@ -43,13 +37,14 @@ export const history: Module<HistoryState, RootState> = {
         sortOrder: SortOrder.Desc,
         starredOnly: false,
 
-        defaultView: TranslateResultViews.Translation,
-        translationResultViewSettings: undefined,
-        translateResultHistoryRecord: null,
+        translationHistoryRecord: null,
+        translationResultViewSettings: null,
         isTranslationInProgress: false,
+        defaultTranslateResultView: TranslateResultViews.Translation,
         isTranslationVisible: false
     },
     mutations: {
+        ...translateResultMutations,
         setRecords(state: HistoryState, historyRecordsResponse: HistoryRecordsResponse): void {
             state.historyRecords = historyRecordsResponse.records;
             state.pageNumber = historyRecordsResponse.pageNumber;
@@ -68,76 +63,30 @@ export const history: Module<HistoryState, RootState> = {
         setStarredOnly(state: HistoryState, starredOnly: boolean): void {
             state.starredOnly = starredOnly;
         },
-        setTranslationResultViewSettings(state: HistoryState, translationResultViewSettings: TranslationViewRendererSettings): void {
-            state.translationResultViewSettings = translationResultViewSettings;
-        },
         setTranslationInProgress(state: HistoryState): void {
-            state.isTranslationInProgress = true;
+            translateResultMutations.setTranslationInProgress(state);
             state.isTranslationVisible = true;
         },
         setTranslateResult(state: HistoryState, translateResultCommand: TranslateResultCommand): void {
-            if (translateResultCommand.historyRecord === null) {
-                throw Error("Translation from history returned null");
-            }
-
-            state.translateResultHistoryRecord = translateResultCommand.historyRecord;
-            state.isTranslationInProgress = false;
+            translateResultMutations.setTranslateResult(state, translateResultCommand);
             state.isTranslationVisible = true;
-        },
-        updateTranslateResult(state: HistoryState, historyRecord: HistoryRecord): void {
-            if (state.translateResultHistoryRecord === null) {
-                return;
-            }
-
-            if (state.translateResultHistoryRecord.sentence !== historyRecord.sentence || state.translateResultHistoryRecord.isForcedTranslation !== historyRecord.isForcedTranslation) {
-                return;
-            }
-
-            state.translateResultHistoryRecord = historyRecord;
         },
         hideTranslation(state: HistoryState): void {
             state.isTranslationVisible = false;
-            state.translateResultHistoryRecord = null;
+            state.translationHistoryRecord = null;
         }
     },
     actions: {
-        setup({ commit, dispatch }): void {
+        ...translateResultActions,
+        setup(context): void {
+            translateResultActions.setup(context);
+
+            const { commit, dispatch } = context;
             messageBus.getValue<HistoryRecordsResponse>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
             messageBus.getNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
-
-            messageBus.getValue<TranslationViewRendererSettings>(Messages.Translation.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
-            messageBus.getValue<TranslateResultCommand>(Messages.Translation.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
-            messageBus.getValue<HistoryRecord>(Messages.Translation.UpdateTranslateResult, historyRecord => commit("updateTranslateResult", historyRecord));
-            messageBus.getNotification(Messages.Translation.InProgressCommand, () => commit("setTranslationInProgress"));
         },
         requestHistoryRecords({ state }): void {
             messageBus.sendCommand<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords, { pageNumber: state.pageNumber, sortColumn: state.sortColumn, sortOrder: state.sortOrder, starredOnly: state.starredOnly });
-        },
-        playText({ state }): void {
-            executeTranslationCommand(state, Messages.Translation.PlayTextCommand, translateResult => translateResult.sentence.input);
-        },
-        translateSuggestion({ commit, state }): void {
-            commit("setTranslationInProgress");
-            executeTranslationCommand(state, Messages.Translation.TranslateCommand, translateResult => translateResult.sentence.suggestion);
-        },
-        forceTranslation({ commit, state }): void {
-            commit("setTranslationInProgress");
-            executeTranslationCommand(state, Messages.Translation.ForceTranslateCommand, translateResult => translateResult.sentence.input);
-        },
-        translateText({ commit }, text: string): void {
-            commit("setTranslationInProgress");
-            messageBus.sendCommand(Messages.Translation.TranslateCommand, text);
-        },
-        setStarredStatus(_, request: { record: HistoryRecord; isStarred: boolean }): void {
-            messageBus.sendCommand<StarCommand>(Messages.Translation.StarTranslateResult, { sentence: request.record.sentence, isForcedTranslation: request.record.isForcedTranslation, isStarred: request.isStarred });
         }
     }
 };
-
-function executeTranslationCommand(state: HistoryState, commandName: Messages, inputGetter: (translateResult: TranslateResult) => string | null): void {
-    if (!state.translateResultHistoryRecord) {
-        return;
-    }
-
-    messageBus.sendCommand(commandName, inputGetter(state.translateResultHistoryRecord.translateResult));
-}

@@ -48,8 +48,8 @@
       </table>
       <div v-if="isTranslationVisible" class="translation-result-holder">
         <translation-result
-              :default-view="defaultView"
-              :history-record="translateResultHistoryRecord"
+              :default-view="defaultTranslateResultView"
+              :history-record="translationHistoryRecord"
               :is-in-progress="isTranslationInProgress"
               :translation-result-view-settings="translationResultViewSettings"
               :is-embedded="true"

@@ -14,7 +14,7 @@ export default class App extends Vue {
     @ns.State public isFrameless!: boolean;
     @ns.State public hotkeySettings!: HotkeySettings | undefined;
 
-    @ns.Action private readonly fetchData!: () => void;
+    @ns.Action private readonly setup!: () => void;
     @ns.Action private readonly zoomIn!: () => void;
     @ns.Action private readonly zoomOut!: () => void;
     @ns.Action private readonly resetZoom!: () => void;
@@ -23,7 +23,7 @@ export default class App extends Vue {
 
     constructor() {
         super();
-        this.fetchData();
+        this.setup();
     }
 
     public mounted(): void {

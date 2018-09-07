@@ -18,14 +18,13 @@ const ns = namespace("app/translation");
     }
 })
 export default class Translation extends Vue {
-    @ns.State public historyRecord!: HistoryRecord | null;
-    @ns.State public translationResultViewSettings!: TranslationViewRendererSettings;
-    @ns.State public isInitialized!: boolean;
-    @ns.State public isInProgress!: boolean;
+    @ns.State public translationHistoryRecord!: HistoryRecord | null;
+    @ns.State public translationResultViewSettings!: TranslationViewRendererSettings | null;
+    @ns.State public isTranslationInProgress!: boolean;
     @ns.State public showInput!: boolean;
-    @ns.State public defaultView!: TranslateResultViews;
+    @ns.State public defaultTranslateResultView!: TranslateResultViews;
 
-    @ns.Action private readonly fetchData!: () => void;
+    @ns.Action private readonly setup!: () => void;
     @ns.Action public readonly playText!: () => void;
     @ns.Action public readonly translateText!: (text: string) => void;
     @ns.Action public readonly translateSuggestion!: () => void;
@@ -34,10 +33,14 @@ export default class Translation extends Vue {
 
     constructor() {
         super();
-        this.fetchData();
+        this.setup();
     }
 
     public get hasResult(): boolean {
-        return this.historyRecord !== null;
+        return this.translationHistoryRecord !== null;
+    }
+
+    public get isInitialized(): boolean {
+        return this.translationResultViewSettings !== null;
     }
 }
