@@ -21,7 +21,9 @@ export class Messages {
 
     public static Translation = class {
         public static readonly ShowInputCommand = "input-text-command";
+    };
 
+    public static TranslateResult = class {
         public static readonly InProgressCommand = "set-in-progress";
         public static readonly TranslateResult = "translate-result";
         public static readonly UpdateTranslateResult = "update-translate-result";

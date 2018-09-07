@@ -5,10 +5,10 @@ import { ViewContext } from "presentation/framework/ViewContext";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
 import { Messages } from "common/messaging/Messages";
 import { mapSubject } from "utils/map-subject";
-import { TranslationViewBase } from "presentation/views/TranslationViewBase";
+import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
 
-export class HistoryView extends TranslationViewBase {
+export class HistoryView extends TranslateResultView {
 
     public historyRecordsRequest$!: Observable<HistoryRecordsRequest>;
 

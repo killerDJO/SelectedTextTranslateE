@@ -5,9 +5,9 @@ import { Messages } from "common/messaging/Messages";
 import { ViewNames } from "common/ViewNames";
 
 import { ViewContext } from "presentation/framework/ViewContext";
-import { TranslationViewBase } from "presentation/views/TranslationViewBase";
+import { TranslateResultView } from "presentation/views/TranslateResultView";
 
-export class TranslationView extends TranslationViewBase {
+export class TranslationView extends TranslateResultView {
 
     private currentScaleFactor: number | null = null;
 

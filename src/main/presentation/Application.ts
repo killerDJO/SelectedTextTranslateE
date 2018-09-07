@@ -20,7 +20,7 @@ import { Updater } from "install/Updater";
 import { NotificationSender } from "infrastructure/NotificationSender";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslationViewBase } from "presentation/views/TranslationViewBase";
+import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 @injectable()
@@ -44,8 +44,8 @@ export class Application {
         this.setupHotkeys();
     }
 
-    private setupTranslationView(translationView: TranslationViewBase): void {
-        this.setupTranslationViewBase(translationView, false, historyRecord => {
+    private setupTranslationView(translationView: TranslationView): void {
+        this.setupTranslateResultView(translationView, false, historyRecord => {
             const historyView = this.viewsRegistry.getView<HistoryView>(ViewNames.History);
             if (historyView !== null) {
                 historyView.updateTranslateResult(historyRecord);
@@ -60,17 +60,17 @@ export class Application {
 
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
 
-        this.setupTranslationViewBase(historyView, true);
+        this.setupTranslateResultView(historyView, true);
     }
 
-    private setupTranslationViewBase(translationViewBase: TranslationViewBase, skipStatistic: boolean, starCallback?: (historyRecord: HistoryRecord) => void): void {
-        translationViewBase.playText$.subscribe(text => this.playText(text));
-        translationViewBase.translateText$.subscribe(text => this.translateText(text, false, skipStatistic, translationViewBase));
-        translationViewBase.forceTranslateText$.subscribe(text => this.translateText(text, true, skipStatistic, translationViewBase));
-        translationViewBase.starTranslateResult$
+    private setupTranslateResultView(translateResultView: TranslateResultView, skipStatistic: boolean, starCallback?: (historyRecord: HistoryRecord) => void): void {
+        translateResultView.playText$.subscribe(text => this.playText(text));
+        translateResultView.translateText$.subscribe(text => this.translateText(text, false, skipStatistic, translateResultView));
+        translateResultView.forceTranslateText$.subscribe(text => this.translateText(text, true, skipStatistic, translateResultView));
+        translateResultView.starTranslateResult$
             .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest.sentence, starRequest.isForcedTranslation, starRequest.isStarred)))
             .subscribe(historyRecord => {
-                translationViewBase.updateTranslateResult(historyRecord);
+                translateResultView.updateTranslateResult(historyRecord);
                 if (!!starCallback) {
                     starCallback(historyRecord);
                 }
@@ -125,7 +125,7 @@ export class Application {
             });
     }
 
-    private translateText(text: string, isForcedTranslation: boolean, skipStatistic: boolean, targetView: TranslationViewBase, defaultTranslateResultView: TranslateResultViews = TranslateResultViews.Translation): void {
+    private translateText(text: string, isForcedTranslation: boolean, skipStatistic: boolean, targetView: TranslateResultView, defaultTranslateResultView: TranslateResultViews = TranslateResultViews.Translation): void {
         targetView.showProgressIndicator();
         this.textTranslator
             .translate(text, isForcedTranslation, skipStatistic)

@@ -1,7 +1,7 @@
 import { Module, ActionContext } from "vuex";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResultCommand } from "common/dto/translation/TranslateResultCommand";
+import { TranslateResultResponse } from "common/dto/translation/TranslateResultCommand";
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
@@ -25,7 +25,7 @@ export const translation: Module<TranslationState, RootState> = {
     },
     mutations: {
         ...translateResultMutations,
-        setTranslateResult(state: TranslationState, translateResultCommand: TranslateResultCommand): void {
+        setTranslateResult(state: TranslationState, translateResultCommand: TranslateResultResponse): void {
             translateResultMutations.setTranslateResult(state, translateResultCommand);
             state.showInput = false;
         },
