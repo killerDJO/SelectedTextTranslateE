@@ -1,10 +1,14 @@
 <template>
     <div class="content" :class="{'is-embedded': isEmbedded}">
         <div class="actions">
-            <link-button :text="'Translate from ' + languages.get(historyRecord.translateResult.sentence.languageSuggestion)" @click="changeLanguage" class="action" v-if="hasLanguageSuggestion"/>
+            <link-button :text="'Translate from ' + languages.get(languageSuggestion)" @click="changeLanguage" class="action" v-if="hasLanguageSuggestion"/>
             <link-button :text="'Show Definitions'"  class="action" @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions" />
             <link-button :text="'Show Translations'" class="action" @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories" />
-            <link-button :text="'Statistic'"         class="action" @click="currentView = TranslateResultViews.Statistic" v-if="currentView !== TranslateResultViews.Statistic" />
+            <link-button
+                :text="`Translated ${historyRecord.translationsNumber === 1 ? 'one time' : `${historyRecord.translationsNumber} times`}`"
+                class="action"
+                @click="currentView = TranslateResultViews.Statistic"
+                v-if="currentView !== TranslateResultViews.Statistic" />
         </div>
         <translation-result-content-category
             v-if="currentView === TranslateResultViews.Translation"
@@ -21,6 +25,7 @@
         <translation-result-statistic
             v-if="currentView === TranslateResultViews.Statistic"
             :history-record="historyRecord"
+            :languages="languages"
             @refresh-translation="refreshTranslation"/>
     </div>
 </template>

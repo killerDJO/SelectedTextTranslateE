@@ -56,7 +56,7 @@ export class HistoryStore {
         );
     }
 
-    public updateTranslateResult(translateResult: TranslateResult, key: TranslationKey, skipStatistic: boolean): Observable<HistoryRecord> {
+    public updateTranslateResult(translateResult: TranslateResult, key: TranslationKey): Observable<HistoryRecord> {
         const currentTime = new Date();
         const update$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
@@ -64,7 +64,7 @@ export class HistoryStore {
             {
                 $set: {
                     translateResult: translateResult,
-                    updatedDate: skipStatistic ? undefined : currentTime
+                    updatedDate: currentTime
                 }
             });
 

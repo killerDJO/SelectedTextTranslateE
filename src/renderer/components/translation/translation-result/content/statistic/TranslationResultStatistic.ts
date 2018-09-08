@@ -9,6 +9,9 @@ export default class TranslationResultStatistic extends Vue {
     @Prop(Object)
     public historyRecord!: HistoryRecord;
 
+    @Prop(Map)
+    public languages!: Map<string, string>;
+
     public refreshTranslation(): void {
         this.$emit("refresh-translation");
     }

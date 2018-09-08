@@ -46,8 +46,11 @@ export default class TranslationResultContent extends Vue {
     }
 
     public get hasLanguageSuggestion(): boolean {
-        const suggestion = this.historyRecord.translateResult.sentence.languageSuggestion;
-        return !!suggestion && suggestion !== this.historyRecord.sourceLanguage;
+        return !!this.languageSuggestion && this.languageSuggestion !== this.historyRecord.sourceLanguage;
+    }
+
+    public get languageSuggestion(): string | null {
+        return this.historyRecord.translateResult.sentence.languageSuggestion;
     }
 
     public mounted() {

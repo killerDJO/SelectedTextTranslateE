@@ -1,10 +1,34 @@
 <template>
     <div class="statistic">
-        <li class="item">Times translated<span class="item-value"> - {{historyRecord.translationsNumber}}</span></li>
-        <li class="item">First translated<span class="item-value"> - {{historyRecord.createdDate | date-time}}</span></li>
-        <li class="item">Last translated<span class="item-value"> - {{historyRecord.lastTranslatedDate | date-time}}</span></li>
-        <li class="item">Last updated<span class="item-value"> - {{historyRecord.updatedDate | date-time}}</span></li>
-        <link-button @click="refreshTranslation" :text="'Refresh'" />
+        <table class="table-striped non-clickable statistics-table headless">
+            <tbody>
+              <tr>
+                <td>Times translated</td>
+                <td>{{historyRecord.translationsNumber}}</td>
+              </tr>
+              <tr>
+                <td>First translated</td>
+                <td>{{historyRecord.createdDate | date-time}}</td>
+              </tr>
+              <tr>
+                <td>Last translated</td>
+                <td>{{historyRecord.lastTranslatedDate | date-time}}</td>
+              </tr>
+              <tr>
+                <td>Last updated</td>
+                <td>{{historyRecord.updatedDate | date-time}}</td>
+              </tr>
+              <tr>
+                <td>Source Language</td>
+                <td>{{languages.get(historyRecord.sourceLanguage)}}</td>
+              </tr>
+              <tr>
+                <td>Target Language</td>
+                <td>{{languages.get(historyRecord.targetLanguage)}}</td>
+              </tr>
+            </tbody>
+          </table>
+        <link-button @click="refreshTranslation" :text="'Refresh Record'" class="refresh-button"/>
     </div>
 </template>
 

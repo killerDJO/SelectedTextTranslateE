@@ -37,8 +37,8 @@ export class TextTranslator {
         const key = this.getTranslationKey(sanitizedSentence, isForcedTranslation, sourceLanguage, targetLanguage);
 
         return this.historyStore.getRecord(key).pipe(
-            concatMap(historyRecord => this.getTranslateResult(key, refreshCache, historyRecord, skipStatistic)),
-            concatMap(historyRecord => !skipStatistic ? this.historyStore.incrementTranslationsNumber(key) : of(historyRecord))
+            concatMap(historyRecord => this.getTranslateResult(key, refreshCache, historyRecord)),
+            concatMap(historyRecord => !(skipStatistic || refreshCache) ? this.historyStore.incrementTranslationsNumber(key) : of(historyRecord))
         );
     }
 
@@ -52,7 +52,7 @@ export class TextTranslator {
         };
     }
 
-    private getTranslateResult(key: TranslationKey, refreshCache: boolean, historyRecord: HistoryRecord | null, skipStatistic: boolean): Observable<HistoryRecord> {
+    private getTranslateResult(key: TranslationKey, refreshCache: boolean, historyRecord: HistoryRecord | null): Observable<HistoryRecord> {
         const translateResult$ = this
             .getResponseFromService(key)
             .pipe(tap(() => this.logger.info(`Serving translation ${this.getLogKey(key)} from service.`)));
@@ -64,7 +64,7 @@ export class TextTranslator {
 
         if (refreshCache || this.isHistoryRecordExpired(historyRecord)) {
             return translateResult$
-                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, key, skipStatistic)));
+                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, key)));
         }
 
         this.logger.info(`Serving translation ${this.getLogKey(key)} from dictionary.`);
@@ -77,7 +77,7 @@ export class TextTranslator {
 
     private isHistoryRecordExpired(historyRecord: HistoryRecord): boolean {
         const currentTime = Date.now();
-        const elapsedMilliseconds = currentTime - historyRecord.updatedDate.getTime();
+        const elapsedMilliseconds = currentTime - (historyRecord.updatedDate || historyRecord.createdDate).getTime();
         const MillisecondsInSecond = 1000;
         const SecondsInMinute = 60;
         const MinutesInHour = 60;
