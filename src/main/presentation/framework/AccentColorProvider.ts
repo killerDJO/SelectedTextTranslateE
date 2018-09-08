@@ -1,20 +1,28 @@
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { injectable } from "inversify";
 import { systemPreferences } from "electron";
+import { map, distinctUntilChanged } from "rxjs/operators";
 
 @injectable()
 export class AccentColorProvider {
 
-    public readonly accentColor$: BehaviorSubject<string>;
+    private readonly accentColorFull$: BehaviorSubject<string>;
+
+    public get accentColor$(): Observable<string> {
+        return this.accentColorFull$.pipe(
+            map(this.convertFromRgbaToRgb),
+            distinctUntilChanged()
+        );
+    }
 
     constructor() {
-        this.accentColor$ = new BehaviorSubject(this.convertFromRgbaToRgb(systemPreferences.getAccentColor()));
+        this.accentColorFull$ = new BehaviorSubject(this.convertFromRgbaToRgb(systemPreferences.getAccentColor()));
         this.initializeSubscriptions();
     }
 
     private initializeSubscriptions(): void {
         systemPreferences.addListener("accent-color-changed", (event: Electron.Event, newColor: string) => {
-            this.accentColor$.next(this.convertFromRgbaToRgb(newColor));
+            this.accentColorFull$.next(newColor);
         });
     }
 
