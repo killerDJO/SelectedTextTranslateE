@@ -12,6 +12,7 @@ import { Logger } from "infrastructure/Logger";
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { HistorySettings } from "business-logic/settings/dto/Settings";
+import { TranslationKey } from "common/dto/translation/TranslationKey";
 
 @injectable()
 export class HistoryStore {
@@ -34,15 +35,15 @@ export class HistoryStore {
         return this.historyUpdatedSubject$;
     }
 
-    public addTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<HistoryRecord> {
+    public addTranslateResult(translateResult: TranslateResult, key: TranslationKey): Observable<HistoryRecord> {
         const currentTime = new Date();
         const insert$ = this.datastoreProvider.insert<HistoryRecord>(this.datastore, {
-            sentence: translateResult.sentence.input,
+            sentence: key.sentence,
             translateResult: translateResult,
             translationsNumber: 0,
-            isForcedTranslation: isForcedTranslation,
-            sourceLanguage: "en",
-            targetLanguage: "ru",
+            isForcedTranslation: key.isForcedTranslation,
+            sourceLanguage: key.sourceLanguage,
+            targetLanguage: key.targetLanguage,
             createdDate: currentTime,
             updatedDate: currentTime,
             lastTranslatedDate: currentTime,
@@ -50,42 +51,45 @@ export class HistoryStore {
         });
 
         return insert$.pipe(
-            tap(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is saved to history.`)),
+            tap(() => this.logger.info(`Translation ${this.getLogKey(key)} is saved to history.`)),
             tap(() => this.notifyAboutUpdate())
         );
     }
 
-    public updateTranslateResult(translateResult: TranslateResult, isForcedTranslation: boolean, skipStatistic: boolean): Observable<HistoryRecord> {
+    public updateTranslateResult(translateResult: TranslateResult, key: TranslationKey, skipStatistic: boolean): Observable<HistoryRecord> {
         const currentTime = new Date();
-        const update$ = this.datastoreProvider.update<HistoryRecord>(this.datastore, { sentence: translateResult.sentence.input, isForcedTranslation: isForcedTranslation }, {
-            $set: {
-                translateResult: translateResult,
-                updatedDate: skipStatistic ? undefined : currentTime
-            }
-        });
+        const update$ = this.datastoreProvider.update<HistoryRecord>(
+            this.datastore,
+            this.getSearchQuery(key),
+            {
+                $set: {
+                    translateResult: translateResult,
+                    updatedDate: skipStatistic ? undefined : currentTime
+                }
+            });
 
         return update$.pipe(
-            tap(() => this.logger.info(`Translation for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is updated in history.`)),
+            tap(() => this.logger.info(`Translation ${this.getLogKey(key)} is updated in history.`)),
             tap(() => this.notifyAboutUpdate())
         );
     }
 
-    public incrementTranslationsNumber(translateResult: TranslateResult, isForcedTranslation: boolean): Observable<HistoryRecord> {
+    public incrementTranslationsNumber(key: TranslationKey): Observable<HistoryRecord> {
         const currentTime = new Date();
         const increment$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
-            { sentence: translateResult.sentence.input, isForcedTranslation: isForcedTranslation },
+            this.getSearchQuery(key),
             { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime } });
 
         return increment$.pipe(
-            tap(() => this.logger.info(`Translations number for "${translateResult.sentence.input}" when forced translation is set to "${isForcedTranslation}" is incremented.`)),
+            tap(() => this.logger.info(`Translations number ${this.getLogKey(key)} is incremented.`)),
             tap(() => this.notifyAboutUpdate())
         );
     }
 
-    public getRecord(sentence: string, isForcedTranslation: boolean): Observable<HistoryRecord | null> {
+    public getRecord(key: TranslationKey): Observable<HistoryRecord | null> {
         return this.datastoreProvider
-            .find<HistoryRecord>(this.datastore, { sentence: sentence, isForcedTranslation: isForcedTranslation })
+            .find<HistoryRecord>(this.datastore, this.getSearchQuery(key))
             .pipe(
                 map(result => !!result.length ? result[0] : null)
             );
@@ -96,7 +100,9 @@ export class HistoryStore {
             [SortColumn.Input]: "sentence",
             [SortColumn.TimesTranslated]: "translationsNumber",
             [SortColumn.LastTranslatedDate]: "lastTranslatedDate",
-            [SortColumn.Translation]: "translateResult.sentence.translation"
+            [SortColumn.Translation]: "translateResult.sentence.translation",
+            [SortColumn.SourceLanguage]: "sourceLanguage",
+            [SortColumn.TargetLanguage]: "targetLanguage"
         };
 
         const sortQuery: any = {};
@@ -123,19 +129,32 @@ export class HistoryStore {
             );
     }
 
-    public setStarredStatus(sentence: string, isForcedTranslation: boolean, isStarred: boolean): Observable<HistoryRecord> {
+    public setStarredStatus(key: TranslationKey, isStarred: boolean): Observable<HistoryRecord> {
         const setStarredStatus$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
-            { sentence: sentence, isForcedTranslation: isForcedTranslation },
+            this.getSearchQuery(key),
             { $set: { isStarred: isStarred } });
 
         return setStarredStatus$.pipe(
-            tap(() => this.logger.info(`Translation for "${sentence}" when forced translation is set to "${isForcedTranslation}" has changed its starred status to ${isStarred}.`)),
+            tap(() => this.logger.info(`Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`)),
             tap(() => this.notifyAboutUpdate())
         );
     }
 
     private notifyAboutUpdate(): void {
         this.historyUpdatedSubject$.next();
+    }
+
+    private getSearchQuery(key: TranslationKey) {
+        return {
+            sentence: key.sentence,
+            isForcedTranslation: key.isForcedTranslation,
+            sourceLanguage: key.sourceLanguage,
+            targetLanguage: key.targetLanguage
+        };
+    }
+
+    private getLogKey(key: TranslationKey): string {
+        return `for "${key.sentence}" when forced translation is set to "${key.isForcedTranslation}" with languages ${key.sourceLanguage} -${key.targetLanguage} `;
     }
 }

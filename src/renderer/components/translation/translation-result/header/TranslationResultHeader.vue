@@ -15,8 +15,8 @@
         </icon-button>
         <div class="origin" @blur="translateText($event.target.innerText)" @keydown.enter.prevent="translateText($event.target.innerText)" contenteditable="true" tabindex="0">{{ sentence.origin }}</div>
         <div class="header-actions">
-            <span v-if="isInputCorrected">(corrected from <a class="link-button" @click="forceTranslation" v-tab-index>{{sentence.input}})</a></span>
-            <span v-if="hasSuggestion">(maybe you meant <a class="link-button" @click="translateSuggestion" v-tab-index>{{sentence.suggestion}})</a></span>
+            <span v-if="isInputCorrected">(corrected from <link-button @click="forceTranslation" :text="sentence.input" />)</span>
+            <span v-if="hasSuggestion">(maybe you meant <link-button @click="translateSuggestion" :text="sentence.suggestion" />)</span>
         </div>
     </div>
 </template>

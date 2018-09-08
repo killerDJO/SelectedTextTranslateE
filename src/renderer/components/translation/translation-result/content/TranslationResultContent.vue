@@ -3,7 +3,7 @@
         <div class="change-actions">
             <link-button :text="'Show Definitions'"     @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions" />
             <link-button :text="'Show Translations'"    @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories" />
-            <link-button :text="'Statistic'"            @click="currentView = TranslateResultViews.Statistic" v-if="currentView !== TranslateResultViews.Statistic && !firstTimeTranslation" />
+            <link-button :text="'Statistic'"            @click="currentView = TranslateResultViews.Statistic" v-if="currentView !== TranslateResultViews.Statistic && showStatistic" />
         </div>
         <translation-result-content-category
             v-if="currentView === TranslateResultViews.Translation"

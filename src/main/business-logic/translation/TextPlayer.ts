@@ -11,6 +11,7 @@ import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { Logger } from "infrastructure/Logger";
 
 import * as nativeExtensions from "native/native-extensions.node";
+import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 
 @injectable()
 export class TextPlayer {
@@ -27,18 +28,21 @@ export class TextPlayer {
         this.tempFilePath = path.resolve(app.getPath("temp"), "STT_audio.mp3");
     }
 
-    public playText(text: string): Observable<void> {
+    public playText(request: PlayTextRequest): Observable<void> {
         if (this.isPlayInProgress) {
             return of(undefined);
         }
 
         this.isPlayInProgress = true;
-        this.logger.info(`Playing text '${text}'`);
-        return this.getAudioContent(text)
+        const language = request.language || this.settingsProvider.getSettings().value.language.sourceLanguage;
+        this.logger.info(`Playing ${this.getLogKey(request.text, language)}`);
+
+        return this.getAudioContent(request.text, language)
             .pipe(
                 concatMap(content => this.saveContentToTempFile(content)),
-                concatMap(() => this.playFile(text)),
-                tap(() => this.isPlayInProgress = false)
+                concatMap(() => this.playFile()),
+                tap(() => this.isPlayInProgress = false),
+                tap(() => this.logger.info(`End playing ${this.getLogKey(request.text, language)}`))
             );
     }
 
@@ -47,14 +51,13 @@ export class TextPlayer {
         return writeFileAsObservable(this.tempFilePath, content);
     }
 
-    private playFile(text: string): Observable<void> {
+    private playFile(): Observable<void> {
         return new Observable<void>(observer => {
             const volume = this.settingsProvider.getSettings().value.engine.playVolume;
             nativeExtensions.playFile(this.tempFilePath, volume, error => {
                 if (!!error) {
                     observer.error(new Error(error));
                 } else {
-                    this.logger.info(`End playing text '${text}'`);
                     observer.next();
                     observer.complete();
                 }
@@ -62,10 +65,14 @@ export class TextPlayer {
         });
     }
 
-    private getAudioContent(text: string): Observable<Buffer> {
+    private getLogKey(text: string, language: string): string {
+        return `text '${text}' with language ${language}`;
+    }
+
+    private getAudioContent(text: string, language: string): Observable<Buffer> {
         const encodedText = encodeURIComponent(text);
         return this.hashProvider.computeHash(text).pipe(
-            map(hash => `${this.settingsProvider.getSettings().value.engine.baseUrl}/translate_tts?tl=en&client=t&q=${encodedText}&tk=${hash}`),
+            map(hash => `${this.settingsProvider.getSettings().value.engine.baseUrl}/translate_tts?tl=${language}&client=t&q=${encodedText}&tk=${hash}`),
             concatMap(url => this.requestProvider.getBinaryContent(url))
         );
     }

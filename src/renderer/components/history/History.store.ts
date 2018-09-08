@@ -11,6 +11,7 @@ import { SortColumn } from "common/dto/history/SortColumn";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
+import { Language } from "common/dto/settings/Language";
 
 const messageBus = new MessageBus();
 
@@ -22,6 +23,7 @@ interface HistoryState extends TranslateResultState {
     sortColumn: SortColumn;
     sortOrder: SortOrder;
     starredOnly: boolean;
+    languages: Map<string, string>;
 
     isTranslationVisible: boolean;
 }
@@ -36,6 +38,7 @@ export const history: Module<HistoryState, RootState> = {
         sortColumn: SortColumn.LastTranslatedDate,
         sortOrder: SortOrder.Desc,
         starredOnly: false,
+        languages: new Map<string, string>(),
 
         translationHistoryRecord: null,
         translationResultViewSettings: null,
@@ -63,6 +66,11 @@ export const history: Module<HistoryState, RootState> = {
         setStarredOnly(state: HistoryState, starredOnly: boolean): void {
             state.starredOnly = starredOnly;
         },
+        setLanguages(state: HistoryState, languages: Language[]): void {
+            for (const language of languages) {
+                state.languages.set(language.code, language.name);
+            }
+        },
         setTranslationInProgress(state: HistoryState): void {
             translateResultMutations.setTranslationInProgress(state);
             state.isTranslationVisible = true;
@@ -83,6 +91,7 @@ export const history: Module<HistoryState, RootState> = {
 
             const { commit, dispatch } = context;
             messageBus.getValue<HistoryRecordsResponse>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
+            messageBus.getValue<Language[]>(Messages.History.Languages, languages => commit("setLanguages", languages));
             messageBus.getNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
         },
         requestHistoryRecords({ state }): void {

@@ -9,7 +9,8 @@ import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
-import { StarCommand } from "common/dto/translation/StarCommand";
+import { StarRequest } from "common/dto/translation/StarRequest";
+import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 
 const messageBus = new MessageBus();
 
@@ -33,7 +34,10 @@ export const translateResultMutations = {
             return;
         }
 
-        if (state.translationHistoryRecord.sentence !== historyRecord.sentence || state.translationHistoryRecord.isForcedTranslation !== historyRecord.isForcedTranslation) {
+        if (state.translationHistoryRecord.sentence !== historyRecord.sentence
+            || state.translationHistoryRecord.isForcedTranslation !== historyRecord.isForcedTranslation
+            || state.translationHistoryRecord.sourceLanguage !== historyRecord.sourceLanguage
+            || state.translationHistoryRecord.targetLanguage !== historyRecord.targetLanguage) {
             return;
         }
 
@@ -55,35 +59,46 @@ export const translateResultActions = {
         messageBus.getValue<TranslationViewRendererSettings>(Messages.TranslateResult.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
     },
     playText({ state }: ActionContext<TranslateResultState, RootState>): void {
-        executeCommand<string>(state, Messages.TranslateResult.PlayTextCommand, historyRecord => historyRecord.sentence);
+        executeCommand<PlayTextRequest>(state, Messages.TranslateResult.PlayTextCommand, historyRecord => ({
+            text: historyRecord.sentence,
+            language: historyRecord.sourceLanguage
+        }));
     },
     translateSuggestion({ commit, state }: ActionContext<TranslateResultState, RootState>): void {
         executeCommandWithProgress<TranslationRequest>(
             state,
             commit,
             Messages.TranslateResult.TranslateCommand,
-            historyRecord => ({ text: historyRecord.translateResult.sentence.suggestion, isForcedTranslation: false, refreshCache: false }));
+            historyRecord => ({ text: historyRecord.translateResult.sentence.suggestion, isForcedTranslation: false, refreshCache: false, sourceLanguage: historyRecord.sourceLanguage, targetLanguage: historyRecord.targetLanguage }));
     },
     forceTranslation({ commit, state }: ActionContext<TranslateResultState, RootState>): void {
         executeCommandWithProgress<TranslationRequest>(
             state,
             commit,
             Messages.TranslateResult.TranslateCommand,
-            historyRecord => ({ text: historyRecord.sentence, isForcedTranslation: true, refreshCache: false }));
+            historyRecord => ({ text: historyRecord.sentence, isForcedTranslation: true, refreshCache: false, sourceLanguage: historyRecord.sourceLanguage, targetLanguage: historyRecord.targetLanguage }));
     },
     refreshTranslation({ commit, state }: ActionContext<TranslateResultState, RootState>): void {
         executeCommandWithProgress<TranslationRequest>(
             state,
             commit,
             Messages.TranslateResult.TranslateCommand,
-            historyRecord => ({ text: historyRecord.sentence, isForcedTranslation: historyRecord.isForcedTranslation, refreshCache: true }));
+            historyRecord => ({ text: historyRecord.sentence, isForcedTranslation: historyRecord.isForcedTranslation, refreshCache: true, sourceLanguage: historyRecord.sourceLanguage, targetLanguage: historyRecord.targetLanguage }));
     },
-    translateText({ commit }: ActionContext<TranslateResultState, RootState>, text: string): void {
+    translateText({ commit }: ActionContext<TranslateResultState, RootState>, request: TranslationRequest): void {
         commit("setTranslationInProgress");
-        messageBus.sendCommand<TranslationRequest>(Messages.TranslateResult.TranslateCommand, { text, isForcedTranslation: false, refreshCache: false });
+        messageBus.sendCommand<TranslationRequest>(Messages.TranslateResult.TranslateCommand, request);
     },
     setStarredStatus(_: ActionContext<TranslateResultState, RootState>, request: { record: HistoryRecord; isStarred: boolean }): void {
-        messageBus.sendCommand<StarCommand>(Messages.TranslateResult.StarTranslateResult, { sentence: request.record.sentence, isForcedTranslation: request.record.isForcedTranslation, isStarred: request.isStarred });
+        messageBus.sendCommand<StarRequest>(
+            Messages.TranslateResult.StarTranslateResult,
+            {
+                sentence: request.record.sentence,
+                isForcedTranslation: request.record.isForcedTranslation,
+                sourceLanguage: request.record.sourceLanguage,
+                targetLanguage: request.record.targetLanguage,
+                isStarred: request.isStarred
+            });
     }
 };
 

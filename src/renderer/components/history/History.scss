@@ -31,6 +31,10 @@
                 text-align: left;
                 grid-column: 1;
             }
+
+            .checkbox {
+                margin-left: $margin-default;
+            }
         }
 
         .translation-results-header {
@@ -59,6 +63,19 @@
                 width: 37%;
             }
 
+            .source-language-column,
+            .target-language-column {
+                display: none;
+            }
+
+            .times-column {
+                width: 10%;
+            }
+
+            .last-translated-column {
+                width: 16%;
+            }
+
             .translation-column .no-translation {
                 font-style: italic;
                 color: $color-gray;
@@ -74,18 +91,23 @@
                     color: $color-star;
                 }
             }
-    
-            .times-column {
-                width: 10%;
-            }
-
-            .last-translated-column {
-                width: 16%;
-            }
 
             .no-records-available {
                 text-align: center;
                 font-style: italic;
+            }
+
+            &.show-languages{
+                .source-language-column,
+                .target-language-column {
+                    display: table-cell;
+                    width: 10%;
+                }
+
+                .word-column,
+                .translation-column {
+                    width: 27%;
+                }
             }
         }
 

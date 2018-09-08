@@ -42,8 +42,8 @@ export default class TranslationResultContent extends Vue {
         return !!this.historyRecord.translateResult.definitions.length;
     }
 
-    public get firstTimeTranslation(): boolean {
-        return this.historyRecord.translationsNumber === 1;
+    public get showStatistic(): boolean {
+        return this.historyRecord.translationsNumber > 1 || this.isEmbedded;
     }
 
     public mounted() {

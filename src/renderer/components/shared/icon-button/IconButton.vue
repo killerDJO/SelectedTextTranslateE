@@ -1,6 +1,6 @@
 <template>
-   <span v-tab-index="tabIndex" @click.stop="click" class="icon-wrapper">
-      <span @click.stop="click" :title="title" tabindex="-1" class="icon-holder">
+   <span v-tab-index="tabIndex" @click.stop.prevent="click" class="icon-wrapper">
+      <span @click.stop.prevent="click" :title="title" tabindex="-1" class="icon-holder">
         <slot />
       </span>
     </span>

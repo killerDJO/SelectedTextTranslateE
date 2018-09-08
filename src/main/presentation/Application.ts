@@ -23,6 +23,7 @@ import { TranslateResultViews } from "common/dto/translation/TranslateResultView
 import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
+import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 
 @injectable()
 export class Application {
@@ -65,10 +66,10 @@ export class Application {
     }
 
     private setupTranslateResultView(translateResultView: TranslateResultView, skipStatistic: boolean, starCallback?: (historyRecord: HistoryRecord) => void): void {
-        translateResultView.playText$.subscribe(text => this.playText(text));
+        translateResultView.playText$.subscribe(request => this.playText(request));
         translateResultView.translateText$.subscribe(request => this.translateText(request, skipStatistic, translateResultView));
         translateResultView.starTranslateResult$
-            .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest.sentence, starRequest.isForcedTranslation, starRequest.isStarred)))
+            .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest, starRequest.isStarred)))
             .subscribe(historyRecord => {
                 translateResultView.updateTranslateResult(historyRecord);
                 if (!!starCallback) {
@@ -95,7 +96,7 @@ export class Application {
         this.hotkeysRegistry.showDefinition$.subscribe(() => this.translateSelectedText(TranslateResultViews.Definition));
         this.hotkeysRegistry.playText$
             .pipe(concatMap(() => this.textExtractor.getSelectedText()))
-            .subscribe(text => this.playText(text));
+            .subscribe(text => this.playText({ text }));
         this.hotkeysRegistry.inputText$.subscribe(() => this.translationView.showTextInput());
     }
 
@@ -117,9 +118,9 @@ export class Application {
             .subscribe(text => this.translateText({ text, isForcedTranslation: false, refreshCache: false }, false, this.translationView, defaultView));
     }
 
-    private playText(text: string): void {
+    private playText(request: PlayTextRequest): void {
         this.textPlayer
-            .playText(text)
+            .playText(request)
             .subscribe({
                 error: error => this.notificationSender.showNonCriticalError("Error playing text", error)
             });

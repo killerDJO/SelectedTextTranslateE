@@ -9,6 +9,7 @@ import { TranslateResultViews } from "common/dto/translation/TranslateResultView
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
+import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 
 const ns = namespace("app/history");
 
@@ -26,6 +27,7 @@ export default class History extends Vue {
     @ns.State public sortColumn!: SortColumn;
     @ns.State public sortOrder!: SortOrder;
     @ns.State public starredOnly!: boolean;
+    @ns.State public languages!: Map<string, string>;
 
     @ns.State public translationHistoryRecord!: HistoryRecord | null;
     @ns.State public translationResultViewSettings!: TranslationViewRendererSettings | null;
@@ -45,12 +47,13 @@ export default class History extends Vue {
     @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
 
     @ns.Action public readonly playText!: () => void;
-    @ns.Action public readonly translateText!: (text: string) => void;
+    @ns.Action public readonly translateText!: (request: TranslationRequest) => void;
     @ns.Action public readonly translateSuggestion!: () => void;
     @ns.Action public readonly forceTranslation!: () => void;
     @ns.Action public readonly refreshTranslation!: () => void;
 
     public SortColumn: typeof SortColumn = SortColumn;
+    public showLanguages: boolean = false;
 
     public mounted() {
         this.setup();
@@ -87,6 +90,16 @@ export default class History extends Vue {
 
     public get pageCount(): number {
         return Math.ceil(this.totalRecords / this.pageSize);
+    }
+
+    public translateHistoryRecord(record: HistoryRecord): void {
+        this.translateText({
+            text: record.sentence,
+            isForcedTranslation: record.isForcedTranslation,
+            refreshCache: false,
+            sourceLanguage: record.sourceLanguage,
+            targetLanguage: record.targetLanguage
+        })
     }
 
     @Watch("pageNumber")

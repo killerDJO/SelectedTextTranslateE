@@ -8,6 +8,7 @@ import TranslationResult from "./translation-result/TranslationResult.vue";
 import TranslationInput from "./translation-input/TranslationInput.vue";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 
 const ns = namespace("app/translation");
 
@@ -26,7 +27,7 @@ export default class Translation extends Vue {
 
     @ns.Action private readonly setup!: () => void;
     @ns.Action public readonly playText!: () => void;
-    @ns.Action public readonly translateText!: (text: string) => void;
+    @ns.Action public readonly translateText!: (request: TranslationRequest) => void;
     @ns.Action public readonly translateSuggestion!: () => void;
     @ns.Action public readonly forceTranslation!: () => void;
     @ns.Action public readonly refreshTranslation!: () => void;

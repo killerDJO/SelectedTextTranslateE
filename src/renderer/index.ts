@@ -1,4 +1,4 @@
-import { webFrame } from "electron";
+import { webFrame, ipcRenderer } from "electron";
 import Vue from "vue";
 import Vuex from "vuex";
 import Router from "vue-router";
@@ -27,6 +27,7 @@ class Bootstrapper {
     public static bootstrap(): void {
         Bootstrapper.setupErrorHandling();
         Bootstrapper.preventNativeZoom();
+        ipcRenderer.setMaxListeners(Infinity);
         Bootstrapper.bootstrapVue();
     }
 
