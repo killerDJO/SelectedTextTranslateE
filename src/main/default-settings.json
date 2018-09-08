@@ -45,6 +45,9 @@
         "sourceLanguage": "en",
         "targetLanguage": "ru"
     },
+    "search": {
+        "searchPattern": "https://www.google.com.ua/search?safe=off&source=hp&q={{query}}"
+    },
     "history": {
         "databaseName": "history.db",
         "pageSize": 25

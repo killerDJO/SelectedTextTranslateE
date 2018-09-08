@@ -17,8 +17,9 @@ import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 export abstract class TranslateResultView extends ViewBase {
     protected inProgressTimeout: NodeJS.Timer | null = null;
 
-    public readonly playText$!: Observable<PlayTextRequest>;
-    public readonly translateText$!: Observable<TranslationRequest>;
+    public readonly playText$: Observable<PlayTextRequest>;
+    public readonly search$: Observable<string>;
+    public readonly translateText$: Observable<TranslationRequest>;
     public readonly starTranslateResult$: Observable<StarRequest>;
 
     constructor(viewName: ViewNames, context: ViewContext, viewOptions: ViewOptions) {
@@ -29,6 +30,7 @@ export abstract class TranslateResultView extends ViewBase {
         this.playText$ = this.messageBus.getValue(Messages.TranslateResult.PlayTextCommand);
         this.translateText$ = this.messageBus.getValue<TranslationRequest>(Messages.TranslateResult.TranslateCommand);
         this.starTranslateResult$ = this.messageBus.getValue<StarRequest>(Messages.TranslateResult.StarTranslateResult);
+        this.search$ = this.messageBus.getValue<string>(Messages.TranslateResult.Search);
     }
 
     public showProgressIndicator(): void {

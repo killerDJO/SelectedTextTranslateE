@@ -67,6 +67,7 @@
               @translate-text="translateText"
               @change-language="changeLanguage"
               @play-text="playText"
+              @search="search"
               @set-starred-status="setStarredStatus"/>
       </div>
       <div class="results-footer" v-if="totalRecords !== 0">

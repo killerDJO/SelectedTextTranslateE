@@ -19,6 +19,7 @@
                 :default-view="defaultView"
                 :is-embedded="isEmbedded"
                 :languages="languages"
+                @search="search"
                 @translate="translateText"
                 @change-language="changeLanguage"
                 @refresh-translation="refreshTranslation"/>

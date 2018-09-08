@@ -11,6 +11,7 @@ export interface Settings {
     readonly hotkeys: HotkeySettings;
     readonly update: UpdateSettings;
     readonly language: LanguageSettings;
+    readonly search: SearchSettings;
 }
 
 export interface HotkeySettings {
@@ -72,4 +73,8 @@ export interface UpdateSettings {
 export interface LanguageSettings {
     readonly sourceLanguage: string;
     readonly targetLanguage: string;
+}
+
+export interface SearchSettings {
+    readonly searchPattern: string;
 }

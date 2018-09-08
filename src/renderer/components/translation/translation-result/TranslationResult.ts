@@ -65,6 +65,10 @@ export default class TranslationResult extends Vue {
         this.$emit("change-language");
     }
 
+    public search(): void {
+        this.$emit("search");
+    }
+
     public setStarredStatus(isStarred: boolean): void {
         this.$emit("set-starred-status", { record: this.historyRecord, isStarred });
     }

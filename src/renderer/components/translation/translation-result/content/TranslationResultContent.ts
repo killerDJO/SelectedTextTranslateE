@@ -80,4 +80,8 @@ export default class TranslationResultContent extends Vue {
     public refreshTranslation(): void {
         this.$emit("refresh-translation");
     }
+
+    public search(): void {
+        this.$emit("search");
+    }
 }

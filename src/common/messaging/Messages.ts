@@ -32,6 +32,7 @@ export class Messages {
         public static readonly TranslateCommand = "translate-command";
         public static readonly TranslationResultViewSettings = "translation-result-view-settings";
         public static readonly StarTranslateResult = "star-translate-result";
+        public static readonly Search = "search";
     };
 
     public static History = class {

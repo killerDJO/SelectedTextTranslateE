@@ -24,6 +24,7 @@ import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
+import { SearchExecutor } from "business-logic/search/SearchExecutor";
 
 @injectable()
 export class Application {
@@ -40,7 +41,8 @@ export class Application {
         private readonly notificationSender: NotificationSender,
         private readonly historyStore: HistoryStore,
         private readonly viewsRegistry: ViewsRegistry,
-        private readonly updater: Updater) {
+        private readonly updater: Updater,
+        private readonly searchExecutor: SearchExecutor) {
 
         this.createTaskbar();
         this.setupHotkeys();
@@ -68,6 +70,7 @@ export class Application {
     private setupTranslateResultView(translateResultView: TranslateResultView, skipStatistic: boolean, starCallback?: (historyRecord: HistoryRecord) => void): void {
         translateResultView.playText$.subscribe(request => this.playText(request));
         translateResultView.translateText$.subscribe(request => this.translateText(request, skipStatistic, translateResultView));
+        translateResultView.search$.subscribe(text => this.searchExecutor.search(text));
         translateResultView.starTranslateResult$
             .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest, starRequest.isStarred)))
             .subscribe(historyRecord => {

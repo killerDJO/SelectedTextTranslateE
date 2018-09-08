@@ -31,6 +31,7 @@ import { NullScaler } from "presentation/framework/scaling/NullScaler";
 import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
 import { Installer } from "install/Installer";
 import { Updater } from "install/Updater";
+import { SearchExecutor } from "business-logic/search/SearchExecutor";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -68,6 +69,7 @@ class Binder {
         this.container.bind<TranslationResponseParser>(TranslationResponseParser).toSelf();
         this.container.bind<TextPlayer>(TextPlayer).toSelf();
         this.container.bind<SettingsProvider>(SettingsProvider).toSelf().inSingletonScope();
+        this.container.bind<SearchExecutor>(SearchExecutor).toSelf().inSingletonScope();
     }
 
     private bindPresentation(): void {

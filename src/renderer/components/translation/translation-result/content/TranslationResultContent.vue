@@ -4,6 +4,7 @@
             <link-button :text="'Translate from ' + languages.get(languageSuggestion)" @click="changeLanguage" class="action" v-if="hasLanguageSuggestion"/>
             <link-button :text="'Show Definitions'"  class="action" @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions" />
             <link-button :text="'Show Translations'" class="action" @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories" />
+            <link-button :text="'Search'" @click="search" class="action"/>
             <link-button
                 :text="`Translated ${historyRecord.translationsNumber === 1 ? 'one time' : `${historyRecord.translationsNumber} times`}`"
                 class="action"

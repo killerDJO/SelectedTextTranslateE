@@ -16,6 +16,7 @@
             @translate-text="translateText"
             @change-language="changeLanguage"
             @play-text="playText"
+            @search="search"
             @set-starred-status="setStarredStatus"/>
         <div v-else>
             <div  class="no-text-data">No text data selected</div>
