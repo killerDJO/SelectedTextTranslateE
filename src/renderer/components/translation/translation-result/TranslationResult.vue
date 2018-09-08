@@ -18,7 +18,9 @@
                 :translation-result-view-settings="translationResultViewSettings"
                 :default-view="defaultView"
                 :is-embedded="isEmbedded"
+                :languages="languages"
                 @translate="translateText"
+                @change-language="changeLanguage"
                 @refresh-translation="refreshTranslation"/>
         </div>
     </div>

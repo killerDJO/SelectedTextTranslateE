@@ -26,6 +26,7 @@ export class Messages {
     public static TranslateResult = class {
         public static readonly InProgressCommand = "set-in-progress";
         public static readonly TranslateResult = "translate-result";
+        public static readonly Languages = "translate-result-languages";
         public static readonly UpdateTranslateResult = "update-translate-result";
         public static readonly PlayTextCommand = "play-text-command";
         public static readonly TranslateCommand = "translate-command";
@@ -35,7 +36,6 @@ export class Messages {
 
     public static History = class {
         public static readonly HistoryRecords = "history-records";
-        public static readonly Languages = "history-languages";
         public static readonly RequestHistoryRecords = "get-history-records";
         public static readonly HistoryUpdated = "history-updated";
     };

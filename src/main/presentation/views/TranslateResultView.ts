@@ -25,6 +25,7 @@ export abstract class TranslateResultView extends ViewBase {
         super(viewName, context, viewOptions);
 
         this.messageBus.sendValue(Messages.TranslateResult.TranslationResultViewSettings, this.context.viewsSettings.translation.renderer);
+        this.messageBus.sendValue(Messages.TranslateResult.Languages, this.context.settingsProvider.getLanguages());
         this.playText$ = this.messageBus.getValue(Messages.TranslateResult.PlayTextCommand);
         this.translateText$ = this.messageBus.getValue<TranslationRequest>(Messages.TranslateResult.TranslateCommand);
         this.starTranslateResult$ = this.messageBus.getValue<StarRequest>(Messages.TranslateResult.StarTranslateResult);

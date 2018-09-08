@@ -8,11 +8,10 @@
         padding-left: $padding-large;
     }
 
-    .change-actions {
-        margin-bottom: $margin-small;
+    .actions {
+        margin-bottom: $margin-default;
 
-        .change-action {
-            margin-bottom: $margin-small;
+        .action {
             margin-right: $margin-small;
         }
     }

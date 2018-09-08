@@ -21,7 +21,6 @@ export class HistoryView extends TranslateResultView {
         });
 
         this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
-        this.messageBus.sendValue(Messages.History.Languages, this.context.settingsProvider.getLanguages());
     }
 
     public setHistoryRecords(historyRecords: HistoryRecordsResponse): void {

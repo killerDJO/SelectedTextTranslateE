@@ -22,6 +22,7 @@ export default class Translation extends Vue {
     @ns.State public translationHistoryRecord!: HistoryRecord | null;
     @ns.State public translationResultViewSettings!: TranslationViewRendererSettings | null;
     @ns.State public isTranslationInProgress!: boolean;
+    @ns.State public languages!: Map<string, string>;
     @ns.State public showInput!: boolean;
     @ns.State public defaultTranslateResultView!: TranslateResultViews;
 
@@ -31,6 +32,7 @@ export default class Translation extends Vue {
     @ns.Action public readonly translateSuggestion!: () => void;
     @ns.Action public readonly forceTranslation!: () => void;
     @ns.Action public readonly refreshTranslation!: () => void;
+    @ns.Action public readonly changeLanguage!: () => void;
     @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
 
     constructor() {

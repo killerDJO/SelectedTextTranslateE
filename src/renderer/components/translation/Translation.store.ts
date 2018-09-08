@@ -21,7 +21,8 @@ export const translation: Module<TranslationState, RootState> = {
         translationResultViewSettings: null,
         isTranslationInProgress: false,
         defaultTranslateResultView: TranslateResultViews.Translation,
-        showInput: false
+        showInput: false,
+        languages: new Map<string, string>(),
     },
     mutations: {
         ...translateResultMutations,

@@ -3,6 +3,8 @@
     padding-right: $padding-small;
     padding-top: $padding-small;
     line-height: 20px;
+    display: grid;
+    grid-template-columns: 15px 1fr;
     box-sizing: border-box;
     border-bottom: $border-width solid $color-light-gray;
     white-space: nowrap;
@@ -11,16 +13,24 @@
         padding-left: $padding-large;
     }
 
-    .icon-star,
-    .icon-star-empty {
-        font-size: $font-medium;
-    }
+    .translation-actions{
+        grid-row: 1;
+        grid-column: 1;
 
-    .icon-star {
-        color: $color-star;
+        .icon-star,
+        .icon-star-empty {
+            font-size: $font-big;
+        }
+
+        .icon-star {
+            color: $color-star;
+        }
     }
 
     .translation {
+        grid-row: 1;
+        grid-column: 2;
+
         font-size: $font-large;
 
         .no-translation {
@@ -29,35 +39,45 @@
         }
     }
 
-    .origin {
-        font-size: $font-small;
-        color: $color-gray;
-        display: inline-block;
-        margin-left: 2px;
-        outline: none;
-        cursor: text;
-    }
+    .play-text {
+        grid-row: 2;
+        grid-column: 1;
 
-    .play {
-        width: 10px;
-        height: 10px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        display: inline-block;
-        background-image: url("icons/play.svg");
-
-        &:hover{
-            background-image: url("icons/play-hovered.svg");
+        .play {
+            width: 11px;
+            height: 11px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            display: inline-block;
+            background-image: url("icons/play.svg");
+    
+            &:hover{
+                background-image: url("icons/play-hovered.svg");
+            }
         }
     }
 
-    .header-actions {
-        font-size: $font-small;
-        color: $color-gray;
-        display: inline-block;
+    .origin-holder {
+        grid-row: 2;
+        grid-column: 2;
 
-        .link-button-wrapper {
-            vertical-align: bottom;
+        .origin {
+            font-size: $font-small;
+            color: $color-gray;
+            display: inline-block;
+            margin-left: 2px;
+            outline: none;
+            cursor: text;
+        }
+
+        .origin-actions {
+            font-size: $font-small;
+            color: $color-gray;
+            display: inline-block;
+    
+            .link-button-wrapper {
+                vertical-align: bottom;
+            }
         }
     }
 }

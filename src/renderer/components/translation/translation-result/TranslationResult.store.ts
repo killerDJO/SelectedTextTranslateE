@@ -11,6 +11,7 @@ import { RootState } from "root.store";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { StarRequest } from "common/dto/translation/StarRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
+import { Language } from "common/dto/settings/Language";
 
 const messageBus = new MessageBus();
 
@@ -19,6 +20,7 @@ export interface TranslateResultState {
     translationResultViewSettings: TranslationViewRendererSettings | null;
     isTranslationInProgress: boolean;
     defaultTranslateResultView: TranslateResultViews;
+    languages: Map<string, string>;
 }
 
 export const translateResultMutations = {
@@ -48,8 +50,13 @@ export const translateResultMutations = {
     },
     setTranslationInProgress(state: TranslateResultState): void {
         state.isTranslationInProgress = true;
-    }
-}
+    },
+    setLanguages(state: TranslateResultState, languages: Language[]): void {
+        for (const language of languages) {
+            state.languages.set(language.code, language.name);
+        }
+    },
+};
 
 export const translateResultActions = {
     setup({ commit }: ActionContext<TranslateResultState, RootState>): void {
@@ -57,6 +64,7 @@ export const translateResultActions = {
         messageBus.getValue<TranslateResultResponse>(Messages.TranslateResult.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
         messageBus.getValue<HistoryRecord>(Messages.TranslateResult.UpdateTranslateResult, historyRecord => commit("updateTranslateResult", historyRecord));
         messageBus.getValue<TranslationViewRendererSettings>(Messages.TranslateResult.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
+        messageBus.getValue<Language[]>(Messages.TranslateResult.Languages, languages => commit("setLanguages", languages));
     },
     playText({ state }: ActionContext<TranslateResultState, RootState>): void {
         executeCommand<PlayTextRequest>(state, Messages.TranslateResult.PlayTextCommand, historyRecord => ({
@@ -69,21 +77,61 @@ export const translateResultActions = {
             state,
             commit,
             Messages.TranslateResult.TranslateCommand,
-            historyRecord => ({ text: historyRecord.translateResult.sentence.suggestion, isForcedTranslation: false, refreshCache: false, sourceLanguage: historyRecord.sourceLanguage, targetLanguage: historyRecord.targetLanguage }));
+            historyRecord => ({
+                text: historyRecord.translateResult.sentence.suggestion,
+                isForcedTranslation: false,
+                refreshCache: false,
+                sourceLanguage: historyRecord.sourceLanguage,
+                targetLanguage: historyRecord.targetLanguage
+            }));
     },
     forceTranslation({ commit, state }: ActionContext<TranslateResultState, RootState>): void {
         executeCommandWithProgress<TranslationRequest>(
             state,
             commit,
             Messages.TranslateResult.TranslateCommand,
-            historyRecord => ({ text: historyRecord.sentence, isForcedTranslation: true, refreshCache: false, sourceLanguage: historyRecord.sourceLanguage, targetLanguage: historyRecord.targetLanguage }));
+            historyRecord => ({
+                text: historyRecord.sentence,
+                isForcedTranslation: true,
+                refreshCache: false,
+                sourceLanguage: historyRecord.sourceLanguage,
+                targetLanguage: historyRecord.targetLanguage
+            }));
     },
     refreshTranslation({ commit, state }: ActionContext<TranslateResultState, RootState>): void {
         executeCommandWithProgress<TranslationRequest>(
             state,
             commit,
             Messages.TranslateResult.TranslateCommand,
-            historyRecord => ({ text: historyRecord.sentence, isForcedTranslation: historyRecord.isForcedTranslation, refreshCache: true, sourceLanguage: historyRecord.sourceLanguage, targetLanguage: historyRecord.targetLanguage }));
+            historyRecord => ({
+                text: historyRecord.sentence,
+                isForcedTranslation: historyRecord.isForcedTranslation,
+                refreshCache: true,
+                sourceLanguage: historyRecord.sourceLanguage,
+                targetLanguage: historyRecord.targetLanguage
+            }));
+    },
+    changeLanguage({ commit, state }: ActionContext<TranslateResultState, RootState>): void {
+        if (state.translationHistoryRecord === null) {
+            return;
+        }
+
+        const language = state.translationHistoryRecord.translateResult.sentence.languageSuggestion;
+        if (language === null) {
+            return;
+        }
+
+        executeCommandWithProgress<TranslationRequest>(
+            state,
+            commit,
+            Messages.TranslateResult.TranslateCommand,
+            historyRecord => ({
+                text: historyRecord.sentence,
+                isForcedTranslation: historyRecord.isForcedTranslation,
+                refreshCache: true,
+                sourceLanguage: language,
+                targetLanguage: historyRecord.targetLanguage
+            }));
     },
     translateText({ commit }: ActionContext<TranslateResultState, RootState>, request: TranslationRequest): void {
         commit("setTranslationInProgress");

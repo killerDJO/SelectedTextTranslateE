@@ -27,6 +27,9 @@ export default class TranslationResultContent extends Vue {
     @Prop(String)
     public defaultView!: TranslateResultViews;
 
+    @Prop(Map)
+    public languages!: Map<string, string>;
+
     @Prop(Boolean)
     public isEmbedded!: boolean;
 
@@ -42,8 +45,9 @@ export default class TranslationResultContent extends Vue {
         return !!this.historyRecord.translateResult.definitions.length;
     }
 
-    public get showStatistic(): boolean {
-        return this.historyRecord.translationsNumber > 1 || this.isEmbedded;
+    public get hasLanguageSuggestion(): boolean {
+        const suggestion = this.historyRecord.translateResult.sentence.languageSuggestion;
+        return !!suggestion && suggestion !== this.historyRecord.sourceLanguage;
     }
 
     public mounted() {
@@ -64,6 +68,10 @@ export default class TranslationResultContent extends Vue {
 
     public translate(text: string): void {
         this.$emit("translate", text);
+    }
+
+    public changeLanguage(): void {
+        this.$emit("change-language");
     }
 
     public refreshTranslation(): void {

@@ -1,9 +1,9 @@
 <template>
     <div class="statistic">
-        <div class="item">Times Translated<span class="item-value"> - {{historyRecord.translationsNumber}}</span></div>
-        <div class="item">First Translated<span class="item-value"> - {{historyRecord.createdDate | date-time}}</span></div>
-        <div class="item">Last Translated<span class="item-value"> - {{historyRecord.lastTranslatedDate | date-time}}</span></div>
-        <div class="item">Last Updated<span class="item-value"> - {{historyRecord.updatedDate | date-time}}</span></div>
+        <li class="item">Times translated<span class="item-value"> - {{historyRecord.translationsNumber}}</span></li>
+        <li class="item">First translated<span class="item-value"> - {{historyRecord.createdDate | date-time}}</span></li>
+        <li class="item">Last translated<span class="item-value"> - {{historyRecord.lastTranslatedDate | date-time}}</span></li>
+        <li class="item">Last updated<span class="item-value"> - {{historyRecord.updatedDate | date-time}}</span></li>
         <link-button @click="refreshTranslation" :text="'Refresh'" />
     </div>
 </template>

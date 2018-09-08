@@ -1,9 +1,10 @@
 <template>
     <div class="content" :class="{'is-embedded': isEmbedded}">
-        <div class="change-actions">
-            <link-button :text="'Show Definitions'"     @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions" />
-            <link-button :text="'Show Translations'"    @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories" />
-            <link-button :text="'Statistic'"            @click="currentView = TranslateResultViews.Statistic" v-if="currentView !== TranslateResultViews.Statistic && showStatistic" />
+        <div class="actions">
+            <link-button :text="'Translate from ' + languages.get(historyRecord.translateResult.sentence.languageSuggestion)" @click="changeLanguage" class="action" v-if="hasLanguageSuggestion"/>
+            <link-button :text="'Show Definitions'"  class="action" @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions" />
+            <link-button :text="'Show Translations'" class="action" @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories" />
+            <link-button :text="'Statistic'"         class="action" @click="currentView = TranslateResultViews.Statistic" v-if="currentView !== TranslateResultViews.Statistic" />
         </div>
         <translation-result-content-category
             v-if="currentView === TranslateResultViews.Translation"

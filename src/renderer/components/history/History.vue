@@ -60,10 +60,12 @@
               :is-in-progress="isTranslationInProgress"
               :translation-result-view-settings="translationResultViewSettings"
               :is-embedded="true"
+              :languages="languages"
               @translate-suggestion="translateSuggestion"
               @force-translation="forceTranslation"
               @refresh-translation="refreshTranslation"
               @translate-text="translateText"
+              @change-language="changeLanguage"
               @play-text="playText"
               @set-starred-status="setStarredStatus"/>
       </div>

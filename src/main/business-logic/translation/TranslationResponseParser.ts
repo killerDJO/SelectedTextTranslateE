@@ -29,7 +29,7 @@ import { TranslateResult, TranslateResultSentence, TranslateResultCategory, Tran
 // 5:  <irrelevant>,
 // 6:  <irrelevant>,
 // 7:  [<irrelevant>, <suggestion>, <irrelevant>, null, null, <irrelevant>],
-// 8:  <irrelevant>,
+// 8:  [[<suggested_language>], <irrelevant>, ...],
 // 9:  <irrelevant>,
 // 10: <irrelevant>,
 // 11: [
@@ -89,7 +89,12 @@ export class TranslationResponseParser {
             suggestion = root[7][1];
         }
 
-        return new TranslateResultSentence(input, translation, origin, suggestion);
+        let languageSuggestion: string | null = null;
+        if (!!root[8] && !!root[8][0]) {
+            languageSuggestion = root[8][0][0] || null;
+        }
+
+        return new TranslateResultSentence(input, translation, origin, suggestion, languageSuggestion);
     }
 
     private parseTranslateCategories(root: any): ReadonlyArray<TranslateResultCategory> {

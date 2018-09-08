@@ -17,6 +17,7 @@ import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 })
 export default class TranslationResult extends Vue {
     @Prop(Object) public historyRecord!: HistoryRecord | null;
+    @Prop(Map) public languages!: Map<string, string>;
     @Prop(Object) public translationResultViewSettings!: TranslationViewRendererSettings;
     @Prop(Boolean) public isInProgress!: boolean;
     @Prop(String) public defaultView!: TranslateResultViews;
@@ -58,6 +59,10 @@ export default class TranslationResult extends Vue {
 
     public refreshTranslation(): void {
         this.$emit("refresh-translation");
+    }
+
+    public changeLanguage(): void {
+        this.$emit("change-language");
     }
 
     public setStarredStatus(isStarred: boolean): void {

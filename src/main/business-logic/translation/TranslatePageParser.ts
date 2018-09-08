@@ -2,14 +2,13 @@ import { Cache, CacheClass } from "memory-cache";
 import { DOMParser } from "xmldom";
 import safeEval = require("safe-eval");
 import { Observable, of } from "rxjs";
-import { tap, map, take, catchError } from "rxjs/operators";
+import { tap, map, take } from "rxjs/operators";
 import { injectable } from "inversify";
 
 import { TranslationConfig } from "business-logic/translation/dto/TranslationConfig";
 import { Logger } from "infrastructure/Logger";
 import { RequestProvider } from "data-access/RequestProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { NotificationSender } from "infrastructure/NotificationSender";
 
 @injectable()
 export class TranslatePageParser {
