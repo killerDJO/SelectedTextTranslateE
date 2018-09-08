@@ -14,7 +14,7 @@ import { mapSubject } from "utils/map-subject";
 @injectable()
 export class ViewContext {
     constructor(
-        private readonly settingsProvider: SettingsProvider,
+        public readonly settingsProvider: SettingsProvider,
         public readonly accentColorProvider: AccentColorProvider,
         public readonly scalerFactory: ScalerFactory,
         public readonly errorHandler: RendererErrorHandler,

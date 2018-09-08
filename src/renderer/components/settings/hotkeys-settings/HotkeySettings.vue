@@ -23,7 +23,7 @@
             <tbody>
               <tr class="hotkey" v-for="hotkey in currentCommand.hotkeys" :key="createHotkeyString(hotkey)">
                 <td class="hotkey-column">{{createHotkeyString(hotkey)}}</td>
-                <td class="action-column"><icon-button class="remove-hotkey" title="'Remove hotkey'" @click="removeHotkey(hotkey)"><i class="icon icon-cancel"/></icon-button></td>
+                <td class="action-column"><icon-button class="remove-hotkey" title="Remove hotkey" @click="removeHotkey(hotkey)"><i class="icon icon-cancel"/></icon-button></td>
               </tr>
               <tr v-if="currentCommand.hotkeys.length === 0">
                 <td colspan="2" class="no-hotkeys">

@@ -15,7 +15,10 @@
       <play-settings
         :play-settings="settings.play"
         @play-settings-updated="updatePlaySettings"/>
-      <link-button @click="openSettingsFile" :text="'Open Settings File'" class="pull-right"/>
+      <language-settings
+        :language-settings="settings.language"
+        @language-settings-updated="updateLanguageSettings"/>
+      <link-button @click="openSettingsFile" :text="'Open Settings File'" class="open-file"/>
     </div>
   </div>
 </template>

@@ -7,7 +7,7 @@ import * as _ from "lodash";
 import { Settings } from "business-logic/settings/dto/Settings";
 import { SettingsStore } from "infrastructure/SettingsStore";
 import { DeepPartial } from "utils/deep-partial";
-import { shell } from "electron";
+import { Language } from "common/dto/settings/Language";
 
 @injectable()
 export class SettingsProvider {
@@ -33,19 +33,27 @@ export class SettingsProvider {
     }
 
     public getDefaultSettings(): Settings {
-        const defaultSettingsPath = path.resolve(__dirname, "default-settings.json");
-        const defaultSettingsContent = fs.readFileSync(defaultSettingsPath).toString("utf8");
-        return JSON.parse(defaultSettingsContent) as Settings;
+        return this.readJsonFile<Settings>("default-settings.json");
     }
 
     public openInEditor(): void {
         this.settingsStore.openInEditor();
     }
 
+    public getLanguages(): ReadonlyArray<Language> {
+        return this.readJsonFile<Language[]>("languages.json");
+    }
+
     private getSettingsFromDefaultsFile(): Settings {
         const defaultSettings = this.getDefaultSettings();
         const settings = this.getSettingsByDefaultSettings(defaultSettings, "") as Settings;
         return settings;
+    }
+
+    private readJsonFile<TContent>(fileName: string): TContent {
+        const defaultSettingsPath = path.resolve(__dirname, fileName);
+        const defaultSettingsContent = fs.readFileSync(defaultSettingsPath).toString("utf8");
+        return JSON.parse(defaultSettingsContent) as TContent;
     }
 
     private getSettingsByDefaultSettings(currentDefaultSettings: any, parentPath: string): any {

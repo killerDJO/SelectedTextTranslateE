@@ -41,6 +41,10 @@
         "requestTimeout": 10000,
         "playVolume": 100
     },
+    "language": {
+        "sourceLanguage": "en",
+        "targetLanguage": "ru"
+    },
     "history": {
         "databaseName": "history.db",
         "pageSize": 25

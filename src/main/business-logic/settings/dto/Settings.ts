@@ -10,6 +10,7 @@ export interface Settings {
     readonly scaling: ScalingSettings;
     readonly hotkeys: HotkeySettings;
     readonly update: UpdateSettings;
+    readonly language: LanguageSettings;
 }
 
 export interface HotkeySettings {
@@ -66,4 +67,9 @@ export interface HistorySettings extends ViewSize {
 export interface UpdateSettings {
     readonly feedUrl: string;
     readonly releasesUrl: string;
+}
+
+export interface LanguageSettings {
+    readonly sourceLanguage: string;
+    readonly targetLanguage: string;
 }

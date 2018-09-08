@@ -57,6 +57,10 @@ module.exports = (env, argv) => {
                     from: path.resolve(__dirname, "../src/main/default-settings.json"),
                     to: "./"
                 },
+                {
+                    from: path.resolve(__dirname, "../src/main/languages.json"),
+                    to: "./"
+                },
             ]),
             new webpack.NoEmitOnErrorsPlugin()
         ]

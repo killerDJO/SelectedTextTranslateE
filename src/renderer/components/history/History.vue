@@ -6,7 +6,7 @@
         <checkbox class="starred-checkbox" v-model="starredOnly$" :label="'Starred Only'" :left-to-right="true" />
       </div>
       <div class="translation-results-header" v-if="isTranslationVisible">
-        <span class="icon icon-cancel" @click="hideTranslation"></span>
+        <icon-button title="Hide Translation" @click="hideTranslation"><i class="icon icon-cancel"/></icon-button>
         <p class="title">Translation</p>
       </div>
       <table class="table-striped results non-clickable">

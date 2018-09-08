@@ -48,7 +48,7 @@ export class SettingsView extends ViewBase {
 
     private setSettingsInternal(name: string, settings$: Observable<Settings>): void {
         this.registerSubscription(
-            this.messageBus.registerObservable(name, settings$.pipe(map(this.getEditableSettings))).subscription);
+            this.messageBus.registerObservable(name, settings$.pipe(map(settings => this.getEditableSettings(settings)))).subscription);
     }
 
     protected getInitialBounds(): Electron.Rectangle {
@@ -76,6 +76,11 @@ export class SettingsView extends ViewBase {
             },
             play: {
                 playVolume: settings.engine.playVolume
+            },
+            language: {
+                sourceLanguage: settings.language.sourceLanguage,
+                targetLanguage: settings.language.targetLanguage,
+                allLanguages: this.context.settingsProvider.getLanguages()
             }
         };
     }
@@ -100,6 +105,10 @@ export class SettingsView extends ViewBase {
             },
             engine: {
                 playVolume: settings.play.playVolume
+            },
+            language: {
+                sourceLanguage: settings.language.sourceLanguage,
+                targetLanguage: settings.language.targetLanguage
             }
         };
     }
