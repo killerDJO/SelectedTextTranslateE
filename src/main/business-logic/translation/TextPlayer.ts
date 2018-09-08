@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import { Observable, bindNodeCallback, of } from "rxjs";
-import { concatMap, map } from "rxjs/operators";
+import { concatMap, map, tap } from "rxjs/operators";
 import * as path from "path";
 import * as fs from "fs";
 import { app } from "electron";
@@ -11,12 +11,12 @@ import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { Logger } from "infrastructure/Logger";
 
 import * as nativeExtensions from "native/native-extensions.node";
-import { NotificationSender } from "infrastructure/NotificationSender";
 
 @injectable()
 export class TextPlayer {
 
     private readonly tempFilePath: string;
+    private isPlayInProgress: boolean = false;
 
     constructor(
         private readonly requestProvider: RequestProvider,
@@ -28,11 +28,17 @@ export class TextPlayer {
     }
 
     public playText(text: string): Observable<void> {
+        if (this.isPlayInProgress) {
+            return of(undefined);
+        }
+
+        this.isPlayInProgress = true;
         this.logger.info(`Playing text '${text}'`);
         return this.getAudioContent(text)
             .pipe(
                 concatMap(content => this.saveContentToTempFile(content)),
-                concatMap(() => this.playFile(text))
+                concatMap(() => this.playFile(text)),
+                tap(() => this.isPlayInProgress = false)
             );
     }
 
