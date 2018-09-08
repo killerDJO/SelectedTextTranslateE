@@ -1,19 +1,19 @@
 import { app } from "electron";
 import childProcess = require("child_process");
-import path = require("path");
 import { injectable } from "inversify";
 
 import { Logger } from "infrastructure/Logger";
+import { StartupHandler } from "install/StartupHandler";
+import { StartupItemsProvider } from "install/StartupItemsProvider";
 
 @injectable()
 export class Installer {
     private static readonly OneSecondTimeout: number = 1000;
 
-    private readonly appFolder = path.resolve(process.execPath, "..");
-    private readonly exeName = path.basename(process.execPath);
-    private readonly updateExe = path.resolve(path.join(this.appFolder, "..", "Update.exe"));
-
-    constructor(private readonly logger: Logger) {
+    constructor(
+        private readonly logger: Logger,
+        private readonly startupItemsProvider: StartupItemsProvider,
+        private readonly startupHandler: StartupHandler) {
     }
 
     public handleSquirrelEvent(): boolean {
@@ -45,14 +45,14 @@ export class Installer {
     }
 
     private handleInstallAndUpdate(): void {
-        this.configureStartup(true);
-        this.spawnUpdate(["--createShortcut", this.exeName, this.getShortcutLocations()]);
+        this.startupHandler.enableStartup();
+        this.spawnUpdate(["--createShortcut", this.startupItemsProvider.exePath, this.getShortcutLocations()]);
         this.quit(Installer.OneSecondTimeout);
     }
 
     private handleUninstall(): void {
-        this.configureStartup(false);
-        this.spawnUpdate(["--removeShortcut", this.exeName, this.getShortcutLocations()]);
+        this.startupHandler.disableStartup();
+        this.spawnUpdate(["--removeShortcut", this.startupItemsProvider.exePath, this.getShortcutLocations()]);
         this.quit(Installer.OneSecondTimeout);
     }
 
@@ -62,17 +62,6 @@ export class Installer {
 
     private handleObsolete(): void {
         this.quit();
-    }
-
-    private configureStartup(enable: boolean) {
-        app.setLoginItemSettings({
-            openAtLogin: enable,
-            path: this.updateExe,
-            args: [
-                "--processStart", `"${this.exeName}"`,
-                "--process-start-args", '"--hidden"'
-            ]
-        });
     }
 
     private spawn(command: string, args: string[]): void {
@@ -85,7 +74,7 @@ export class Installer {
     }
 
     private spawnUpdate(args: string[]): void {
-        return this.spawn(this.updateExe, args);
+        return this.spawn(this.startupItemsProvider.updateExePath, args);
     }
 
     private quit(timeout: number = 0): void {

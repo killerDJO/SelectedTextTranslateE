@@ -18,6 +18,9 @@
       <language-settings
         :language-settings="settings.language"
         @language-settings-updated="updateLanguageSettings"/>
+      <startup-settings
+        :is-startup-enabled="isStartupEnabled"
+        @set-startup-state="setStartupState"/>
       <link-button @click="openSettingsFile" :text="'Open Settings File'" class="open-file"/>
     </div>
   </div>

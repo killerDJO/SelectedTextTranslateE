@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { concatMap, distinctUntilChanged, delay } from "rxjs/operators";
+import { concatMap, distinctUntilChanged } from "rxjs/operators";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -25,6 +25,7 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 import { SearchExecutor } from "business-logic/search/SearchExecutor";
+import { StartupHandler } from "install/StartupHandler";
 
 @injectable()
 export class Application {
@@ -42,7 +43,8 @@ export class Application {
         private readonly historyStore: HistoryStore,
         private readonly viewsRegistry: ViewsRegistry,
         private readonly updater: Updater,
-        private readonly searchExecutor: SearchExecutor) {
+        private readonly searchExecutor: SearchExecutor,
+        private readonly startupHandler: StartupHandler) {
 
         this.createTaskbar();
         this.setupHotkeys();
@@ -86,6 +88,9 @@ export class Application {
         settingsView.setDefaultSettings(this.settingsProvider.getDefaultSettings());
         settingsView.setScalingState(this.scaler.scalingState);
         settingsView.setScaleFactor$.subscribe(scaleFactor => this.scaler.setScaleFactor(scaleFactor));
+        settingsView.setStartupState(this.startupHandler.isStartupEnabled$);
+        settingsView.setStartupState$
+            .subscribe(state => state ? this.startupHandler.enableStartup() : this.startupHandler.disableStartup());
         settingsView.pauseHotkeys$
             .pipe(distinctUntilChanged())
             .subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());

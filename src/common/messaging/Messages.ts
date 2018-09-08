@@ -45,9 +45,11 @@ export class Messages {
         public static readonly EditableSettings = "editable-settings";
         public static readonly DefaultEditableSettings = "default-editable-settings";
         public static readonly ScalingState = "scaling-state";
+        public static readonly StartupState = "startup-state";
         public static readonly EditableSettingsUpdated = "editable-settings-updated";
         public static readonly PauseHotkeysRequest = "pause-hotkeys-request";
         public static readonly SetScaleFactorCommand = "set-scale-factor";
+        public static readonly SetStartupStateCommand = "set-startup-state";
         public static readonly OpenSettingsFile = "open-settings-file";
     };
 }

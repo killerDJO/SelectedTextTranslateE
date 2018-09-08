@@ -6,6 +6,7 @@ import HotkeySettings from "components/settings/hotkeys-settings/HotkeySettings.
 import ScalingSettings from "components/settings/scaling-settings/ScalingSettings.vue";
 import PlaySettings from "components/settings/play-settings/PlaySettings.vue";
 import LanguageSettings from "components/settings/language-settings/LanguageSettings.vue";
+import StartupSettings from "components/settings/startup-settings/StartupSettings.vue";
 
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { EditableHotkeySettings } from "common/dto/settings/editable-settings/EditableHotkeySettings";
@@ -22,19 +23,22 @@ const ns = namespace("app/settings");
         HotkeySettings,
         ScalingSettings,
         PlaySettings,
-        LanguageSettings
+        LanguageSettings,
+        StartupSettings
     }
 })
 export default class Settings extends Vue {
     @ns.State public settings!: EditableSettings | null;
     @ns.State public defaultSettings!: EditableSettings | null;
     @ns.State public scalingState!: ScalingState | null;
+    @ns.State public isStartupEnabled!: boolean;
 
     @ns.Action private readonly setup!: () => void;
     @ns.Action private readonly updateSettings!: (settings: EditableSettings) => void;
     @ns.Action public readonly pauseHotkeys!: () => void;
     @ns.Action public readonly enableHotkeys!: () => void;
     @ns.Action public readonly openSettingsFile!: () => void;
+    @ns.Action public readonly setStartupState!: (isStartupEnabled: boolean) => void;
 
     @ns.Action public readonly changeScaling!: (scaleFactor: number) => void;
 

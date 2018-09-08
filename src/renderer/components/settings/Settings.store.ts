@@ -13,6 +13,7 @@ interface SettingsState {
     settings: EditableSettings | null;
     defaultSettings: EditableSettings | null;
     scalingState: ScalingState | null;
+    isStartupEnabled: boolean;
 }
 
 export const settings: Module<SettingsState, RootState> = {
@@ -20,6 +21,7 @@ export const settings: Module<SettingsState, RootState> = {
     state: {
         settings: null,
         scalingState: null,
+        isStartupEnabled: false,
         defaultSettings: null
     },
     mutations: {
@@ -31,6 +33,9 @@ export const settings: Module<SettingsState, RootState> = {
         },
         setScalingState(state: SettingsState, scalingState: ScalingState): void {
             state.scalingState = scalingState;
+        },
+        setStartupState(state: SettingsState, isStartupEnabled: boolean): void {
+            state.isStartupEnabled = isStartupEnabled;
         }
     },
     actions: {
@@ -38,6 +43,7 @@ export const settings: Module<SettingsState, RootState> = {
             messageBus.getValue<EditableSettings>(Messages.Settings.EditableSettings, editableSettings => commit("setSettings", editableSettings));
             messageBus.getValue<EditableSettings>(Messages.Settings.DefaultEditableSettings, defaultSettings => commit("setDefaultSettings", defaultSettings));
             messageBus.getValue<ScalingState>(Messages.Settings.ScalingState, scalingState => commit("setScalingState", scalingState));
+            messageBus.getValue<boolean>(Messages.Settings.StartupState, isStartupEnabled => commit("setStartupState", isStartupEnabled));
         },
         updateSettings({ state }, editableSettings: EditableSettings): void {
             if (_.isEqual(state.settings, editableSettings)) {
@@ -51,11 +57,14 @@ export const settings: Module<SettingsState, RootState> = {
         enableHotkeys(): void {
             messageBus.sendCommand<boolean>(Messages.Settings.PauseHotkeysRequest, false);
         },
-        changeScaling(_, scaleFactor: number): void {
+        changeScaling(__, scaleFactor: number): void {
             messageBus.sendCommand<number>(Messages.Settings.SetScaleFactorCommand, scaleFactor);
         },
         openSettingsFile(): void {
             messageBus.sendCommand<void>(Messages.Settings.OpenSettingsFile);
+        },
+        setStartupState(__, isStartupEnabled: boolean): void {
+            messageBus.sendCommand<boolean>(Messages.Settings.SetStartupStateCommand, isStartupEnabled);
         }
     }
 };

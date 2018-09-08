@@ -32,12 +32,15 @@ import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
 import { Installer } from "install/Installer";
 import { Updater } from "install/Updater";
 import { SearchExecutor } from "business-logic/search/SearchExecutor";
+import { StartupHandler } from "install/StartupHandler";
+import { StartupItemsProvider } from "install/StartupItemsProvider";
 
 class Binder {
     public readonly container: Container = new Container();
 
     constructor() {
         this.bindInfrastructure();
+        this.bindInstall();
         this.bindDataAccess();
         this.bindBusinessLogic();
         this.bindPresentation();
@@ -49,10 +52,15 @@ class Binder {
         this.container.bind<StorageFolderProvider>(StorageFolderProvider).toSelf();
         this.container.bind<NotificationSender>(NotificationSender).toSelf();
         this.container.bind<Logger>(Logger).toSelf().inSingletonScope();
-        this.container.bind<Installer>(Installer).toSelf().inSingletonScope();
-        this.container.bind<Updater>(Updater).toSelf().inSingletonScope();
         this.container.bind<ErrorHandler>(ErrorHandler).toSelf().inSingletonScope();
         this.container.bind<SettingsStore>(SettingsStore).toSelf().inSingletonScope();
+    }
+
+    private bindInstall(): void {
+        this.container.bind<Installer>(Installer).toSelf().inSingletonScope();
+        this.container.bind<Updater>(Updater).toSelf().inSingletonScope();
+        this.container.bind<StartupHandler>(StartupHandler).toSelf().inSingletonScope();
+        this.container.bind<StartupItemsProvider>(StartupItemsProvider).toSelf().inSingletonScope();
     }
 
     private bindDataAccess(): void {

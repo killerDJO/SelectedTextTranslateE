@@ -13,10 +13,11 @@ import { ScalingState } from "common/dto/settings/ScalingState";
 
 export class SettingsView extends ViewBase {
 
-    public readonly pauseHotkeys$!: Observable<boolean>;
-    public readonly updatedSettings$!: Observable<DeepPartial<Settings>>;
-    public readonly setScaleFactor$!: Observable<number>;
-    public readonly openSettingsFile$!: Observable<void>;
+    public readonly pauseHotkeys$: Observable<boolean>;
+    public readonly updatedSettings$: Observable<DeepPartial<Settings>>;
+    public readonly setScaleFactor$: Observable<number>;
+    public readonly setStartupState$: Observable<boolean>;
+    public readonly openSettingsFile$: Observable<void>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.Settings, viewContext, {
@@ -30,6 +31,7 @@ export class SettingsView extends ViewBase {
         this.updatedSettings$ = this.messageBus.getValue<EditableSettings>(Messages.Settings.EditableSettingsUpdated)
             .pipe(map(editableSettings => this.getSettings(editableSettings)));
         this.setScaleFactor$ = this.messageBus.getValue<number>(Messages.Settings.SetScaleFactorCommand);
+        this.setStartupState$ = this.messageBus.getValue<boolean>(Messages.Settings.SetStartupStateCommand);
         this.openSettingsFile$ = this.messageBus.getValue<void>(Messages.Settings.OpenSettingsFile);
     }
 
@@ -44,6 +46,11 @@ export class SettingsView extends ViewBase {
     public setScalingState(scalingState$: Observable<ScalingState>): void {
         this.registerSubscription(
             this.messageBus.registerObservable(Messages.Settings.ScalingState, scalingState$).subscription);
+    }
+
+    public setStartupState(startupState$: Observable<boolean>): void {
+        this.registerSubscription(
+            this.messageBus.registerObservable(Messages.Settings.StartupState, startupState$).subscription);
     }
 
     private setSettingsInternal(name: string, settings$: Observable<Settings>): void {
