@@ -12,6 +12,7 @@ import { Logger } from "infrastructure/Logger";
 
 import * as nativeExtensions from "native/native-extensions.node";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
+import { replaceAllPattern } from "utils/replace-pattern";
 
 @injectable()
 export class TextPlayer {
@@ -41,7 +42,6 @@ export class TextPlayer {
             .pipe(
                 concatMap(content => this.saveContentToTempFile(content)),
                 concatMap(() => this.playFile()),
-                tap(() => this.isPlayInProgress = false),
                 tap(() => this.logger.info(`End playing ${this.getLogKey(request.text, language)}`))
             );
     }
@@ -55,6 +55,7 @@ export class TextPlayer {
         return new Observable<void>(observer => {
             const volume = this.settingsProvider.getSettings().value.engine.playVolume;
             nativeExtensions.playFile(this.tempFilePath, volume, error => {
+                this.isPlayInProgress = false;
                 if (!!error) {
                     observer.error(new Error(error));
                 } else {
@@ -70,10 +71,18 @@ export class TextPlayer {
     }
 
     private getAudioContent(text: string, language: string): Observable<Buffer> {
-        const encodedText = encodeURIComponent(text);
         return this.hashProvider.computeHash(text).pipe(
-            map(hash => `${this.settingsProvider.getSettings().value.engine.baseUrl}/translate_tts?tl=${language}&client=t&q=${encodedText}&tk=${hash}`),
+            map(hash => this.buildUrl(text, language, hash)),
             concatMap(url => this.requestProvider.getBinaryContent(url))
         );
+    }
+
+    private buildUrl(text: string, language: string, hash: string) {
+        const urlPattern = this.settingsProvider.getSettings().value.engine.playTextPattern;
+        return replaceAllPattern(urlPattern, {
+            language: language,
+            query: encodeURIComponent(text),
+            hash: hash
+        });
     }
 }

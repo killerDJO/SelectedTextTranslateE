@@ -13,6 +13,7 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
+import { replaceAllPattern } from "utils/replace-pattern";
 
 @injectable()
 export class TextTranslator {
@@ -99,11 +100,14 @@ export class TextTranslator {
 
     private getTranslationResponse(key: TranslationKey, hash: string): Observable<any> {
         const encodedText = encodeURIComponent(key.sentence);
-        const forceTranslationArgument = key.isForcedTranslation ? "qc" : "qca";
-        const domain = this.settingsProvider.getSettings().value.engine.baseUrl;
-        const urlPath =
-            `translate_a/single?client=t&sl=${key.sourceLanguage}&tl=${key.targetLanguage}&hl=${key.targetLanguage}&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt=${forceTranslationArgument}` +
-            `&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=4&tk=${hash}&q=${encodedText}`;
-        return this.requestProvider.getJsonContent(`${domain}/${urlPath}`);
+        const urlPattern = this.settingsProvider.getSettings().value.engine.translatePattern;
+        const url = replaceAllPattern(urlPattern, {
+            "source-language": key.sourceLanguage,
+            "target-language": key.targetLanguage,
+            "forced": key.isForcedTranslation ? "qc" : "qca",
+            "hash": hash,
+            "query": encodedText
+        });
+        return this.requestProvider.getJsonContent(url);
     }
 }

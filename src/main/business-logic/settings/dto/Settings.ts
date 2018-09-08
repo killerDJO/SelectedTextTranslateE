@@ -23,6 +23,8 @@ export interface HotkeySettings {
 
 export interface TranslationEngineSettings {
     readonly copyDelayMilliseconds: number;
+    readonly translatePattern: string;
+    readonly playTextPattern: string;
     readonly baseUrl: string;
     readonly historyRefreshInterval: number;
     readonly userAgent: string;
