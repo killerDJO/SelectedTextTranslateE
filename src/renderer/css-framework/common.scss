@@ -6,8 +6,7 @@ body {
     color: $color-font;
 }
 
-.focusable:focus,
-.focusable:active {
+.focusable:focus {
     box-shadow: 0 0 0 $outline-width $color-outline;
     border-radius: $border-radius;
     outline: none;
@@ -19,21 +18,4 @@ input {
 
 .form-control {
     padding: 0 $padding-default;
-}
-
-button:disabled {
-    opacity: 0.5;
-}
-
-.link-button {
-    font-size: $font-small;
-    color: $color-gray;
-    text-decoration: underline;
-    cursor: pointer;
-    display: inline-block;
-    vertical-align: text-bottom;
-
-    &:hover{
-        color: $color-black;
-    }
 }

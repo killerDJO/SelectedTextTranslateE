@@ -15,7 +15,7 @@
       <play-settings
         :play-settings="settings.play"
         @play-settings-updated="updatePlaySettings"/>
-      <span class="link-button pull-right" @click="openSettingsFile" v-tab-index>Open Settings File</span>
+      <link-button @click="openSettingsFile" :text="'Open Settings File'" class="pull-right"/>
     </div>
   </div>
 </template>

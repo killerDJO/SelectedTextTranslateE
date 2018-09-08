@@ -1,0 +1,12 @@
+.app-button-wrapper {
+    display: inline-flex;
+
+    button {
+        outline: none;
+        width: 100%;
+
+        &:disabled {
+            opacity: 0.5;
+        }
+    }
+}

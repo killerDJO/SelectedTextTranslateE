@@ -21,4 +21,8 @@ export default class Checkbox extends Vue {
     public set isChecked$(isChecked: boolean) {
         this.$emit("input", isChecked);
     }
+
+    public onClick(): void {
+        this.isChecked$ = !this.isChecked$;
+    }
 }

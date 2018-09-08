@@ -24,11 +24,8 @@
             position: relative;
             width: 100%;
             display: grid;
+            align-items: center;
             grid-template-columns: 1fr auto;
-
-            .number-selector {
-                width: 10rem;
-            }
 
             .title {
                 text-align: left;

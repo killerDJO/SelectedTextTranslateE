@@ -1,0 +1,17 @@
+.link-button-wrapper {
+    display: inline-flex;
+    vertical-align: text-bottom;
+
+    .link {
+        font-size: $font-small;
+        color: $color-gray;
+        text-decoration: underline;
+        cursor: pointer;
+        display: inline-block;
+        outline: none;
+    
+        &:hover{
+            color: $color-black;
+        }
+    }
+}

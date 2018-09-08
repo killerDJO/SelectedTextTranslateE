@@ -28,7 +28,12 @@ export class AutoFocus implements DirectiveOptions {
     }
 
     private addAttributes(element: HTMLElement, binding: VNodeDirective): void {
-        element.tabIndex = binding.value || 0;
+        const tabIndex = +binding.value || 0;
+        element.tabIndex = tabIndex;
+        if (tabIndex === -1) {
+            element.blur();
+        }
+
         element.classList.add("focusable");
     }
 }

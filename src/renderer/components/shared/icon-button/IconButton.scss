@@ -1,0 +1,12 @@
+.icon-wrapper {
+    display: inline-flex;
+
+    .icon-holder {
+        outline: none;
+        line-height: 0;
+
+        :first-child {
+            cursor: pointer;
+        }
+    }
+}

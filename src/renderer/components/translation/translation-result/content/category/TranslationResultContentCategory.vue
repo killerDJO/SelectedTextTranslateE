@@ -9,7 +9,7 @@
                 </span>
             </span>
         </div>
-        <a v-if="hasInitiallyHiddenEntries" class="expand link-button" @click="toggleExpansionState" v-tab-index>{{ expandButtonText }}</a>
+        <link-button v-if="hasInitiallyHiddenEntries" :text="expandButtonText" class="expand" @click="toggleExpansionState" />
     </div>
 </template>
 

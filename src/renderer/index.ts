@@ -11,6 +11,9 @@ import ValidatedField from "components/shared/validated-field/ValidatedField.vue
 import Slider from "components/shared/slider/Slider.vue";
 import ConfirmModal from "components/shared/confirm-modal/ConfirmModal.vue";
 import Checkbox from "components/shared/checkbox/Checkbox.vue";
+import IconButton from "components/shared/icon-button/IconButton.vue";
+import LinkButton from "components/shared/link-button/LinkButton.vue";
+import AppButton from "components/shared/app-button/AppButton.vue";
 
 import { router } from "router";
 import { MessageBus } from "communication/MessageBus";
@@ -53,6 +56,9 @@ class Bootstrapper {
         Vue.component("confirm-modal", ConfirmModal);
         Vue.component("paginate", Paginate);
         Vue.component("checkbox", Checkbox);
+        Vue.component("icon-button", IconButton);
+        Vue.component("link-button", LinkButton);
+        Vue.component("app-button", AppButton);
     }
 
     private static registerPlugins(): void {

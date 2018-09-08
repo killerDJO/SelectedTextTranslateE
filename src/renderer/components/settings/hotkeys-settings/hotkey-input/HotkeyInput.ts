@@ -29,8 +29,10 @@ export default class HotkeyInput extends Vue {
         }
 
         if (this.isNavigationSequence(this.keys.concat([event.key]))) {
-            this.keys = [];
-            this.isInputInProgress = false;
+            if (this.isInputInProgress) {
+                this.keys = [];
+                this.isInputInProgress = false;
+            }
             return;
         }
 
@@ -121,6 +123,10 @@ export default class HotkeyInput extends Vue {
         const tabKey = "Tab";
         const shiftKey = "Shift";
 
-        return _.isEqual([tabKey], keys) || _.isEqual([shiftKey, tabKey], keys);
+        if (!this.isInputInProgress && keys.length >= 1 && keys[keys.length - 1] === tabKey) {
+            return true;
+        }
+
+        return _.isEqual([shiftKey, tabKey], keys);
     }
 }
