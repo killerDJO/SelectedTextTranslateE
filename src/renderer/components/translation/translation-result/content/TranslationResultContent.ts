@@ -33,6 +33,9 @@ export default class TranslationResultContent extends Vue {
     @Prop(Boolean)
     public isEmbedded!: boolean;
 
+    @Prop(Boolean)
+    public isOffline!: boolean;
+
     public TranslateResultViews: typeof TranslateResultViews = TranslateResultViews;
 
     public currentView: TranslateResultViews = TranslateResultViews.Translation;

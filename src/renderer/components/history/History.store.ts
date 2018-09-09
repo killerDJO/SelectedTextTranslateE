@@ -45,7 +45,8 @@ export const history: Module<HistoryState, RootState> = {
         translationResultViewSettings: null,
         isTranslationInProgress: false,
         defaultTranslateResultView: TranslateResultViews.Translation,
-        isTranslationVisible: false
+        isTranslationVisible: false,
+        isOffline: false
     },
     mutations: {
         ...translateResultMutations,

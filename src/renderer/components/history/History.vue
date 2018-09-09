@@ -67,6 +67,7 @@
               :translation-result-view-settings="translationResultViewSettings"
               :is-embedded="true"
               :languages="languages"
+              :is-offline="isOffline"
               @translate-suggestion="translateSuggestion"
               @force-translation="forceTranslation"
               @refresh-translation="refreshTranslation"

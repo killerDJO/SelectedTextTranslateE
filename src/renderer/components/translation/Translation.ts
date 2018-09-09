@@ -25,6 +25,7 @@ export default class Translation extends Vue {
     @ns.State public languages!: Map<string, string>;
     @ns.State public showInput!: boolean;
     @ns.State public defaultTranslateResultView!: TranslateResultViews;
+    @ns.State public isOffline!: boolean;
 
     @ns.Action private readonly setup!: () => void;
     @ns.Action public readonly playText!: () => void;

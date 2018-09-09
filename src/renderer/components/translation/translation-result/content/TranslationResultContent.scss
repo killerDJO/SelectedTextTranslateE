@@ -9,9 +9,15 @@
 
     .actions {
         margin-bottom: $margin-default;
+        display: flex;
 
         .action {
             margin-right: $margin-small;
+        }
+
+        .offline-status {
+            color: $color-gray;
+            font-size: $font-small;
         }
     }
 }

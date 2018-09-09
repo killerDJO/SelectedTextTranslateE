@@ -21,6 +21,7 @@ export interface TranslateResultState {
     isTranslationInProgress: boolean;
     defaultTranslateResultView: TranslateResultViews;
     languages: Map<string, string>;
+    isOffline: boolean;
 }
 
 export const translateResultMutations = {
@@ -56,6 +57,9 @@ export const translateResultMutations = {
             state.languages.set(language.code, language.name);
         }
     },
+    setOfflineStatus(state: TranslateResultState, isOffline: boolean): void {
+        state.isOffline = isOffline;
+    }
 };
 
 export const translateResultActions = {
@@ -65,6 +69,10 @@ export const translateResultActions = {
         messageBus.getValue<HistoryRecord>(Messages.TranslateResult.UpdateTranslateResult, historyRecord => commit("updateTranslateResult", historyRecord));
         messageBus.getValue<TranslationViewRendererSettings>(Messages.TranslateResult.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
         messageBus.getValue<Language[]>(Messages.TranslateResult.Languages, languages => commit("setLanguages", languages));
+
+        commit("setOfflineStatus", !navigator.onLine);
+        window.ononline = () => commit("setOfflineStatus", false);
+        window.onoffline = () => commit("setOfflineStatus", true);
     },
     playText({ state }: ActionContext<TranslateResultState, RootState>): void {
         executeCommand<PlayTextRequest>(state, Messages.TranslateResult.PlayTextCommand, historyRecord => ({

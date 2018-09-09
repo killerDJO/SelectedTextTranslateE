@@ -23,6 +23,7 @@ export const translation: Module<TranslationState, RootState> = {
         defaultTranslateResultView: TranslateResultViews.Translation,
         showInput: false,
         languages: new Map<string, string>(),
+        isOffline: false
     },
     mutations: {
         ...translateResultMutations,

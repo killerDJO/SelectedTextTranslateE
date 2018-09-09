@@ -28,6 +28,9 @@ export default class TranslationResult extends Vue {
     })
     public isEmbedded!: boolean;
 
+    @Prop(Boolean)
+    public isOffline!: boolean;
+
     public showProgressIndicator: boolean = false;
 
     public playText(): void {

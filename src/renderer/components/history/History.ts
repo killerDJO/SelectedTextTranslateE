@@ -33,6 +33,7 @@ export default class History extends Vue {
     @ns.State public translationHistoryRecord!: HistoryRecord | null;
     @ns.State public translationResultViewSettings!: TranslationViewRendererSettings | null;
     @ns.State public isTranslationInProgress!: boolean;
+    @ns.State public isOffline!: boolean;
     @ns.State public isTranslationVisible!: boolean;
     @ns.State public defaultTranslateResultView!: TranslateResultViews;
 

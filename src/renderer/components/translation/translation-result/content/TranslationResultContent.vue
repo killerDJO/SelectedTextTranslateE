@@ -10,6 +10,7 @@
                 class="action"
                 @click="currentView = TranslateResultViews.Statistic"
                 v-if="currentView !== TranslateResultViews.Statistic" />
+            <span class="action offline-status" v-if="isOffline">Offline</span>
         </div>
         <translation-result-content-category
             v-if="currentView === TranslateResultViews.Translation"

@@ -10,6 +10,7 @@
             :is-in-progress="isTranslationInProgress"
             :translation-result-view-settings="translationResultViewSettings"
             :languages="languages"
+            :is-offline="isOffline"
             @translate-suggestion="translateSuggestion"
             @force-translation="forceTranslation"
             @refresh-translation="refreshTranslation"
