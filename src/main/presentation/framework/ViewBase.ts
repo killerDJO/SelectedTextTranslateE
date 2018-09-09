@@ -20,6 +20,7 @@ export abstract class ViewBase {
     protected readonly isShowInProgress$: BehaviorSubject<boolean>;
 
     private scalerSubscription: Subscription | null = null;
+    private isDisposed: boolean = false;
     protected scaler!: IScaler;
 
     constructor(
@@ -140,7 +141,8 @@ export abstract class ViewBase {
         this.messageBus.getValue<void>(Messages.Common.ZoomOutCommand).subscribe(() => this.scaler.zoomOut());
         this.messageBus.getValue<void>(Messages.Common.ResetZoomCommand).subscribe(() => this.scaler.reset());
         this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
-        this.window.once("closed", () => this.destroy());
+        this.window.once("closed", () => this.dispose());
+        this.window.once("session-end", () => this.dispose());
     }
 
     private scale(scaleFactor: number): void {
@@ -150,7 +152,13 @@ export abstract class ViewBase {
         });
     }
 
-    private destroy(): void {
+    private dispose(): void {
+        if (this.isDisposed) {
+            return;
+        }
+
+        this.isDisposed = true;
+
         for (const subscription of this.subscriptions) {
             subscription.unsubscribe();
         }
