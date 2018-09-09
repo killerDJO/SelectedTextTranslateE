@@ -122,16 +122,12 @@ export class Application {
 
     private translateSelectedText(defaultView: TranslateResultViews = TranslateResultViews.Translation): void {
         this.textExtractor.getSelectedText()
-            .pipe(
-                map<string, TranslationRequest>(text => ({ text, isForcedTranslation: false, refreshCache: false })),
-                map(request => {
-                    const translationView = this.viewsRegistry.getView<TranslationView>(ViewNames.Translation);
-                    return translationView === null
-                        ? { skipStatistic: false, request }
-                        : { skipStatistic: translationView.isTranslationVisible(request), request };
-                })
-            )
-            .subscribe(result => this.translateText(result.request, result.skipStatistic, this.translationView, defaultView));
+            .subscribe(text => {
+                const request = { text, isForcedTranslation: false, refreshCache: false };
+                const translationView = this.viewsRegistry.getView<TranslationView>(ViewNames.Translation);
+                const skipStatistic = translationView !== null ? translationView.isTranslationVisible(request) : false;
+                this.translateText(request, skipStatistic, this.translationView, defaultView);
+            });
     }
 
     private playText(request: PlayTextRequest): void {
