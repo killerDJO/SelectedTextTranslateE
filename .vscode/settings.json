@@ -17,6 +17,7 @@
         "KEYEVENTF",
         "VUEJS",
         "arraybuffer",
+        "debounced",
         "devtool",
         "injectable",
         "inversify",

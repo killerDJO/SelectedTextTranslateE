@@ -59,6 +59,8 @@ export interface ScalingSettings {
 
 export interface TranslationViewSettings extends ViewSize {
     readonly margin: number;
+    readonly x?: number;
+    readonly y?: number;
     readonly renderer: TranslationViewRendererSettings;
 }
 

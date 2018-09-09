@@ -51,6 +51,10 @@ export class Scaler implements IScaler {
         return Math.round(this.scaleFactor$.value * value);
     }
 
+    public downscaleValue(value: number): number {
+        return Math.round(value / this.scaleFactor$.value);
+    }
+
     public rescaleValue(value: number, previousScaleFactor: number): number {
         return Math.round(this.scaleFactor$.value / previousScaleFactor * value);
     }

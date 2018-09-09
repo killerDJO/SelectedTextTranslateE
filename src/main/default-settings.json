@@ -67,6 +67,8 @@
             "width": 300,
             "height": 400,
             "margin": 5,
+            "x": null,
+            "y": null,
             "renderer": {
                 "score": {
                     "highThreshold": 0.05,

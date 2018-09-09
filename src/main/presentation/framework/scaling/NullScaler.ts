@@ -28,6 +28,10 @@ export class NullScaler implements IScaler {
         return value;
     }
 
+    public downscaleValue(value: number): number {
+        return value;
+    }
+
     public rescaleValue(value: number, previousScaleFactor: number): number {
         return value;
     }

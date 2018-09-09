@@ -9,6 +9,7 @@ import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import _ = require("lodash");
 
 export class TranslationView extends TranslateResultView {
 
@@ -25,6 +26,8 @@ export class TranslationView extends TranslateResultView {
         this.window.setSkipTaskbar(true);
 
         this.window.on("blur", () => this.hide());
+
+        this.setupSaveDimensions();
     }
 
     public showTextInput(): void {
@@ -69,14 +72,45 @@ export class TranslationView extends TranslateResultView {
         const width = this.scaler.scaleValue(translationSettings.width);
         const height = this.scaler.scaleValue(translationSettings.height);
 
+        const x = translationSettings.x || primaryDisplay.workArea.width - width - translationSettings.margin;
+        const y = translationSettings.y || primaryDisplay.workArea.height - height - translationSettings.margin;
+
         this.setCurrentScaleFactor();
+
+        let maxX = 0;
+        let maxY = 0;
+        for (const display of screen.getAllDisplays()) {
+            maxX = Math.max(maxX, display.workArea.x + display.workArea.width);
+            maxY = Math.max(maxY, display.workArea.y + display.workArea.height);
+        }
 
         return {
             width: width,
             height: height,
-            x: primaryDisplay.workArea.width - width - translationSettings.margin,
-            y: primaryDisplay.workArea.height - height - translationSettings.margin
+            x: Math.min(Math.max(0, x), maxX),
+            y: Math.min(Math.max(0, y), maxY)
         };
+    }
+
+    private setupSaveDimensions(): void {
+        const oneSecond = 1000;
+        const debouncedSaveDimension = _.debounce(() => this.saveDimensions(), oneSecond);
+        this.window.on("resize", debouncedSaveDimension);
+        this.window.on("move", debouncedSaveDimension);
+    }
+
+    private saveDimensions(): void {
+        const bounds = this.window.getBounds();
+        this.context.settingsProvider.updateSettings({
+            views: {
+                translation: {
+                    height: this.scaler.downscaleValue(bounds.height),
+                    width: this.scaler.downscaleValue(bounds.width),
+                    x: bounds.x,
+                    y: bounds.y
+                }
+            }
+        });
     }
 
     private setCurrentScaleFactor(): void {
