@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { concatMap, distinctUntilChanged } from "rxjs/operators";
+import { concatMap, distinctUntilChanged, map } from "rxjs/operators";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -121,9 +121,17 @@ export class Application {
     }
 
     private translateSelectedText(defaultView: TranslateResultViews = TranslateResultViews.Translation): void {
-        this.textExtractor
-            .getSelectedText()
-            .subscribe(text => this.translateText({ text, isForcedTranslation: false, refreshCache: false }, false, this.translationView, defaultView));
+        this.textExtractor.getSelectedText()
+            .pipe(
+                map<string, TranslationRequest>(text => ({ text, isForcedTranslation: false, refreshCache: false })),
+                map(request => {
+                    const translationView = this.viewsRegistry.getView<TranslationView>(ViewNames.Translation);
+                    return translationView === null
+                        ? { skipStatistic: false, request }
+                        : { skipStatistic: translationView.isTranslationVisible(request), request };
+                })
+            )
+            .subscribe(result => this.translateText(result.request, result.skipStatistic, this.translationView, defaultView));
     }
 
     private playText(request: PlayTextRequest): void {
