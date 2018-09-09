@@ -45,7 +45,7 @@
 
             .add-hotkey{
                 float: right;
-                width: calc(#{$action-column-width} + #{$border-width})
+                width: calc(#{$action-column-width} + #{2*$border-width})
             }
         }
 

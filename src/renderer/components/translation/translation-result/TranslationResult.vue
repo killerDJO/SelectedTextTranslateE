@@ -4,7 +4,7 @@
             <span class="loading-indicator"/>
             <span>Translating text...</span>
         </div>
-        <div v-else>
+        <div v-else class="translate-result-items">
             <translation-result-header
                 :history-record="historyRecord"
                 :is-embedded="isEmbedded"
