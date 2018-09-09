@@ -38,6 +38,10 @@ export class ViewsRegistry {
         return existingView as TView;
     }
 
+    public exists(name: ViewNames): boolean {
+        return this.getView(name) !== null;
+    }
+
     private createView<TView extends ViewBase>(name: ViewNames, postCreateAction?: (view: TView) => void): TView {
         const viewFactory = this.viewFactories.get(name);
         if (viewFactory === undefined) {

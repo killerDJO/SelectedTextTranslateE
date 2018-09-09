@@ -61,7 +61,6 @@ export default class TranslationResultContent extends Vue {
     }
 
     @Watch("defaultView")
-    @Watch("historyRecord", { deep: true })
     public initializeCurrentView() {
         if (!this.hasCategories && this.hasDefinitions && this.defaultView === TranslateResultViews.Translation) {
             this.currentView = TranslateResultViews.Definition;
@@ -69,6 +68,13 @@ export default class TranslationResultContent extends Vue {
             this.currentView = TranslateResultViews.Translation;
         } else {
             this.currentView = this.defaultView;
+        }
+    }
+
+    @Watch("historyRecord", { deep: true })
+    public watchHistoryRecord(oldValue: HistoryRecord, newValue: HistoryRecord) {
+        if (oldValue._id !== newValue._id) {
+            this.initializeCurrentView();
         }
     }
 

@@ -65,7 +65,7 @@ export class Application {
             .subscribe(records => historyView.setHistoryRecords(records));
         historyView.archiveRecord$
             .pipe(concatMap(record => this.historyStore.setArchivedStatus(record, record.isArchived)))
-            .subscribe();
+            .subscribe(record => this.historyView.updateTranslateResult(record));
 
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
 
@@ -147,7 +147,12 @@ export class Application {
         this.textTranslator
             .translate(translationRequest, skipStatistic)
             .subscribe(
-                result => targetView.setTranslateResult(result, defaultTranslateResultView),
+                result => {
+                    targetView.setTranslateResult(result, defaultTranslateResultView);
+                    if (result !== null && targetView === this.translationView && this.viewsRegistry.exists(ViewNames.History)) {
+                        this.historyView.updateTranslateResult(result);
+                    }
+                },
                 error => {
                     this.notificationSender.showNonCriticalError("Error translating text", error);
                     targetView.hide();
