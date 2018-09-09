@@ -13,7 +13,7 @@
             <slot name="body" />
           </div>
           <div class="modal-footer clearfix">
-              <link-button @click="close" :text="'Cancel'" />
+              <link-button @click="close" :text="'Cancel'" class="cancel" />
               <button class="btn btn-default" @click="confirm" v-tab-index v-auto-focus>Confirm</button>
           </div>
         </div>

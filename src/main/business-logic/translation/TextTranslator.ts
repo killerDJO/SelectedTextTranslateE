@@ -75,7 +75,7 @@ export class TextTranslator {
     }
 
     private getLogKey(key: TranslationKey): string {
-        return `for "${key.sentence}" when forced translation is set to "${key.isForcedTranslation}" with languages ${key.sourceLanguage} -${key.targetLanguage} `;
+        return `for "${key.sentence}" when forced translation is set to "${key.isForcedTranslation}" with languages ${key.sourceLanguage}-${key.targetLanguage}`;
     }
 
     private isHistoryRecordExpired(historyRecord: HistoryRecord): boolean {

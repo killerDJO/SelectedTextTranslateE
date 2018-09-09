@@ -57,10 +57,12 @@
     
         .modal-footer {
             padding: $padding-default;
-            float: right;
+            justify-content: flex-end;
+            align-items: center;
+            display: flex;
 
-            .link-button {
-                vertical-align: middle;
+            .cancel {
+                margin-right: $margin-small;
             }
         }
     }

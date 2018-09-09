@@ -5,18 +5,19 @@ import { injectable } from "inversify";
 import * as path from "path";
 
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
+import { SettingsStore } from "infrastructure/SettingsStore";
 
 @injectable()
 export class Logger {
     private readonly logger: winston.Logger;
     private readonly transport: winston.transports.FileTransportInstance;
     private readonly logsDirectory: string;
-    private readonly maxLogSize: number = 1024 * 1024;
 
-    constructor(storageFolderProvider: StorageFolderProvider) {
+    constructor(storageFolderProvider: StorageFolderProvider, settingsStore: SettingsStore) {
+        const loggingSettings = settingsStore.getSettings().logging;
         this.logsDirectory = path.join(storageFolderProvider.getPath(), "logs");
-        const logFilePath = path.join(this.logsDirectory, "log.txt");
-        this.transport = new winston.transports.File({ filename: logFilePath, maxsize: this.maxLogSize });
+        const logFilePath = path.join(this.logsDirectory, loggingSettings.logFileName);
+        this.transport = new winston.transports.File({ filename: logFilePath, maxsize: loggingSettings.maxLogSize });
         this.logger = winston.createLogger({
             format: this.getLogFormat(),
             transports: [

@@ -44,6 +44,10 @@
         "requestTimeout": 10000,
         "playVolume": 100
     },
+    "logging": {
+        "maxLogSize": 1048576,
+        "logFileName": "log.txt"
+    },
     "language": {
         "sourceLanguage": "en",
         "targetLanguage": "ru"
