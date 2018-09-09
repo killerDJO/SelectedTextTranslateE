@@ -120,6 +120,7 @@ export class Application {
         this.taskbar.isSuspended$
             .pipe(distinctUntilChanged())
             .subscribe(areSuspended => areSuspended ? this.hotkeysRegistry.suspendHotkeys() : this.hotkeysRegistry.enableHotkeys());
+        this.taskbar.watchPlayingState(this.textPlayer.isPlayInProgress$);
         this.taskbar.checkForUpdates$.subscribe(() => this.updater.checkForUpdate());
     }
 

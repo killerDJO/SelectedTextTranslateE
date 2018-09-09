@@ -23,6 +23,16 @@ export class Taskbar {
         this.isSuspended$.pipe(distinctUntilChanged()).subscribe(() => this.updateTraySuspendedState());
     }
 
+    public watchPlayingState(isPlaying$: BehaviorSubject<boolean>) {
+        isPlaying$.pipe(distinctUntilChanged()).subscribe(isPlaying => {
+            if (isPlaying) {
+                this.tray.setImage(this.iconsProvider.getIconPath("tray-playing"));
+            } else {
+                this.tray.setImage(this.getCurrentIcon());
+            }
+        });
+    }
+
     private createTaskBar(): void {
         this.tray = new Tray(this.iconsProvider.getIconPath("tray"));
         this.tray.setToolTip("Selected text translate..");
@@ -30,8 +40,12 @@ export class Taskbar {
     }
 
     private updateTraySuspendedState(): void {
-        this.tray.setImage(this.iconsProvider.getIconPath(this.isSuspended$.value ? "tray-suspended" : "tray"));
+        this.tray.setImage(this.getCurrentIcon());
         this.tray.setContextMenu(this.createContextMenu());
+    }
+
+    private getCurrentIcon(): string {
+        return this.iconsProvider.getIconPath(this.isSuspended$.value ? "tray-suspended" : "tray")
     }
 
     private createContextMenu(): Electron.Menu {

@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { Observable, bindNodeCallback, of } from "rxjs";
+import { Observable, bindNodeCallback, of, BehaviorSubject } from "rxjs";
 import { concatMap, map, tap } from "rxjs/operators";
 import * as path from "path";
 import * as fs from "fs";
@@ -18,7 +18,7 @@ import { replaceAllPattern } from "utils/replace-pattern";
 export class TextPlayer {
 
     private readonly tempFilePath: string;
-    private isPlayInProgress: boolean = false;
+    public isPlayInProgress$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
         private readonly requestProvider: RequestProvider,
@@ -30,11 +30,11 @@ export class TextPlayer {
     }
 
     public playText(request: PlayTextRequest): Observable<void> {
-        if (this.isPlayInProgress) {
+        if (this.isPlayInProgress$.value) {
             return of(undefined);
         }
 
-        this.isPlayInProgress = true;
+        this.isPlayInProgress$.next(true);
         const language = request.language || this.settingsProvider.getSettings().value.language.sourceLanguage;
         this.logger.info(`Playing ${this.getLogKey(request.text, language)}`);
 
@@ -42,7 +42,7 @@ export class TextPlayer {
             .pipe(
                 concatMap(content => this.saveContentToTempFile(content)),
                 concatMap(() => this.playFile()),
-                tap(() => this.logger.info(`End playing ${this.getLogKey(request.text, language)}`))
+                tap(() => this.logger.info(`End playing ${this.getLogKey(request.text, language)}`)),
             );
     }
 
@@ -55,7 +55,7 @@ export class TextPlayer {
         return new Observable<void>(observer => {
             const volume = this.settingsProvider.getSettings().value.engine.playVolume;
             nativeExtensions.playFile(this.tempFilePath, volume, error => {
-                this.isPlayInProgress = false;
+                this.isPlayInProgress$.next(false);
                 if (!!error) {
                     observer.error(new Error(error));
                 } else {
