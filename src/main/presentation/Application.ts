@@ -129,12 +129,7 @@ export class Application {
 
     private translateSelectedText(defaultView: TranslateResultViews = TranslateResultViews.Translation): void {
         this.textExtractor.getSelectedText()
-            .subscribe(text => {
-                const request = { text, isForcedTranslation: false, refreshCache: false };
-                const translationView = this.viewsRegistry.getView<TranslationView>(ViewNames.Translation);
-                const skipStatistic = translationView !== null ? translationView.isTranslationVisible(request) : false;
-                this.translateText(request, skipStatistic, this.translationView, defaultView);
-            });
+            .subscribe(text => this.translateText({ text, isForcedTranslation: false, refreshCache: false }, false, this.translationView, defaultView));
     }
 
     private playText(request: PlayTextRequest): void {
@@ -146,6 +141,10 @@ export class Application {
     }
 
     private translateText(translationRequest: TranslationRequest, skipStatistic: boolean, targetView: TranslateResultView, defaultTranslateResultView: TranslateResultViews = TranslateResultViews.Translation): void {
+        if (this.viewsRegistry.exists(ViewNames.Translation)) {
+            skipStatistic = skipStatistic || this.translationView.isTranslationVisible(translationRequest);
+        }
+
         targetView.showProgressIndicator();
         this.textTranslator
             .translate(translationRequest, skipStatistic)
