@@ -110,7 +110,9 @@ export class HistoryStore {
 
         const sortQuery: any = {};
         sortQuery[sortColumnMap[request.sortColumn]] = request.sortOrder === SortOrder.Asc ? 1 : -1;
-        sortQuery.lastTranslatedDate = -1;
+        if (request.sortColumn !== SortColumn.LastTranslatedDate) {
+            sortQuery.lastTranslatedDate = -1;
+        }
 
         const searchQuery: any = {};
         if (request.starredOnly) {
