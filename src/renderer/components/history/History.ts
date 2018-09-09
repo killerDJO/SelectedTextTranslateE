@@ -27,6 +27,7 @@ export default class History extends Vue {
     @ns.State public sortColumn!: SortColumn;
     @ns.State public sortOrder!: SortOrder;
     @ns.State public starredOnly!: boolean;
+    @ns.State public includeArchived!: boolean;
     @ns.State public languages!: Map<string, string>;
 
     @ns.State public translationHistoryRecord!: HistoryRecord | null;
@@ -39,15 +40,17 @@ export default class History extends Vue {
     @ns.Mutation private readonly setSortColumn!: (sortColumn: SortColumn) => void;
     @ns.Mutation private readonly setSortOrder!: (sortOrder: SortOrder) => void;
     @ns.Mutation private readonly setStarredOnly!: (starredOnly: boolean) => void;
+    @ns.Mutation private readonly setIncludeArchived!: (includeArchived: boolean) => void;
 
     @ns.Mutation public readonly hideTranslation!: () => void;
 
     @ns.Action private readonly setup!: () => void;
     @ns.Action private readonly requestHistoryRecords!: () => void;
-    @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
+    @ns.Action public readonly setArchivedStatus!: (request: { record: HistoryRecord; isArchived: boolean }) => void;
 
     @ns.Action public readonly playText!: () => void;
     @ns.Action public readonly translateText!: (request: TranslationRequest) => void;
+    @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
     @ns.Action public readonly translateSuggestion!: () => void;
     @ns.Action public readonly forceTranslation!: () => void;
     @ns.Action public readonly refreshTranslation!: () => void;
@@ -90,6 +93,13 @@ export default class History extends Vue {
         return this.starredOnly;
     }
 
+    public set includeArchived$(value: boolean) {
+        this.setIncludeArchived(value);
+    }
+    public get includeArchived$(): boolean {
+        return this.includeArchived;
+    }
+
     public get pageCount(): number {
         return Math.ceil(this.totalRecords / this.pageSize);
     }
@@ -101,13 +111,14 @@ export default class History extends Vue {
             refreshCache: false,
             sourceLanguage: record.sourceLanguage,
             targetLanguage: record.targetLanguage
-        })
+        });
     }
 
     @Watch("pageNumber")
     @Watch("sortColumn")
     @Watch("sortOrder")
     @Watch("starredOnly")
+    @Watch("includeArchived")
     public refreshRecords(): void {
         this.requestHistoryRecords();
     }

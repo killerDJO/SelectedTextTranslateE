@@ -7,10 +7,12 @@ import { Messages } from "common/messaging/Messages";
 import { mapSubject } from "utils/map-subject";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
+import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
 
 export class HistoryView extends TranslateResultView {
 
     public historyRecordsRequest$!: Observable<HistoryRecordsRequest>;
+    public readonly archiveRecord$: Observable<ArchiveRequest>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.History, viewContext, {
@@ -21,6 +23,7 @@ export class HistoryView extends TranslateResultView {
         });
 
         this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
+        this.archiveRecord$ = this.messageBus.getValue<ArchiveRequest>(Messages.History.ArchiveRecord);
     }
 
     public setHistoryRecords(historyRecords: HistoryRecordsResponse): void {

@@ -61,8 +61,11 @@ export class Application {
 
     private setupHistoryView(historyView: HistoryView): void {
         historyView.historyRecordsRequest$
-            .pipe(concatMap(request => this.historyStore.getRecords(request.pageNumber, request.sortColumn, request.sortOrder, request.starredOnly)))
+            .pipe(concatMap(request => this.historyStore.getRecords(request)))
             .subscribe(records => historyView.setHistoryRecords(records));
+        historyView.archiveRecord$
+            .pipe(concatMap(record => this.historyStore.setArchivedStatus(record, record.isArchived)))
+            .subscribe();
 
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
 

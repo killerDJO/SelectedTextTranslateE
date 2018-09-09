@@ -11,4 +11,5 @@ export interface HistoryRecord {
     readonly updatedDate: Date;
     readonly lastTranslatedDate: Date;
     readonly isStarred: boolean;
+    readonly isArchived: boolean;
 }

@@ -26,6 +26,10 @@
                 <td>Target Language</td>
                 <td>{{languages.get(historyRecord.targetLanguage)}}</td>
               </tr>
+              <tr>
+                <td>Archived</td>
+                <td>{{historyRecord.isArchived ? "Yes" : "No"}}</td>
+              </tr>
             </tbody>
           </table>
         <link-button @click="refreshTranslation" :text="'Refresh Record'" class="refresh-button"/>

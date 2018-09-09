@@ -5,6 +5,7 @@
         <p class="title">Translation History</p>
         <div>
           <checkbox v-model="showLanguages" :label="'Show Languages'" :left-to-right="true" />
+          <checkbox v-model="includeArchived$" :label="'Show Archived'" :left-to-right="true" />
           <checkbox v-model="starredOnly$" :label="'Starred Only'" :left-to-right="true" />
         </div>
       </div>
@@ -21,6 +22,7 @@
             <sortable-header class="source-language-column" :sort-column="SortColumn.SourceLanguage" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Source</sortable-header>
             <sortable-header class="target-language-column" :sort-column="SortColumn.TargetLanguage" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Target</sortable-header>
             <sortable-header class="last-translated-column" :sort-column="SortColumn.LastTranslatedDate" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Last Translated</sortable-header>
+            <sortable-header class="archived-column" :sort-column="SortColumn.IsArchived" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Status</sortable-header>
           </tr>
         </thead>
         <tbody v-if="historyRecords.length !== 0">
@@ -40,9 +42,13 @@
               <span v-else class="no-translation">No Translation</span>
             </td>
             <td class="times-column">{{record.translationsNumber !== 0 ? record.translationsNumber : "-"}}</td>
-            <td class="source-language-column">{{languages.get(record.sourceLanguage) || record.sourceLanguage}}</td>
-            <td class="target-language-column">{{languages.get(record.targetLanguage) || record.targetLanguage}}</td>
+            <td class="source-language-column" v-overflow-tooltip>{{languages.get(record.sourceLanguage) || record.sourceLanguage}}</td>
+            <td class="target-language-column" v-overflow-tooltip>{{languages.get(record.targetLanguage) || record.targetLanguage}}</td>
             <td class="last-translated-column" v-overflow-tooltip>{{record.lastTranslatedDate | date-time}}</td>
+            <td class="archived-column">
+              <icon-button v-if="record.isArchived" title="Restore" @click="setArchivedStatus({record: record, isArchived: false})"><i class="icon icon-trash restore"/></icon-button>
+              <icon-button v-else title="Archive" @click="setArchivedStatus({record: record, isArchived: true})"><i class="icon icon-trash archive"/></icon-button>
+            </td>
           </tr>
         </tbody>
         <tbody v-else>

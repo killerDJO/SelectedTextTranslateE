@@ -13,6 +13,7 @@ import { DatastoreProvider } from "data-access/DatastoreProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { HistorySettings } from "business-logic/settings/dto/Settings";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
+import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
 
 @injectable()
 export class HistoryStore {
@@ -47,7 +48,8 @@ export class HistoryStore {
             createdDate: currentTime,
             updatedDate: currentTime,
             lastTranslatedDate: currentTime,
-            isStarred: false
+            isStarred: false,
+            isArchived: false
         });
 
         return insert$.pipe(
@@ -95,33 +97,38 @@ export class HistoryStore {
             );
     }
 
-    public getRecords(pageNumber: number, sortColumn: SortColumn, sortOrder: SortOrder, starredOnly: boolean): Observable<HistoryRecordsResponse> {
+    public getRecords(request: HistoryRecordsRequest): Observable<HistoryRecordsResponse> {
         const sortColumnMap = {
             [SortColumn.Input]: "sentence",
             [SortColumn.TimesTranslated]: "translationsNumber",
             [SortColumn.LastTranslatedDate]: "lastTranslatedDate",
             [SortColumn.Translation]: "translateResult.sentence.translation",
             [SortColumn.SourceLanguage]: "sourceLanguage",
-            [SortColumn.TargetLanguage]: "targetLanguage"
+            [SortColumn.TargetLanguage]: "targetLanguage",
+            [SortColumn.IsArchived]: "isArchived"
         };
 
         const sortQuery: any = {};
-        sortQuery[sortColumnMap[sortColumn]] = sortOrder === SortOrder.Asc ? 1 : -1;
+        sortQuery[sortColumnMap[request.sortColumn]] = request.sortOrder === SortOrder.Asc ? 1 : -1;
+        sortQuery.lastTranslatedDate = -1;
 
         const searchQuery: any = {};
-        if (starredOnly) {
+        if (request.starredOnly) {
             searchQuery.isStarred = true;
+        }
+        if (!request.includeArchived) {
+            searchQuery.isArchived = false;
         }
 
         const count$ = this.datastoreProvider.count(this.datastore, searchQuery);
         const pageSize = this.historySettings.pageSize;
 
         return this.datastoreProvider
-            .findPaged<HistoryRecord>(this.datastore, searchQuery, sortQuery, pageNumber, pageSize).pipe(
+            .findPaged<HistoryRecord>(this.datastore, searchQuery, sortQuery, request.pageNumber, pageSize).pipe(
                 concatMap(historyRecords => count$.pipe(map(count => {
                     return {
                         records: historyRecords,
-                        pageNumber: pageNumber,
+                        pageNumber: request.pageNumber,
                         pageSize: pageSize,
                         totalRecords: count
                     };
@@ -130,13 +137,21 @@ export class HistoryStore {
     }
 
     public setStarredStatus(key: TranslationKey, isStarred: boolean): Observable<HistoryRecord> {
-        const setStarredStatus$ = this.datastoreProvider.update<HistoryRecord>(
+        return this.setStatus(key, { isStarred: isStarred }, `Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`);
+    }
+
+    public setArchivedStatus(key: TranslationKey, isArchived: boolean): Observable<HistoryRecord> {
+        return this.setStatus(key, { isArchived: isArchived }, `Translation ${this.getLogKey(key)} has changed its archived status to ${isArchived}.`);
+    }
+
+    private setStatus(key: TranslationKey, updateQuery: any, logMessage: string) {
+        const setStatus$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
             this.getSearchQuery(key),
-            { $set: { isStarred: isStarred } });
+            { $set: updateQuery });
 
-        return setStarredStatus$.pipe(
-            tap(() => this.logger.info(`Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`)),
+        return setStatus$.pipe(
+            tap(() => this.logger.info(logMessage)),
             tap(() => this.notifyAboutUpdate())
         );
     }

@@ -60,7 +60,7 @@
 
             .word-column,
             .translation-column {
-                width: 37%;
+                width: 35%;
             }
 
             .source-language-column,
@@ -89,6 +89,20 @@
 
                 .icon-star {
                     color: $color-star;
+                }
+            }
+
+            .archived-column {
+                width: 70px;
+                text-align: center;
+
+                .archive:hover,
+                .restore {
+                    color: $color-error;
+                }
+
+                .archive {
+                    color: $color-gray;
                 }
             }
 

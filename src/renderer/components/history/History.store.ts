@@ -11,6 +11,7 @@ import { SortColumn } from "common/dto/history/SortColumn";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
+import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
 
 const messageBus = new MessageBus();
 
@@ -22,6 +23,7 @@ interface HistoryState extends TranslateResultState {
     sortColumn: SortColumn;
     sortOrder: SortOrder;
     starredOnly: boolean;
+    includeArchived: boolean;
 
     isTranslationVisible: boolean;
 }
@@ -36,6 +38,7 @@ export const history: Module<HistoryState, RootState> = {
         sortColumn: SortColumn.LastTranslatedDate,
         sortOrder: SortOrder.Desc,
         starredOnly: false,
+        includeArchived: false,
         languages: new Map<string, string>(),
 
         translationHistoryRecord: null,
@@ -64,6 +67,9 @@ export const history: Module<HistoryState, RootState> = {
         setStarredOnly(state: HistoryState, starredOnly: boolean): void {
             state.starredOnly = starredOnly;
         },
+        setIncludeArchived(state: HistoryState, includeArchived: boolean): void {
+            state.includeArchived = includeArchived;
+        },
         setTranslationInProgress(state: HistoryState): void {
             translateResultMutations.setTranslationInProgress(state);
             state.isTranslationVisible = true;
@@ -87,7 +93,26 @@ export const history: Module<HistoryState, RootState> = {
             messageBus.getNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
         },
         requestHistoryRecords({ state }): void {
-            messageBus.sendCommand<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords, { pageNumber: state.pageNumber, sortColumn: state.sortColumn, sortOrder: state.sortOrder, starredOnly: state.starredOnly });
+            messageBus.sendCommand<HistoryRecordsRequest>(
+                Messages.History.RequestHistoryRecords,
+                {
+                    pageNumber: state.pageNumber,
+                    sortColumn: state.sortColumn,
+                    sortOrder: state.sortOrder,
+                    starredOnly: state.starredOnly,
+                    includeArchived: state.includeArchived
+                });
+        },
+        setArchivedStatus(_, request: { record: HistoryRecord; isArchived: boolean }): void {
+            messageBus.sendCommand<ArchiveRequest>(
+                Messages.History.ArchiveRecord,
+                {
+                    sentence: request.record.sentence,
+                    isForcedTranslation: request.record.isForcedTranslation,
+                    sourceLanguage: request.record.sourceLanguage,
+                    targetLanguage: request.record.targetLanguage,
+                    isArchived: request.isArchived
+                });
         }
     }
 };
