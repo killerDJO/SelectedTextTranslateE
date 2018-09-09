@@ -3,12 +3,12 @@ import { Component } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
-
-import TranslationResult from "./translation-result/TranslationResult.vue";
-import TranslationInput from "./translation-input/TranslationInput.vue";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
+
+import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
+import TranslationInput from "components/translation/translation-input/TranslationInput.vue";
 
 const ns = namespace("app/translation");
 

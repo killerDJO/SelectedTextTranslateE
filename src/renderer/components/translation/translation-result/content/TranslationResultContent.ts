@@ -3,11 +3,11 @@ import Vue from "vue";
 
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 import TranslationResultContentCategory from "components/translation/translation-result/content/category/TranslationResultContentCategory.vue";
 import TranslationResultDefinitionCategory from "components/translation/translation-result/content/definitions/TranslationResultDefinitionCategory.vue";
 import TranslationResultStatistic from "components/translation/translation-result/content/statistic/TranslationResultStatistic.vue";
-import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 @Component({
     components: {

@@ -1,7 +1,7 @@
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import * as _ from "lodash";
 
 import { Hotkey } from "common/dto/settings/Hotkey";
-import * as _ from "lodash";
 
 @Component
 export default class HotkeyInput extends Vue {

@@ -1,7 +1,7 @@
 import { Notification } from "electron";
 import { injectable } from "inversify";
+
 import { Logger } from "infrastructure/Logger";
-import { Observable, empty } from "rxjs";
 
 @injectable()
 export class NotificationSender {
@@ -17,8 +17,8 @@ export class NotificationSender {
             body: message
         });
 
-        return new Promise<void>((resolve, reject) => {
-            notification.on("show", event => resolve());
+        return new Promise<void>((resolve) => {
+            notification.on("show", (event) => resolve());
 
             if (!!clickHandler) {
                 notification.on("click", clickHandler);

@@ -2,12 +2,12 @@ import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
-
-import TranslationResultContent from "./content/TranslationResultContent.vue";
-import TranslationResultHeader from "./header/TranslationResultHeader.vue";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
+
+import TranslationResultContent from "components/translation/translation-result/content/TranslationResultContent.vue";
+import TranslationResultHeader from "components/translation/translation-result/header/TranslationResultHeader.vue";
 
 @Component({
     components: {
@@ -48,7 +48,7 @@ export default class TranslationResult extends Vue {
             refreshCache: false,
             sourceLanguage: this.historyRecord.sourceLanguage,
             targetLanguage: this.historyRecord.targetLanguage
-        }
+        };
         this.$emit("translate-text", request);
     }
 

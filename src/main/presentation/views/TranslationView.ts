@@ -1,15 +1,15 @@
 import { screen } from "electron";
 import { BehaviorSubject, Subject } from "rxjs";
+import * as _ from "lodash";
 
 import { Messages } from "common/messaging/Messages";
 import { ViewNames } from "common/ViewNames";
-
-import { ViewContext } from "presentation/framework/ViewContext";
-import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import _ = require("lodash");
+
+import { ViewContext } from "presentation/framework/ViewContext";
+import { TranslateResultView } from "presentation/views/TranslateResultView";
 
 export class TranslationView extends TranslateResultView {
 

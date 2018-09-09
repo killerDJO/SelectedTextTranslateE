@@ -1,6 +1,6 @@
 import Vue from "vue";
-
 import { Component, Prop } from "vue-property-decorator";
+
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslateResultSentence } from "common/dto/translation/TranslateResult";
 

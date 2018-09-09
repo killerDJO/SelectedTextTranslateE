@@ -1,9 +1,10 @@
 import { autoUpdater, shell, dialog, app } from "electron";
 import { injectable } from "inversify";
 
-import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { Logger } from "infrastructure/Logger";
 import { NotificationSender } from "infrastructure/NotificationSender";
+
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 @injectable()
 export class Updater {

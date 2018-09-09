@@ -1,17 +1,18 @@
 import { ActionContext, Commit } from "vuex";
 
-import { TranslateResult } from "common/dto/translation/TranslateResult";
+import { RootState } from "root.store";
+
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
-import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
-import { RootState } from "root.store";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { StarRequest } from "common/dto/translation/StarRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 import { Language } from "common/dto/settings/Language";
+
+import { MessageBus } from "communication/MessageBus";
 
 const messageBus = new MessageBus();
 

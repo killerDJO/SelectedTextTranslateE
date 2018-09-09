@@ -2,6 +2,7 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import * as _ from "lodash";
 
 import { EditablePlaySettings } from "common/dto/settings/editable-settings/EditablePlaySettings";
+
 import SettingsHolder from "components/settings/settings-holder/SettingsHolder.vue";
 
 @Component({

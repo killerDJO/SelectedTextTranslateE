@@ -1,13 +1,15 @@
 import { Observable } from "rxjs";
 
 import { ViewNames } from "common/ViewNames";
-import { ViewContext } from "presentation/framework/ViewContext";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
 import { Messages } from "common/messaging/Messages";
-import { mapSubject } from "utils/map-subject";
-import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
 import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
+
+import { mapSubject } from "utils/map-subject";
+
+import { ViewContext } from "presentation/framework/ViewContext";
+import { TranslateResultView } from "presentation/views/TranslateResultView";
 
 export class HistoryView extends TranslateResultView {
 

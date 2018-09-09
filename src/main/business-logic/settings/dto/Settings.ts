@@ -29,6 +29,7 @@ export interface TranslationEngineSettings {
     readonly historyRefreshInterval: number;
     readonly userAgent: string;
     readonly requestTimeout: number;
+    readonly translationConfigRefreshInterval: number;
     readonly playVolume: number;
 }
 

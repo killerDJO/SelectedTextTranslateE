@@ -3,11 +3,14 @@ import { app } from "electron";
 import "reflect-metadata";
 
 import { container } from "inversify.config";
-import { DevToolsLoader } from "presentation/infrastructure/DevToolsLoader";
+
 import { ErrorHandler } from "infrastructure/ErrorHandler";
 import { Logger } from "infrastructure/Logger";
-import { Application } from "presentation/Application";
+
 import { Installer } from "install/Installer";
+
+import { DevToolsLoader } from "presentation/infrastructure/DevToolsLoader";
+import { Application } from "presentation/Application";
 
 const logger = container.get<Logger>(Logger);
 

@@ -1,5 +1,4 @@
 import { BehaviorSubject } from "rxjs";
-import { screen } from "electron";
 import { injectable } from "inversify";
 
 import { IScaler } from "presentation/framework/scaling/IScaler";

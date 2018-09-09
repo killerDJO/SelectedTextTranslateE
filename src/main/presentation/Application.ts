@@ -1,31 +1,34 @@
 import { injectable } from "inversify";
-import { concatMap, distinctUntilChanged, map } from "rxjs/operators";
-
-import { Taskbar } from "presentation/Taskbar";
-import { TranslationView } from "presentation/views/TranslationView";
-import { TextTranslator } from "business-logic/translation/TextTranslator";
-import { TextExtractor } from "business-logic/translation/TextExtractor";
-import { TextPlayer } from "business-logic/translation/TextPlayer";
-import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
-import { IconsProvider } from "presentation/infrastructure/IconsProvider";
-import { ViewsRegistry } from "presentation/views/ViewsRegistry";
-import { ViewNames } from "common/ViewNames";
-import { ViewBase } from "presentation/framework/ViewBase";
-import { HistoryView } from "presentation/views/HistoryView";
-import { HistoryStore } from "business-logic/history/HistoryStore";
-import { SettingsView } from "presentation/views/SettingsView";
-import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { Scaler } from "presentation/framework/scaling/Scaler";
-import { Updater } from "install/Updater";
-import { NotificationSender } from "infrastructure/NotificationSender";
+import { concatMap, distinctUntilChanged } from "rxjs/operators";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
-import { SearchExecutor } from "business-logic/search/SearchExecutor";
+import { ViewNames } from "common/ViewNames";
+
+import { Updater } from "install/Updater";
 import { StartupHandler } from "install/StartupHandler";
+
+import { NotificationSender } from "infrastructure/NotificationSender";
+
+import { SearchExecutor } from "business-logic/search/SearchExecutor";
+import { TextTranslator } from "business-logic/translation/TextTranslator";
+import { TextExtractor } from "business-logic/translation/TextExtractor";
+import { TextPlayer } from "business-logic/translation/TextPlayer";
+import { HistoryStore } from "business-logic/history/HistoryStore";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+
+import { Taskbar } from "presentation/Taskbar";
+import { TranslationView } from "presentation/views/TranslationView";
+import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
+import { IconsProvider } from "presentation/infrastructure/IconsProvider";
+import { ViewsRegistry } from "presentation/views/ViewsRegistry";
+import { ViewBase } from "presentation/framework/ViewBase";
+import { HistoryView } from "presentation/views/HistoryView";
+import { SettingsView } from "presentation/views/SettingsView";
+import { Scaler } from "presentation/framework/scaling/Scaler";
+import { TranslateResultView } from "presentation/views/TranslateResultView";
 
 @injectable()
 export class Application {

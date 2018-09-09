@@ -2,19 +2,18 @@ import { Component, Vue } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 import * as _ from "lodash";
 
-import HotkeySettings from "components/settings/hotkeys-settings/HotkeySettings.vue";
-import ScalingSettings from "components/settings/scaling-settings/ScalingSettings.vue";
-import PlaySettings from "components/settings/play-settings/PlaySettings.vue";
-import LanguageSettings from "components/settings/language-settings/LanguageSettings.vue";
-import StartupSettings from "components/settings/startup-settings/StartupSettings.vue";
-
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { EditableHotkeySettings } from "common/dto/settings/editable-settings/EditableHotkeySettings";
 import { EditableScalingSettings } from "common/dto/settings/editable-settings/EditableScalingSettings";
 import { EditablePlaySettings } from "common/dto/settings/editable-settings/EditablePlaySettings";
 import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
-
 import { ScalingState } from "common/dto/settings/ScalingState";
+
+import HotkeySettings from "components/settings/hotkeys-settings/HotkeySettings.vue";
+import ScalingSettings from "components/settings/scaling-settings/ScalingSettings.vue";
+import PlaySettings from "components/settings/play-settings/PlaySettings.vue";
+import LanguageSettings from "components/settings/language-settings/LanguageSettings.vue";
+import StartupSettings from "components/settings/startup-settings/StartupSettings.vue";
 
 const ns = namespace("app/settings");
 

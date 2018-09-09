@@ -2,11 +2,13 @@ import { BehaviorSubject } from "rxjs";
 import { screen } from "electron";
 import { injectable } from "inversify";
 
-import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { IScaler } from "presentation/framework/scaling/IScaler";
-import { ScalingSettings } from "business-logic/settings/dto/Settings";
 import { ScalingState } from "common/dto/settings/ScalingState";
 import { mapSubject } from "utils/map-subject";
+
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { ScalingSettings } from "business-logic/settings/dto/Settings";
+
+import { IScaler } from "presentation/framework/scaling/IScaler";
 
 @injectable()
 export class Scaler implements IScaler {

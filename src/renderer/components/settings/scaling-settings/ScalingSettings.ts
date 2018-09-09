@@ -2,8 +2,9 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import * as _ from "lodash";
 
 import { EditableScalingSettings } from "common/dto/settings/editable-settings/EditableScalingSettings";
-import SettingsHolder from "components/settings/settings-holder/SettingsHolder.vue";
 import { ScalingState } from "common/dto/settings/ScalingState";
+
+import SettingsHolder from "components/settings/settings-holder/SettingsHolder.vue";
 
 @Component({
     components: {

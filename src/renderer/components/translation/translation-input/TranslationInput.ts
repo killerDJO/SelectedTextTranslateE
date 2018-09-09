@@ -1,4 +1,5 @@
 import Vue from "vue";
+
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 
 export default class TranslationInput extends Vue {

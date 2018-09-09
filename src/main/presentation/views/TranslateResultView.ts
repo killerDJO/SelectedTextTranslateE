@@ -1,18 +1,17 @@
 import { Observable, Subject } from "rxjs";
 
 import { Messages } from "common/messaging/Messages";
-
-import { ViewBase } from "presentation/framework/ViewBase";
 import { ViewNames } from "common/ViewNames";
-import { ViewContext } from "presentation/framework/ViewContext";
-
-import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
-import { TranslationRequest } from "common/dto/translation/TranslationRequest";
-import { ViewOptions } from "presentation/framework/ViewOptions";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { StarRequest } from "common/dto/translation/StarRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
+import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
+import { TranslationRequest } from "common/dto/translation/TranslationRequest";
+
+import { ViewBase } from "presentation/framework/ViewBase";
+import { ViewContext } from "presentation/framework/ViewContext";
+import { ViewOptions } from "presentation/framework/ViewOptions";
 
 export abstract class TranslateResultView extends ViewBase {
     protected inProgressTimeout: NodeJS.Timer | null = null;

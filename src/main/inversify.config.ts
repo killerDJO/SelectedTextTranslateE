@@ -1,5 +1,16 @@
 import { Container } from "inversify";
 
+import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
+import { Logger } from "infrastructure/Logger";
+import { ErrorHandler } from "infrastructure/ErrorHandler";
+import { SettingsStore } from "infrastructure/SettingsStore";
+import { NotificationSender } from "infrastructure/NotificationSender";
+
+import { Installer } from "install/Installer";
+import { Updater } from "install/Updater";
+import { StartupHandler } from "install/StartupHandler";
+import { StartupItemsProvider } from "install/StartupItemsProvider";
+
 import { RequestProvider } from "data-access/RequestProvider";
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 
@@ -10,6 +21,8 @@ import { TextTranslator } from "business-logic/translation/TextTranslator";
 import { TranslatePageParser } from "business-logic/translation/TranslatePageParser";
 import { TranslationResponseParser } from "business-logic/translation/TranslationResponseParser";
 import { TextPlayer } from "business-logic/translation/TextPlayer";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { SearchExecutor } from "business-logic/search/SearchExecutor";
 
 import { MessageBus } from "presentation/infrastructure/MessageBus";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
@@ -17,23 +30,12 @@ import { Application } from "presentation/Application";
 import { AccentColorProvider } from "presentation/framework/AccentColorProvider";
 import { HotkeysRegistry } from "presentation/hotkeys/HotkeysRegistry";
 import { Scaler } from "presentation/framework/scaling/Scaler";
-import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
-import { Logger } from "infrastructure/Logger";
-import { ErrorHandler } from "infrastructure/ErrorHandler";
-import { SettingsStore } from "infrastructure/SettingsStore";
 import { ViewContext } from "presentation/framework/ViewContext";
-import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { NotificationSender } from "infrastructure/NotificationSender";
 import { RendererErrorHandler } from "presentation/infrastructure/RendererErrorHandler";
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewsRegistry } from "presentation/views/ViewsRegistry";
 import { NullScaler } from "presentation/framework/scaling/NullScaler";
 import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
-import { Installer } from "install/Installer";
-import { Updater } from "install/Updater";
-import { SearchExecutor } from "business-logic/search/SearchExecutor";
-import { StartupHandler } from "install/StartupHandler";
-import { StartupItemsProvider } from "install/StartupItemsProvider";
 
 class Binder {
     public readonly container: Container = new Container();

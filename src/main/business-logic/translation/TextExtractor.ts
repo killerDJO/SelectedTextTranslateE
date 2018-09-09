@@ -1,6 +1,7 @@
 import { clipboard } from "electron";
 import { Subject, Observable } from "rxjs";
 import { injectable } from "inversify";
+
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 import * as nativeExtensions from "native/native-extensions.node";

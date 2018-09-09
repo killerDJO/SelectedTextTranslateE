@@ -1,7 +1,9 @@
 import { injectable } from "inversify";
-import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { replacePattern } from "utils/replace-pattern";
 import { shell } from "electron";
+
+import { replacePattern } from "utils/replace-pattern";
+
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 @injectable()
 export class SearchExecutor {

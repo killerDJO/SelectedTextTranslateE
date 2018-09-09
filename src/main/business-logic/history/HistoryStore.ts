@@ -8,12 +8,15 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
 import { SortColumn } from "common/dto/history/SortColumn";
 import { SortOrder } from "common/dto/history/SortOrder";
-import { Logger } from "infrastructure/Logger";
-import { DatastoreProvider } from "data-access/DatastoreProvider";
-import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { HistorySettings } from "business-logic/settings/dto/Settings";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
+
+import { Logger } from "infrastructure/Logger";
+
+import { DatastoreProvider } from "data-access/DatastoreProvider";
+
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { HistorySettings } from "business-logic/settings/dto/Settings";
 
 @injectable()
 export class HistoryStore {

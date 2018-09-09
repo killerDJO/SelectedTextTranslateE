@@ -1,6 +1,7 @@
 import { injectable } from "inversify";
 
 import { ViewNames } from "common/ViewNames";
+
 import { ViewBase } from "presentation/framework/ViewBase";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslationView } from "presentation/views/TranslationView";

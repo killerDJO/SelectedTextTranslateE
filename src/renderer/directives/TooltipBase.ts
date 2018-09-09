@@ -8,7 +8,7 @@ interface TooltipData {
 
 interface Callback {
     readonly event: string;
-    readonly listener: () => void;
+    listener(): void;
 }
 
 export abstract class TooltipBase implements DirectiveOptions {

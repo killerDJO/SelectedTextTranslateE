@@ -5,14 +5,16 @@ import * as path from "path";
 import * as fs from "fs";
 import { app } from "electron";
 
+import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
+
+import { Logger } from "infrastructure/Logger";
+import { replaceAllPattern } from "utils/replace-pattern";
+
 import { RequestProvider } from "data-access/RequestProvider";
+import * as nativeExtensions from "native/native-extensions.node";
+
 import { HashProvider } from "business-logic/translation/HashProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { Logger } from "infrastructure/Logger";
-
-import * as nativeExtensions from "native/native-extensions.node";
-import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
-import { replaceAllPattern } from "utils/replace-pattern";
 
 @injectable()
 export class TextPlayer {

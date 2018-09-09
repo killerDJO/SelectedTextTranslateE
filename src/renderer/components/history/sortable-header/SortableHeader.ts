@@ -1,4 +1,5 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
+
 import { SortOrder } from "common/dto/history/SortOrder";
 import { SortColumn } from "common/dto/history/SortColumn";
 

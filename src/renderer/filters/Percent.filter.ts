@@ -1,5 +1,3 @@
-import * as moment from "moment";
-
 import { FilterOptions } from "decorators/FilterOptions";
 import Filter from "decorators/VueFilter";
 

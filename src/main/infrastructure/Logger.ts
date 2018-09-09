@@ -1,5 +1,4 @@
 import * as winston from "winston";
-import * as Transport from "winston-transport";
 import { Format } from "logform";
 import { shell } from "electron";
 import { injectable } from "inversify";

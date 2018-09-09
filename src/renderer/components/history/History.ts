@@ -1,15 +1,15 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { namespace } from "vuex-class";
+
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SortColumn } from "common/dto/history/SortColumn";
 import { SortOrder } from "common/dto/history/SortOrder";
-
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
-import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 
 const ns = namespace("app/history");
 

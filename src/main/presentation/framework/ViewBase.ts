@@ -1,14 +1,15 @@
 import { BrowserWindow, screen } from "electron";
 import { BehaviorSubject, Subscription } from "rxjs";
+import { distinctUntilChanged, first } from "rxjs/operators";
+
+import { Messages } from "common/messaging/Messages";
+import { ViewNames } from "common/ViewNames";
 
 import { MessageBus } from "presentation/infrastructure/MessageBus";
-import { Messages } from "common/messaging/Messages";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
-import { ViewNames } from "common/ViewNames";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { ViewOptions } from "presentation/framework/ViewOptions";
 import { IScaler } from "presentation/framework/scaling/IScaler";
-import { distinctUntilChanged, filter, first } from "rxjs/operators";
 
 export abstract class ViewBase {
     private readonly subscriptions: Subscription[] = [];

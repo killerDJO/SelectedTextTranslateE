@@ -1,4 +1,5 @@
 import Vue from "vue";
+
 import { bindMethods, toKebabCase } from "decorators/decorator-utilities";
 
 export default function Directive(name?: string) {

@@ -1,12 +1,12 @@
 import { Observable, ReplaySubject, Subscription as RxJsSubscription, of, Subject } from "rxjs";
 import { ipcMain } from "electron";
-import { take } from "rxjs/operators";
 
 import { Channels } from "common/messaging/Messages";
 import { Message } from "common/messaging/Message";
 
 interface IpcSubscription {
     readonly channel: string;
+    // tslint:disable-next-line:ban-types
     readonly callback: Function;
 }
 

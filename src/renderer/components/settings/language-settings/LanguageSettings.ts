@@ -2,8 +2,9 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import * as _ from "lodash";
 
 import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
-import SettingsHolder from "components/settings/settings-holder/SettingsHolder.vue";
 import { Language } from "common/dto/settings/Language";
+
+import SettingsHolder from "components/settings/settings-holder/SettingsHolder.vue";
 
 @Component({
     components: {

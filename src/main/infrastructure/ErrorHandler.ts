@@ -1,5 +1,5 @@
 import { injectable } from "inversify";
-import { dialog, shell } from "electron";
+import { dialog } from "electron";
 
 import { Logger } from "infrastructure/Logger";
 

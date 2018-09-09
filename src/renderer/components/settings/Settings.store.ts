@@ -1,11 +1,13 @@
 import { Module } from "vuex";
 import * as _ from "lodash";
 
-import { MessageBus } from "communication/MessageBus";
-import { Messages } from "common/messaging/Messages";
 import { RootState } from "root.store";
+
+import { Messages } from "common/messaging/Messages";
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { ScalingState } from "common/dto/settings/ScalingState";
+
+import { MessageBus } from "communication/MessageBus";
 
 const messageBus = new MessageBus();
 

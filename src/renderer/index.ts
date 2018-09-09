@@ -4,7 +4,14 @@ import Vuex from "vuex";
 import Router from "vue-router";
 import * as Paginate from "vuejs-paginate";
 
+import { Messages } from "common/messaging/Messages";
+
+import { MessageBus } from "communication/MessageBus";
+
 import { root, RootState } from "root.store";
+import { router } from "router";
+import "filters";
+import "directives";
 
 import App from "components/app/App.vue";
 import ValidatedField from "components/shared/validated-field/ValidatedField.vue";
@@ -14,13 +21,6 @@ import Checkbox from "components/shared/checkbox/Checkbox.vue";
 import IconButton from "components/shared/icon-button/IconButton.vue";
 import LinkButton from "components/shared/link-button/LinkButton.vue";
 import AppButton from "components/shared/app-button/AppButton.vue";
-
-import { router } from "router";
-import { MessageBus } from "communication/MessageBus";
-import { Messages } from "common/messaging/Messages";
-
-import "filters";
-import "directives";
 
 class Bootstrapper {
 

@@ -3,17 +3,19 @@ import { injectable } from "inversify";
 import { concatMap, tap, map } from "rxjs/operators";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
+import { TranslationRequest } from "common/dto/translation/TranslationRequest";
+import { TranslationKey } from "common/dto/translation/TranslationKey";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
+
 import { Logger } from "infrastructure/Logger";
+import { replaceAllPattern } from "utils/replace-pattern";
+
+import { RequestProvider } from "data-access/RequestProvider";
 
 import { HashProvider } from "business-logic/translation/HashProvider";
 import { TranslationResponseParser } from "business-logic/translation/TranslationResponseParser";
-import { RequestProvider } from "data-access/RequestProvider";
 import { HistoryStore } from "business-logic/history/HistoryStore";
-import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { TranslationRequest } from "common/dto/translation/TranslationRequest";
-import { TranslationKey } from "common/dto/translation/TranslationKey";
-import { replaceAllPattern } from "utils/replace-pattern";
 
 @injectable()
 export class TextTranslator {

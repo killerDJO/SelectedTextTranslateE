@@ -2,14 +2,17 @@ import { Observable, of } from "rxjs";
 import { map } from "rxjs/operators";
 
 import { ViewNames } from "common/ViewNames";
-import { ViewBase } from "presentation/framework/ViewBase";
-import { ViewContext } from "presentation/framework/ViewContext";
-import { Settings } from "business-logic/settings/dto/Settings";
+import { ScalingState } from "common/dto/settings/ScalingState";
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { Messages } from "common/messaging/Messages";
+
 import { DeepPartial } from "utils/deep-partial";
 import { mapSubject } from "utils/map-subject";
-import { ScalingState } from "common/dto/settings/ScalingState";
+
+import { Settings } from "business-logic/settings/dto/Settings";
+
+import { ViewBase } from "presentation/framework/ViewBase";
+import { ViewContext } from "presentation/framework/ViewContext";
 
 export class SettingsView extends ViewBase {
 

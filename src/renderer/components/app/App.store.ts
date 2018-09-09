@@ -1,10 +1,12 @@
 import { Module } from "vuex";
+
+import { RootState } from "root.store";
+
 import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { translation } from "components/translation/Translation.store";
 import { history } from "components/history/History.store";
 import { settings } from "components/settings/Settings.store";
-import { RootState } from "root.store";
 
 import { HotkeySettings, RendererSettings } from "common/dto/settings/renderer-settings/RendererSettings";
 

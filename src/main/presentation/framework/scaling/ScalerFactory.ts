@@ -1,7 +1,8 @@
+import { injectable } from "inversify";
+
 import { IScaler } from "presentation/framework/scaling/IScaler";
 import { Scaler } from "presentation/framework/scaling/Scaler";
 import { NullScaler } from "presentation/framework/scaling/NullScaler";
-import { injectable } from "inversify";
 
 @injectable()
 export class ScalerFactory {

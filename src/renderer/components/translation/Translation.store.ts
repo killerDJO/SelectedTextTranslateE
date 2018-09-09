@@ -1,11 +1,14 @@
-import { Module, ActionContext } from "vuex";
+import { Module } from "vuex";
+import { remote } from "electron";
+
+import { RootState } from "root.store";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
-import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
-import { RootState } from "root.store";
-import { remote } from "electron";
+
+import { MessageBus } from "communication/MessageBus";
+
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
 
 const messageBus = new MessageBus();

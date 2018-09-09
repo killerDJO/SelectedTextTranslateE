@@ -1,7 +1,7 @@
 import { remote } from "electron";
+import * as Mousetrap from "mousetrap";
 
 import { Hotkey } from "common/dto/settings/Hotkey";
-import * as Mousetrap from "mousetrap";
 
 export class HotkeysRegistry {
     public registerHotkeys(hotkeys: Hotkey[], callback: () => void): void {

@@ -39,6 +39,7 @@
         "playTextPattern": "https://translate.google.com/translate_tts?tl={{language}}&client=t&q={{query}}&tk={{hash}}",
         "baseUrl": "https://translate.google.com",
         "historyRefreshInterval": 30,
+        "translationConfigRefreshInterval": 60,
         "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.84 Safari/537.36",
         "requestTimeout": 10000,
         "playVolume": 100

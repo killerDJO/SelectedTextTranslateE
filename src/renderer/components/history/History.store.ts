@@ -1,17 +1,20 @@
 import { Module } from "vuex";
 
+import { RootState } from "root.store";
+
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
 import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
-import { MessageBus } from "communication/MessageBus";
 import { Messages } from "common/messaging/Messages";
-import { RootState } from "root.store";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { SortColumn } from "common/dto/history/SortColumn";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
-import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
 import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
+
+import { MessageBus } from "communication/MessageBus";
+
+import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
 
 const messageBus = new MessageBus();
 

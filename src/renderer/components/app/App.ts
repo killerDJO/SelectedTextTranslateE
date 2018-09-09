@@ -3,6 +3,7 @@ import { namespace } from "vuex-class";
 import Vue from "vue";
 
 import { HotkeySettings } from "common/dto/settings/renderer-settings/RendererSettings";
+
 import { HotkeysRegistry } from "components/app/services/HotkeysRegistry";
 
 const ns = namespace("app");
@@ -32,16 +33,18 @@ export default class App extends Vue {
     }
 
     public repaintLayout(): void {
-        setTimeout(() => {
-            const scrollHolder = this.$el.getElementsByClassName("scroll-holder")[0] as HTMLElement;
-            if (scrollHolder === null) {
-                return;
-            }
-            const originalWidth = scrollHolder.style.width;
-            scrollHolder.style.width = "auto";
-            const hight = scrollHolder.offsetHeight;
-            scrollHolder.style.width = originalWidth;
-        }, 10);
+        setTimeout(
+            () => {
+                const scrollHolder = this.$el.getElementsByClassName("scroll-holder")[0] as HTMLElement;
+                if (scrollHolder === null) {
+                    return;
+                }
+                const originalWidth = scrollHolder.style.width;
+                scrollHolder.style.width = "auto";
+                const hight = scrollHolder.offsetHeight;
+                scrollHolder.style.width = originalWidth;
+            },
+            10);
     }
 
     @Watch("hotkeySettings", { deep: true })

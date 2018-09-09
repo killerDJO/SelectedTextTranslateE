@@ -3,6 +3,7 @@ import childProcess = require("child_process");
 import { injectable } from "inversify";
 
 import { Logger } from "infrastructure/Logger";
+
 import { StartupHandler } from "install/StartupHandler";
 import { StartupItemsProvider } from "install/StartupItemsProvider";
 

@@ -4,10 +4,12 @@ import * as path from "path";
 import * as fs from "fs";
 import * as _ from "lodash";
 
-import { Settings } from "business-logic/settings/dto/Settings";
+import { Language } from "common/dto/settings/Language";
+
 import { SettingsStore } from "infrastructure/SettingsStore";
 import { DeepPartial } from "utils/deep-partial";
-import { Language } from "common/dto/settings/Language";
+
+import { Settings } from "business-logic/settings/dto/Settings";
 
 @injectable()
 export class SettingsProvider {

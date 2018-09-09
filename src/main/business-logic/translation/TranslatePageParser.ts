@@ -20,10 +20,9 @@ export class TranslatePageParser {
         private readonly requestProvider: RequestProvider,
         private readonly logger: Logger,
         private readonly settingsProvider: SettingsProvider) {
-        const MinutesInHour = 60;
         const SecondsInMinute = 60;
         const MillisecondsInSecond = 1000;
-        this.refreshIntervalMilliseconds = MinutesInHour * SecondsInMinute * MillisecondsInSecond;
+        this.refreshIntervalMilliseconds = this.settingsProvider.getSettings().value.engine.translationConfigRefreshInterval * SecondsInMinute * MillisecondsInSecond;
     }
 
     public getTranslationConfig(): Observable<TranslationConfig> {

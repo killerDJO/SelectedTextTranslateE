@@ -1,8 +1,10 @@
 import { injectable } from "inversify";
 import { app } from "electron";
-import { Logger } from "infrastructure/Logger";
-import { StartupItemsProvider } from "install/StartupItemsProvider";
 import { BehaviorSubject } from "rxjs";
+
+import { Logger } from "infrastructure/Logger";
+
+import { StartupItemsProvider } from "install/StartupItemsProvider";
 
 @injectable()
 export class StartupHandler {
