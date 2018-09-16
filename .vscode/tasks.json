@@ -18,13 +18,6 @@
             "problemMatcher": []
         },
         {
-            "label": "renderer: build-prod",
-            "type": "npm",
-            "script": "renderer-build-prod",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
             "label": "main: build-dev",
             "type": "npm",
             "script": "main-build-dev",
@@ -32,16 +25,23 @@
             "problemMatcher": []
         },
         {
-            "label": "main: build-prod",
+            "label": "main: watch",
             "type": "npm",
-            "script": "main-build-prod",
+            "script": "main-watch-dev",
             "group": "build",
             "problemMatcher": []
         },
         {
-            "label": "main: watch",
+            "label": "service-renderer: build-dev",
             "type": "npm",
-            "script": "main-watch-dev",
+            "script": "service-renderer-build-dev",
+            "group": "build",
+            "problemMatcher": []
+        },
+        {
+            "label": "service-renderer: watch",
+            "type": "npm",
+            "script": "service-renderer-watch-dev",
             "group": "build",
             "problemMatcher": []
         },
@@ -86,7 +86,8 @@
             "problemMatcher": [],
             "dependsOn": [
                 "main: watch",
-                "renderer: watch"
+                "renderer: watch",
+                "service-renderer: watch"
             ]
         },
         {

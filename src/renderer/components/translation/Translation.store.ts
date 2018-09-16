@@ -7,7 +7,7 @@ import { TranslateResultViews } from "common/dto/translation/TranslateResultView
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { Messages } from "common/messaging/Messages";
 
-import { MessageBus } from "communication/MessageBus";
+import { MessageBus } from "common/renderer/MessageBus";
 
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
 

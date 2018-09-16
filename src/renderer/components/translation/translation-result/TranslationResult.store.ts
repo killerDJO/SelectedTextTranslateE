@@ -12,7 +12,7 @@ import { StarRequest } from "common/dto/translation/StarRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 import { Language } from "common/dto/settings/Language";
 
-import { MessageBus } from "communication/MessageBus";
+import { MessageBus } from "common/renderer/MessageBus";
 
 const messageBus = new MessageBus();
 

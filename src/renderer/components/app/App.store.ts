@@ -2,7 +2,7 @@ import { Module } from "vuex";
 
 import { RootState } from "root.store";
 
-import { MessageBus } from "communication/MessageBus";
+import { MessageBus } from "common/renderer/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { translation } from "components/translation/Translation.store";
 import { history } from "components/history/History.store";

@@ -14,6 +14,7 @@ import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest"
 import { Logger } from "infrastructure/Logger";
 
 import { DatastoreProvider } from "data-access/DatastoreProvider";
+import { FirebaseClient } from "data-access/FirebaseClient";
 
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { HistorySettings } from "business-logic/settings/dto/Settings";
@@ -29,7 +30,8 @@ export class HistoryStore {
     constructor(
         private readonly datastoreProvider: DatastoreProvider,
         private readonly settingsProvider: SettingsProvider,
-        private readonly logger: Logger) {
+        private readonly logger: Logger,
+        private readonly firebaseClient: FirebaseClient) {
 
         this.historySettings = this.settingsProvider.getSettings().value.history;
         this.datastore = this.datastoreProvider.openDatabase(this.historySettings.databaseName);
@@ -80,6 +82,8 @@ export class HistoryStore {
     }
 
     public incrementTranslationsNumber(key: TranslationKey): Observable<HistoryRecord> {
+        this.firebaseClient.test();
+
         const currentTime = new Date();
         const increment$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,

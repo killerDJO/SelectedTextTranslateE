@@ -5,7 +5,7 @@ import { distinctUntilChanged, first } from "rxjs/operators";
 import { Messages } from "common/messaging/Messages";
 import { ViewNames } from "common/ViewNames";
 
-import { MessageBus } from "presentation/infrastructure/MessageBus";
+import { MessageBus } from "infrastructure/MessageBus";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { ViewOptions } from "presentation/framework/ViewOptions";

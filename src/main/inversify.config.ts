@@ -24,7 +24,7 @@ import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { SearchExecutor } from "business-logic/search/SearchExecutor";
 
-import { MessageBus } from "presentation/infrastructure/MessageBus";
+import { MessageBus } from "infrastructure/MessageBus";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
 import { Application } from "presentation/Application";
 import { AccentColorProvider } from "presentation/framework/AccentColorProvider";
@@ -36,6 +36,8 @@ import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewsRegistry } from "presentation/views/ViewsRegistry";
 import { NullScaler } from "presentation/framework/scaling/NullScaler";
 import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
+import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
+import { FirebaseClient } from "data-access/FirebaseClient";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -52,6 +54,7 @@ class Binder {
 
     private bindInfrastructure(): void {
         this.container.bind<StorageFolderProvider>(StorageFolderProvider).toSelf();
+        this.container.bind<ServiceRendererProvider>(ServiceRendererProvider).toSelf().inSingletonScope();
         this.container.bind<NotificationSender>(NotificationSender).toSelf();
         this.container.bind<Logger>(Logger).toSelf().inSingletonScope();
         this.container.bind<ErrorHandler>(ErrorHandler).toSelf().inSingletonScope();
@@ -68,6 +71,7 @@ class Binder {
     private bindDataAccess(): void {
         this.container.bind<RequestProvider>(RequestProvider).toSelf();
         this.container.bind<DatastoreProvider>(DatastoreProvider).toSelf();
+        this.container.bind<FirebaseClient>(FirebaseClient).toSelf().inSingletonScope();
     }
 
     private bindBusinessLogic(): void {

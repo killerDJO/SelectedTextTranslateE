@@ -12,7 +12,7 @@ import { TranslateResultViews } from "common/dto/translation/TranslateResultView
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
 
-import { MessageBus } from "communication/MessageBus";
+import { MessageBus } from "common/renderer/MessageBus";
 
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
 

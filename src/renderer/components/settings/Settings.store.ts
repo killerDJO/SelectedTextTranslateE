@@ -7,7 +7,7 @@ import { Messages } from "common/messaging/Messages";
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { ScalingState } from "common/dto/settings/ScalingState";
 
-import { MessageBus } from "communication/MessageBus";
+import { MessageBus } from "common/renderer/MessageBus";
 
 const messageBus = new MessageBus();
 

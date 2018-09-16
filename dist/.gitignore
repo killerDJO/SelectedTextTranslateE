@@ -1,5 +1,4 @@
 *.node
-app/main
-app/renderer
+app
 package
 installer

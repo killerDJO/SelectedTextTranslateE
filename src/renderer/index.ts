@@ -6,7 +6,7 @@ import * as Paginate from "vuejs-paginate";
 
 import { Messages } from "common/messaging/Messages";
 
-import { MessageBus } from "communication/MessageBus";
+import { MessageBus } from "common/renderer/MessageBus";
 
 import { root, RootState } from "root.store";
 import { router } from "router";
