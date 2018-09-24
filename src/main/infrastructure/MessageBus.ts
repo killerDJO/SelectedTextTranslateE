@@ -3,6 +3,7 @@ import { ipcMain } from "electron";
 
 import { Channels } from "common/messaging/Messages";
 import { Message } from "common/messaging/Message";
+import { createMessage } from "common/messaging/create-message";
 
 interface IpcSubscription {
     readonly channel: string;
@@ -36,7 +37,7 @@ export class MessageBus {
                 throw Error("Window has been destroyed. Make sure subscription is disposed properly.");
             }
 
-            const message = this.createMessage(name);
+            const message = createMessage(name);
             const messages = this.messageQueue.get(name) || new Map();
             messages.set(message.id, { value: value, received$: received$ });
             this.messageQueue.set(name, messages);
@@ -58,17 +59,27 @@ export class MessageBus {
         return this.registerObservable(name, of(null)).received$;
     }
 
-    public getValue<TValue>(name: string): Observable<TValue> {
+    public observeValue<TValue>(name: string): Observable<TValue> {
         const subject$ = new ReplaySubject<TValue>(1);
-        this.createSubscription(Channels.Observe, (event: Electron.Event, receivedName: string, observable: TValue) => {
+        this.createSubscription(Channels.Observe, (event: Electron.Event, receivedName: string, value: TValue) => {
             if (receivedName !== name) {
                 return;
             }
 
-            subject$.next(observable);
+            subject$.next(value);
         });
 
         return subject$;
+    }
+
+    public returnValue<TReply, TArgs>(name: string, generateReply: (args?: TArgs) => Observable<TReply>): void {
+        this.createSubscription(Channels.Observe, (event: Electron.Event, message: Message, args: TArgs) => {
+            if (message.name !== name) {
+                return;
+            }
+
+            generateReply(args).subscribe(value => this.window.webContents.send(Channels.Observe, message, value));
+        });
     }
 
     public destroy(): void {
@@ -116,13 +127,5 @@ export class MessageBus {
 
     private isCurrentWindowEvent(event: Electron.Event): boolean {
         return event.sender.id === this.window.webContents.id;
-    }
-
-    private createMessage(name: string): Message {
-        const id = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        return {
-            id: id,
-            name: name,
-        };
     }
 }

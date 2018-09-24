@@ -17,6 +17,7 @@ import { TextTranslator } from "business-logic/translation/TextTranslator";
 import { TextExtractor } from "business-logic/translation/TextExtractor";
 import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { HistoryStore } from "business-logic/history/HistoryStore";
+import { HistorySyncService } from "business-logic/history/HistorySyncService";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 import { Taskbar } from "presentation/Taskbar";
@@ -47,10 +48,13 @@ export class Application {
         private readonly viewsRegistry: ViewsRegistry,
         private readonly updater: Updater,
         private readonly searchExecutor: SearchExecutor,
-        private readonly startupHandler: StartupHandler) {
+        private readonly startupHandler: StartupHandler,
+        private readonly historySyncService: HistorySyncService) {
 
         this.createTaskbar();
         this.setupHotkeys();
+
+        this.historySyncService.startSync();
     }
 
     private setupTranslationView(translationView: TranslationView): void {

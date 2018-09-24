@@ -18,7 +18,9 @@
         "VUEJS",
         "arraybuffer",
         "debounced",
+        "deserialize",
         "devtool",
+        "firestore",
         "injectable",
         "inversify",
         "keybd"

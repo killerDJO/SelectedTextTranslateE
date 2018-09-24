@@ -5,6 +5,7 @@ import { Logger } from "infrastructure/Logger";
 import { ErrorHandler } from "infrastructure/ErrorHandler";
 import { SettingsStore } from "infrastructure/SettingsStore";
 import { NotificationSender } from "infrastructure/NotificationSender";
+import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
 
 import { Installer } from "install/Installer";
 import { Updater } from "install/Updater";
@@ -23,6 +24,7 @@ import { TranslationResponseParser } from "business-logic/translation/Translatio
 import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { SearchExecutor } from "business-logic/search/SearchExecutor";
+import { HistorySyncService } from "business-logic/history/HistorySyncService";
 
 import { MessageBus } from "infrastructure/MessageBus";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
@@ -36,8 +38,7 @@ import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewsRegistry } from "presentation/views/ViewsRegistry";
 import { NullScaler } from "presentation/framework/scaling/NullScaler";
 import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
-import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
-import { FirebaseClient } from "data-access/FirebaseClient";
+import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -71,11 +72,12 @@ class Binder {
     private bindDataAccess(): void {
         this.container.bind<RequestProvider>(RequestProvider).toSelf();
         this.container.bind<DatastoreProvider>(DatastoreProvider).toSelf();
-        this.container.bind<FirebaseClient>(FirebaseClient).toSelf().inSingletonScope();
     }
 
     private bindBusinessLogic(): void {
         this.container.bind<HistoryStore>(HistoryStore).toSelf().inSingletonScope();
+        this.container.bind<HistorySyncService>(HistorySyncService).toSelf().inSingletonScope();
+        this.container.bind<HistoryDatabaseProvider>(HistoryDatabaseProvider).toSelf().inSingletonScope();
         this.container.bind<HashProvider>(HashProvider).toSelf();
         this.container.bind<TextExtractor>(TextExtractor).toSelf();
         this.container.bind<TextTranslator>(TextTranslator).toSelf();

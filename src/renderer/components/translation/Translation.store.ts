@@ -52,7 +52,7 @@ export const translation: Module<TranslationState, RootState> = {
         ...translateResultActions,
         setup(context): void {
             translateResultActions.setup(context);
-            messageBus.getNotification(Messages.Translation.ShowInputCommand, () => context.commit("setShowInput"));
+            messageBus.observeNotification(Messages.Translation.ShowInputCommand, () => context.commit("setShowInput"));
             remote.getCurrentWindow().on("hide", () => context.commit("clearTranslateResult"));
         }
     }

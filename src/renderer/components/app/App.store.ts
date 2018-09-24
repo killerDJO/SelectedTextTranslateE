@@ -43,10 +43,10 @@ export const app: Module<ApplicationState, RootState> = {
     },
     actions: {
         setup({ commit }): void {
-            messageBus.getValue<string>(Messages.Common.AccentColor, accentColor => commit("setAccentColor", accentColor));
-            messageBus.getValue<number>(Messages.Common.ScaleFactor, scaleFactor => commit("setScaleFactor", scaleFactor));
-            messageBus.getValue<string>(Messages.Common.IsFramelessWindow, isFrameless => commit("setFramelessStatus", isFrameless));
-            messageBus.getValue<RendererSettings>(Messages.Common.RendererSettings, rendererSettings => commit("setHotkeySettings", rendererSettings.hotkeys));
+            messageBus.observeValue<string>(Messages.Common.AccentColor, accentColor => commit("setAccentColor", accentColor));
+            messageBus.observeValue<number>(Messages.Common.ScaleFactor, scaleFactor => commit("setScaleFactor", scaleFactor));
+            messageBus.observeValue<string>(Messages.Common.IsFramelessWindow, isFrameless => commit("setFramelessStatus", isFrameless));
+            messageBus.observeValue<RendererSettings>(Messages.Common.RendererSettings, rendererSettings => commit("setHotkeySettings", rendererSettings.hotkeys));
         },
         zoomIn(): void {
             messageBus.sendCommand(Messages.Common.ZoomInCommand);

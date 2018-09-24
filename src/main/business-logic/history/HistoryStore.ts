@@ -14,10 +14,10 @@ import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest"
 import { Logger } from "infrastructure/Logger";
 
 import { DatastoreProvider } from "data-access/DatastoreProvider";
-import { FirebaseClient } from "data-access/FirebaseClient";
 
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { HistorySettings } from "business-logic/settings/dto/Settings";
+import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
 
 @injectable()
 export class HistoryStore {
@@ -30,11 +30,11 @@ export class HistoryStore {
     constructor(
         private readonly datastoreProvider: DatastoreProvider,
         private readonly settingsProvider: SettingsProvider,
-        private readonly logger: Logger,
-        private readonly firebaseClient: FirebaseClient) {
+        private readonly historyDatabaseProvider: HistoryDatabaseProvider,
+        private readonly logger: Logger) {
 
         this.historySettings = this.settingsProvider.getSettings().value.history;
-        this.datastore = this.datastoreProvider.openDatabase(this.historySettings.databaseName);
+        this.datastore = this.historyDatabaseProvider.get();
     }
 
     public get historyUpdated$(): Observable<void> {
@@ -71,7 +71,8 @@ export class HistoryStore {
             {
                 $set: {
                     translateResult: translateResult,
-                    updatedDate: currentTime
+                    updatedDate: currentTime,
+                    isSyncedWithServer: false
                 }
             });
 
@@ -82,13 +83,11 @@ export class HistoryStore {
     }
 
     public incrementTranslationsNumber(key: TranslationKey): Observable<HistoryRecord> {
-        this.firebaseClient.test();
-
         const currentTime = new Date();
         const increment$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
             this.getSearchQuery(key),
-            { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime } });
+            { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime, isSyncedWithServer: false } });
 
         return increment$.pipe(
             tap(() => this.logger.info(`Translations number ${this.getLogKey(key)} is incremented.`)),
@@ -146,11 +145,11 @@ export class HistoryStore {
     }
 
     public setStarredStatus(key: TranslationKey, isStarred: boolean): Observable<HistoryRecord> {
-        return this.setStatus(key, { isStarred: isStarred }, `Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`);
+        return this.setStatus(key, { isStarred: isStarred, isSyncedWithServer: false }, `Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`);
     }
 
     public setArchivedStatus(key: TranslationKey, isArchived: boolean): Observable<HistoryRecord> {
-        return this.setStatus(key, { isArchived: isArchived }, `Translation ${this.getLogKey(key)} has changed its archived status to ${isArchived}.`);
+        return this.setStatus(key, { isArchived: isArchived, isSyncedWithServer: false }, `Translation ${this.getLogKey(key)} has changed its archived status to ${isArchived}.`);
     }
 
     private setStatus(key: TranslationKey, updateQuery: any, logMessage: string) {

@@ -65,11 +65,11 @@ export const translateResultMutations = {
 
 export const translateResultActions = {
     setup({ commit }: ActionContext<TranslateResultState, RootState>): void {
-        messageBus.getNotification(Messages.TranslateResult.InProgressCommand, () => commit("setTranslationInProgress"));
-        messageBus.getValue<TranslateResultResponse>(Messages.TranslateResult.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
-        messageBus.getValue<HistoryRecord>(Messages.TranslateResult.UpdateTranslateResult, historyRecord => commit("updateTranslateResult", historyRecord));
-        messageBus.getValue<TranslationViewRendererSettings>(Messages.TranslateResult.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
-        messageBus.getValue<Language[]>(Messages.TranslateResult.Languages, languages => commit("setLanguages", languages));
+        messageBus.observeNotification(Messages.TranslateResult.InProgressCommand, () => commit("setTranslationInProgress"));
+        messageBus.observeValue<TranslateResultResponse>(Messages.TranslateResult.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
+        messageBus.observeValue<HistoryRecord>(Messages.TranslateResult.UpdateTranslateResult, historyRecord => commit("updateTranslateResult", historyRecord));
+        messageBus.observeValue<TranslationViewRendererSettings>(Messages.TranslateResult.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
+        messageBus.observeValue<Language[]>(Messages.TranslateResult.Languages, languages => commit("setLanguages", languages));
 
         commit("setOfflineStatus", !navigator.onLine);
         window.ononline = () => commit("setOfflineStatus", false);
@@ -162,7 +162,7 @@ export const translateResultActions = {
     }
 };
 
-function executeCommand<TRequest>(state: TranslateResultState, commandName: Messages, inputGetter: (historyRecord: HistoryRecord) => TRequest): void {
+function executeCommand<TRequest>(state: TranslateResultState, commandName: string, inputGetter: (historyRecord: HistoryRecord) => TRequest): void {
     if (state.translationHistoryRecord === null) {
         return;
     }
@@ -170,7 +170,7 @@ function executeCommand<TRequest>(state: TranslateResultState, commandName: Mess
     messageBus.sendCommand<TRequest>(commandName, inputGetter(state.translationHistoryRecord));
 }
 
-function executeCommandWithProgress<TRequest>(state: TranslateResultState, commit: Commit, commandName: Messages, inputGetter: (historyRecord: HistoryRecord) => TRequest): void {
+function executeCommandWithProgress<TRequest>(state: TranslateResultState, commit: Commit, commandName: string, inputGetter: (historyRecord: HistoryRecord) => TRequest): void {
     commit("setTranslationInProgress");
     executeCommand<TRequest>(state, commandName, inputGetter);
 }

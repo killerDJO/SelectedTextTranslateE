@@ -46,20 +46,6 @@
             "problemMatcher": []
         },
         {
-            "label": "create: package",
-            "type": "npm",
-            "script": "pack",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "create: installer",
-            "type": "npm",
-            "script": "create-installer",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
             "label": "native: rebuild",
             "type": "npm",
             "script": "native-rebuild",

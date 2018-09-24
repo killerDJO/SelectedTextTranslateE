@@ -42,10 +42,10 @@ export const settings: Module<SettingsState, RootState> = {
     },
     actions: {
         setup({ commit }): void {
-            messageBus.getValue<EditableSettings>(Messages.Settings.EditableSettings, editableSettings => commit("setSettings", editableSettings));
-            messageBus.getValue<EditableSettings>(Messages.Settings.DefaultEditableSettings, defaultSettings => commit("setDefaultSettings", defaultSettings));
-            messageBus.getValue<ScalingState>(Messages.Settings.ScalingState, scalingState => commit("setScalingState", scalingState));
-            messageBus.getValue<boolean>(Messages.Settings.StartupState, isStartupEnabled => commit("setStartupState", isStartupEnabled));
+            messageBus.observeValue<EditableSettings>(Messages.Settings.EditableSettings, editableSettings => commit("setSettings", editableSettings));
+            messageBus.observeValue<EditableSettings>(Messages.Settings.DefaultEditableSettings, defaultSettings => commit("setDefaultSettings", defaultSettings));
+            messageBus.observeValue<ScalingState>(Messages.Settings.ScalingState, scalingState => commit("setScalingState", scalingState));
+            messageBus.observeValue<boolean>(Messages.Settings.StartupState, isStartupEnabled => commit("setStartupState", isStartupEnabled));
         },
         updateSettings({ state }, editableSettings: EditableSettings): void {
             if (_.isEqual(state.settings, editableSettings)) {

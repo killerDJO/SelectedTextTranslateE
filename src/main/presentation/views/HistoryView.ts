@@ -24,8 +24,8 @@ export class HistoryView extends TranslateResultView {
             isScalingEnabled: mapSubject(viewContext.scalingSettings, scaling => !scaling.scaleTranslationViewOnly)
         });
 
-        this.historyRecordsRequest$ = this.messageBus.getValue<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
-        this.archiveRecord$ = this.messageBus.getValue<ArchiveRequest>(Messages.History.ArchiveRecord);
+        this.historyRecordsRequest$ = this.messageBus.observeValue<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
+        this.archiveRecord$ = this.messageBus.observeValue<ArchiveRequest>(Messages.History.ArchiveRecord);
     }
 
     public setHistoryRecords(historyRecords: HistoryRecordsResponse): void {

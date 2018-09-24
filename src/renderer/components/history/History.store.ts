@@ -93,8 +93,8 @@ export const history: Module<HistoryState, RootState> = {
             translateResultActions.setup(context);
 
             const { commit, dispatch } = context;
-            messageBus.getValue<HistoryRecordsResponse>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
-            messageBus.getNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
+            messageBus.observeValue<HistoryRecordsResponse>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
+            messageBus.observeNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
         },
         requestHistoryRecords({ state }): void {
             messageBus.sendCommand<HistoryRecordsRequest>(

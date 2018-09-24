@@ -1,4 +1,4 @@
-import { FirebaseClient } from "firebase-client/FirebaseClient";
+import { HistorySyncService } from "history/HistorySyncService";
 
 // tslint:disable-next-line:no-unused-expression
-new FirebaseClient();
+new HistorySyncService();

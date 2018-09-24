@@ -42,6 +42,12 @@ export class Messages {
         public static readonly HistoryUpdated = "history-updated";
     };
 
+    public static HistorySync = class {
+        public static readonly HistoryRecords = "history-records-sync";
+        public static readonly UpdateRecord = "history-record-update";
+        public static readonly MergeRecord = "history-record-merge";
+    };
+
     public static Settings = class {
         public static readonly EditableSettings = "editable-settings";
         public static readonly DefaultEditableSettings = "default-editable-settings";
