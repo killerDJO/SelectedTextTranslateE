@@ -137,10 +137,10 @@ export abstract class ViewBase {
 
     private initializeSubscriptions(): void {
         this.messageBus.registerObservable(Messages.Common.AccentColor, this.context.accentColorProvider.accentColor$);
-        this.messageBus.observeValue<Error>(Messages.Common.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
-        this.messageBus.observeValue<void>(Messages.Common.ZoomInCommand).subscribe(() => this.scaler.zoomIn());
-        this.messageBus.observeValue<void>(Messages.Common.ZoomOutCommand).subscribe(() => this.scaler.zoomOut());
-        this.messageBus.observeValue<void>(Messages.Common.ResetZoomCommand).subscribe(() => this.scaler.reset());
+        this.messageBus.observeCommand<Error>(Messages.Common.RendererError).subscribe(error => this.context.errorHandler.handlerError(this.viewName, error));
+        this.messageBus.observeCommand<void>(Messages.Common.ZoomInCommand).subscribe(() => this.scaler.zoomIn());
+        this.messageBus.observeCommand<void>(Messages.Common.ZoomOutCommand).subscribe(() => this.scaler.zoomOut());
+        this.messageBus.observeCommand<void>(Messages.Common.ResetZoomCommand).subscribe(() => this.scaler.reset());
         this.window.once("ready-to-show", () => this.isReadyToShow$.next(true));
         this.window.once("closed", () => this.dispose());
         this.window.once("session-end", () => this.dispose());

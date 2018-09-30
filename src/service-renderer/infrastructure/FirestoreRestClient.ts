@@ -2,6 +2,7 @@ import * as firebase from "firebase/app";
 import * as _ from "lodash";
 
 import { FirebaseDocument } from "infrastructure/FirebaseDocument";
+import { OutOfSyncError } from "infrastructure/OutOfSyncError";
 
 export class FirestoreRestClient {
     private readonly firestoreDocuments: string;
@@ -110,6 +111,12 @@ export class FirestoreRestClient {
         });
 
         if (response.status !== 200) {
+            const responsePayload = await response.json();
+            const status = responsePayload.error.status;
+            if (status === "FAILED_PRECONDITION" || status === "ALREADY_EXISTS") {
+                throw new OutOfSyncError(responsePayload.error.message);
+            }
+
             throw Error(`Error response from firestore. Status: ${response.status}`);
         }
 

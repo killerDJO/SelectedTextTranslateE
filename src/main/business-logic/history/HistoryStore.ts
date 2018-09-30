@@ -23,7 +23,7 @@ import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseP
 export class HistoryStore {
 
     private readonly datastore: Datastore;
-    private readonly historyUpdatedSubject$: Subject<void> = new Subject();
+    private readonly historyUpdatedSubject$: Subject<HistoryRecord> = new Subject();
 
     private readonly historySettings: HistorySettings;
 
@@ -37,7 +37,7 @@ export class HistoryStore {
         this.datastore = this.historyDatabaseProvider.get();
     }
 
-    public get historyUpdated$(): Observable<void> {
+    public get historyUpdated$(): Observable<HistoryRecord> {
         return this.historyUpdatedSubject$;
     }
 
@@ -54,12 +54,13 @@ export class HistoryStore {
             updatedDate: currentTime,
             lastTranslatedDate: currentTime,
             isStarred: false,
-            isArchived: false
+            isArchived: false,
+            ...this.getModificationFields(currentTime)
         });
 
         return insert$.pipe(
             tap(() => this.logger.info(`Translation ${this.getLogKey(key)} is saved to history.`)),
-            tap(() => this.notifyAboutUpdate())
+            tap(record => this.notifyAboutUpdate(record))
         );
     }
 
@@ -72,13 +73,13 @@ export class HistoryStore {
                 $set: {
                     translateResult: translateResult,
                     updatedDate: currentTime,
-                    isSyncedWithServer: false
+                    ...this.getModificationFields(currentTime)
                 }
             });
 
         return update$.pipe(
             tap(() => this.logger.info(`Translation ${this.getLogKey(key)} is updated in history.`)),
-            tap(() => this.notifyAboutUpdate())
+            tap(record => this.notifyAboutUpdate(record))
         );
     }
 
@@ -87,11 +88,11 @@ export class HistoryStore {
         const increment$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
             this.getSearchQuery(key),
-            { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime, isSyncedWithServer: false } });
+            { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime, ...this.getModificationFields(currentTime) } });
 
         return increment$.pipe(
             tap(() => this.logger.info(`Translations number ${this.getLogKey(key)} is incremented.`)),
-            tap(() => this.notifyAboutUpdate())
+            tap(record => this.notifyAboutUpdate(record))
         );
     }
 
@@ -145,27 +146,27 @@ export class HistoryStore {
     }
 
     public setStarredStatus(key: TranslationKey, isStarred: boolean): Observable<HistoryRecord> {
-        return this.setStatus(key, { isStarred: isStarred, isSyncedWithServer: false }, `Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`);
+        return this.setStatus(key, { isStarred: isStarred }, `Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`);
     }
 
     public setArchivedStatus(key: TranslationKey, isArchived: boolean): Observable<HistoryRecord> {
-        return this.setStatus(key, { isArchived: isArchived, isSyncedWithServer: false }, `Translation ${this.getLogKey(key)} has changed its archived status to ${isArchived}.`);
+        return this.setStatus(key, { isArchived: isArchived }, `Translation ${this.getLogKey(key)} has changed its archived status to ${isArchived}.`);
     }
 
-    private setStatus(key: TranslationKey, updateQuery: any, logMessage: string) {
+    private setStatus(key: TranslationKey, updateQuery: any, logMessage: string): Observable<HistoryRecord> {
         const setStatus$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore,
             this.getSearchQuery(key),
-            { $set: updateQuery });
+            { $set: { ...updateQuery, ...this.getModificationFields() } });
 
         return setStatus$.pipe(
             tap(() => this.logger.info(logMessage)),
-            tap(() => this.notifyAboutUpdate())
+            tap(record => this.notifyAboutUpdate(record))
         );
     }
 
-    private notifyAboutUpdate(): void {
-        this.historyUpdatedSubject$.next();
+    private notifyAboutUpdate(historyRecord: HistoryRecord): void {
+        this.historyUpdatedSubject$.next(historyRecord);
     }
 
     private getSearchQuery(key: TranslationKey) {
@@ -174,6 +175,13 @@ export class HistoryStore {
             isForcedTranslation: key.isForcedTranslation,
             sourceLanguage: key.sourceLanguage,
             targetLanguage: key.targetLanguage
+        };
+    }
+
+    private getModificationFields(modificationDate?: Date) {
+        return {
+            isSyncedWithServer: false,
+            lastModifiedDate: modificationDate || new Date()
         };
     }
 

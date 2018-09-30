@@ -5,6 +5,7 @@ import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest"
 import { Messages } from "common/messaging/Messages";
 import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
 import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 import { mapSubject } from "utils/map-subject";
 
@@ -24,15 +25,15 @@ export class HistoryView extends TranslateResultView {
             isScalingEnabled: mapSubject(viewContext.scalingSettings, scaling => !scaling.scaleTranslationViewOnly)
         });
 
-        this.historyRecordsRequest$ = this.messageBus.observeValue<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
-        this.archiveRecord$ = this.messageBus.observeValue<ArchiveRequest>(Messages.History.ArchiveRecord);
+        this.historyRecordsRequest$ = this.messageBus.observeCommand<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
+        this.archiveRecord$ = this.messageBus.observeCommand<ArchiveRequest>(Messages.History.ArchiveRecord);
     }
 
     public setHistoryRecords(historyRecords: HistoryRecordsResponse): void {
         this.messageBus.sendValue(Messages.History.HistoryRecords, historyRecords);
     }
 
-    public subscribeToHistoryUpdate(historyUpdate$: Observable<void>): void {
+    public subscribeToHistoryUpdate(historyUpdate$: Observable<HistoryRecord>): void {
         this.registerSubscription(historyUpdate$.subscribe(() => this.messageBus.sendNotification(Messages.History.HistoryUpdated)));
     }
 

@@ -28,9 +28,9 @@ export class ServiceRendererProvider {
 
             const messageBus = new MessageBus(this.serviceRenderer);
 
-            messageBus.observeValue<string>(Messages.ServiceRenderer.LogInfo).subscribe(message => this.logger.info(message));
-            messageBus.observeValue<string>(Messages.ServiceRenderer.LogWarning).subscribe(message => this.logger.warning(message));
-            messageBus.observeValue<{ message: string; error: Error }>(Messages.ServiceRenderer.LogError).subscribe(({ message, error }) => {
+            messageBus.observeCommand<string>(Messages.ServiceRenderer.LogInfo).subscribe(message => this.logger.info(message));
+            messageBus.observeCommand<string>(Messages.ServiceRenderer.LogWarning).subscribe(message => this.logger.warning(message));
+            messageBus.observeCommand<{ message: string; error: Error }>(Messages.ServiceRenderer.LogError).subscribe(({ message, error }) => {
                 this.notificationSender.showNonCriticalError(`Error occurred in a service process: ${message}`, error);
             });
         }

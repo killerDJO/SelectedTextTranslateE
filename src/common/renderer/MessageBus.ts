@@ -27,17 +27,13 @@ export class MessageBus {
         });
     }
 
-    public sendCommand<TValue>(name: string, value?: TValue): void {
-        ipcRenderer.send(Channels.Observe, name, value);
-    }
-
-    public getValue<TValue, TArgs>(name: string, args?: TArgs): Promise<TValue> {
+    public sendCommand<TArgs, TResult = void>(name: string, args?: TArgs): Promise<TResult> {
         const message = createMessage(name);
         return new Promise(resolve => {
 
-            ipcRenderer.send(Channels.Reply, message, args);
+            ipcRenderer.send(Channels.Observe, message, args);
 
-            const subscription = new Subscription(Channels.Reply, (sender: Electron.EventEmitter, receivedMessage: Message, value: TValue) => {
+            const subscription = new Subscription(Channels.Observe, (sender: Electron.EventEmitter, receivedMessage: Message, value: TResult) => {
                 if (message.name !== receivedMessage.name || message.id !== receivedMessage.id) {
                     return;
                 }

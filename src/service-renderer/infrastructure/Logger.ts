@@ -13,6 +13,6 @@ export class Logger {
     }
 
     public error(message: string, error: Error) {
-        this.messageBus.sendCommand(Messages.ServiceRenderer.LogWarning, { message, error });
+        this.messageBus.sendCommand(Messages.ServiceRenderer.LogError, { message, error: { message: error.message, stack: error.stack, name: error.name } });
     }
 }

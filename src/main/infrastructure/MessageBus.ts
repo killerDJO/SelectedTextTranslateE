@@ -59,26 +59,22 @@ export class MessageBus {
         return this.registerObservable(name, of(null)).received$;
     }
 
-    public observeValue<TValue>(name: string): Observable<TValue> {
+    public observeCommand<TValue>(name: string): Observable<TValue> {
         const subject$ = new ReplaySubject<TValue>(1);
-        this.createSubscription(Channels.Observe, (event: Electron.Event, receivedName: string, value: TValue) => {
-            if (receivedName !== name) {
-                return;
-            }
-
-            subject$.next(value);
+        this.handleCommand<TValue, void>(name, args => {
+            subject$.next(args);
+            return of(void 0);
         });
-
         return subject$;
     }
 
-    public returnValue<TReply, TArgs>(name: string, generateReply: (args?: TArgs) => Observable<TReply>): void {
-        this.createSubscription(Channels.Reply, (event: Electron.Event, message: Message, args: TArgs) => {
+    public handleCommand<TArgs, TResult = void>(name: string, handler: (args: TArgs) => Observable<TResult>): void {
+        this.createSubscription(Channels.Observe, async (event: Electron.Event, message: Message, args: TArgs) => {
             if (message.name !== name) {
                 return;
             }
 
-            generateReply(args).subscribe(value => this.window.webContents.send(Channels.Reply, message, value));
+            handler(args).subscribe(result => this.window.webContents.send(Channels.Observe, message, result));
         });
     }
 

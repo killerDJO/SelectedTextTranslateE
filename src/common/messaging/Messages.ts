@@ -1,7 +1,6 @@
 export enum Channels {
     Subscribe = "subscribe",
     Observe = "observe",
-    Reply = "reply",
     Received = "received"
 }
 
@@ -45,7 +44,8 @@ export class Messages {
 
     public static HistorySync = class {
         public static readonly StartSync = "start-history-records-sync";
-        public static readonly HistoryRecords = "history-records-sync";
+        public static readonly UnSyncedHistoryRecords = "unsynced-history-records";
+        public static readonly HistoryRecord = "history-record-sync";
         public static readonly FirebaseSettings = "firebase-settings";
         public static readonly HistorySyncSettings = "history-sync-settings";
         public static readonly UpdateRecord = "history-record-update";

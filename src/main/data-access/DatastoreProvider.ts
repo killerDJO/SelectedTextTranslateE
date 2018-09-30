@@ -21,9 +21,9 @@ export class DatastoreProvider {
 
     public insert<TDocument>(datastore: Datastore, document: TDocument): Observable<TDocument> {
         return new Observable<TDocument>(observer => {
-            datastore.insert(document, (error) => {
+            datastore.insert(document, (error, insertedDocument) => {
                 this.handleError(error);
-                observer.next(document);
+                observer.next(insertedDocument);
                 observer.complete();
             });
         });

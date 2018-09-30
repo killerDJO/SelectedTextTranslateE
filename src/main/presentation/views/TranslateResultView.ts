@@ -26,10 +26,10 @@ export abstract class TranslateResultView extends ViewBase {
 
         this.messageBus.sendValue(Messages.TranslateResult.TranslationResultViewSettings, this.context.viewsSettings.translation.renderer);
         this.messageBus.sendValue(Messages.TranslateResult.Languages, this.context.settingsProvider.getLanguages());
-        this.playText$ = this.messageBus.observeValue(Messages.TranslateResult.PlayTextCommand);
-        this.translateText$ = this.messageBus.observeValue<TranslationRequest>(Messages.TranslateResult.TranslateCommand);
-        this.starTranslateResult$ = this.messageBus.observeValue<StarRequest>(Messages.TranslateResult.StarTranslateResult);
-        this.search$ = this.messageBus.observeValue<string>(Messages.TranslateResult.Search);
+        this.playText$ = this.messageBus.observeCommand(Messages.TranslateResult.PlayTextCommand);
+        this.translateText$ = this.messageBus.observeCommand<TranslationRequest>(Messages.TranslateResult.TranslateCommand);
+        this.starTranslateResult$ = this.messageBus.observeCommand<StarRequest>(Messages.TranslateResult.StarTranslateResult);
+        this.search$ = this.messageBus.observeCommand<string>(Messages.TranslateResult.Search);
     }
 
     public showProgressIndicator(): void {
