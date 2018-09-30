@@ -13,6 +13,9 @@ import { Logger } from "infrastructure/Logger";
 import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
+import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 
 @injectable()
 export class HistorySyncService {
@@ -23,6 +26,7 @@ export class HistorySyncService {
         private readonly datastoreProvider: DatastoreProvider,
         private readonly historyStore: HistoryStore,
         private readonly historyDatabaseProvider: HistoryDatabaseProvider,
+        private readonly settingsProvider: SettingsProvider,
         private readonly logger: Logger) {
 
         this.datastore = this.historyDatabaseProvider.get();
@@ -30,16 +34,18 @@ export class HistorySyncService {
 
     public startSync(): void {
         const messageBus = new MessageBus(this.serviceRendererProvider.getServiceRenderer());
+        const settings = this.settingsProvider.getSettings().value;
         messageBus.returnValue(Messages.HistorySync.HistoryRecords, () => this.getHistoryRecordsToSync());
         messageBus.observeValue<HistoryRecord>(Messages.HistorySync.UpdateRecord).subscribe(record => this.updateRecord(record));
         messageBus.observeValue<HistoryRecord>(Messages.HistorySync.MergeRecord).subscribe(record => this.mergeRecord(record));
+        messageBus.sendValue<FirebaseSettings>(Messages.HistorySync.FirebaseSettings, settings.firebase);
+        messageBus.sendValue<HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings, settings.history.sync);
+        messageBus.sendNotification(Messages.HistorySync.StartSync);
     }
 
     private getHistoryRecordsToSync(): Observable<HistoryRecord[]> {
-        this.logger.info("Getting records to sync.");
         return this.datastoreProvider
-            .find<HistoryRecord>(this.datastore, { $not: { isSyncedWithServer: true } })
-            .pipe(tap(() => this.logger.info("finished getting records to sync.")));
+            .find<HistoryRecord>(this.datastore, { $not: { isSyncedWithServer: true } });
     }
 
     private updateRecord(record: HistoryRecord): void {
@@ -54,8 +60,6 @@ export class HistorySyncService {
     }
 
     private mergeRecord(serverRecord: HistoryRecord): void {
-        this.logger.info(`Merging ${this.getLogKey(serverRecord)} from server.`);
-
         const recordKey: TranslationKey = {
             sentence: serverRecord.sentence,
             isForcedTranslation: serverRecord.isForcedTranslation,

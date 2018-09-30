@@ -5,15 +5,26 @@ import { createMessage } from "common/messaging/create-message";
 
 export class MessageBus {
 
-    public observeValue<TValue>(name: string, callback: (value: TValue) => void): void {
-        ipcRenderer.on(Channels.Observe, (sender: Electron.EventEmitter, message: Message, value: TValue) => {
+    public observeValue<TValue>(name: string, callback: (value: TValue) => void): Subscription {
+        const subscription = new Subscription(Channels.Observe, (sender: Electron.EventEmitter, message: Message, value: TValue) => {
             if (message.name !== name) {
                 return;
             }
             callback(value);
             ipcRenderer.send(Channels.Received, message);
         });
+        subscription.subscribe();
         ipcRenderer.send(Channels.Subscribe, name);
+        return subscription;
+    }
+
+    public observeConstant<TValue>(name: string): Promise<TValue> {
+        return new Promise(resolve => {
+            const subscription = this.observeValue<TValue>(name, value => {
+                subscription.unsubscribe();
+                resolve(value);
+            });
+        });
     }
 
     public sendCommand<TValue>(name: string, value?: TValue): void {
@@ -24,22 +35,37 @@ export class MessageBus {
         const message = createMessage(name);
         return new Promise(resolve => {
 
-            ipcRenderer.send(Channels.Observe, message, args);
+            ipcRenderer.send(Channels.Reply, message, args);
 
-            const callback = (sender: Electron.EventEmitter, receivedMessage: Message, value: TValue) => {
+            const subscription = new Subscription(Channels.Reply, (sender: Electron.EventEmitter, receivedMessage: Message, value: TValue) => {
                 if (message.name !== receivedMessage.name || message.id !== receivedMessage.id) {
                     return;
                 }
 
-                ipcRenderer.removeListener(Channels.Observe, callback);
+                subscription.unsubscribe();
                 resolve(value);
-            };
+            });
 
-            ipcRenderer.on(Channels.Observe, callback);
+            subscription.subscribe();
         });
     }
 
     public observeNotification(name: string, callback: () => void): void {
         this.observeValue<void>(name, callback);
+    }
+}
+
+export class Subscription {
+    constructor(
+        private readonly channel: string,
+        private readonly callback: Function) {
+    }
+
+    public subscribe() {
+        ipcRenderer.addListener(this.channel, this.callback);
+    }
+
+    public unsubscribe() {
+        ipcRenderer.removeListener(this.channel, this.callback);
     }
 }

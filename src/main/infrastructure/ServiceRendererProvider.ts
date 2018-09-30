@@ -1,10 +1,20 @@
 import { injectable } from "inversify";
-import { BrowserWindow } from "electron";
+import { BrowserWindow, } from "electron";
 import * as path from "path";
+
+import { Messages } from "common/messaging/Messages";
+import { MessageBus } from "infrastructure/MessageBus";
+import { Logger } from "infrastructure/Logger";
+import { NotificationSender } from "infrastructure/NotificationSender";
 
 @injectable()
 export class ServiceRendererProvider {
     private serviceRenderer: BrowserWindow | null = null;
+
+    constructor(
+        private readonly logger: Logger,
+        private readonly notificationSender: NotificationSender) {
+    }
 
     public getServiceRenderer(): BrowserWindow {
         if (this.serviceRenderer === null) {
@@ -15,6 +25,14 @@ export class ServiceRendererProvider {
             });
             this.serviceRenderer.loadURL(`file:${path.resolve(__dirname, "..\\service-renderer\\index.html")}`);
             this.serviceRenderer.show();
+
+            const messageBus = new MessageBus(this.serviceRenderer);
+
+            messageBus.observeValue<string>(Messages.ServiceRenderer.LogInfo).subscribe(message => this.logger.info(message));
+            messageBus.observeValue<string>(Messages.ServiceRenderer.LogWarning).subscribe(message => this.logger.warning(message));
+            messageBus.observeValue<{ message: string; error: Error }>(Messages.ServiceRenderer.LogError).subscribe(({ message, error }) => {
+                this.notificationSender.showNonCriticalError(`Error occurred in a service process: ${message}`, error);
+            });
         }
 
         return this.serviceRenderer;

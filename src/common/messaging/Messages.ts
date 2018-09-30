@@ -1,6 +1,7 @@
 export enum Channels {
     Subscribe = "subscribe",
     Observe = "observe",
+    Reply = "reply",
     Received = "received"
 }
 
@@ -43,7 +44,10 @@ export class Messages {
     };
 
     public static HistorySync = class {
+        public static readonly StartSync = "start-history-records-sync";
         public static readonly HistoryRecords = "history-records-sync";
+        public static readonly FirebaseSettings = "firebase-settings";
+        public static readonly HistorySyncSettings = "history-sync-settings";
         public static readonly UpdateRecord = "history-record-update";
         public static readonly MergeRecord = "history-record-merge";
     };
@@ -58,5 +62,11 @@ export class Messages {
         public static readonly SetScaleFactorCommand = "set-scale-factor";
         public static readonly SetStartupStateCommand = "set-startup-state";
         public static readonly OpenSettingsFile = "open-settings-file";
+    };
+
+    public static ServiceRenderer = class {
+        public static readonly LogInfo = "service-renderer-log-info";
+        public static readonly LogError = "service-renderer-log-error";
+        public static readonly LogWarning = "service-renderer-log-warning";
     };
 }

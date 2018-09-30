@@ -73,12 +73,12 @@ export class MessageBus {
     }
 
     public returnValue<TReply, TArgs>(name: string, generateReply: (args?: TArgs) => Observable<TReply>): void {
-        this.createSubscription(Channels.Observe, (event: Electron.Event, message: Message, args: TArgs) => {
+        this.createSubscription(Channels.Reply, (event: Electron.Event, message: Message, args: TArgs) => {
             if (message.name !== name) {
                 return;
             }
 
-            generateReply(args).subscribe(value => this.window.webContents.send(Channels.Observe, message, value));
+            generateReply(args).subscribe(value => this.window.webContents.send(Channels.Reply, message, value));
         });
     }
 

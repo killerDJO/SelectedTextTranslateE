@@ -57,7 +57,12 @@
     },
     "history": {
         "databaseName": "history.db",
-        "pageSize": 25
+        "pageSize": 25,
+        "sync": {
+            "email": "killerDJO@gmail.com",
+            "password": "4815162342",
+            "interval": 300000
+        }
     },
     "scaling": {
         "scaleFactor": 1,
@@ -136,5 +141,11 @@
     "update": {
         "feedUrl": "https://update.electronjs.org/killerDJO/SelectedTextTranslateE",
         "releasesUrl": "https://github.com/killerDJO/SelectedTextTranslateE/releases"
+    },
+    "firebase": {
+        "apiKey": "AIzaSyAuHtBBH6VTFdX12AAOFiIa9xWl7AC2m0A",
+        "authDomain": "stte-cad70.firebaseapp.com",
+        "projectId": "stte-cad70",
+        "firestoreBaseUrl": "https://firestore.googleapis.com/v1beta1"
     }
 }

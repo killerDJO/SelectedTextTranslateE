@@ -4,23 +4,53 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { Messages } from "common/messaging/Messages";
 import md5 = require("md5");
 import { ServerHistoryRecord } from "history/ServerHistoryRecord";
+import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
+import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
+import { Logger } from "infrastructure/Logger";
 
 export class HistorySyncService {
     private readonly messageBus: MessageBus = new MessageBus();
     private readonly firebaseClient: FirebaseClient = new FirebaseClient();
+    private readonly logger: Logger = new Logger();
     private readonly collectionId: string = "history";
+    private isSyncInProgress: boolean = false;
 
     constructor() {
-        this.firebaseClient.initializeApp().then(() => this.syncRecords());
+        this.messageBus.observeNotification(Messages.HistorySync.StartSync, () => {
+            if (!this.isSyncInProgress) {
+                this.startSync();
+            }
+        });
     }
 
-    private async syncRecords(): Promise<void> {
+    private startSync() {
+        this.isSyncInProgress = true;
+        this.logger.info("History records sync enabled.");
+
+        Promise
+            .all([
+                this.messageBus.observeConstant<FirebaseSettings>(Messages.HistorySync.FirebaseSettings),
+                this.messageBus.observeConstant<HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings)])
+            .then(([firebaseSettings, historySyncSettings]) => {
+                this.firebaseClient.initializeApp(firebaseSettings, historySyncSettings.email, historySyncSettings.password)
+                    .then(() => this.syncRecords(historySyncSettings.interval));
+            });
+    }
+
+    private async syncRecords(syncInterval: number): Promise<void> {
         try {
+            this.logger.info("Start history records sync.");
+            this.logger.info("Start history records pull.");
             await this.pullRecords();
+            this.logger.info("End history records pull.");
+            this.logger.info("Start history records push.");
             await this.pushRecords();
+            this.logger.info("End history records push.");
+            this.logger.info("End history records sync.");
+        } catch (error) {
+            this.logger.error("Error syncing records", error);
         } finally {
-            const SyncInterval: number = 5 * 60 * 1000;
-            setTimeout(() => this.syncRecords(), SyncInterval);
+            setTimeout(() => this.syncRecords(syncInterval), syncInterval);
         }
     }
 
@@ -29,7 +59,8 @@ export class HistorySyncService {
         documents.forEach(document => {
             const historyRecord: HistoryRecord = {
                 ...this.deserializeRecord(document.record),
-                serverTimestamp: document.timestamp
+                serverTimestamp: document.timestamp,
+                isSyncedWithServer: true
             };
             this.messageBus.sendCommand(Messages.HistorySync.MergeRecord, historyRecord);
         });
@@ -74,7 +105,7 @@ export class HistorySyncService {
                 isSyncedWithServer: true
             });
         } catch (error) {
-            console.error("Error writing record", error);
+            this.logger.error("Error writing record", error);
         }
     }
 
