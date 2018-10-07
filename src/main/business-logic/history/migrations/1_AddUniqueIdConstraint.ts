@@ -11,8 +11,7 @@ import { HistoryMigration } from "business-logic/history/migrations/base/History
 export class AddUniqueIdConstraint extends HistoryMigration {
 
     constructor(private readonly datastoreProvider: DatastoreProvider) {
-        super();
-        this._priority = 1;
+        super(1, "AddUniqueIdConstraint");
     }
 
     public migrate(datastore: Datastore): Observable<void> {

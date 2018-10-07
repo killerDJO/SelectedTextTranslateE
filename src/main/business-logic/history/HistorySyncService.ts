@@ -29,7 +29,7 @@ export class HistorySyncService {
         private readonly settingsProvider: SettingsProvider,
         private readonly logger: Logger) {
 
-        this.datastore$ = this.historyDatabaseProvider.datastore$;
+        this.datastore$ = this.historyDatabaseProvider.historyDatastore$;
     }
 
     public startSync(): void {

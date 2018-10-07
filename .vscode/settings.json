@@ -23,6 +23,7 @@
         "firestore",
         "injectable",
         "inversify",
-        "keybd"
+        "keybd",
+        "unmanaged"
     ]
 }

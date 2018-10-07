@@ -4,10 +4,8 @@ import { Observable } from "rxjs";
 
 @injectable()
 export abstract class HistoryMigration {
-    protected _priority: number = 0;
 
-    public get priority(): number {
-        return this._priority;
+    constructor(public readonly priority: number, public readonly name: string) {
     }
 
     public abstract migrate(datastore: Datastore): Observable<void>;

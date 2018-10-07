@@ -48,7 +48,7 @@ import { NullScaler } from "presentation/framework/scaling/NullScaler";
 import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
 
 class Binder {
-    public readonly container: Container = new Container();
+    public readonly container: Container = new Container({ skipBaseClassChecks: true });
 
     constructor() {
         this.bindInfrastructure();

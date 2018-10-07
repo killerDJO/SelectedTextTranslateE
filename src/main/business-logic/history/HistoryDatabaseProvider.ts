@@ -1,7 +1,7 @@
 import { injectable, multiInject } from "inversify";
 import * as Datastore from "nedb";
-import { AsyncSubject, merge, Observable, of, empty } from "rxjs";
-import { tap, concatMap, publish } from "rxjs/operators";
+import { AsyncSubject, merge, Observable, of } from "rxjs";
+import { tap, concatMap } from "rxjs/operators";
 
 import { Logger } from "infrastructure/Logger";
 import { DatastoreProvider } from "data-access/DatastoreProvider";
@@ -10,7 +10,7 @@ import { HistoryMigration } from "business-logic/history/migrations/base/History
 
 @injectable()
 export class HistoryDatabaseProvider {
-    public readonly datastore$: AsyncSubject<Datastore> = new AsyncSubject();
+    public readonly historyDatastore$: AsyncSubject<Datastore> = new AsyncSubject();
 
     constructor(
         private readonly datastoreProvider: DatastoreProvider,
@@ -20,7 +20,7 @@ export class HistoryDatabaseProvider {
 
         const historySettings = this.settingsProvider.getSettings().value.history;
         const datastore = this.datastoreProvider.openDatabase(historySettings.databaseName);
-        this.datastore$.next(datastore);
+        this.historyDatastore$.next(datastore);
 
         this.runMigrations(datastore);
     }
@@ -33,18 +33,17 @@ export class HistoryDatabaseProvider {
             .subscribe({
                 complete: () => {
                     this.logger.info("End running history migrations.");
-                    this.datastore$.complete();
+                    this.historyDatastore$.complete();
                 }
             });
     }
 
     private runMigration(datastore: Datastore, migration: HistoryMigration): Observable<void> {
-        const migrationName = migration.constructor.name;
         return of(void 0).pipe(
-            tap(() => this.logger.info(`Start running migration: ${migrationName}`)),
+            tap(() => this.logger.info(`Start running migration: ${migration.name}`)),
             concatMap(() => migration.migrate(datastore)),
             tap({
-                complete: () => this.logger.info(`End running migration: ${migrationName}`)
+                complete: () => this.logger.info(`End running migration: ${migration.name}`)
             })
         );
     }

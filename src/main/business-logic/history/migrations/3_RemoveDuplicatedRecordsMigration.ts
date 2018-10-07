@@ -14,8 +14,7 @@ import { Logger } from "infrastructure/Logger";
 export class RemoveDuplicatedRecordsMigration extends HistoryMigration {
 
     constructor(private readonly datastoreProvider: DatastoreProvider, private readonly logger: Logger) {
-        super();
-        this._priority = 3;
+        super(3, "RemoveDuplicatedRecordsMigration");
     }
 
     public migrate(datastore: Datastore): Observable<void> {

@@ -36,7 +36,7 @@ export class HistoryStore {
         private readonly logger: Logger) {
 
         this.historySettings = this.settingsProvider.getSettings().value.history;
-        this.datastore$ = this.historyDatabaseProvider.datastore$;
+        this.datastore$ = this.historyDatabaseProvider.historyDatastore$;
     }
 
     public get historyUpdated$(): Observable<HistoryRecord> {

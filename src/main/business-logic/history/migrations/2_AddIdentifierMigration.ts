@@ -9,8 +9,7 @@ import { RecordIdGenerator } from "business-logic/history/RecordIdGenerator";
 export class AddIdentifierMigration extends HistoryRecordsMigration {
 
     constructor(private readonly recordIdGenerator: RecordIdGenerator, datastoreProvider: DatastoreProvider) {
-        super(datastoreProvider);
-        this._priority = 2;
+        super(2, "AddIdentifierMigration", datastoreProvider);
     }
 
     protected getSelectQuery() {

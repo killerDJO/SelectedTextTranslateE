@@ -8,8 +8,7 @@ import { HistoryRecordsMigration } from "business-logic/history/migrations/base/
 export class AddLastModificationTimeMigration extends HistoryRecordsMigration {
 
     constructor(datastoreProvider: DatastoreProvider) {
-        super(datastoreProvider);
-        this._priority = 4;
+        super(4, "AddLastModificationTimeMigration", datastoreProvider);
     }
 
     protected getSelectQuery() {

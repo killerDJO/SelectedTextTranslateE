@@ -9,8 +9,8 @@ import { HistoryMigration } from "business-logic/history/migrations/base/History
 
 @injectable()
 export abstract class HistoryRecordsMigration extends HistoryMigration {
-    constructor(private readonly datastoreProvider: DatastoreProvider) {
-        super();
+    constructor(priority: number, name: string, private readonly datastoreProvider: DatastoreProvider) {
+        super(priority, name);
     }
 
     public migrate(datastore: Datastore): Observable<void> {
