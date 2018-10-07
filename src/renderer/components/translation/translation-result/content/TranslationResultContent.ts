@@ -73,7 +73,7 @@ export default class TranslationResultContent extends Vue {
 
     @Watch("historyRecord", { deep: true })
     public watchHistoryRecord(oldValue: HistoryRecord, newValue: HistoryRecord) {
-        if (oldValue._id !== newValue._id) {
+        if (oldValue.id !== newValue.id) {
             this.initializeCurrentView();
         }
     }

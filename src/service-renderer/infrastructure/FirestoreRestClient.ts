@@ -52,6 +52,9 @@ export class FirestoreRestClient {
 
         const response = await this.executeFirestoreCommand(user, "runQuery", payload);
         const result: any[] = await response.json();
+        if (!result[0] || !result[0].document) {
+            return [];
+        }
         return result.map(document => this.parseDocument<TDocument>(document));
     }
 

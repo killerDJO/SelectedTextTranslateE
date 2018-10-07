@@ -25,6 +25,14 @@ import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { SearchExecutor } from "business-logic/search/SearchExecutor";
 import { HistorySyncService } from "business-logic/history/HistorySyncService";
+import { HistoryMigration } from "business-logic/history/migrations/base/HistoryMigration";
+import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
+import { RecordIdGenerator } from "business-logic/history/RecordIdGenerator";
+
+import { AddUniqueIdConstraint } from "business-logic/history/migrations/1_AddUniqueIdConstraint";
+import { AddIdentifierMigration } from "business-logic/history/migrations/2_AddIdentifierMigration";
+import { RemoveDuplicatedRecordsMigration } from "business-logic/history/migrations/3_RemoveDuplicatedRecordsMigration";
+import { AddLastModificationTimeMigration } from "business-logic/history/migrations/4_AddLastModificationTimeMigration";
 
 import { MessageBus } from "infrastructure/MessageBus";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
@@ -38,7 +46,6 @@ import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 import { ViewsRegistry } from "presentation/views/ViewsRegistry";
 import { NullScaler } from "presentation/framework/scaling/NullScaler";
 import { ScalerFactory } from "presentation/framework/scaling/ScalerFactory";
-import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
 
 class Binder {
     public readonly container: Container = new Container();
@@ -75,17 +82,32 @@ class Binder {
     }
 
     private bindBusinessLogic(): void {
+        this.container.bind<SettingsProvider>(SettingsProvider).toSelf().inSingletonScope();
+        this.container.bind<SearchExecutor>(SearchExecutor).toSelf().inSingletonScope();
+
+        this.bindHistory();
+        this.bindTranslationEngine();
+    }
+
+    private bindHistory(): void {
         this.container.bind<HistoryStore>(HistoryStore).toSelf().inSingletonScope();
         this.container.bind<HistorySyncService>(HistorySyncService).toSelf().inSingletonScope();
         this.container.bind<HistoryDatabaseProvider>(HistoryDatabaseProvider).toSelf().inSingletonScope();
+        this.container.bind<RecordIdGenerator>(RecordIdGenerator).toSelf();
+
+        this.container.bind<HistoryMigration>(HistoryMigration).to(AddLastModificationTimeMigration);
+        this.container.bind<HistoryMigration>(HistoryMigration).to(AddIdentifierMigration);
+        this.container.bind<HistoryMigration>(HistoryMigration).to(RemoveDuplicatedRecordsMigration);
+        this.container.bind<HistoryMigration>(HistoryMigration).to(AddUniqueIdConstraint);
+    }
+
+    private bindTranslationEngine(): void {
         this.container.bind<HashProvider>(HashProvider).toSelf();
         this.container.bind<TextExtractor>(TextExtractor).toSelf();
         this.container.bind<TextTranslator>(TextTranslator).toSelf();
         this.container.bind<TranslatePageParser>(TranslatePageParser).toSelf().inSingletonScope();
         this.container.bind<TranslationResponseParser>(TranslationResponseParser).toSelf();
         this.container.bind<TextPlayer>(TextPlayer).toSelf();
-        this.container.bind<SettingsProvider>(SettingsProvider).toSelf().inSingletonScope();
-        this.container.bind<SearchExecutor>(SearchExecutor).toSelf().inSingletonScope();
     }
 
     private bindPresentation(): void {

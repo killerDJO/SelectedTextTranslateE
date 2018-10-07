@@ -2,7 +2,6 @@ import { FirebaseClient } from "infrastructure/FirebaseClient";
 import { MessageBus } from "common/renderer/MessageBus";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { Messages } from "common/messaging/Messages";
-import md5 = require("md5");
 import { ServerHistoryRecord } from "history/ServerHistoryRecord";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
@@ -13,20 +12,23 @@ export class HistorySyncService {
     private readonly messageBus: MessageBus = new MessageBus();
     private readonly firebaseClient: FirebaseClient = new FirebaseClient();
     private readonly logger: Logger = new Logger();
+
     private readonly collectionId: string = "history";
-    private isSyncInProgress: boolean = false;
+
+    private isSyncStarted: boolean = false;
+    private syncTask: Promise<void> | null = null;
 
     constructor() {
         this.messageBus.observeNotification(Messages.HistorySync.StartSync, () => {
-            if (!this.isSyncInProgress) {
+            if (!this.isSyncStarted) {
                 this.startSync();
             }
         });
     }
 
     private startSync() {
-        this.isSyncInProgress = true;
-        this.logger.info("History records sync enabled.");
+        this.isSyncStarted = true;
+        this.logger.info("History records sync started.");
 
         Promise
             .all([
@@ -50,6 +52,17 @@ export class HistorySyncService {
     }
 
     private async syncAllRecords(): Promise<void> {
+        await this.waitForSyncToFinish();
+
+        try {
+            this.syncTask = this.syncAllRecordsUnsafe();
+            await this.syncTask;
+        } finally {
+            this.syncTask = null;
+        }
+    }
+
+    private async syncAllRecordsUnsafe(): Promise<void> {
         try {
             this.logger.info("Start history records sync.");
             this.logger.info("Start history records pull.");
@@ -65,6 +78,8 @@ export class HistorySyncService {
     }
 
     private async syncSingleRecord(historyRecord: HistoryRecord): Promise<void> {
+        await this.waitForSyncToFinish();
+
         if (await this.writeRecord(historyRecord)) {
             this.logger.info("Failed to sync individual record. Falling back to a full sync.");
             await this.syncAllRecords();
@@ -91,10 +106,10 @@ export class HistorySyncService {
     }
 
     private async writeRecord(record: HistoryRecord): Promise<boolean> {
-        const id = `${md5(record.sentence)}${record.isForcedTranslation ? "-forced" : ""}-${record.sourceLanguage}-${record.targetLanguage}`;
-        this.logger.info(`Write record with id ${id} to the server.`);
+        this.logger.info(`Write record with id ${record.id} to the server.`);
 
-        const serializedRecord = this.serializeRecord({
+        const sanitizedRecord = {
+            id: record.id,
             sentence: record.sentence,
             isForcedTranslation: record.isForcedTranslation,
             sourceLanguage: record.sourceLanguage,
@@ -104,23 +119,27 @@ export class HistorySyncService {
             createdDate: record.createdDate,
             updatedDate: record.updatedDate,
             lastTranslatedDate: record.lastTranslatedDate,
+            lastModifiedDate: record.lastModifiedDate,
             isStarred: record.isStarred,
             isArchived: record.isArchived
-        });
+        };
+        const serializedRecord = this.serializeRecord(sanitizedRecord);
 
         const firebasePromise = !record.serverTimestamp
-            ? this.firebaseClient.addDocument(this.collectionId, id, { record: serializedRecord })
-            : this.firebaseClient.updateDocument(this.collectionId, id, { record: serializedRecord }, record.serverTimestamp);
+            ? this.firebaseClient.addDocument(this.collectionId, record.id, { record: serializedRecord })
+            : this.firebaseClient.updateDocument(this.collectionId, record.id, { record: serializedRecord }, record.serverTimestamp);
 
         try {
             const updatedTimestamp = await firebasePromise;
             await this.messageBus.sendCommand<HistoryRecord>(Messages.HistorySync.UpdateRecord, {
-                ...record,
+                ...sanitizedRecord,
+                id: record.id,
                 serverTimestamp: updatedTimestamp,
                 isSyncedWithServer: true
             });
         } catch (error) {
             if (error instanceof OutOfSyncError) {
+                this.logger.warning("Failed to write record. Records are out of sync.");
                 return true;
             }
 
@@ -128,6 +147,12 @@ export class HistorySyncService {
         }
 
         return false;
+    }
+
+    private async waitForSyncToFinish(): Promise<void> {
+        while (this.syncTask !== null) {
+            await this.syncTask;
+        }
     }
 
     private serializeRecord(record: HistoryRecord): string {

@@ -19,7 +19,7 @@ import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 
 @injectable()
 export class HistorySyncService {
-    private readonly datastore: Datastore;
+    private readonly datastore$: Observable<Datastore>;
 
     constructor(
         private readonly serviceRendererProvider: ServiceRendererProvider,
@@ -29,7 +29,7 @@ export class HistorySyncService {
         private readonly settingsProvider: SettingsProvider,
         private readonly logger: Logger) {
 
-        this.datastore = this.historyDatabaseProvider.get();
+        this.datastore$ = this.historyDatabaseProvider.datastore$;
     }
 
     public startSync(): void {
@@ -46,17 +46,18 @@ export class HistorySyncService {
 
     private getHistoryRecordsToSync(): Observable<HistoryRecord[]> {
         return this.datastoreProvider
-            .find<HistoryRecord>(this.datastore, { $not: { isSyncedWithServer: true } });
+            .find<HistoryRecord>(this.datastore$, { $not: { isSyncedWithServer: true } });
     }
 
     private updateRecord(record: HistoryRecord): Observable<void> {
-        if (!record._id) {
-            throw Error("Record with an _id must be provided");
+        if (!record.id) {
+            throw Error("Record with an id must be provided");
         }
 
         this.logger.info(`Updating ${this.getLogKey(record)} after syncing with server.`);
-        return this.datastoreProvider
-            .update<HistoryRecord>(this.datastore, { _id: record._id }, record).pipe(map(() => void 0));
+        return this.checkThatRecordUpdated(
+            this.datastoreProvider.update<HistoryRecord>(this.datastore$, { id: record.id, lastModifiedDate: record.lastModifiedDate }, record),
+            record);
     }
 
     private mergeRecord(serverRecord: HistoryRecord): Observable<void> {
@@ -69,7 +70,7 @@ export class HistorySyncService {
         return this.historyStore.getRecord(recordKey).pipe(concatMap(existingRecord => {
             if (!existingRecord) {
                 this.logger.info(`New ${this.getLogKey(serverRecord)} has been created from server.`);
-                this.datastoreProvider.insert(this.datastore, serverRecord).subscribe();
+                this.datastoreProvider.insert(this.datastore$, serverRecord).subscribe();
                 return of(void 0);
             }
 
@@ -86,7 +87,7 @@ export class HistorySyncService {
 
             const mergedRecord: HistoryRecord = {
                 ...recordKey,
-                _id: existingRecord._id,
+                id: existingRecord.id,
                 createdDate: newerRecord.createdDate,
                 translateResult: newerTranslateResultRecord.translateResult,
                 updatedDate: newerTranslateResultRecord.updatedDate,
@@ -100,12 +101,25 @@ export class HistorySyncService {
             };
 
             this.logger.info(`Existing ${this.getLogKey(serverRecord)} has been merged with server record.`);
-            return this.datastoreProvider.update(this.datastore, { _id: mergedRecord._id }, mergedRecord);
+            return this.checkThatRecordUpdated(
+                this.datastoreProvider.update(this.datastore$, { id: mergedRecord.id, lastModifiedDate: existingRecord.lastModifiedDate }, mergedRecord),
+                mergedRecord);
         }));
     }
 
+    private checkThatRecordUpdated(updateResult: Observable<HistoryRecord>, record: HistoryRecord): Observable<void> {
+        return updateResult.pipe(
+            tap(historyRecord => {
+                if (!historyRecord) {
+                    this.logger.warning(`Failed to saved ${this.getLogKey(record)}.`);
+                }
+            }),
+            map(() => void 0)
+        );
+    }
+
     private getLastModifiedDate(record: HistoryRecord): Date {
-        return new Date(record.lastModifiedDate || record.lastTranslatedDate || record.updatedDate);
+        return new Date(record.lastModifiedDate);
     }
 
     private getLogKey(record: HistoryRecord): string {

@@ -18,11 +18,12 @@ import { DatastoreProvider } from "data-access/DatastoreProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { HistorySettings } from "business-logic/settings/dto/Settings";
 import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
+import { RecordIdGenerator } from "business-logic/history/RecordIdGenerator";
 
 @injectable()
 export class HistoryStore {
 
-    private readonly datastore: Datastore;
+    private readonly datastore$: Observable<Datastore>;
     private readonly historyUpdatedSubject$: Subject<HistoryRecord> = new Subject();
 
     private readonly historySettings: HistorySettings;
@@ -31,22 +32,24 @@ export class HistoryStore {
         private readonly datastoreProvider: DatastoreProvider,
         private readonly settingsProvider: SettingsProvider,
         private readonly historyDatabaseProvider: HistoryDatabaseProvider,
+        private readonly recordIdGenerator: RecordIdGenerator,
         private readonly logger: Logger) {
 
         this.historySettings = this.settingsProvider.getSettings().value.history;
-        this.datastore = this.historyDatabaseProvider.get();
+        this.datastore$ = this.historyDatabaseProvider.datastore$;
     }
 
     public get historyUpdated$(): Observable<HistoryRecord> {
         return this.historyUpdatedSubject$;
     }
 
-    public addTranslateResult(translateResult: TranslateResult, key: TranslationKey): Observable<HistoryRecord> {
+    public addTranslateResult(translateResult: TranslateResult, key: TranslationKey, incrementTranslationsNumber: boolean): Observable<HistoryRecord> {
         const currentTime = new Date();
-        const insert$ = this.datastoreProvider.insert<HistoryRecord>(this.datastore, {
+        const insert$ = this.datastoreProvider.insert<HistoryRecord>(this.datastore$, {
+            id: this.recordIdGenerator.generateId(key),
             sentence: key.sentence,
             translateResult: translateResult,
-            translationsNumber: 0,
+            translationsNumber: incrementTranslationsNumber ? 1 : 0,
             isForcedTranslation: key.isForcedTranslation,
             sourceLanguage: key.sourceLanguage,
             targetLanguage: key.targetLanguage,
@@ -64,17 +67,24 @@ export class HistoryStore {
         );
     }
 
-    public updateTranslateResult(translateResult: TranslateResult, key: TranslationKey): Observable<HistoryRecord> {
+    public updateTranslateResult(translateResult: TranslateResult, key: TranslationKey, incrementTranslationsNumber: boolean): Observable<HistoryRecord> {
         const currentTime = new Date();
+        const setQuery: any = {
+            updatedDate: currentTime,
+            translateResult: translateResult,
+            ...this.getModificationFields(currentTime)
+        };
+
+        if (incrementTranslationsNumber) {
+            setQuery.lastTranslatedDate = currentTime;
+        }
+
         const update$ = this.datastoreProvider.update<HistoryRecord>(
-            this.datastore,
+            this.datastore$,
             this.getSearchQuery(key),
             {
-                $set: {
-                    translateResult: translateResult,
-                    updatedDate: currentTime,
-                    ...this.getModificationFields(currentTime)
-                }
+                $set: setQuery,
+                $inc: { translationsNumber: incrementTranslationsNumber ? 1 : 0 }
             });
 
         return update$.pipe(
@@ -86,7 +96,7 @@ export class HistoryStore {
     public incrementTranslationsNumber(key: TranslationKey): Observable<HistoryRecord> {
         const currentTime = new Date();
         const increment$ = this.datastoreProvider.update<HistoryRecord>(
-            this.datastore,
+            this.datastore$,
             this.getSearchQuery(key),
             { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime, ...this.getModificationFields(currentTime) } });
 
@@ -98,7 +108,7 @@ export class HistoryStore {
 
     public getRecord(key: TranslationKey): Observable<HistoryRecord | null> {
         return this.datastoreProvider
-            .find<HistoryRecord>(this.datastore, this.getSearchQuery(key))
+            .find<HistoryRecord>(this.datastore$, this.getSearchQuery(key))
             .pipe(
                 map(result => !!result.length ? result[0] : null)
             );
@@ -129,11 +139,11 @@ export class HistoryStore {
             searchQuery.isArchived = false;
         }
 
-        const count$ = this.datastoreProvider.count(this.datastore, searchQuery);
+        const count$ = this.datastoreProvider.count(this.datastore$, searchQuery);
         const pageSize = this.historySettings.pageSize;
 
         return this.datastoreProvider
-            .findPaged<HistoryRecord>(this.datastore, searchQuery, sortQuery, request.pageNumber, pageSize).pipe(
+            .findPaged<HistoryRecord>(this.datastore$, searchQuery, sortQuery, request.pageNumber, pageSize).pipe(
                 concatMap(historyRecords => count$.pipe(map(count => {
                     return {
                         records: historyRecords,
@@ -155,7 +165,7 @@ export class HistoryStore {
 
     private setStatus(key: TranslationKey, updateQuery: any, logMessage: string): Observable<HistoryRecord> {
         const setStatus$ = this.datastoreProvider.update<HistoryRecord>(
-            this.datastore,
+            this.datastore$,
             this.getSearchQuery(key),
             { $set: { ...updateQuery, ...this.getModificationFields() } });
 
@@ -181,7 +191,7 @@ export class HistoryStore {
     private getModificationFields(modificationDate?: Date) {
         return {
             isSyncedWithServer: false,
-            lastModifiedDate: modificationDate || new Date()
+            lastModifiedDate: (modificationDate || new Date()).getTime()
         };
     }
 

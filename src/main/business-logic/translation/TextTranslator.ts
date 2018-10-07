@@ -40,8 +40,7 @@ export class TextTranslator {
         const key = this.getTranslationKey(sanitizedSentence, isForcedTranslation, sourceLanguage, targetLanguage);
 
         return this.historyStore.getRecord(key).pipe(
-            concatMap(historyRecord => this.getTranslateResult(key, refreshCache, historyRecord)),
-            concatMap(historyRecord => !(skipStatistic || refreshCache) ? this.historyStore.incrementTranslationsNumber(key) : of(historyRecord))
+            concatMap(historyRecord => this.getTranslateResult(key, refreshCache, skipStatistic, historyRecord)),
         );
     }
 
@@ -55,22 +54,29 @@ export class TextTranslator {
         };
     }
 
-    private getTranslateResult(key: TranslationKey, refreshCache: boolean, historyRecord: HistoryRecord | null): Observable<HistoryRecord> {
+    private getTranslateResult(key: TranslationKey, refreshCache: boolean, skipStatistic: boolean, historyRecord: HistoryRecord | null): Observable<HistoryRecord> {
         const translateResult$ = this
             .getResponseFromService(key)
             .pipe(tap(() => this.logger.info(`Serving translation ${this.getLogKey(key)} from service.`)));
 
+        const incrementTranslationsNumber = !(skipStatistic || refreshCache);
+
         if (historyRecord === null) {
             return translateResult$
-                .pipe(concatMap(translateResult => this.historyStore.addTranslateResult(translateResult, key)));
+                .pipe(concatMap(translateResult => this.historyStore.addTranslateResult(translateResult, key, incrementTranslationsNumber)));
         }
 
         if (refreshCache || this.isHistoryRecordExpired(historyRecord)) {
             return translateResult$
-                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, key)));
+                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, key, incrementTranslationsNumber)));
         }
 
         this.logger.info(`Serving translation ${this.getLogKey(key)} from dictionary.`);
+
+        if (incrementTranslationsNumber) {
+            return this.historyStore.incrementTranslationsNumber(key);
+        }
+
         return of(historyRecord);
     }
 
