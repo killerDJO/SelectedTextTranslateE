@@ -87,7 +87,10 @@ export class HistorySyncService {
     }
 
     private async pullRecords(): Promise<void> {
-        const documents = await this.firebaseClient.getDocuments<ServerHistoryRecord>(this.collectionId);
+        const lastSyncTime = await this.messageBus.sendCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime);
+        const documents = await this.firebaseClient.getDocuments<ServerHistoryRecord>(this.collectionId, lastSyncTime);
+
+        let maxTimestamp: string | null = null;
         for (const document of documents) {
             const historyRecord: HistoryRecord = {
                 ...this.deserializeRecord(document.record),
@@ -95,6 +98,14 @@ export class HistorySyncService {
                 isSyncedWithServer: true
             };
             await this.messageBus.sendCommand(Messages.HistorySync.MergeRecord, historyRecord);
+
+            if (maxTimestamp === null || new Date(document.timestamp) > new Date(maxTimestamp)) {
+                maxTimestamp = document.timestamp;
+            }
+        }
+
+        if (maxTimestamp !== null) {
+            await this.messageBus.sendCommand<string>(Messages.HistorySync.SetLastSyncTime, maxTimestamp);
         }
     }
 

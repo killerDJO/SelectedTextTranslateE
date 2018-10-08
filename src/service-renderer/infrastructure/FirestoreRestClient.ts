@@ -8,6 +8,8 @@ export class FirestoreRestClient {
     private readonly firestoreDocuments: string;
     private readonly firestoreBaseUrl: string;
 
+    private static readonly TimestampFieldPath: string = "timestamp";
+
     constructor(firestoreBaseUrl: string, projectId: string) {
         this.firestoreBaseUrl = firestoreBaseUrl;
         this.firestoreDocuments = `projects/${projectId}/databases/(default)/documents`;
@@ -22,6 +24,34 @@ export class FirestoreRestClient {
     }
 
     public async getDocuments<TDocument extends FirebaseDocument>(user: firebase.User, collectionId: string, timestamp?: string): Promise<TDocument[]> {
+
+        const filters: any = [
+            {
+                fieldFilter: {
+                    field: {
+                        fieldPath: "user"
+                    },
+                    op: "EQUAL",
+                    value: {
+                        stringValue: user.uid
+                    }
+                }
+            }
+        ];
+        if (!!timestamp) {
+            filters.push({
+                fieldFilter: {
+                    field: {
+                        fieldPath: FirestoreRestClient.TimestampFieldPath
+                    },
+                    op: "GREATER_THAN",
+                    value: {
+                        timestampValue: timestamp
+                    }
+                }
+            });
+        }
+
         const payload = {
             structuredQuery: {
                 from: [
@@ -32,19 +62,7 @@ export class FirestoreRestClient {
                 where: {
                     compositeFilter: {
                         op: "AND",
-                        filters: [
-                            {
-                                fieldFilter: {
-                                    field: {
-                                        fieldPath: "user"
-                                    },
-                                    op: "EQUAL",
-                                    value: {
-                                        stringValue: user.uid
-                                    }
-                                }
-                            }
-                        ]
+                        filters: filters
                     }
                 }
             }
@@ -83,7 +101,7 @@ export class FirestoreRestClient {
                         document: recordRef,
                         fieldTransforms: [
                             {
-                                fieldPath: "timestamp",
+                                fieldPath: FirestoreRestClient.TimestampFieldPath,
                                 setToServerValue: "REQUEST_TIME"
                             }
                         ]

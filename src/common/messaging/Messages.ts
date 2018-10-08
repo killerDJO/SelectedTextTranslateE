@@ -50,6 +50,8 @@ export class Messages {
         public static readonly HistorySyncSettings = "history-sync-settings";
         public static readonly UpdateRecord = "history-record-update";
         public static readonly MergeRecord = "history-record-merge";
+        public static readonly LastSyncTime = "last-sync-time";
+        public static readonly SetLastSyncTime = "set-last-sync-time";
     };
 
     public static Settings = class {

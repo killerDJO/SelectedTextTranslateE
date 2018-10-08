@@ -38,10 +38,30 @@ export class HistorySyncService {
         messageBus.handleCommand(Messages.HistorySync.UnSyncedHistoryRecords, () => this.getHistoryRecordsToSync());
         messageBus.handleCommand<HistoryRecord>(Messages.HistorySync.UpdateRecord, record => this.updateRecord(record));
         messageBus.handleCommand<HistoryRecord>(Messages.HistorySync.MergeRecord, record => this.mergeRecord(record));
+        messageBus.handleCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime, () => of(this.getLastSyncTime()));
+        messageBus.handleCommand<string>(Messages.HistorySync.SetLastSyncTime, lastSyncTime => of(this.setLastSyncTime(lastSyncTime)));
         messageBus.sendValue<FirebaseSettings>(Messages.HistorySync.FirebaseSettings, settings.firebase);
-        messageBus.sendValue<HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings, settings.history.sync);
+        messageBus.sendValue<HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings, this.getHistorySyncSettings());
         messageBus.sendNotification(Messages.HistorySync.StartSync);
         messageBus.registerObservable(Messages.HistorySync.HistoryRecord, this.historyStore.historyUpdated$);
+    }
+
+    private getHistorySyncSettings(): HistorySyncSettings {
+        return this.settingsProvider.getSettings().value.history.sync;
+    }
+
+    private getLastSyncTime(): string | undefined {
+        return this.getHistorySyncSettings().lastSyncTime;
+    }
+
+    private setLastSyncTime(lastSyncTime: string): void {
+        this.settingsProvider.updateSettings({
+            history: {
+                sync: {
+                    lastSyncTime: lastSyncTime
+                }
+            }
+        });
     }
 
     private getHistoryRecordsToSync(): Observable<HistoryRecord[]> {

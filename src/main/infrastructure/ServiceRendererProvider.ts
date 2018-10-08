@@ -20,11 +20,13 @@ export class ServiceRendererProvider {
         if (this.serviceRenderer === null) {
             this.serviceRenderer = new BrowserWindow({
                 webPreferences: {
-                    backgroundThrottling: false
-                }
+                    backgroundThrottling: false,
+                },
+                show: false
             });
             this.serviceRenderer.loadURL(`file:${path.resolve(__dirname, "..\\service-renderer\\index.html")}`);
-            this.serviceRenderer.show();
+
+            this.serviceRenderer.webContents.toggleDevTools();
 
             const messageBus = new MessageBus(this.serviceRenderer);
 
