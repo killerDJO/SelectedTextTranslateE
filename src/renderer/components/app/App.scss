@@ -29,4 +29,8 @@
             height: calc(100% -  #{$frameless-header-height});
         }
     }
+
+    .view {
+        min-height: 100%;
+    }
 }

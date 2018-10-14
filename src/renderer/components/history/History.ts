@@ -123,4 +123,16 @@ export default class History extends Vue {
     public refreshRecords(): void {
         this.requestHistoryRecords();
     }
+
+    public signIn(): void {
+        console.log("Sing In");
+    }
+
+    public signUp(): void {
+        console.log("Sing Up");
+    }
+
+    public openSettings(): void {
+        console.log("openSettings");
+    }
 }

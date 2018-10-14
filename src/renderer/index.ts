@@ -21,6 +21,7 @@ import Checkbox from "components/shared/checkbox/Checkbox.vue";
 import IconButton from "components/shared/icon-button/IconButton.vue";
 import LinkButton from "components/shared/link-button/LinkButton.vue";
 import AppButton from "components/shared/app-button/AppButton.vue";
+import DropButton from "components/shared/drop-button/DropButton.vue";
 
 class Bootstrapper {
 
@@ -60,6 +61,7 @@ class Bootstrapper {
         Vue.component("icon-button", IconButton);
         Vue.component("link-button", LinkButton);
         Vue.component("app-button", AppButton);
+        Vue.component("drop-button", DropButton);
     }
 
     private static registerPlugins(): void {

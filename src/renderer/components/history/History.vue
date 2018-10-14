@@ -29,7 +29,7 @@
           <tr v-for="record in historyRecords" :key="record.sentence + record.isForcedTranslation + record.sourceLanguage + record.targetLanguage" @click="translateHistoryRecord(record)">
             <td class="word-column" v-overflow-tooltip>
               <div class="synced-icon-holder">
-                <i class="icon icon-cloud-thunder synced-icon" v-if="!record.isSyncedWithServer" />
+                <i class="icon icon-cloud-thunder synced-icon" v-if="!record.isSyncedWithServer" title="Record is not synced with server"/>
               </div>
               <icon-button v-if="record.isStarred" @click="setStarredStatus({record: record, isStarred: false})" :title="'Unmark Translation'" :tab-index="-1">
                 <span class="icon icon-star" />
@@ -49,8 +49,8 @@
             <td class="target-language-column" v-overflow-tooltip>{{languages.get(record.targetLanguage) || record.targetLanguage}}</td>
             <td class="last-translated-column" v-overflow-tooltip>{{record.lastTranslatedDate | date-time}}</td>
             <td class="archived-column">
-              <icon-button v-if="record.isArchived" title="Restore" @click="setArchivedStatus({record: record, isArchived: false})"><i class="icon icon-trash restore"/></icon-button>
-              <icon-button v-else title="Archive" @click="setArchivedStatus({record: record, isArchived: true})"><i class="icon icon-trash archive"/></icon-button>
+              <icon-button v-if="record.isArchived" title="Restore" @click="setArchivedStatus({record: record, isArchived: false})" :tab-index="-1"><i class="icon icon-trash restore"/></icon-button>
+              <icon-button v-else title="Archive" @click="setArchivedStatus({record: record, isArchived: true})" :tab-index="-1"><i class="icon icon-trash archive"/></icon-button>
             </td>
           </tr>
         </tbody>
@@ -81,15 +81,22 @@
               @set-starred-status="setStarredStatus"/>
       </div>
       <div class="results-footer" v-if="totalRecords !== 0">
-        <p class="records-count">{{totalRecords}} records</p>
-        <paginate
-          v-model="pageNumber$"
-          :page-count="pageCount"
-          :prev-text="'Prev'"
-          :next-text="'Next'"
-          :container-class="'pagination'"
-          :break-view-text="'...'">
-        </paginate>
+        <drop-button
+          class="sync-control"
+          :text="'Sing In'"
+          @click="signIn"
+          :dropItems="[{text: 'Sign Up', callback: signUp}, {text: 'Settings', callback: openSettings}]"/>
+        <div class="pagination-holder">
+          <p class="records-count">{{totalRecords}} records</p>
+          <paginate
+            v-model="pageNumber$"
+            :page-count="pageCount"
+            :prev-text="'Prev'"
+            :next-text="'Next'"
+            :container-class="'pagination'"
+            :break-view-text="'...'">
+          </paginate>
+        </div>
       </div>
     </div>
   </div>

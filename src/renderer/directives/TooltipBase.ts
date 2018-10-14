@@ -39,7 +39,7 @@ export abstract class TooltipBase implements DirectiveOptions {
 
         const content = this.getTooltipContent(element);
         if (!!content) {
-            tooltipData.tooltip.updateTitleContent(content);
+            (tooltipData.tooltip as any).updateTitleContent(content);
 
             if (this.shouldTooltipBeVisible(element)) {
                 this.showTooltip(element, tooltipData.tooltip);

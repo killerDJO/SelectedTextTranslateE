@@ -1,0 +1,78 @@
+.drop-wrapper {
+    display: inline-flex;
+    position: relative;
+    
+    margin-top: $margin-small;
+    border: $border-width solid $color-border;
+    border-radius: $border-radius;
+
+    .drop-button:hover,
+    .drop-button:focus-within,
+    .drop-trigger:hover,
+    .drop-trigger:focus-within {
+        background-color: $color-background;
+    }
+
+    .drop-button {
+        padding: $padding-small $padding-default;
+        cursor: pointer;
+        outline: none;
+    }
+
+    .drop-trigger {
+        border-left: $border-width solid $color-border;
+
+        $icon-wrapper-width: 30px;
+        /deep/ .icon-holder {
+            display: inline-flex;
+            font-size: $font-large;
+            width: $icon-wrapper-width;
+            height: $icon-wrapper-width;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    .drop-content{
+        position: fixed;
+        left: -10000px;
+
+        border: $border-width solid $color-border;
+        background-color: $color-white;
+
+        &[x-placement='bottom-end']{
+            border-bottom-left-radius: $border-radius;
+            border-bottom-right-radius: $border-radius;
+            margin-top: -$border-width;
+        }
+
+        &[x-placement='top-end']{
+            border-top-left-radius: $border-radius;
+            border-top-right-radius: $border-radius;
+            margin-bottom: -$border-width;
+        }
+
+        .drop-items {
+            margin: 0;
+            list-style: none;
+            padding: 0;
+
+            .drop-item {
+                &:not(:last-child) {
+                    border-bottom: $border-width solid $color-border;
+                }
+
+                &:hover {
+                    background-color: $color-selection;
+                    color: $color-white;
+                }
+
+                .drop-item-value{
+                    cursor: pointer;
+                    padding: $padding-small $padding-default;
+                    outline: none;
+                }
+            }
+        }
+    }
+}

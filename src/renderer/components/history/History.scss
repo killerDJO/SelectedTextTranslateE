@@ -148,15 +148,25 @@
         .results-footer {
             grid-row: 3;
 
-            .pagination {
-                float: right;
+            .sync-control {
+                margin-top: $margin-default;
             }
 
-            .records-count {
-                display: inline;
-                font-style: italic;
-                font-size: $font-small;
-                color: $color-gray;
+            .pagination-holder {
+                float: right;
+                display: inline-flex;
+                align-items: center;
+
+                .records-count {
+                    display: inline;
+                    font-style: italic;
+                    font-size: $font-small;
+                    color: $color-gray;
+                }
+
+                .pagination {
+                    margin-left: $margin-small;
+                }
             }
         }
     }
