@@ -14,7 +14,7 @@
           </div>
           <div class="modal-footer clearfix">
               <link-button @click="close" :text="'Cancel'" class="cancel" />
-              <button class="btn btn-default" @click="confirm" v-tab-index v-auto-focus>Confirm</button>
+              <button class="btn btn-default" @click="confirm" v-tab-index v-auto-focus>{{confirmText}}</button>
           </div>
         </div>
       </div>
@@ -23,5 +23,5 @@
   </transition>
 </template>
 
-<script src="./ConfirmModal.ts" lang="ts"></script>
-<style src="./ConfirmModal.scss" lang="scss" scoped></style>
+<script src="./Modal.ts" lang="ts"></script>
+<style src="./Modal.scss" lang="scss" scoped></style>

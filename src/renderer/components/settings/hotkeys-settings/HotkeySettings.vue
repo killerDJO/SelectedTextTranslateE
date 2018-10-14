@@ -42,10 +42,10 @@
       </div>
       <div class="settings-separator"/>
       <link-button @click="showResetHotkeysModal = true" class="reset-hotkeys" :text="'Reset Hotkey Settings'" />
-      <confirm-modal :show.sync="showResetHotkeysModal" @confirm="resetHotkeySettings">
+      <modal :show.sync="showResetHotkeysModal" @confirm="resetHotkeySettings">
         <span slot="header">Are you sure you want to reset hotkeys?</span>
         <span slot="body">You'll loose all your current hotkeys settings permanently.</span>
-      </confirm-modal>
+      </modal>
     </div>
   </settings-holder>
 </template>

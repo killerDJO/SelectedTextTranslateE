@@ -10,13 +10,16 @@ import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
+import HistoryLogin from "components/history/history-login/HistoryLogin.vue";
+import { Tabs } from "components/history/history-login/HistoryLogin";
 
 const ns = namespace("app/history");
 
 @Component({
     components: {
         SortableHeader,
-        TranslationResult
+        TranslationResult,
+        HistoryLogin
     }
 })
 export default class History extends Vue {
@@ -60,6 +63,9 @@ export default class History extends Vue {
 
     public SortColumn: typeof SortColumn = SortColumn;
     public showLanguages: boolean = false;
+
+    public showHistoryLogin: boolean = false;
+    public showHistoryLoginTab: Tabs = Tabs.SignIn;
 
     public mounted() {
         this.setup();
@@ -125,10 +131,14 @@ export default class History extends Vue {
     }
 
     public signIn(): void {
+        this.showHistoryLoginTab = Tabs.SignIn;
+        this.showHistoryLogin = true;
         console.log("Sing In");
     }
 
     public signUp(): void {
+        this.showHistoryLoginTab = Tabs.SignUp;
+        this.showHistoryLogin = true;
         console.log("Sing Up");
     }
 

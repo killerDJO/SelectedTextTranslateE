@@ -98,6 +98,7 @@
           </paginate>
         </div>
       </div>
+      <history-login :show.sync="showHistoryLogin" :initialTab="showHistoryLoginTab"/>
     </div>
   </div>
 </template>

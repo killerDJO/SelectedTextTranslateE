@@ -1,0 +1,37 @@
+.login-tabs {
+    display: flex;
+    border-bottom: $border-width solid $color-border;
+    margin: (-$margin-small) (-$margin-default) 0 (-$margin-default);
+    padding: 0 $padding-default;
+
+    .login-tab.active{
+        color: $color-black;
+        border-bottom: $border-width*2 solid $color-selection;
+    }
+
+    .login-tab {
+        display: inline;
+        margin-right: $margin-large;
+        cursor: pointer;
+        font-size: $font-large;
+        color: $color-gray;
+        padding-bottom: $padding-default;
+    }
+}
+
+.login-contents {
+    display: flex;
+    min-height: 175px;
+    padding-top: $padding-default;
+
+    .login-content:not(.active){
+        display: none;
+    }
+    
+    .form-group {
+        label {
+            margin-bottom: 0;
+            line-height: 1;
+        }
+    }
+}

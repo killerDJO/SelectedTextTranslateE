@@ -16,12 +16,13 @@ import "directives";
 import App from "components/app/App.vue";
 import ValidatedField from "components/shared/validated-field/ValidatedField.vue";
 import Slider from "components/shared/slider/Slider.vue";
-import ConfirmModal from "components/shared/confirm-modal/ConfirmModal.vue";
+import Modal from "components/shared/modal/Modal.vue";
 import Checkbox from "components/shared/checkbox/Checkbox.vue";
 import IconButton from "components/shared/icon-button/IconButton.vue";
 import LinkButton from "components/shared/link-button/LinkButton.vue";
 import AppButton from "components/shared/app-button/AppButton.vue";
 import DropButton from "components/shared/drop-button/DropButton.vue";
+import Password from "components/shared/password/Password.vue";
 
 class Bootstrapper {
 
@@ -55,13 +56,14 @@ class Bootstrapper {
     private static registerSharedComponents(): void {
         Vue.component("validated-field", ValidatedField);
         Vue.component("slider", Slider);
-        Vue.component("confirm-modal", ConfirmModal);
+        Vue.component("modal", Modal);
         Vue.component("paginate", Paginate);
         Vue.component("checkbox", Checkbox);
         Vue.component("icon-button", IconButton);
         Vue.component("link-button", LinkButton);
         Vue.component("app-button", AppButton);
         Vue.component("drop-button", DropButton);
+        Vue.component("password", Password);
     }
 
     private static registerPlugins(): void {
