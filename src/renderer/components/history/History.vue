@@ -28,6 +28,9 @@
         <tbody v-if="historyRecords.length !== 0">
           <tr v-for="record in historyRecords" :key="record.sentence + record.isForcedTranslation + record.sourceLanguage + record.targetLanguage" @click="translateHistoryRecord(record)">
             <td class="word-column" v-overflow-tooltip>
+              <div class="synced-icon-holder">
+                <i class="icon icon-cloud-thunder synced-icon" v-if="!record.isSyncedWithServer" />
+              </div>
               <icon-button v-if="record.isStarred" @click="setStarredStatus({record: record, isStarred: false})" :title="'Unmark Translation'" :tab-index="-1">
                 <span class="icon icon-star" />
               </icon-button>

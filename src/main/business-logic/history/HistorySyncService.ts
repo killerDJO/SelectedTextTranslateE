@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import * as Datastore from "nedb";
-import { Observable, of } from "rxjs";
+import { Observable, of, Subject, pipe } from "rxjs";
 import { tap, map, concatMap } from "rxjs/operators";
 
 import { MessageBus } from "infrastructure/MessageBus";
@@ -20,6 +20,7 @@ import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 @injectable()
 export class HistorySyncService {
     private readonly datastore$: Observable<Datastore>;
+    private readonly syncStateUpdatedSubject$: Subject<HistoryRecord> = new Subject();
 
     constructor(
         private readonly serviceRendererProvider: ServiceRendererProvider,
@@ -30,6 +31,10 @@ export class HistorySyncService {
         private readonly logger: Logger) {
 
         this.datastore$ = this.historyDatabaseProvider.historyDatastore$;
+    }
+
+    public get syncStateUpdated$(): Observable<HistoryRecord> {
+        return this.syncStateUpdatedSubject$;
     }
 
     public startSync(): void {
@@ -135,7 +140,8 @@ export class HistorySyncService {
                     this.logger.warning(`Failed to saved ${this.getLogKey(record)}.`);
                 }
             }),
-            map(() => void 0)
+            tap(updatedRecord => this.notifyAboutUpdate(updatedRecord)),
+            map(() => void 0),
         );
     }
 
@@ -145,5 +151,9 @@ export class HistorySyncService {
 
     private getLogKey(record: HistoryRecord): string {
         return `record with sentence "${record.sentence}" when forced translation is set to "${record.isForcedTranslation}" with languages ${record.sourceLanguage}-${record.targetLanguage}`;
+    }
+
+    private notifyAboutUpdate(record: HistoryRecord): void {
+        this.syncStateUpdatedSubject$.next(record);
     }
 }

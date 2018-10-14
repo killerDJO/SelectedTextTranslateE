@@ -84,12 +84,26 @@
             .word-column {
                 .icon-star,
                 .icon-star-empty {
+                    margin-left: -$margin-small;
                     cursor: pointer;
                 }
 
                 .icon-star {
                     color: $color-star;
                 }
+
+                .synced-icon-holder {
+                    margin-left: -$margin-large;
+                    display: inline-flex;
+                    width: $margin-large;
+                    justify-content: center;
+
+                    .synced-icon {
+                        font-size: $font-small;
+                        color: $color-light-gray;
+                    }
+                }
+                
             }
 
             .archived-column {

@@ -75,6 +75,7 @@ export class Application {
             .subscribe(record => this.historyView.updateTranslateResult(record));
 
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
+        historyView.subscribeToHistoryUpdate(this.historySyncService.syncStateUpdated$);
 
         this.setupTranslateResultView(historyView, true);
     }
