@@ -61,7 +61,7 @@
         "sync": {
             "email": "killerDJO@gmail.com",
             "password": "4815162342",
-            "interval": 300000,
+            "interval": 60000,
             "lastSyncTime": null
         }
     },

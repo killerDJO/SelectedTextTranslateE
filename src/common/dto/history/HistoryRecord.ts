@@ -8,6 +8,7 @@ export interface HistoryRecord {
     readonly targetLanguage: string;
     readonly translateResult: TranslateResult;
     readonly translationsNumber: number;
+    readonly serverTranslationsNumber?: number;
     readonly createdDate: Date | string;
     readonly updatedDate: Date | string;
     readonly lastTranslatedDate: Date | string;

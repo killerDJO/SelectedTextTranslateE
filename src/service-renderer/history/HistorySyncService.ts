@@ -146,7 +146,8 @@ export class HistorySyncService {
                 ...sanitizedRecord,
                 id: record.id,
                 serverTimestamp: updatedTimestamp,
-                isSyncedWithServer: true
+                serverTranslationsNumber: record.translationsNumber,
+                isSyncedWithServer: true,
             });
         } catch (error) {
             if (error instanceof OutOfSyncError) {

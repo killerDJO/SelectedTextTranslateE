@@ -26,6 +26,7 @@ export class TranslationView extends TranslateResultView {
         this.window.setSkipTaskbar(true);
 
         this.window.on("blur", () => this.hide());
+        this.window.on("hide", () => this.currentTranslation = null);
 
         this.setupSaveDimensions();
     }
