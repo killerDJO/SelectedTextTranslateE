@@ -40,10 +40,18 @@ export class Messages {
         public static readonly ArchiveRecord = "archive-record";
         public static readonly RequestHistoryRecords = "get-history-records";
         public static readonly HistoryUpdated = "history-updated";
+
+        public static readonly SignIn = "history-sign-in";
+        public static readonly SignUp = "history-sign-up";
+        public static readonly SignOut = "history-sign-out";
+        public static readonly SyncOneTime = "history-one-time";
+        public static readonly CurrentUser = "history-current-user";
+        public static readonly SyncState = "history-sync-state";
     };
 
     public static HistorySync = class {
         public static readonly StartSync = "start-history-records-sync";
+        public static readonly StopSync = "stop-history-records-sync";
         public static readonly UnSyncedHistoryRecords = "unsynced-history-records";
         public static readonly HistoryRecord = "history-record-sync";
         public static readonly FirebaseSettings = "firebase-settings";
@@ -52,6 +60,12 @@ export class Messages {
         public static readonly MergeRecord = "history-record-merge";
         public static readonly LastSyncTime = "last-sync-time";
         public static readonly SetLastSyncTime = "set-last-sync-time";
+
+        public static readonly CurrentUser = "current-user";
+        public static readonly IsSyncInProgress = "is-sync-in-progress";
+        public static readonly SignIn = "sign-in";
+        public static readonly SignUp = "sign-up";
+        public static readonly SignOut = "sign-out";
     };
 
     public static Settings = class {

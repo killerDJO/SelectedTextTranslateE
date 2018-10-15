@@ -10,8 +10,7 @@ import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
-import HistoryLogin from "components/history/history-login/HistoryLogin.vue";
-import { Tabs } from "components/history/history-login/HistoryLogin";
+import HistorySync from "components/history/history-sync/HistorySync.vue";
 
 const ns = namespace("app/history");
 
@@ -19,7 +18,7 @@ const ns = namespace("app/history");
     components: {
         SortableHeader,
         TranslationResult,
-        HistoryLogin
+        HistorySync
     }
 })
 export default class History extends Vue {
@@ -63,9 +62,6 @@ export default class History extends Vue {
 
     public SortColumn: typeof SortColumn = SortColumn;
     public showLanguages: boolean = false;
-
-    public showHistoryLogin: boolean = false;
-    public showHistoryLoginTab: Tabs = Tabs.SignIn;
 
     public mounted() {
         this.setup();
@@ -130,19 +126,5 @@ export default class History extends Vue {
         this.requestHistoryRecords();
     }
 
-    public signIn(): void {
-        this.showHistoryLoginTab = Tabs.SignIn;
-        this.showHistoryLogin = true;
-        console.log("Sing In");
-    }
 
-    public signUp(): void {
-        this.showHistoryLoginTab = Tabs.SignUp;
-        this.showHistoryLogin = true;
-        console.log("Sing Up");
-    }
-
-    public openSettings(): void {
-        console.log("openSettings");
-    }
 }

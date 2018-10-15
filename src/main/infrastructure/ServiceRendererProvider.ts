@@ -26,7 +26,7 @@ export class ServiceRendererProvider {
             });
             this.serviceRenderer.loadURL(`file:${path.resolve(__dirname, "..\\service-renderer\\index.html")}`);
 
-            //this.serviceRenderer.webContents.toggleDevTools();
+            this.serviceRenderer.webContents.toggleDevTools();
 
             const messageBus = new MessageBus(this.serviceRenderer);
 

@@ -8,3 +8,7 @@ const logger = new Logger();
 window.onerror = (message: string | Event, source: string | undefined, lineno: number | undefined, colno: number | undefined, error: Error | undefined) => {
     logger.error("Unhandled error.", error || new Error(message.toString()));
 };
+
+window.addEventListener("unhandledrejection", (event: PromiseRejectionEvent) => {
+    logger.error("Unhandled rejection.", event.reason);
+});

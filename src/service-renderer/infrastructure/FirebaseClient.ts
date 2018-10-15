@@ -3,6 +3,8 @@ import "firebase/auth";
 import "firebase/firestore";
 
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
+import { SignInResponse } from "common/dto/history/account/SignInResponse";
+import { AccountInfo } from "common/dto/history/account/AccountInfo";
 
 import { FirestoreRestClient } from "infrastructure/FirestoreRestClient";
 import { FirebaseDocument } from "infrastructure/FirebaseDocument";
@@ -11,7 +13,7 @@ export class FirebaseClient {
 
     private firestoreRestClient: FirestoreRestClient | null = null;
 
-    public initializeApp(firebaseSettings: FirebaseSettings, email: string, password: string): Promise<firebase.auth.UserCredential> {
+    public initializeApp(firebaseSettings: FirebaseSettings): void {
         this.firestoreRestClient = new FirestoreRestClient(firebaseSettings.firestoreBaseUrl, firebaseSettings.projectId);
 
         firebase.initializeApp({
@@ -21,10 +23,29 @@ export class FirebaseClient {
         });
 
         this.setupFirestore();
+    }
 
-        return firebase.auth().signInWithEmailAndPassword(email, password).catch(error => {
-            throw new Error(`Firebase signIn error. Code: ${error.code}. Message: ${error.message}`);
-        });
+    public signIn(email: string, password: string): Promise<SignInResponse> {
+        return this.handleAuthResponse(firebase.auth().signInWithEmailAndPassword(email, password));
+    }
+
+    public signUp(email: string, password: string): Promise<SignInResponse> {
+        return this.handleAuthResponse(firebase.auth().createUserWithEmailAndPassword(email, password));
+    }
+
+    public signOut(): Promise<void> {
+        return firebase.auth().signOut();
+    }
+
+    public getAccountInfo(): AccountInfo | null {
+        const user = firebase.auth().currentUser;
+        if (user === null || !user.email) {
+            return null;
+        }
+
+        return {
+            email: user.email
+        };
     }
 
     public addDocument(collectionId: string, documentId: string, document: any): Promise<string> {
@@ -37,6 +58,17 @@ export class FirebaseClient {
 
     public async getDocuments<TDocument extends FirebaseDocument>(collectionId: string, timestamp?: string): Promise<TDocument[]> {
         return this.getFirestoreRestClient().getDocuments<TDocument>(this.getCurrentUser(), collectionId, timestamp);
+    }
+
+    private handleAuthResponse(credentials: Promise<firebase.auth.UserCredential>): Promise<SignInResponse> {
+        return credentials
+            .then(
+                () => ({ isSuccessful: true }),
+                error => ({
+                    isSuccessful: false,
+                    validationMessage: error.message
+                })
+            );
     }
 
     private setupFirestore() {

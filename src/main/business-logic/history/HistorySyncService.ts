@@ -1,26 +1,37 @@
 import { injectable } from "inversify";
 import * as Datastore from "nedb";
-import { Observable, of, Subject, pipe } from "rxjs";
+import { Observable, of, Subject, Subscription, AsyncSubject } from "rxjs";
 import { tap, map, concatMap } from "rxjs/operators";
+
+import { Messages } from "common/messaging/Messages";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { TranslationKey } from "common/dto/translation/TranslationKey";
+import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
+import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
+import { AccountInfo } from "common/dto/history/account/AccountInfo";
+import { SignInRequest } from "common/dto/history/account/SignInRequest";
+import { SignInResponse } from "common/dto/history/account/SignInResponse";
 
 import { MessageBus } from "infrastructure/MessageBus";
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
-import { Messages } from "common/messaging/Messages";
-import { HistoryRecord } from "common/dto/history/HistoryRecord";
-import { DatastoreProvider } from "data-access/DatastoreProvider";
 import { Logger } from "infrastructure/Logger";
+
+import { DatastoreProvider } from "data-access/DatastoreProvider";
 
 import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
 import { HistoryStore } from "business-logic/history/HistoryStore";
-import { TranslationKey } from "common/dto/translation/TranslationKey";
-import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 
 @injectable()
 export class HistorySyncService {
     private readonly datastore$: Observable<Datastore>;
     private readonly syncStateUpdatedSubject$: Subject<HistoryRecord> = new Subject();
+    private readonly messageBus: MessageBus;
+
+    private historyUpdateSubscription: Subscription | null = null;
+
+    public currentUser$!: Observable<AccountInfo | null>;
+    public isSyncInProgress$!: Observable<boolean>;
 
     constructor(
         private readonly serviceRendererProvider: ServiceRendererProvider,
@@ -31,24 +42,95 @@ export class HistorySyncService {
         private readonly logger: Logger) {
 
         this.datastore$ = this.historyDatabaseProvider.historyDatastore$;
+        this.messageBus = new MessageBus(this.serviceRendererProvider.getServiceRenderer());
+
+        this.setupMessageBus();
     }
 
     public get syncStateUpdated$(): Observable<HistoryRecord> {
         return this.syncStateUpdatedSubject$;
     }
 
-    public startSync(): void {
-        const messageBus = new MessageBus(this.serviceRendererProvider.getServiceRenderer());
+    public signInUser(signInRequest: SignInRequest): Observable<SignInResponse> {
+        this.logger.info(`Sign in to account ${signInRequest.email}.`);
+        return this.messageBus.sendValue<SignInRequest, SignInResponse>(Messages.HistorySync.SignIn, signInRequest).pipe(
+            tap(response => this.trySaveUserCredentials(signInRequest, response)),
+            tap(response => this.logUnsuccessfulResponse(response))
+        );
+    }
+
+    public signUpUser(signInRequest: SignInRequest): Observable<SignInResponse> {
+        this.logger.info(`Sign up to account ${signInRequest.email}.`);
+        return this.messageBus.sendValue<SignInRequest, SignInResponse>(Messages.HistorySync.SignUp, signInRequest).pipe(
+            tap(response => this.trySaveUserCredentials(signInRequest, response)),
+            tap(response => this.logUnsuccessfulResponse(response))
+        );
+    }
+
+    public signOutUser(): Observable<void> {
+        this.logger.info("Sign out from account");
+        return this.messageBus.sendNotification(Messages.HistorySync.SignOut).pipe(
+            tap(() => this.clearUserCredentials())
+        );
+    }
+
+    public startContinuousSync(): void {
+        this.messageBus.sendValue(Messages.HistorySync.StartSync, true);
+        this.historyUpdateSubscription = this.messageBus.registerObservable(Messages.HistorySync.HistoryRecord, this.historyStore.historyUpdated$).subscription;
+    }
+
+    public stopContinuousSync(): void {
+        if (this.historyUpdateSubscription !== null) {
+            this.historyUpdateSubscription.unsubscribe();
+        }
+
+        this.messageBus.sendNotification(Messages.HistorySync.StopSync);
+    }
+
+    public startSingleSync(): void {
+        this.messageBus.sendValue(Messages.HistorySync.StartSync, false);
+    }
+
+    private trySaveUserCredentials(signInRequest: SignInRequest, signInResponse: SignInResponse): void {
+        if (signInResponse.isSuccessful) {
+            this.updateCredentials(signInRequest.email, signInRequest.password);
+        }
+    }
+
+    private logUnsuccessfulResponse(signInResponse: SignInResponse): void {
+        if (!signInResponse.isSuccessful) {
+            this.logger.info(`Authorization error. ${signInResponse.validationMessage}`);
+        }
+    }
+
+    private clearUserCredentials() {
+        this.updateCredentials("", "");
+    }
+
+    private updateCredentials(email: string, password: string) {
+        this.settingsProvider.updateSettings({
+            history: {
+                sync: {
+                    email: email,
+                    password: password
+                }
+            }
+        });
+    }
+
+    private setupMessageBus(): void {
         const settings = this.settingsProvider.getSettings().value;
-        messageBus.handleCommand(Messages.HistorySync.UnSyncedHistoryRecords, () => this.getHistoryRecordsToSync());
-        messageBus.handleCommand<HistoryRecord>(Messages.HistorySync.UpdateRecord, record => this.updateRecord(record));
-        messageBus.handleCommand<HistoryRecord>(Messages.HistorySync.MergeRecord, record => this.mergeRecord(record));
-        messageBus.handleCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime, () => of(this.getLastSyncTime()));
-        messageBus.handleCommand<string>(Messages.HistorySync.SetLastSyncTime, lastSyncTime => of(this.setLastSyncTime(lastSyncTime)));
-        messageBus.sendValue<FirebaseSettings>(Messages.HistorySync.FirebaseSettings, settings.firebase);
-        messageBus.sendValue<HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings, this.getHistorySyncSettings());
-        messageBus.sendNotification(Messages.HistorySync.StartSync);
-        messageBus.registerObservable(Messages.HistorySync.HistoryRecord, this.historyStore.historyUpdated$);
+
+        this.messageBus.handleCommand(Messages.HistorySync.UnSyncedHistoryRecords, () => this.getHistoryRecordsToSync());
+        this.messageBus.handleCommand<HistoryRecord>(Messages.HistorySync.UpdateRecord, record => this.updateRecord(record));
+        this.messageBus.handleCommand<HistoryRecord>(Messages.HistorySync.MergeRecord, record => this.mergeRecord(record));
+        this.messageBus.handleCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime, () => of(this.getLastSyncTime()));
+        this.messageBus.handleCommand<string>(Messages.HistorySync.SetLastSyncTime, lastSyncTime => of(this.setLastSyncTime(lastSyncTime)));
+        this.messageBus.sendValue<FirebaseSettings>(Messages.HistorySync.FirebaseSettings, settings.firebase);
+        this.messageBus.handleCommand<void, HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings, () => of(this.getHistorySyncSettings()));
+
+        this.isSyncInProgress$ = this.messageBus.observeCommand<boolean>(Messages.HistorySync.IsSyncInProgress);
+        this.currentUser$ = this.messageBus.observeCommand<AccountInfo | null>(Messages.HistorySync.CurrentUser);
     }
 
     private getHistorySyncSettings(): HistorySyncSettings {

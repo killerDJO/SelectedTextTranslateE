@@ -1,6 +1,7 @@
 import { Module } from "vuex";
 
 import { RootState } from "root.store";
+import { historySync } from "./history-sync/HistorySync.store";
 
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
@@ -33,6 +34,9 @@ interface HistoryState extends TranslateResultState {
 
 export const history: Module<HistoryState, RootState> = {
     namespaced: true,
+    modules: {
+        sync: historySync
+    },
     state: {
         historyRecords: [],
         pageNumber: 1,

@@ -5,13 +5,18 @@ import { createMessage } from "common/messaging/create-message";
 
 export class MessageBus {
 
-    public observeValue<TValue>(name: string, callback: (value: TValue) => void): Subscription {
+    public observeValue<TValue, TResult = void>(name: string, callback: (value: TValue) => TResult | Promise<TResult>): Subscription {
         const subscription = new Subscription(Channels.Observe, (sender: Electron.EventEmitter, message: Message, value: TValue) => {
             if (message.name !== name) {
                 return;
             }
-            callback(value);
-            ipcRenderer.send(Channels.Received, message);
+            const result = callback(value);
+            if (result instanceof Promise) {
+                result.then(resultValue => ipcRenderer.send(Channels.Received, message, resultValue));
+            } else {
+                ipcRenderer.send(Channels.Received, message, result);
+            }
+
         });
         subscription.subscribe();
         ipcRenderer.send(Channels.Subscribe, name);
@@ -46,8 +51,8 @@ export class MessageBus {
         });
     }
 
-    public observeNotification(name: string, callback: () => void): void {
-        this.observeValue<void>(name, callback);
+    public observeNotification<TResult = void>(name: string, callback: () => TResult | Promise<TResult>): void {
+        this.observeValue<void, TResult>(name, callback);
     }
 }
 

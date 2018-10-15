@@ -81,11 +81,7 @@
               @set-starred-status="setStarredStatus"/>
       </div>
       <div class="results-footer" v-if="totalRecords !== 0">
-        <drop-button
-          class="sync-control"
-          :text="'Sing In'"
-          @click="signIn"
-          :dropItems="[{text: 'Sign Up', callback: signUp}, {text: 'Settings', callback: openSettings}]"/>
+        <history-sync class="sync-control" />
         <div class="pagination-holder">
           <p class="records-count">{{totalRecords}} records</p>
           <paginate
@@ -98,7 +94,6 @@
           </paginate>
         </div>
       </div>
-      <history-login :show.sync="showHistoryLogin" :initialTab="showHistoryLoginTab"/>
     </div>
   </div>
 </template>

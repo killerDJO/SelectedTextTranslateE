@@ -53,8 +53,6 @@ export class Application {
 
         this.createTaskbar();
         this.setupHotkeys();
-
-        this.historySyncService.startSync();
     }
 
     private setupTranslationView(translationView: TranslationView): void {
@@ -76,6 +74,13 @@ export class Application {
 
         historyView.subscribeToHistoryUpdate(this.historyStore.historyUpdated$);
         historyView.subscribeToHistoryUpdate(this.historySyncService.syncStateUpdated$);
+
+        historyView.subscribeToHistorySyncState(this.historySyncService.isSyncInProgress$);
+        historyView.subscribeToHistoryUser(this.historySyncService.currentUser$);
+        historyView.handleSignIn(request => this.historySyncService.signInUser(request));
+        historyView.handleSignUp(request => this.historySyncService.signInUser(request));
+        historyView.signOut$.subscribe(() => this.historySyncService.signOutUser().subscribe());
+        historyView.syncOneTime$.subscribe(() => this.historySyncService.startSingleSync());
 
         this.setupTranslateResultView(historyView, true);
     }

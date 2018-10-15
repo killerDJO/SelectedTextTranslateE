@@ -11,27 +11,27 @@ interface IpcSubscription {
     readonly callback: Function;
 }
 
-interface MessageRegistration {
+interface MessageRegistration<TResult> {
     readonly value: any;
-    readonly received$: Subject<void>;
+    readonly received$: Subject<TResult>;
 }
 
-export interface RegistrationResult {
+export interface RegistrationResult<TResult> {
     readonly subscription: RxJsSubscription;
-    readonly received$: Subject<void>;
+    readonly received$: Subject<TResult>;
 }
 
 export class MessageBus {
-    private readonly messageQueue: Map<string, Map<string, MessageRegistration>> = new Map();
+    private readonly messageQueue: Map<string, Map<string, MessageRegistration<any>>> = new Map();
     private readonly ipcSubscriptions: IpcSubscription[] = [];
 
     constructor(private readonly window: Electron.BrowserWindow) {
         this.createSubscription(Channels.Subscribe, (_, name: string) => this.handleSubscribe(name));
-        this.createSubscription(Channels.Received, (_, message: Message) => this.handleReceived(message));
+        this.createSubscription(Channels.Received, (_, message: Message, result: any) => this.handleReceived(message, result));
     }
 
-    public registerObservable<TValue>(name: string, observable$: Observable<TValue>): RegistrationResult {
-        const received$ = new Subject<void>();
+    public registerObservable<TValue, TResult = void>(name: string, observable$: Observable<TValue>): RegistrationResult<TResult> {
+        const received$ = new Subject<TResult>();
         const subscription = observable$.subscribe(value => {
             if (this.window.isDestroyed()) {
                 throw Error("Window has been destroyed. Make sure subscription is disposed properly.");
@@ -51,8 +51,8 @@ export class MessageBus {
         };
     }
 
-    public sendValue<TValue>(name: string, value: TValue): Subject<void> {
-        return this.registerObservable(name, of(value)).received$;
+    public sendValue<TValue, TResult = void>(name: string, value: TValue): Subject<TResult> {
+        return this.registerObservable<TValue, TResult>(name, of(value)).received$;
     }
 
     public sendNotification(name: string): Subject<void> {
@@ -95,7 +95,7 @@ export class MessageBus {
         }
     }
 
-    private handleReceived(message: Message): void {
+    private handleReceived(message: Message, result: any): void {
         const messages = this.messageQueue.get(message.name);
         if (!messages) {
             return;
@@ -104,7 +104,7 @@ export class MessageBus {
         const messageRegistration = messages.get(message.id);
         if (!!messageRegistration) {
             messages.delete(message.id);
-            messageRegistration.received$.next();
+            messageRegistration.received$.next(result);
             messageRegistration.received$.complete();
         }
     }
