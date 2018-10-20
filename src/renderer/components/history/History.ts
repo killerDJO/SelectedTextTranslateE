@@ -107,6 +107,10 @@ export default class History extends Vue {
         return Math.ceil(this.totalRecords / this.pageSize);
     }
 
+    public get hasRecords(): boolean {
+        return this.totalRecords !== 0;
+    }
+
     public translateHistoryRecord(record: HistoryRecord): void {
         this.translateText({
             text: record.sentence,

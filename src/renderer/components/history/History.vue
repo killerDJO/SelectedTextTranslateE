@@ -80,9 +80,9 @@
               @search="search"
               @set-starred-status="setStarredStatus"/>
       </div>
-      <div class="results-footer" v-if="totalRecords !== 0">
+      <div class="results-footer">
         <history-sync class="sync-control" />
-        <div class="pagination-holder">
+        <div class="pagination-holder" v-if="hasRecords">
           <p class="records-count">{{totalRecords}} records</p>
           <paginate
             v-model="pageNumber$"

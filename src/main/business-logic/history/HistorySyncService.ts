@@ -196,7 +196,9 @@ export class HistorySyncService {
         return this.historyStore.getRecord(recordKey).pipe(concatMap(existingRecord => {
             if (!existingRecord) {
                 this.logger.info(`New ${this.getLogKey(serverRecord)} has been created from server.`);
-                this.datastoreProvider.insert(this.datastore$, serverRecord).subscribe();
+                this.datastoreProvider.insert(this.datastore$, serverRecord)
+                    .pipe(tap<HistoryRecord>(record => this.notifyAboutUpdate(record)))
+                    .subscribe();
                 return of(void 0);
             }
 
