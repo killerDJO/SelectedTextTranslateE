@@ -3,7 +3,7 @@ import { DirectiveOptions } from "vue";
 import Directive from "decorators/VueDirective";
 
 @Directive("tab-guard")
-export class AutoFocus implements DirectiveOptions {
+export class TabGuard implements DirectiveOptions {
     public bind(element: HTMLElement): void {
         element.tabIndex = 0;
         element.addEventListener("focus", this.handleFocus);

@@ -4,13 +4,14 @@ import { FirebaseClient } from "infrastructure/FirebaseClient";
 import { MessageBus } from "common/renderer/MessageBus";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { Messages } from "common/messaging/Messages";
-import { SignInRequest } from "common/dto/history/account/SignInRequest";
+import { SignRequest } from "common/dto/history/account/SignRequest";
 import { ServerHistoryRecord } from "history/ServerHistoryRecord";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 import { Logger } from "infrastructure/Logger";
 import { OutOfSyncError } from "infrastructure/OutOfSyncError";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
+import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 
 export class HistorySyncService {
@@ -34,13 +35,13 @@ export class HistorySyncService {
     }
 
     private setupSubscriptions(): void {
-        this.messageBus.observeValue<SignInRequest, SignInResponse>(Messages.HistorySync.SignIn, async signInRequest => {
+        this.messageBus.observeValue<SignRequest, SignInResponse>(Messages.HistorySync.SignIn, async signInRequest => {
             const signInResponse = await this.firebaseClient.signIn(signInRequest.email, signInRequest.password);
             this.updateCurrentUser();
             return signInResponse;
         });
 
-        this.messageBus.observeValue<SignInRequest, SignInResponse>(Messages.HistorySync.SignUp, async signInRequest => {
+        this.messageBus.observeValue<SignRequest, SignUpResponse>(Messages.HistorySync.SignUp, async signInRequest => {
             const signUpResponse = this.firebaseClient.signUp(signInRequest.email, signInRequest.password);
             this.updateCurrentUser();
             return signUpResponse;
@@ -87,7 +88,7 @@ export class HistorySyncService {
         this.updateCurrentUser();
 
         if (!signInResponse.isSuccessful) {
-            throw Error(`Error performing sign in. ${signInResponse.validationMessage}`);
+            throw Error(`Error performing sign in. ${signInResponse.validationCode}`);
         }
 
         this.syncRecords(historySyncSettings.interval);

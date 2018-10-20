@@ -6,6 +6,6 @@ export default class ValidatedField extends Vue {
     public validationMessage!: string | null;
 
     public get hasValidationMessage(): boolean {
-        return this.validationMessage !== null;
+        return !!this.validationMessage;
     }
 }

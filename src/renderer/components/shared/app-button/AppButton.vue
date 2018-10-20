@@ -1,6 +1,6 @@
 <template>
   <span v-tab-index="disabled ? - 1 : 0" @click.stop="click" class="app-button-wrapper">
-    <button class="btn btn-mini btn-default" @click.stop="click" :disabled="disabled" tabindex="-1">{{text}}</button>
+    <button class="app-button" @click.stop="click" :disabled="disabled" tabindex="-1">{{text}}</button>
   </span>
 </template>
 

@@ -17,6 +17,7 @@ import App from "components/app/App.vue";
 import ValidatedField from "components/shared/validated-field/ValidatedField.vue";
 import Slider from "components/shared/slider/Slider.vue";
 import Modal from "components/shared/modal/Modal.vue";
+import ConfirmModal from "components/shared/confirm-modal/ConfirmModal.vue";
 import Checkbox from "components/shared/checkbox/Checkbox.vue";
 import IconButton from "components/shared/icon-button/IconButton.vue";
 import LinkButton from "components/shared/link-button/LinkButton.vue";
@@ -57,6 +58,7 @@ class Bootstrapper {
         Vue.component("validated-field", ValidatedField);
         Vue.component("slider", Slider);
         Vue.component("modal", Modal);
+        Vue.component("confirm-modal", ConfirmModal);
         Vue.component("paginate", Paginate);
         Vue.component("checkbox", Checkbox);
         Vue.component("icon-button", IconButton);

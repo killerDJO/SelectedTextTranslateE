@@ -78,7 +78,7 @@ export class Application {
         historyView.subscribeToHistorySyncState(this.historySyncService.isSyncInProgress$);
         historyView.subscribeToHistoryUser(this.historySyncService.currentUser$);
         historyView.handleSignIn(request => this.historySyncService.signInUser(request));
-        historyView.handleSignUp(request => this.historySyncService.signInUser(request));
+        historyView.handleSignUp(request => this.historySyncService.signUpUser(request));
         historyView.signOut$.subscribe(() => this.historySyncService.signOutUser().subscribe());
         historyView.syncOneTime$.subscribe(() => this.historySyncService.startSingleSync());
 

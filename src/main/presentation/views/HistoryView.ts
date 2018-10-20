@@ -12,8 +12,9 @@ import { mapSubject } from "utils/map-subject";
 
 import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
-import { SignInRequest } from "common/dto/history/account/SignInRequest";
+import { SignRequest } from "common/dto/history/account/SignRequest";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
+import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 
 export class HistoryView extends TranslateResultView {
 
@@ -42,12 +43,12 @@ export class HistoryView extends TranslateResultView {
         this.messageBus.sendValue(Messages.History.HistoryRecords, historyRecords);
     }
 
-    public handleSignIn(handler: (signInRequest: SignInRequest) => Observable<SignInResponse>): void {
-        this.messageBus.handleCommand<SignInRequest, SignInResponse>(Messages.History.SignIn, handler);
+    public handleSignIn(handler: (signRequest: SignRequest) => Observable<SignInResponse>): void {
+        this.messageBus.handleCommand<SignRequest, SignInResponse>(Messages.History.SignIn, handler);
     }
 
-    public handleSignUp(handler: (signInRequest: SignInRequest) => Observable<SignInResponse>): void {
-        this.messageBus.handleCommand<SignInRequest, SignInResponse>(Messages.History.SignUp, handler);
+    public handleSignUp(handler: (signRequest: SignRequest) => Observable<SignUpResponse>): void {
+        this.messageBus.handleCommand<SignRequest, SignUpResponse>(Messages.History.SignUp, handler);
     }
 
     public subscribeToHistoryUpdate(historyUpdate$: Observable<HistoryRecord>): void {

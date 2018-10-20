@@ -12,9 +12,8 @@
           <div class="modal-body">
             <slot name="body" />
           </div>
-          <div class="modal-footer clearfix">
-              <link-button @click="close" :text="'Cancel'" class="cancel" />
-              <button class="btn btn-default" @click="confirm" v-tab-index v-auto-focus>{{confirmText}}</button>
+          <div class="modal-footer clearfix" v-if="showFooter">
+            <slot name="footer" />
           </div>
         </div>
       </div>

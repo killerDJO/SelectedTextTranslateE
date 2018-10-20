@@ -1,12 +1,31 @@
 .app-button-wrapper {
     display: inline-flex;
 
-    button {
+    .app-button {
         outline: none;
         width: 100%;
+        border: $border-width solid transparent;
+        border-radius: $border-radius;
+        background-color: $color-button-primary;
+        color: $color-white;
+        cursor: pointer;
+        padding: $padding-default/2 $padding-default;
+
+        &:hover:not(:disabled) {
+            background-color: $color-button-primary-hovered;
+        }
+
+        :not(:disabled){
+            transition: background-color .15s ease-in-out;
+        }
 
         &:disabled {
             opacity: 0.5;
         }
+    }
+
+    &.button-small .app-button{
+        padding: 0;
+        line-height: 1.5;
     }
 }

@@ -9,8 +9,10 @@ import { TranslationKey } from "common/dto/translation/TranslationKey";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
-import { SignInRequest } from "common/dto/history/account/SignInRequest";
+import { SignRequest } from "common/dto/history/account/SignRequest";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
+import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
+import { SignResponse } from "common/dto/history/account/SignResponse";
 
 import { MessageBus } from "infrastructure/MessageBus";
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
@@ -21,6 +23,7 @@ import { DatastoreProvider } from "data-access/DatastoreProvider";
 import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { NotificationSender } from "infrastructure/NotificationSender";
 
 @injectable()
 export class HistorySyncService {
@@ -39,31 +42,34 @@ export class HistorySyncService {
         private readonly historyStore: HistoryStore,
         private readonly historyDatabaseProvider: HistoryDatabaseProvider,
         private readonly settingsProvider: SettingsProvider,
-        private readonly logger: Logger) {
+        private readonly logger: Logger,
+        private readonly notificationSender: NotificationSender) {
 
         this.datastore$ = this.historyDatabaseProvider.historyDatastore$;
         this.messageBus = new MessageBus(this.serviceRendererProvider.getServiceRenderer());
 
         this.setupMessageBus();
+        this.signInIfHasSavedData();
     }
 
     public get syncStateUpdated$(): Observable<HistoryRecord> {
         return this.syncStateUpdatedSubject$;
     }
 
-    public signInUser(signInRequest: SignInRequest): Observable<SignInResponse> {
-        this.logger.info(`Sign in to account ${signInRequest.email}.`);
-        return this.messageBus.sendValue<SignInRequest, SignInResponse>(Messages.HistorySync.SignIn, signInRequest).pipe(
-            tap(response => this.trySaveUserCredentials(signInRequest, response)),
+    public signInUser(signRequest: SignRequest): Observable<SignInResponse> {
+        this.logger.info(`Sign in to account ${signRequest.email}.`);
+        return this.messageBus.sendValue<SignRequest, SignInResponse>(Messages.HistorySync.SignIn, signRequest).pipe(
+            tap(response => this.trySaveUserCredentials(signRequest, response)),
             tap(response => this.logUnsuccessfulResponse(response))
         );
     }
 
-    public signUpUser(signInRequest: SignInRequest): Observable<SignInResponse> {
-        this.logger.info(`Sign up to account ${signInRequest.email}.`);
-        return this.messageBus.sendValue<SignInRequest, SignInResponse>(Messages.HistorySync.SignUp, signInRequest).pipe(
-            tap(response => this.trySaveUserCredentials(signInRequest, response)),
-            tap(response => this.logUnsuccessfulResponse(response))
+    public signUpUser(signRequest: SignRequest): Observable<SignUpResponse> {
+        this.logger.info(`Sign up to account ${signRequest.email}.`);
+        return this.messageBus.sendValue<SignRequest, SignUpResponse>(Messages.HistorySync.SignUp, signRequest).pipe(
+            tap(response => this.trySaveUserCredentials(signRequest, response)),
+            tap(response => this.logUnsuccessfulResponse(response)),
+            concatMap(response => response.isSuccessful ? this.signInUser(signRequest).pipe(map(_ => response)) : of(response))
         );
     }
 
@@ -91,15 +97,15 @@ export class HistorySyncService {
         this.messageBus.sendValue(Messages.HistorySync.StartSync, false);
     }
 
-    private trySaveUserCredentials(signInRequest: SignInRequest, signInResponse: SignInResponse): void {
-        if (signInResponse.isSuccessful) {
-            this.updateCredentials(signInRequest.email, signInRequest.password);
+    private trySaveUserCredentials(signRequest: SignRequest, signResponse: SignResponse<any>): void {
+        if (signResponse.isSuccessful) {
+            this.updateCredentials(signRequest.email, signRequest.password);
         }
     }
 
-    private logUnsuccessfulResponse(signInResponse: SignInResponse): void {
-        if (!signInResponse.isSuccessful) {
-            this.logger.info(`Authorization error. ${signInResponse.validationMessage}`);
+    private logUnsuccessfulResponse(signResponse: SignResponse<any>): void {
+        if (!signResponse.isSuccessful) {
+            this.logger.info(`Authorization error. ${signResponse.validationCode}`);
         }
     }
 
@@ -131,6 +137,19 @@ export class HistorySyncService {
 
         this.isSyncInProgress$ = this.messageBus.observeCommand<boolean>(Messages.HistorySync.IsSyncInProgress);
         this.currentUser$ = this.messageBus.observeCommand<AccountInfo | null>(Messages.HistorySync.CurrentUser);
+    }
+
+    private signInIfHasSavedData(): void {
+        const syncSettings = this.getHistorySyncSettings();
+        if (!!syncSettings.email && syncSettings.password) {
+            this.signInUser(syncSettings)
+                .pipe(tap<SignInResponse>(response => {
+                    if (!response.isSuccessful) {
+                        this.notificationSender.showNonCriticalError("Error singing in into a history account.", new Error(response.validationCode));
+                    }
+                }))
+                .subscribe();
+        }
     }
 
     private getHistorySyncSettings(): HistorySyncSettings {

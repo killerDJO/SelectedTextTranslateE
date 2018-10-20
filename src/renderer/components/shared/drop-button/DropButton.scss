@@ -58,6 +58,8 @@
             padding: 0;
 
             .drop-item {
+                white-space: nowrap;
+
                 &:not(:last-child) {
                     border-bottom: $border-width solid $color-border;
                 }

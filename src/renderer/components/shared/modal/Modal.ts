@@ -6,18 +6,11 @@ export default class Modal extends Vue {
     @Prop(Boolean)
     public show!: boolean;
 
-    @Prop({
-        type: String,
-        default: "Confirm"
-    })
-    public confirmText!: string;
+    public get showFooter(): boolean {
+        return !!this.$slots.footer && !!this.$slots.footer.length;
+    }
 
     public close(): void {
         this.$emit("update:show", false);
-    }
-
-    public confirm(): void {
-        this.$emit("confirm");
-        this.close();
     }
 }

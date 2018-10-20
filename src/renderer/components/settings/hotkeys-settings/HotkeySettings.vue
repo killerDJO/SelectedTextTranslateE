@@ -36,16 +36,16 @@
             <validated-field :validation-message="currentHotkeyValidationMessage" class="hotkey-input-control">
               <hotkey-input :hotkey.sync="currentHotkey" @input-started="hotkeyInputStarted" @input-completed="hotkeyInputCompleted"/>
             </validated-field>
-            <app-button class="add-hotkey" @click="addHotkey" :disabled="!isAddHotkeyEnabled" :text="'Add'" />
+            <app-button class="add-hotkey button-small" @click="addHotkey" :disabled="!isAddHotkeyEnabled" :text="'Add'" />
           </div>
         </div>
       </div>
       <div class="settings-separator"/>
       <link-button @click="showResetHotkeysModal = true" class="reset-hotkeys" :text="'Reset Hotkey Settings'" />
-      <modal :show.sync="showResetHotkeysModal" @confirm="resetHotkeySettings">
+      <confirm-modal :show.sync="showResetHotkeysModal" @confirm="resetHotkeySettings">
         <span slot="header">Are you sure you want to reset hotkeys?</span>
         <span slot="body">You'll loose all your current hotkeys settings permanently.</span>
-      </modal>
+      </confirm-modal>
     </div>
   </settings-holder>
 </template>

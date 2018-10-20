@@ -4,9 +4,10 @@ import { RootState } from "root.store";
 
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
+import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 import { MessageBus } from "common/renderer/MessageBus";
 import { Messages } from "common/messaging/Messages";
-import { SignInRequest } from "common/dto/history/account/SignInRequest";
+import { SignRequest } from "common/dto/history/account/SignRequest";
 
 const messageBus = new MessageBus();
 
@@ -15,7 +16,7 @@ interface HistorySyncState {
     isSyncInProgress: boolean;
 
     signInResponse: SignInResponse | null;
-    signUpResponse: SignInResponse | null;
+    signUpResponse: SignUpResponse | null;
 }
 
 export const historySync: Module<HistorySyncState, RootState> = {
@@ -36,7 +37,7 @@ export const historySync: Module<HistorySyncState, RootState> = {
         setSignInResponse(state: HistorySyncState, signInResponse: SignInResponse | null): void {
             state.signInResponse = signInResponse;
         },
-        setSignUpResponse(state: HistorySyncState, signUpResponse: SignInResponse | null): void {
+        setSignUpResponse(state: HistorySyncState, signUpResponse: SignUpResponse | null): void {
             state.signUpResponse = signUpResponse;
         }
     },
@@ -46,14 +47,18 @@ export const historySync: Module<HistorySyncState, RootState> = {
             messageBus.observeValue<AccountInfo | null>(Messages.History.SyncState, isSyncInProgress => commit("setSyncStatus", isSyncInProgress));
 
         },
-        signIn({ commit }, request: SignInRequest): void {
-            messageBus
-                .sendCommand<SignInRequest>(Messages.History.SignIn, request)
-                .then(response => commit("signInResponse", response));
+        resetResponses({ commit }): void {
+            commit("setSignInResponse", null);
+            commit("setSignUpResponse", null);
         },
-        signUp({ commit }, request: SignInRequest): void {
+        signIn({ commit }, request: SignRequest): void {
             messageBus
-                .sendCommand<SignInRequest>(Messages.History.SignUp, request)
+                .sendCommand<SignRequest>(Messages.History.SignIn, request)
+                .then(response => commit("setSignInResponse", response));
+        },
+        signUp({ commit }, request: SignRequest): void {
+            messageBus
+                .sendCommand<SignRequest>(Messages.History.SignUp, request)
                 .then(response => commit("setSignUpResponse", response));
         },
         signOut(): void {

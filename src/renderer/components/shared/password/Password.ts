@@ -5,7 +5,7 @@ export default class Password extends Vue {
     @Prop(String)
     public value!: string;
 
-    public showPassword: boolean = false;
+    public isPasswordVisible: boolean = false;
 
     public get value$(): string {
         return this.value;
@@ -13,5 +13,13 @@ export default class Password extends Vue {
 
     public set value$(value: string) {
         this.$emit("update:value", value);
+    }
+
+    public showPassword(): void {
+        this.isPasswordVisible = true;
+    }
+
+    public hidePassword(): void {
+        this.isPasswordVisible = false;
     }
 }
