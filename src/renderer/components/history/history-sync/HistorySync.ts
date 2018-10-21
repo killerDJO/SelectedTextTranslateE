@@ -1,4 +1,4 @@
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch, Prop } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
@@ -22,7 +22,6 @@ const ns = namespace("app/history/sync");
     }
 })
 export default class HistorySync extends Vue {
-    @ns.State public currentUser!: AccountInfo | null;
     @ns.State public isSyncInProgress!: boolean;
     @ns.State public signInResponse!: SignInResponse | null;
     @ns.State public signUpResponse!: SignUpResponse | null;
@@ -33,6 +32,9 @@ export default class HistorySync extends Vue {
     @ns.Action public readonly signUp!: (request: SignRequest) => void;
     @ns.Action public readonly signOut!: () => void;
     @ns.Action public readonly syncOneTime!: () => void;
+
+    @Prop(Object)
+    public currentUser!: AccountInfo | null;
 
     public showLoginDialog: boolean = false;
     public currentDialogTab: Tabs = Tabs.SignIn;

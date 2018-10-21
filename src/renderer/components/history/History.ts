@@ -7,6 +7,7 @@ import { SortOrder } from "common/dto/history/SortOrder";
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
+import { AccountInfo } from "common/dto/history/account/AccountInfo";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
@@ -23,6 +24,7 @@ const ns = namespace("app/history");
 })
 export default class History extends Vue {
     @ns.State public historyRecords!: HistoryRecord[];
+    @ns.State public currentUser!: AccountInfo | null;
     @ns.State public pageNumber!: number;
     @ns.State public pageSize!: number;
     @ns.State public totalRecords!: number;
@@ -121,14 +123,27 @@ export default class History extends Vue {
         });
     }
 
+    public isRecordSyncedWithServer(record: HistoryRecord): boolean {
+        if (!this.currentUser) {
+            return false;
+        }
+
+        const currentUser = this.currentUser;
+        const currentSyncData = (record.syncData || []).find(syncData => syncData.userEmail === currentUser.email);
+        if (!currentSyncData) {
+            return false;
+        }
+
+        return currentSyncData.lastModifiedDate === record.lastModifiedDate;
+    }
+
     @Watch("pageNumber")
     @Watch("sortColumn")
     @Watch("sortOrder")
     @Watch("starredOnly")
     @Watch("includeArchived")
+    @Watch("currentUser")
     public refreshRecords(): void {
         this.requestHistoryRecords();
     }
-
-
 }

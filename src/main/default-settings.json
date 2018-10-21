@@ -59,10 +59,7 @@
         "databaseName": "history.db",
         "pageSize": 25,
         "sync": {
-            "email": "killerDJO@gmail.com",
-            "password": "4815162342",
-            "interval": 60000,
-            "lastSyncTime": null
+            "interval": 60000
         }
     },
     "scaling": {

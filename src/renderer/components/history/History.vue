@@ -29,7 +29,7 @@
           <tr v-for="record in historyRecords" :key="record.sentence + record.isForcedTranslation + record.sourceLanguage + record.targetLanguage" @click="translateHistoryRecord(record)">
             <td class="word-column" v-overflow-tooltip>
               <div class="synced-icon-holder">
-                <i class="icon icon-cloud-thunder synced-icon" v-if="!record.isSyncedWithServer" title="Record is not synced with server"/>
+                <i class="icon icon-cloud-thunder synced-icon" v-if="!isRecordSyncedWithServer(record)" title="Record is not synced with server"/>
               </div>
               <icon-button v-if="record.isStarred" @click="setStarredStatus({record: record, isStarred: false})" :title="'Unmark Translation'" :tab-index="-1">
                 <span class="icon icon-star" />
@@ -81,7 +81,7 @@
               @set-starred-status="setStarredStatus"/>
       </div>
       <div class="results-footer">
-        <history-sync class="sync-control" />
+        <history-sync class="sync-control" :current-user="currentUser"/>
         <div class="pagination-holder" v-if="hasRecords">
           <p class="records-count">{{totalRecords}} records</p>
           <paginate

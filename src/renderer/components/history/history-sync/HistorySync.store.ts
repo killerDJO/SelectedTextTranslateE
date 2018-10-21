@@ -12,7 +12,7 @@ import { SignRequest } from "common/dto/history/account/SignRequest";
 const messageBus = new MessageBus();
 
 interface HistorySyncState {
-    currentUser: AccountInfo | null;
+
     isSyncInProgress: boolean;
 
     signInResponse: SignInResponse | null;
@@ -22,15 +22,11 @@ interface HistorySyncState {
 export const historySync: Module<HistorySyncState, RootState> = {
     namespaced: true,
     state: {
-        currentUser: null,
         isSyncInProgress: false,
         signInResponse: null,
         signUpResponse: null
     },
     mutations: {
-        setCurrentUser(state: HistorySyncState, currentUser: AccountInfo | null): void {
-            state.currentUser = currentUser;
-        },
         setSyncStatus(state: HistorySyncState, isSyncInProgress: boolean): void {
             state.isSyncInProgress = isSyncInProgress;
         },
@@ -43,7 +39,6 @@ export const historySync: Module<HistorySyncState, RootState> = {
     },
     actions: {
         setup({ commit }): void {
-            messageBus.observeValue<AccountInfo | null>(Messages.History.CurrentUser, currentUser => commit("setCurrentUser", currentUser));
             messageBus.observeValue<AccountInfo | null>(Messages.History.SyncState, isSyncInProgress => commit("setSyncStatus", isSyncInProgress));
 
         },

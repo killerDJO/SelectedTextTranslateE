@@ -56,6 +56,7 @@ export class Messages {
         public static readonly HistoryRecord = "history-record-sync";
         public static readonly FirebaseSettings = "firebase-settings";
         public static readonly HistorySyncSettings = "history-sync-settings";
+        public static readonly UserInfo = "history-user-info";
         public static readonly UpdateRecord = "history-record-update";
         public static readonly MergeRecord = "history-record-merge";
         public static readonly LastSyncTime = "last-sync-time";

@@ -6,6 +6,7 @@ import { ErrorHandler } from "infrastructure/ErrorHandler";
 import { SettingsStore } from "infrastructure/SettingsStore";
 import { NotificationSender } from "infrastructure/NotificationSender";
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
+import { UserStore } from "infrastructure/UserStore";
 
 import { Installer } from "install/Installer";
 import { Updater } from "install/Updater";
@@ -67,6 +68,7 @@ class Binder {
         this.container.bind<Logger>(Logger).toSelf().inSingletonScope();
         this.container.bind<ErrorHandler>(ErrorHandler).toSelf().inSingletonScope();
         this.container.bind<SettingsStore>(SettingsStore).toSelf().inSingletonScope();
+        this.container.bind<UserStore>(UserStore).toSelf().inSingletonScope();
     }
 
     private bindInstall(): void {

@@ -12,6 +12,10 @@ export class SettingsStore {
         this.store.openInEditor();
     }
 
+    public get(name: string): any {
+        return this.store.get(name);
+    }
+
     public getSettings(): any {
         const defaultSettings = this.getDefaultSettings();
         return this.getSettingsByDefaultSettings(defaultSettings, "");

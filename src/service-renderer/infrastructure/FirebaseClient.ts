@@ -46,7 +46,7 @@ export class FirebaseClient {
         }
 
         return {
-            email: user.email
+            email: user.email.toLowerCase()
         };
     }
 

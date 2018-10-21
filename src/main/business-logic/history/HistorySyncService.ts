@@ -4,7 +4,7 @@ import { Observable, of, Subject, Subscription, AsyncSubject } from "rxjs";
 import { tap, map, concatMap } from "rxjs/operators";
 
 import { Messages } from "common/messaging/Messages";
-import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { HistoryRecord, SyncData } from "common/dto/history/HistoryRecord";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
@@ -13,6 +13,7 @@ import { SignRequest } from "common/dto/history/account/SignRequest";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
 import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 import { SignResponse } from "common/dto/history/account/SignResponse";
+import { UserInfo } from "common/dto/UserInfo";
 
 import { MessageBus } from "infrastructure/MessageBus";
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
@@ -24,6 +25,7 @@ import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseP
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { NotificationSender } from "infrastructure/NotificationSender";
+import { UserStore } from "infrastructure/UserStore";
 
 @injectable()
 export class HistorySyncService {
@@ -43,7 +45,8 @@ export class HistorySyncService {
         private readonly historyDatabaseProvider: HistoryDatabaseProvider,
         private readonly settingsProvider: SettingsProvider,
         private readonly logger: Logger,
-        private readonly notificationSender: NotificationSender) {
+        private readonly notificationSender: NotificationSender,
+        private readonly userStore: UserStore) {
 
         this.datastore$ = this.historyDatabaseProvider.historyDatastore$;
         this.messageBus = new MessageBus(this.serviceRendererProvider.getServiceRenderer());
@@ -67,7 +70,6 @@ export class HistorySyncService {
     public signUpUser(signRequest: SignRequest): Observable<SignUpResponse> {
         this.logger.info(`Sign up to account ${signRequest.email}.`);
         return this.messageBus.sendValue<SignRequest, SignUpResponse>(Messages.HistorySync.SignUp, signRequest).pipe(
-            tap(response => this.trySaveUserCredentials(signRequest, response)),
             tap(response => this.logUnsuccessfulResponse(response)),
             concatMap(response => response.isSuccessful ? this.signInUser(signRequest).pipe(map(_ => response)) : of(response))
         );
@@ -76,7 +78,7 @@ export class HistorySyncService {
     public signOutUser(): Observable<void> {
         this.logger.info("Sign out from account");
         return this.messageBus.sendNotification(Messages.HistorySync.SignOut).pipe(
-            tap(() => this.clearUserCredentials())
+            tap(() => this.userStore.clearCurrentUser())
         );
     }
 
@@ -97,9 +99,9 @@ export class HistorySyncService {
         this.messageBus.sendValue(Messages.HistorySync.StartSync, false);
     }
 
-    private trySaveUserCredentials(signRequest: SignRequest, signResponse: SignResponse<any>): void {
+    private trySaveUserCredentials(signRequest: SignRequest, signResponse: SignInResponse): void {
         if (signResponse.isSuccessful) {
-            this.updateCredentials(signRequest.email, signRequest.password);
+            this.userStore.setCurrentUser({ email: signRequest.email, password: signRequest.password });
         }
     }
 
@@ -109,42 +111,28 @@ export class HistorySyncService {
         }
     }
 
-    private clearUserCredentials() {
-        this.updateCredentials("", "");
-    }
-
-    private updateCredentials(email: string, password: string) {
-        this.settingsProvider.updateSettings({
-            history: {
-                sync: {
-                    email: email,
-                    password: password
-                }
-            }
-        });
-    }
-
     private setupMessageBus(): void {
         const settings = this.settingsProvider.getSettings().value;
 
         this.messageBus.handleCommand(Messages.HistorySync.UnSyncedHistoryRecords, () => this.getHistoryRecordsToSync());
         this.messageBus.handleCommand<HistoryRecord>(Messages.HistorySync.UpdateRecord, record => this.updateRecord(record));
         this.messageBus.handleCommand<HistoryRecord>(Messages.HistorySync.MergeRecord, record => this.mergeRecord(record));
-        this.messageBus.handleCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime, () => of(this.getLastSyncTime()));
-        this.messageBus.handleCommand<string>(Messages.HistorySync.SetLastSyncTime, lastSyncTime => of(this.setLastSyncTime(lastSyncTime)));
+        this.messageBus.handleCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime, () => this.getLastSyncTime());
         this.messageBus.sendValue<FirebaseSettings>(Messages.HistorySync.FirebaseSettings, settings.firebase);
         this.messageBus.handleCommand<void, HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings, () => of(this.getHistorySyncSettings()));
+        this.messageBus.handleCommand<void, UserInfo | null>(Messages.HistorySync.UserInfo, () => of(this.userStore.getCurrentUser()));
 
         this.isSyncInProgress$ = this.messageBus.observeCommand<boolean>(Messages.HistorySync.IsSyncInProgress);
         this.currentUser$ = this.messageBus.observeCommand<AccountInfo | null>(Messages.HistorySync.CurrentUser);
     }
 
     private signInIfHasSavedData(): void {
-        const syncSettings = this.getHistorySyncSettings();
-        if (!!syncSettings.email && syncSettings.password) {
-            this.signInUser(syncSettings)
+        const userInfo = this.userStore.getCurrentUser();
+        if (userInfo !== null) {
+            this.signInUser({ email: userInfo.email, password: userInfo.password })
                 .pipe(tap<SignInResponse>(response => {
                     if (!response.isSuccessful) {
+                        this.userStore.clearCurrentUser();
                         this.notificationSender.showNonCriticalError("Error singing in into a history account.", new Error(response.validationCode));
                     }
                 }))
@@ -156,23 +144,49 @@ export class HistorySyncService {
         return this.settingsProvider.getSettings().value.history.sync;
     }
 
-    private getLastSyncTime(): string | undefined {
-        return this.getHistorySyncSettings().lastSyncTime;
+    private getLastSyncTime(): Observable<string | undefined> {
+        return this.datastoreProvider
+            .find<HistoryRecord>(this.datastore$, {})
+            .pipe(map(records => this.getLastSyncTimeFromRecords(records)));
     }
 
-    private setLastSyncTime(lastSyncTime: string): void {
-        this.settingsProvider.updateSettings({
-            history: {
-                sync: {
-                    lastSyncTime: lastSyncTime
-                }
+    private getLastSyncTimeFromRecords(records: HistoryRecord[]): string | undefined {
+        const currentUser = this.getCurrentUser();
+        let maxTimestamp: string | undefined;
+
+        for (const record of records) {
+
+            const serverTimestamp = this.getServerTimestamp(record, currentUser);
+            if (!serverTimestamp) {
+                continue;
             }
-        });
+
+            if (!maxTimestamp || new Date(serverTimestamp) > new Date(maxTimestamp)) {
+                maxTimestamp = serverTimestamp;
+            }
+        }
+
+        return maxTimestamp;
+    }
+
+    private getServerTimestamp(record: HistoryRecord, currentUser: UserInfo): string | undefined {
+        const syncData = this.getUserSyncData(record, currentUser.email);
+        if (!syncData) {
+            return undefined;
+        }
+        return syncData.serverTimestamp;
     }
 
     private getHistoryRecordsToSync(): Observable<HistoryRecord[]> {
+        const currentUser = this.getCurrentUser();
         return this.datastoreProvider
-            .find<HistoryRecord>(this.datastore$, { $not: { isSyncedWithServer: true } });
+            .find<HistoryRecord>(this.datastore$, {})
+            .pipe(map(records => records.filter(record => this.isRecordModified(record, currentUser))));
+    }
+
+    private isRecordModified(record: HistoryRecord, currentUser: UserInfo): boolean {
+        const syncData = this.getUserSyncData(record, currentUser.email);
+        return !syncData || syncData.lastModifiedDate !== record.lastModifiedDate;
     }
 
     private updateRecord(record: HistoryRecord): Observable<void> {
@@ -202,7 +216,15 @@ export class HistorySyncService {
                 return of(void 0);
             }
 
-            if (!!existingRecord.serverTimestamp && existingRecord.serverTimestamp === serverRecord.serverTimestamp) {
+            const currentUser = this.getCurrentUser();
+            const existingSyncData = this.getUserSyncData(existingRecord, currentUser.email);
+            const serverSyncData = this.getUserSyncData(serverRecord, currentUser.email);
+
+            if (!serverSyncData) {
+                throw Error("Server sync for current user data must be present in server record");
+            }
+
+            if (!!existingSyncData && existingSyncData.serverTimestamp === serverSyncData.serverTimestamp) {
                 return of(void 0);
             }
 
@@ -213,6 +235,10 @@ export class HistorySyncService {
                 ? existingRecord
                 : serverRecord;
 
+            const filteredSyncData = (existingRecord.syncData || []).filter(syncData => syncData.userEmail !== currentUser.email);
+
+            const serverTranslationsNumber = !existingSyncData ? 0 : (existingSyncData.serverTranslationsNumber || 0);
+
             const mergedRecord: HistoryRecord = {
                 ...recordKey,
                 id: existingRecord.id,
@@ -221,12 +247,17 @@ export class HistorySyncService {
                 updatedDate: newerTranslateResultRecord.updatedDate,
                 lastTranslatedDate: newerRecord.lastTranslatedDate,
                 lastModifiedDate: newerRecord.lastModifiedDate,
-                translationsNumber: serverRecord.translationsNumber + (existingRecord.translationsNumber - (existingRecord.serverTranslationsNumber || 0)),
-                serverTranslationsNumber: serverRecord.translationsNumber,
+                translationsNumber: serverRecord.translationsNumber + (existingRecord.translationsNumber - serverTranslationsNumber),
                 isArchived: newerRecord.isArchived,
                 isStarred: newerRecord.isStarred,
-                serverTimestamp: serverRecord.serverTimestamp,
-                isSyncedWithServer: false
+                syncData: [
+                    ...filteredSyncData,
+                    {
+                        userEmail: currentUser.email,
+                        serverTimestamp: serverSyncData.serverTimestamp,
+                        serverTranslationsNumber: serverRecord.translationsNumber
+                    }
+                ]
             };
 
             this.logger.info(`Existing ${this.getLogKey(serverRecord)} has been merged with server record.`);
@@ -234,6 +265,20 @@ export class HistorySyncService {
                 this.datastoreProvider.update(this.datastore$, { id: mergedRecord.id, lastModifiedDate: existingRecord.lastModifiedDate }, mergedRecord),
                 mergedRecord);
         }));
+    }
+
+    private getUserSyncData(record: HistoryRecord, userEmail: string): SyncData | undefined {
+        return (record.syncData || []).find(syncData => syncData.userEmail === userEmail);
+    }
+
+    private getCurrentUser(): UserInfo {
+        const currentUser = this.userStore.getCurrentUser();
+
+        if (currentUser === null) {
+            throw Error("Unable to sync when current user is not set");
+        }
+
+        return currentUser;
     }
 
     private checkThatRecordUpdated(updateResult: Observable<HistoryRecord>, record: HistoryRecord): Observable<void> {

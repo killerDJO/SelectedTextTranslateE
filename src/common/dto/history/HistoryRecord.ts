@@ -8,13 +8,19 @@ export interface HistoryRecord {
     readonly targetLanguage: string;
     readonly translateResult: TranslateResult;
     readonly translationsNumber: number;
-    readonly serverTranslationsNumber?: number;
     readonly createdDate: Date | string;
     readonly updatedDate: Date | string;
     readonly lastTranslatedDate: Date | string;
     readonly lastModifiedDate: number;
     readonly isStarred: boolean;
     readonly isArchived: boolean;
+
+    readonly syncData?: SyncData[];
+}
+
+export interface SyncData {
+    readonly userEmail: string;
     readonly serverTimestamp?: string;
-    readonly isSyncedWithServer?: boolean;
+    readonly lastModifiedDate?: number;
+    readonly serverTranslationsNumber?: number;
 }

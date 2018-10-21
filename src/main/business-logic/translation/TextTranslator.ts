@@ -68,7 +68,7 @@ export class TextTranslator {
 
         if (refreshCache || this.isHistoryRecordExpired(historyRecord)) {
             return translateResult$
-                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, key, incrementTranslationsNumber)));
+                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, historyRecord, incrementTranslationsNumber)));
         }
 
         this.logger.info(`Serving translation ${this.getLogKey(key)} from dictionary.`);

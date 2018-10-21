@@ -13,6 +13,7 @@ import { OutOfSyncError } from "infrastructure/OutOfSyncError";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
 import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
+import { UserInfo } from "common/dto/UserInfo";
 
 export class HistorySyncService {
     private readonly messageBus: MessageBus = new MessageBus();
@@ -72,8 +73,9 @@ export class HistorySyncService {
 
     private async startSync(isContinuous: boolean) {
         const historySyncSettings = await this.messageBus.sendCommand<void, HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings);
+        const userInfo = await this.messageBus.sendCommand<void, UserInfo | null>(Messages.HistorySync.UserInfo);
 
-        if (!historySyncSettings.password || !historySyncSettings.email) {
+        if (!userInfo) {
             this.logger.warning("Unable to start sync. User credentials are not provided.");
             return;
         }
@@ -84,7 +86,7 @@ export class HistorySyncService {
         this.logger.info("History records sync started.");
 
         await this.firebaseClient.signOut();
-        const signInResponse = await this.firebaseClient.signIn(historySyncSettings.email, historySyncSettings.password);
+        const signInResponse = await this.firebaseClient.signIn(userInfo.email, userInfo.password);
         this.updateCurrentUser();
 
         if (!signInResponse.isSuccessful) {
@@ -152,23 +154,25 @@ export class HistorySyncService {
     private async pullRecords(): Promise<void> {
         const lastSyncTime = await this.messageBus.sendCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime);
         const documents = await this.firebaseClient.getDocuments<ServerHistoryRecord>(this.collectionId, lastSyncTime);
+        const accountInfo = this.firebaseClient.getAccountInfo();
 
-        let maxTimestamp: string | null = null;
+        if (accountInfo === null) {
+            throw new Error("Unable to sync when user is not signed in");
+        }
         for (const document of documents) {
+            const serverRecord = this.deserializeRecord(document.record);
             const historyRecord: HistoryRecord = {
-                ...this.deserializeRecord(document.record),
-                serverTimestamp: document.timestamp,
-                isSyncedWithServer: true
+                ...serverRecord,
+                syncData: [
+                    {
+                        serverTimestamp: document.timestamp,
+                        lastModifiedDate: serverRecord.lastModifiedDate,
+                        serverTranslationsNumber: serverRecord.translationsNumber,
+                        userEmail: accountInfo.email
+                    }
+                ]
             };
             await this.messageBus.sendCommand(Messages.HistorySync.MergeRecord, historyRecord);
-
-            if (maxTimestamp === null || new Date(document.timestamp) > new Date(maxTimestamp)) {
-                maxTimestamp = document.timestamp;
-            }
-        }
-
-        if (maxTimestamp !== null) {
-            await this.messageBus.sendCommand<string>(Messages.HistorySync.SetLastSyncTime, maxTimestamp);
         }
     }
 
@@ -199,18 +203,39 @@ export class HistorySyncService {
         };
         const serializedRecord = this.serializeRecord(sanitizedRecord);
 
-        const firebasePromise = !record.serverTimestamp
+        const accountInfo = this.firebaseClient.getAccountInfo();
+        if (accountInfo === null) {
+            throw Error("Unable to sync when account is logged out.");
+        }
+
+        let existingServerTimestamp: string | undefined;
+        if (record.syncData) {
+            const existingSyncData = record.syncData.find(data => data.userEmail === accountInfo.email);
+
+            if (!!existingSyncData) {
+                existingServerTimestamp = existingSyncData.serverTimestamp;
+            }
+        }
+
+        const firebasePromise = !existingServerTimestamp
             ? this.firebaseClient.addDocument(this.collectionId, record.id, { record: serializedRecord })
-            : this.firebaseClient.updateDocument(this.collectionId, record.id, { record: serializedRecord }, record.serverTimestamp);
+            : this.firebaseClient.updateDocument(this.collectionId, record.id, { record: serializedRecord }, existingServerTimestamp);
 
         try {
             const updatedTimestamp = await firebasePromise;
+            const filteredSyncData = (record.syncData || []).filter(syncData => syncData.userEmail !== accountInfo.email);
             await this.messageBus.sendCommand<HistoryRecord>(Messages.HistorySync.UpdateRecord, {
                 ...sanitizedRecord,
                 id: record.id,
-                serverTimestamp: updatedTimestamp,
-                serverTranslationsNumber: record.translationsNumber,
-                isSyncedWithServer: true,
+                syncData: [
+                    ...filteredSyncData,
+                    {
+                        userEmail: accountInfo.email,
+                        lastModifiedDate: record.lastModifiedDate,
+                        serverTimestamp: updatedTimestamp,
+                        serverTranslationsNumber: record.translationsNumber
+                    }
+                ]
             });
         } catch (error) {
             if (error instanceof OutOfSyncError) {

@@ -1,4 +1,4 @@
-import { Observable, Subject } from "rxjs";
+import { Observable, Subject, of } from "rxjs";
 import { tap, map, concatMap } from "rxjs/operators";
 import * as Datastore from "nedb";
 import { injectable } from "inversify";
@@ -58,7 +58,8 @@ export class HistoryStore {
             lastTranslatedDate: currentTime,
             isStarred: false,
             isArchived: false,
-            ...this.getModificationFields(currentTime)
+            ...this.getModificationFields(currentTime),
+            syncData: []
         });
 
         return insert$.pipe(
@@ -190,7 +191,6 @@ export class HistoryStore {
 
     private getModificationFields(modificationDate?: Date) {
         return {
-            isSyncedWithServer: false,
             lastModifiedDate: (modificationDate || new Date()).getTime()
         };
     }
