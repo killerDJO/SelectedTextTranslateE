@@ -12,7 +12,11 @@ import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { SignRequest } from "common/dto/history/account/SignRequest";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
 import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
-import { SignResponse } from "common/dto/history/account/SignResponse";
+import { AuthResponse } from "common/dto/history/account/AuthResponse";
+import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
+import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
+import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
+import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 import { UserInfo } from "common/dto/UserInfo";
 
 import { MessageBus } from "infrastructure/MessageBus";
@@ -75,6 +79,27 @@ export class HistorySyncService {
         );
     }
 
+    public sendPasswordResetToken(email: string): Observable<SendResetTokenResponse> {
+        this.logger.info(`Sending reset email to account ${email}.`);
+        return this.messageBus.sendValue<string, SendResetTokenResponse>(Messages.HistorySync.SendPasswordResetToken, email).pipe(
+            tap(response => this.logUnsuccessfulResponse(response))
+        );
+    }
+
+    public verifyPasswordResetToken(token: string): Observable<VerifyResetTokenResponse> {
+        this.logger.info("Verifying password reset token.");
+        return this.messageBus.sendValue<string, VerifyResetTokenResponse>(Messages.HistorySync.VerifyPasswordResetToken, token).pipe(
+            tap(response => this.logUnsuccessfulResponse(response))
+        );
+    }
+
+    public resetPassword(resetPasswordRequest: PasswordResetRequest): Observable<PasswordResetResponse> {
+        this.logger.info("Resetting password.");
+        return this.messageBus.sendValue<PasswordResetRequest, PasswordResetResponse>(Messages.HistorySync.ResetPassword, resetPasswordRequest).pipe(
+            tap(response => this.logUnsuccessfulResponse(response))
+        );
+    }
+
     public signOutUser(): Observable<void> {
         this.logger.info("Sign out from account");
         return this.messageBus.sendNotification(Messages.HistorySync.SignOut).pipe(
@@ -105,7 +130,7 @@ export class HistorySyncService {
         }
     }
 
-    private logUnsuccessfulResponse(signResponse: SignResponse<any>): void {
+    private logUnsuccessfulResponse(signResponse: AuthResponse<any>): void {
         if (!signResponse.isSuccessful) {
             this.logger.info(`Authorization error. ${signResponse.validationCode}`);
         }

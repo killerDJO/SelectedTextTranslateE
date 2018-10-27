@@ -5,7 +5,10 @@ import "firebase/firestore";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { SignInResponse, SignInResponseValidationCode } from "common/dto/history/account/SignInResponse";
 import { SignUpResponse, SignUpResponseValidationCode } from "common/dto/history/account/SignUpResponse";
-import { SignResponse } from "common/dto/history/account/SignResponse";
+import { SendResetTokenResponse, SendResetTokenResponseValidationCode } from "common/dto/history/account/SendResetTokenResponse";
+import { PasswordResetResponse, PasswordResetResponseValidationCode } from "common/dto/history/account/PasswordResetResponse";
+import { VerifyResetTokenResponse, VerifyResetTokenResponseValidationCode } from "common/dto/history/account/VerifyResetTokenResponse";
+import { AuthResponse } from "common/dto/history/account/AuthResponse";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 
 import { FirestoreRestClient } from "infrastructure/FirestoreRestClient";
@@ -39,6 +42,18 @@ export class FirebaseClient {
         return firebase.auth().signOut();
     }
 
+    public sendPasswordResetToken(email: string): Promise<SendResetTokenResponse> {
+        return this.handleAuthResponse<SendResetTokenResponseValidationCode>(firebase.auth().sendPasswordResetEmail(email), this.mapSendResetTokenValidationCodes);
+    }
+
+    public verifyPasswordResetToken(token: string): Promise<VerifyResetTokenResponse> {
+        return this.handleAuthResponse<VerifyResetTokenResponseValidationCode>(firebase.auth().verifyPasswordResetCode(token), this.mapVerifyResetTokenValidationCodes);
+    }
+
+    public confirmPasswordReset(token: string, password: string): Promise<PasswordResetResponse> {
+        return this.handleAuthResponse<PasswordResetResponseValidationCode>(firebase.auth().confirmPasswordReset(token, password), this.mapPasswordResetValidationCodes);
+    }
+
     public getAccountInfo(): AccountInfo | null {
         const user = firebase.auth().currentUser;
         if (user === null || !user.email) {
@@ -62,8 +77,8 @@ export class FirebaseClient {
         return this.getFirestoreRestClient().getDocuments<TDocument>(this.getCurrentUser(), collectionId, timestamp);
     }
 
-    private handleAuthResponse<TValidationCode>(credentials: Promise<firebase.auth.UserCredential>, errorCodeMapper: (errorCode: string) => TValidationCode): Promise<SignResponse<TValidationCode>> {
-        return credentials
+    private handleAuthResponse<TValidationCode>(response: Promise<any>, errorCodeMapper: (errorCode: string) => TValidationCode): Promise<AuthResponse<TValidationCode>> {
+        return response
             .then(
                 () => ({ isSuccessful: true }),
                 error => ({
@@ -76,7 +91,7 @@ export class FirebaseClient {
     private mapSignInValidationCodes(code: string): SignInResponseValidationCode {
         const responsesMap: { [key: string]: SignInResponseValidationCode } = {
             "auth/invalid-email": SignInResponseValidationCode.InvalidEmail,
-            "auth/user-not-found": SignInResponseValidationCode.NotRegisteredEmail,
+            "auth/user-not-found": SignInResponseValidationCode.UserNotFound,
             "auth/wrong-password": SignInResponseValidationCode.InvalidPassword
         };
 
@@ -88,6 +103,35 @@ export class FirebaseClient {
             "auth/invalid-email": SignUpResponseValidationCode.InvalidEmail,
             "auth/weak-password": SignUpResponseValidationCode.WeakPassword,
             "auth/email-already-in-use": SignUpResponseValidationCode.EmailAlreadyInUse
+        };
+
+        return responsesMap[code];
+    }
+
+    private mapSendResetTokenValidationCodes(code: string): SendResetTokenResponseValidationCode {
+        const responsesMap: { [key: string]: SendResetTokenResponseValidationCode } = {
+            "auth/invalid-email": SendResetTokenResponseValidationCode.InvalidEmail,
+            "auth/user-not-found": SendResetTokenResponseValidationCode.UserNotFound,
+            "auth/too-many-requests": SendResetTokenResponseValidationCode.TooManyRequests
+        };
+
+        return responsesMap[code];
+    }
+
+    private mapPasswordResetValidationCodes(code: string): PasswordResetResponseValidationCode {
+        const responsesMap: { [key: string]: PasswordResetResponseValidationCode } = {
+            "auth/expired-action-code": PasswordResetResponseValidationCode.ExpiredActionCode,
+            "auth/invalid-action-code": PasswordResetResponseValidationCode.InvalidActionCode,
+            "auth/weak-password": PasswordResetResponseValidationCode.WeakPassword
+        };
+
+        return responsesMap[code];
+    }
+
+    private mapVerifyResetTokenValidationCodes(code: string): VerifyResetTokenResponseValidationCode {
+        const responsesMap: { [key: string]: VerifyResetTokenResponseValidationCode } = {
+            "auth/expired-action-code": VerifyResetTokenResponseValidationCode.ExpiredToken,
+            "auth/invalid-action-code": VerifyResetTokenResponseValidationCode.InvalidToken
         };
 
         return responsesMap[code];

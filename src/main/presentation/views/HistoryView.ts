@@ -7,14 +7,18 @@ import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsRespons
 import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
+import { SignRequest } from "common/dto/history/account/SignRequest";
+import { SignInResponse } from "common/dto/history/account/SignInResponse";
+import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
+import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
+import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
+import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
+import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 
 import { mapSubject } from "utils/map-subject";
 
 import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
-import { SignRequest } from "common/dto/history/account/SignRequest";
-import { SignInResponse } from "common/dto/history/account/SignInResponse";
-import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 
 export class HistoryView extends TranslateResultView {
 
@@ -49,6 +53,18 @@ export class HistoryView extends TranslateResultView {
 
     public handleSignUp(handler: (signRequest: SignRequest) => Observable<SignUpResponse>): void {
         this.messageBus.handleCommand<SignRequest, SignUpResponse>(Messages.History.SignUp, handler);
+    }
+
+    public handleSendPasswordResetToken(handler: (email: string) => Observable<SendResetTokenResponse>): void {
+        this.messageBus.handleCommand<string, SendResetTokenResponse>(Messages.History.SendPasswordResetToken, handler);
+    }
+
+    public handleVerifyPasswordResetToken(handler: (token: string) => Observable<VerifyResetTokenResponse>): void {
+        this.messageBus.handleCommand<string, VerifyResetTokenResponse>(Messages.History.VerifyPasswordResetToken, handler);
+    }
+
+    public handlePasswordReset(handler: (passwordResetRequest: PasswordResetRequest) => Observable<PasswordResetResponse>): void {
+        this.messageBus.handleCommand<PasswordResetRequest, PasswordResetResponse>(Messages.History.ResetPassword, handler);
     }
 
     public subscribeToHistoryUpdate(historyUpdate$: Observable<HistoryRecord>): void {

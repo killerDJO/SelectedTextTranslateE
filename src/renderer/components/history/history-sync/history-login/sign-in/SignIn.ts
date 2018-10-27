@@ -29,22 +29,22 @@ export default class SignIn extends HistoryLoginViewBase<SignInData, ValidationR
 
     protected validateEmptyFields(validationResult: ValidationResult): void {
         if (!this.data.password) {
-            validationResult.password = "Password must not be empty";
+            validationResult.password = "Password must not be empty.";
         }
     }
 
     protected validateNonEmptyFields(validationResult: ValidationResult): void {
         if (this.signInResponse !== null) {
             if (this.signInResponse.validationCode === SignInResponseValidationCode.InvalidEmail) {
-                validationResult.email = "Email is invalid";
+                validationResult.email = "Email is invalid.";
             }
 
-            if (this.signInResponse.validationCode === SignInResponseValidationCode.NotRegisteredEmail) {
-                validationResult.email = "User with this email is not found";
+            if (this.signInResponse.validationCode === SignInResponseValidationCode.UserNotFound) {
+                validationResult.email = "User with this email is not found.";
             }
 
             if (this.signInResponse.validationCode === SignInResponseValidationCode.InvalidPassword) {
-                validationResult.password = "Password is invalid";
+                validationResult.password = "Password is invalid.";
             }
         }
     }

@@ -4,13 +4,13 @@
       <div class="form-group">
         <label>Email address</label>
         <validated-field :validation-message="validationResult.email">
-          <input type="email" v-auto-focus v-tab-index class="form-control" placeholder="Email" v-model="data.email">
+          <input type="text" v-auto-focus v-tab-index class="form-control" placeholder="Email" v-model="data.email">
         </validated-field>
       </div>
       <div class="form-group">
         <label>Password</label>
         <validated-field :validation-message="validationResult.password">
-        <password :value.sync="data.password"/>
+          <password :value.sync="data.password"/>
         </validated-field>
       </div>
       <div class="form-group">

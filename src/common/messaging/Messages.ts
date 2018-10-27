@@ -44,6 +44,9 @@ export class Messages {
         public static readonly SignIn = "history-sign-in";
         public static readonly SignUp = "history-sign-up";
         public static readonly SignOut = "history-sign-out";
+        public static readonly SendPasswordResetToken = "history-send-password-reset-token";
+        public static readonly VerifyPasswordResetToken = "history-verify-password-reset-token";
+        public static readonly ResetPassword = "history-reset-password";
         public static readonly SyncOneTime = "history-one-time";
         public static readonly CurrentUser = "history-current-user";
         public static readonly SyncState = "history-sync-state";
@@ -67,6 +70,9 @@ export class Messages {
         public static readonly SignIn = "sign-in";
         public static readonly SignUp = "sign-up";
         public static readonly SignOut = "sign-out";
+        public static readonly SendPasswordResetToken = "send-password-reset-token";
+        public static readonly VerifyPasswordResetToken = "verify-password-reset-token";
+        public static readonly ResetPassword = "reset-password";
     };
 
     public static Settings = class {

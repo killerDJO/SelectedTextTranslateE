@@ -5,6 +5,7 @@
       <div class="login-tabs">
         <span class="login-tab" :class="getTabClass(Tabs.SignIn)" @click="setCurrentTab(Tabs.SignIn)">Sign In</span>
         <span class="login-tab" :class="getTabClass(Tabs.SignUp)" @click="setCurrentTab(Tabs.SignUp)">Sign Up</span>
+        <span class="login-tab" :class="getTabClass(Tabs.RestorePassword)" @click="setCurrentTab(Tabs.RestorePassword)" v-if="currentTab === Tabs.RestorePassword">Reset Password</span>
       </div>
       <div class="login-contents">
         <div class="login-content" :class="getTabClass(Tabs.SignIn)">
@@ -23,7 +24,15 @@
             :sign-up-response="signUpResponse" />
         </div>
         <div class="login-content" :class="getTabClass(Tabs.RestorePassword)" @close="close">
-          <reset-password />
+          <reset-password
+            @close="close"
+            @send-password-reset-token="sendPasswordResetToken"
+            @reset-password="resetPassword"
+            @reset-responses="resetResponses"
+            @verify-password-reset-token="verifyPasswordResetToken"
+            :send-reset-token-response="sendResetTokenResponse"
+            :verify-reset-token-response="verifyResetTokenResponse"
+            :password-reset-response="passwordResetResponse"/>
         </div>
       </div>
       <div class="login-loading-overlay" v-show="isLoginActionInProgress" />

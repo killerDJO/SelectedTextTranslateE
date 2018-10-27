@@ -15,8 +15,17 @@ body {
 
 input {
     cursor: initial;
+
+    &[type="text"],
+    &[type="email"] {
+        &:disabled {
+            background-color: $color-border;
+        }
+    }
 }
 
 .form-control {
     padding: 0 $padding-default;
+    border-radius: $border-radius;
+    line-height: 2;
 }

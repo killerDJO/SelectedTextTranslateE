@@ -27,7 +27,7 @@ export default abstract class HistoryLoginViewBase<TData extends DataBase, TVali
 
         if (this.shouldValidateEmptyFields) {
             if (!this.data.email) {
-                validationResult.email = "Email must not be empty";
+                validationResult.email = "Email must not be empty.";
             }
 
             this.validateEmptyFields(validationResult);

@@ -3,7 +3,7 @@
     <div class="drop-wrapper">
       <drop-button
             v-if="currentUser === null"
-            :text="'Sing In'"
+            :text="'Sign In'"
             @click="showSignIn"
             :dropItems="[{text: 'Sign Up', callback: showSignUp}, {text: 'Settings', callback: openSettings}]"/>
       <drop-button
@@ -19,10 +19,16 @@
       :show.sync="showLoginDialog"
       @sign-in="signIn$"
       @sign-up="signUp$"
+      @send-password-reset-token="sendPasswordResetToken$"
+      @verify-password-reset-token="verifyPasswordResetToken$"
+      @reset-password="resetPassword$"
       @reset-responses="resetResponses"
       :initial-tab="currentDialogTab"
       :sign-in-response="signInResponse"
       :sign-up-response="signUpResponse"
+      :send-reset-token-response="sendResetTokenResponse"
+      :password-reset-response="passwordResetResponse"
+      :verify-reset-token-response="verifyResetTokenResponse"
       :is-login-action-in-progress="isLoginActionInProgress"/>
   </div>
 </template>

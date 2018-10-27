@@ -8,12 +8,17 @@ import { SignRequest } from "common/dto/history/account/SignRequest";
 import { ServerHistoryRecord } from "history/ServerHistoryRecord";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
-import { Logger } from "infrastructure/Logger";
-import { OutOfSyncError } from "infrastructure/OutOfSyncError";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
 import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { UserInfo } from "common/dto/UserInfo";
+import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
+import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
+import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
+import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
+
+import { Logger } from "infrastructure/Logger";
+import { OutOfSyncError } from "infrastructure/OutOfSyncError";
 
 export class HistorySyncService {
     private readonly messageBus: MessageBus = new MessageBus();
@@ -46,6 +51,18 @@ export class HistorySyncService {
             const signUpResponse = this.firebaseClient.signUp(signInRequest.email, signInRequest.password);
             this.updateCurrentUser();
             return signUpResponse;
+        });
+
+        this.messageBus.observeValue<PasswordResetRequest, PasswordResetResponse>(Messages.HistorySync.ResetPassword, async resetRequest => {
+            return this.firebaseClient.confirmPasswordReset(resetRequest.token, resetRequest.password);
+        });
+
+        this.messageBus.observeValue<string, SendResetTokenResponse>(Messages.HistorySync.SendPasswordResetToken, async email => {
+            return this.firebaseClient.sendPasswordResetToken(email);
+        });
+
+        this.messageBus.observeValue<string, VerifyResetTokenResponse>(Messages.HistorySync.VerifyPasswordResetToken, async token => {
+            return this.firebaseClient.verifyPasswordResetToken(token);
         });
 
         this.messageBus.observeNotification(Messages.HistorySync.SignOut, async () => {

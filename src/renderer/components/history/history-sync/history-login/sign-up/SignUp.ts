@@ -30,30 +30,30 @@ export default class SignUp extends HistoryLoginViewBase<SignUpData, ValidationR
 
     protected validateEmptyFields(validationResult: ValidationResult): void {
         if (!this.data.password) {
-            validationResult.password = "Password must not be empty";
+            validationResult.password = "Password must not be empty.";
         }
 
         if (!this.data.passwordConfirmation) {
-            validationResult.passwordConfirmation = "Password confirmation must not be empty";
+            validationResult.passwordConfirmation = "Password confirmation must not be empty.";
         }
     }
 
     protected validateNonEmptyFields(validationResult: ValidationResult): void {
-        if (this.data.password !== this.data.passwordConfirmation) {
-            validationResult.password = validationResult.passwordConfirmation = "Password and password confirmation must be equal";
+        if (this.data.passwordConfirmation && this.data.password !== this.data.passwordConfirmation) {
+            validationResult.password = validationResult.passwordConfirmation = "Password and password confirmation must be equal.";
         }
 
         if (this.signUpResponse !== null) {
             if (this.signUpResponse.validationCode === SignUpResponseValidationCode.InvalidEmail) {
-                validationResult.email = "Email is invalid";
+                validationResult.email = "Email is invalid.";
             }
 
             if (this.signUpResponse.validationCode === SignUpResponseValidationCode.EmailAlreadyInUse) {
-                validationResult.email = "User with this email is already registered";
+                validationResult.email = "User with this email is already registered.";
             }
 
             if (this.signUpResponse.validationCode === SignUpResponseValidationCode.WeakPassword) {
-                validationResult.password = "Password is too weak";
+                validationResult.password = "Password is too weak.";
             }
         }
     }

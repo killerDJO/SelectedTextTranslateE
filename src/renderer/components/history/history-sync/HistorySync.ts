@@ -5,6 +5,11 @@ import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
 import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 import { SignRequest } from "common/dto/history/account/SignRequest";
+import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
+import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
+import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
+import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
+import { AuthResponse } from "common/dto/history/account/AuthResponse";
 
 import HistoryLogin from "./history-login/HistoryLogin.vue";
 
@@ -25,11 +30,17 @@ export default class HistorySync extends Vue {
     @ns.State public isSyncInProgress!: boolean;
     @ns.State public signInResponse!: SignInResponse | null;
     @ns.State public signUpResponse!: SignUpResponse | null;
+    @ns.State public sendResetTokenResponse!: PasswordResetResponse | null;
+    @ns.State public verifyResetTokenResponse!: VerifyResetTokenResponse | null;
+    @ns.State public passwordResetResponse!: SendResetTokenResponse | null;
 
     @ns.Action public readonly setup!: () => void;
     @ns.Action public readonly resetResponses!: () => void;
     @ns.Action public readonly signIn!: (request: SignRequest) => void;
     @ns.Action public readonly signUp!: (request: SignRequest) => void;
+    @ns.Action public readonly sendPasswordResetToken!: (email: string) => void;
+    @ns.Action public readonly verifyPasswordResetToken!: (token: string) => void;
+    @ns.Action public readonly resetPassword!: (request: PasswordResetRequest) => void;
     @ns.Action public readonly signOut!: () => void;
     @ns.Action public readonly syncOneTime!: () => void;
 
@@ -47,27 +58,37 @@ export default class HistorySync extends Vue {
     }
 
     public signIn$(signRequest: SignRequest): void {
-        this.resetResponses();
-        this.isLoginActionInProgress = true;
-        this.signIn(signRequest);
+        this.runHistoryAction(() => this.signIn(signRequest));
     }
 
     public signUp$(signRequest: SignRequest): void {
-        this.resetResponses();
-        this.isLoginActionInProgress = true;
-        this.signUp(signRequest);
+        this.runHistoryAction(() => this.signUp(signRequest));
+    }
+
+    public sendPasswordResetToken$(email: string): void {
+        this.runHistoryAction(() => this.sendPasswordResetToken(email));
+    }
+
+    public verifyPasswordResetToken$(token: string): void {
+        this.runHistoryAction(() => this.verifyPasswordResetToken(token));
+    }
+
+    public resetPassword$(request: PasswordResetRequest): void {
+        this.runHistoryAction(() => this.resetPassword(request));
+    }
+
+    @Watch("sendResetTokenResponse")
+    @Watch("verifyResetTokenResponse")
+    public onResponseSet(newResponse: AuthResponse<any> | null) {
+        this.stopAction(newResponse);
     }
 
     @Watch("signInResponse")
     @Watch("signUpResponse")
-    public onResponseSet(newResponse: SignInResponse | null) {
-        if (newResponse !== null) {
-            this.isLoginActionInProgress = false;
-
-            if (newResponse.isSuccessful) {
-                this.showLoginDialog = false;
-            }
-        }
+    @Watch("passwordResetResponse")
+    public onFinalResponseSet(newResponse: AuthResponse<any> | null) {
+        this.stopAction(newResponse);
+        this.closeModalOnSuccess(newResponse);
     }
 
     public showSignIn(): void {
@@ -82,5 +103,23 @@ export default class HistorySync extends Vue {
 
     public openSettings(): void {
         console.log("openSettings");
+    }
+
+    private runHistoryAction(action: () => void) {
+        this.resetResponses();
+        this.isLoginActionInProgress = true;
+        action();
+    }
+
+    private stopAction(newResponse: AuthResponse<any> | null): void {
+        if (newResponse !== null) {
+            this.isLoginActionInProgress = false;
+        }
+    }
+
+    private closeModalOnSuccess(newResponse: AuthResponse<any> | null): void {
+        if (newResponse !== null && newResponse.isSuccessful) {
+            this.showLoginDialog = false;
+        }
     }
 }

@@ -1,6 +1,6 @@
-import { SignResponse } from "common/dto/history/account/SignResponse";
+import { AuthResponse } from "common/dto/history/account/AuthResponse";
 
-export interface SignUpResponse extends SignResponse<SignUpResponseValidationCode> {
+export interface SignUpResponse extends AuthResponse<SignUpResponseValidationCode> {
 }
 
 export enum SignUpResponseValidationCode {

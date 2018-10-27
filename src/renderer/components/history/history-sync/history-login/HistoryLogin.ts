@@ -3,6 +3,10 @@ import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { SignRequest } from "common/dto/history/account/SignRequest";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
 import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
+import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
+import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
+import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
+import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 
 import SignIn from "./sign-in/SignIn.vue";
 import SignUp from "./sign-up/SignUp.vue";
@@ -41,6 +45,15 @@ export default class HistoryLogin extends Vue {
     @Prop(Object)
     public signUpResponse!: SignUpResponse | null;
 
+    @Prop(Object)
+    public sendResetTokenResponse!: SendResetTokenResponse | null;
+
+    @Prop(Object)
+    public passwordResetResponse!: PasswordResetResponse | null;
+
+    @Prop(Object)
+    public verifyResetTokenResponse!: VerifyResetTokenResponse | null;
+
     public currentTab: Tabs = Tabs.SignIn;
     public Tabs: typeof Tabs = Tabs;
 
@@ -60,7 +73,9 @@ export default class HistoryLogin extends Vue {
     }
 
     public setCurrentTab(tab: Tabs): void {
-        this.currentTab = tab;
+        if (tab !== this.currentTab) {
+            this.currentTab = tab;
+        }
     }
 
     public getTabClass(tab: Tabs): string {
@@ -73,6 +88,18 @@ export default class HistoryLogin extends Vue {
 
     public signUp(signUpData: SignRequest): void {
         this.$emit("sign-up", signUpData);
+    }
+
+    public sendPasswordResetToken(email: string): void {
+        this.$emit("send-password-reset-token", email);
+    }
+
+    public verifyPasswordResetToken(token: string): void {
+        this.$emit("verify-password-reset-token", token);
+    }
+
+    public resetPassword(request: PasswordResetRequest): void {
+        this.$emit("reset-password", request);
     }
 
     public showRestorePassword(): void {

@@ -8,6 +8,10 @@ import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 import { MessageBus } from "common/renderer/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { SignRequest } from "common/dto/history/account/SignRequest";
+import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
+import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
+import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
+import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 
 const messageBus = new MessageBus();
 
@@ -17,6 +21,9 @@ interface HistorySyncState {
 
     signInResponse: SignInResponse | null;
     signUpResponse: SignUpResponse | null;
+    sendResetTokenResponse: SendResetTokenResponse | null;
+    passwordResetResponse: PasswordResetResponse | null;
+    verifyResetTokenResponse: VerifyResetTokenResponse | null;
 }
 
 export const historySync: Module<HistorySyncState, RootState> = {
@@ -24,7 +31,10 @@ export const historySync: Module<HistorySyncState, RootState> = {
     state: {
         isSyncInProgress: false,
         signInResponse: null,
-        signUpResponse: null
+        signUpResponse: null,
+        sendResetTokenResponse: null,
+        passwordResetResponse: null,
+        verifyResetTokenResponse: null
     },
     mutations: {
         setSyncStatus(state: HistorySyncState, isSyncInProgress: boolean): void {
@@ -35,6 +45,15 @@ export const historySync: Module<HistorySyncState, RootState> = {
         },
         setSignUpResponse(state: HistorySyncState, signUpResponse: SignUpResponse | null): void {
             state.signUpResponse = signUpResponse;
+        },
+        setSendResetTokenResponse(state: HistorySyncState, sendResetTokenResponse: SendResetTokenResponse | null): void {
+            state.sendResetTokenResponse = sendResetTokenResponse;
+        },
+        setVerifyResetTokenResponse(state: HistorySyncState, verifyResetTokenResponse: VerifyResetTokenResponse | null): void {
+            state.verifyResetTokenResponse = verifyResetTokenResponse;
+        },
+        setPasswordResetResponse(state: HistorySyncState, passwordResetResponse: PasswordResetResponse | null): void {
+            state.passwordResetResponse = passwordResetResponse;
         }
     },
     actions: {
@@ -45,6 +64,9 @@ export const historySync: Module<HistorySyncState, RootState> = {
         resetResponses({ commit }): void {
             commit("setSignInResponse", null);
             commit("setSignUpResponse", null);
+            commit("setVerifyResetTokenResponse", null);
+            commit("setPasswordResetResponse", null);
+            commit("setSendResetTokenResponse", null);
         },
         signIn({ commit }, request: SignRequest): void {
             messageBus
@@ -55,6 +77,21 @@ export const historySync: Module<HistorySyncState, RootState> = {
             messageBus
                 .sendCommand<SignRequest>(Messages.History.SignUp, request)
                 .then(response => commit("setSignUpResponse", response));
+        },
+        sendPasswordResetToken({ commit }, email: string): void {
+            messageBus
+                .sendCommand<string>(Messages.History.SendPasswordResetToken, email)
+                .then(response => commit("setSendResetTokenResponse", response));
+        },
+        verifyPasswordResetToken({ commit }, token: string): void {
+            messageBus
+                .sendCommand<string>(Messages.History.VerifyPasswordResetToken, token)
+                .then(response => commit("setVerifyResetTokenResponse", response));
+        },
+        resetPassword({ commit }, request: PasswordResetRequest): void {
+            messageBus
+                .sendCommand<PasswordResetRequest>(Messages.History.ResetPassword, request)
+                .then(response => commit("setPasswordResetResponse", response));
         },
         signOut(): void {
             messageBus.sendCommand<void>(Messages.History.SignOut);

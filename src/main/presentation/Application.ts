@@ -79,6 +79,10 @@ export class Application {
         historyView.subscribeToHistoryUser(this.historySyncService.currentUser$);
         historyView.handleSignIn(request => this.historySyncService.signInUser(request));
         historyView.handleSignUp(request => this.historySyncService.signUpUser(request));
+        historyView.handleSendPasswordResetToken(request => this.historySyncService.sendPasswordResetToken(request));
+        historyView.handlePasswordReset(request => this.historySyncService.resetPassword(request));
+        historyView.handleVerifyPasswordResetToken(request => this.historySyncService.verifyPasswordResetToken(request));
+
         historyView.signOut$.subscribe(() => this.historySyncService.signOutUser().subscribe());
         historyView.syncOneTime$.subscribe(() => this.historySyncService.startSingleSync());
 
