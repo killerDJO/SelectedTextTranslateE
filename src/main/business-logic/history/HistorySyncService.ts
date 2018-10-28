@@ -103,7 +103,7 @@ export class HistorySyncService {
     public signOutUser(): Observable<void> {
         this.logger.info("Sign out from account");
         return this.messageBus.sendNotification(Messages.HistorySync.SignOut).pipe(
-            tap(() => this.userStore.clearCurrentUser())
+            concatMap(() => this.userStore.clearCurrentUser().pipe(map(() => undefined)))
         );
     }
 
@@ -145,24 +145,25 @@ export class HistorySyncService {
         this.messageBus.handleCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime, () => this.getLastSyncTime());
         this.messageBus.sendValue<FirebaseSettings>(Messages.HistorySync.FirebaseSettings, settings.firebase);
         this.messageBus.handleCommand<void, HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings, () => of(this.getHistorySyncSettings()));
-        this.messageBus.handleCommand<void, UserInfo | null>(Messages.HistorySync.UserInfo, () => of(this.userStore.getCurrentUser()));
+        this.messageBus.handleCommand<void, UserInfo | null>(Messages.HistorySync.UserInfo, () => this.userStore.getCurrentUser());
 
         this.isSyncInProgress$ = this.messageBus.observeCommand<boolean>(Messages.HistorySync.IsSyncInProgress);
         this.currentUser$ = this.messageBus.observeCommand<AccountInfo | null>(Messages.HistorySync.CurrentUser);
     }
 
     private signInIfHasSavedData(): void {
-        const userInfo = this.userStore.getCurrentUser();
-        if (userInfo !== null) {
-            this.signInUser({ email: userInfo.email, password: userInfo.password })
+        this.userStore.getCurrentUser().pipe(concatMap(userInfo => {
+            if (!userInfo) {
+                return of();
+            }
+            return this.signInUser({ email: userInfo.email, password: userInfo.password })
                 .pipe(tap<SignInResponse>(response => {
                     if (!response.isSuccessful) {
                         this.userStore.clearCurrentUser();
                         this.notificationSender.showNonCriticalError("Error singing in into a history account.", new Error(response.validationCode));
                     }
-                }))
-                .subscribe();
-        }
+                }));
+        })).subscribe();
     }
 
     private getHistorySyncSettings(): HistorySyncSettings {
@@ -172,11 +173,13 @@ export class HistorySyncService {
     private getLastSyncTime(): Observable<string | undefined> {
         return this.datastoreProvider
             .find<HistoryRecord>(this.datastore$, {})
-            .pipe(map(records => this.getLastSyncTimeFromRecords(records)));
+            .pipe(
+                concatMap(records => this.getCurrentUser().pipe(map(user => ({ records, user })))),
+                map(({ records, user }) => this.getLastSyncTimeFromRecords(user, records))
+            );
     }
 
-    private getLastSyncTimeFromRecords(records: HistoryRecord[]): string | undefined {
-        const currentUser = this.getCurrentUser();
+    private getLastSyncTimeFromRecords(currentUser: UserInfo, records: HistoryRecord[]): string | undefined {
         let maxTimestamp: string | undefined;
 
         for (const record of records) {
@@ -203,10 +206,11 @@ export class HistorySyncService {
     }
 
     private getHistoryRecordsToSync(): Observable<HistoryRecord[]> {
-        const currentUser = this.getCurrentUser();
         return this.datastoreProvider
             .find<HistoryRecord>(this.datastore$, {})
-            .pipe(map(records => records.filter(record => this.isRecordModified(record, currentUser))));
+            .pipe(
+                concatMap(records => this.getCurrentUser().pipe(map(user => ({ records, user })))),
+                map(({ records, user }) => records.filter(record => this.isRecordModified(record, user))));
     }
 
     private isRecordModified(record: HistoryRecord, currentUser: UserInfo): boolean {
@@ -232,78 +236,79 @@ export class HistorySyncService {
             sourceLanguage: serverRecord.sourceLanguage,
             targetLanguage: serverRecord.targetLanguage
         };
-        return this.historyStore.getRecord(recordKey).pipe(concatMap(existingRecord => {
-            if (!existingRecord) {
-                this.logger.info(`New ${this.getLogKey(serverRecord)} has been created from server.`);
-                this.datastoreProvider.insert(this.datastore$, serverRecord)
-                    .pipe(tap<HistoryRecord>(record => this.notifyAboutUpdate(record)))
-                    .subscribe();
-                return of(void 0);
-            }
+        return this.historyStore.getRecord(recordKey).pipe(
+            concatMap(existingRecord => this.getCurrentUser().pipe(map(currentUser => ({ existingRecord, currentUser })))),
+            concatMap(({ existingRecord, currentUser }) => {
+                if (!existingRecord) {
+                    this.logger.info(`New ${this.getLogKey(serverRecord)} has been created from server.`);
+                    this.datastoreProvider.insert(this.datastore$, serverRecord)
+                        .pipe(tap<HistoryRecord>(record => this.notifyAboutUpdate(record)))
+                        .subscribe();
+                    return of(void 0);
+                }
 
-            const currentUser = this.getCurrentUser();
-            const existingSyncData = this.getUserSyncData(existingRecord, currentUser.email);
-            const serverSyncData = this.getUserSyncData(serverRecord, currentUser.email);
+                const existingSyncData = this.getUserSyncData(existingRecord, currentUser.email);
+                const serverSyncData = this.getUserSyncData(serverRecord, currentUser.email);
 
-            if (!serverSyncData) {
-                throw Error("Server sync for current user data must be present in server record");
-            }
+                if (!serverSyncData) {
+                    throw Error("Server sync for current user data must be present in server record");
+                }
 
-            if (!!existingSyncData && existingSyncData.serverTimestamp === serverSyncData.serverTimestamp) {
-                return of(void 0);
-            }
+                if (!!existingSyncData && existingSyncData.serverTimestamp === serverSyncData.serverTimestamp) {
+                    return of(void 0);
+                }
 
-            const newerRecord = this.getLastModifiedDate(existingRecord) > this.getLastModifiedDate(serverRecord)
-                ? existingRecord
-                : serverRecord;
-            const newerTranslateResultRecord = new Date(existingRecord.updatedDate) > new Date(serverRecord.updatedDate)
-                ? existingRecord
-                : serverRecord;
+                const newerRecord = this.getLastModifiedDate(existingRecord) > this.getLastModifiedDate(serverRecord)
+                    ? existingRecord
+                    : serverRecord;
+                const newerTranslateResultRecord = new Date(existingRecord.updatedDate) > new Date(serverRecord.updatedDate)
+                    ? existingRecord
+                    : serverRecord;
 
-            const filteredSyncData = (existingRecord.syncData || []).filter(syncData => syncData.userEmail !== currentUser.email);
+                const filteredSyncData = (existingRecord.syncData || []).filter(syncData => syncData.userEmail !== currentUser.email);
 
-            const serverTranslationsNumber = !existingSyncData ? 0 : (existingSyncData.serverTranslationsNumber || 0);
+                const serverTranslationsNumber = !existingSyncData ? 0 : (existingSyncData.serverTranslationsNumber || 0);
 
-            const mergedRecord: HistoryRecord = {
-                ...recordKey,
-                id: existingRecord.id,
-                createdDate: newerRecord.createdDate,
-                translateResult: newerTranslateResultRecord.translateResult,
-                updatedDate: newerTranslateResultRecord.updatedDate,
-                lastTranslatedDate: newerRecord.lastTranslatedDate,
-                lastModifiedDate: newerRecord.lastModifiedDate,
-                translationsNumber: serverRecord.translationsNumber + (existingRecord.translationsNumber - serverTranslationsNumber),
-                isArchived: newerRecord.isArchived,
-                isStarred: newerRecord.isStarred,
-                syncData: [
-                    ...filteredSyncData,
-                    {
-                        userEmail: currentUser.email,
-                        serverTimestamp: serverSyncData.serverTimestamp,
-                        serverTranslationsNumber: serverRecord.translationsNumber
-                    }
-                ]
-            };
+                const mergedRecord: HistoryRecord = {
+                    ...recordKey,
+                    id: existingRecord.id,
+                    createdDate: newerRecord.createdDate,
+                    translateResult: newerTranslateResultRecord.translateResult,
+                    updatedDate: newerTranslateResultRecord.updatedDate,
+                    lastTranslatedDate: newerRecord.lastTranslatedDate,
+                    lastModifiedDate: newerRecord.lastModifiedDate,
+                    translationsNumber: serverRecord.translationsNumber + (existingRecord.translationsNumber - serverTranslationsNumber),
+                    isArchived: newerRecord.isArchived,
+                    isStarred: newerRecord.isStarred,
+                    syncData: [
+                        ...filteredSyncData,
+                        {
+                            userEmail: currentUser.email,
+                            serverTimestamp: serverSyncData.serverTimestamp,
+                            serverTranslationsNumber: serverRecord.translationsNumber
+                        }
+                    ]
+                };
 
-            this.logger.info(`Existing ${this.getLogKey(serverRecord)} has been merged with server record.`);
-            return this.checkThatRecordUpdated(
-                this.datastoreProvider.update(this.datastore$, { id: mergedRecord.id, lastModifiedDate: existingRecord.lastModifiedDate }, mergedRecord),
-                mergedRecord);
-        }));
+                this.logger.info(`Existing ${this.getLogKey(serverRecord)} has been merged with server record.`);
+                return this.checkThatRecordUpdated(
+                    this.datastoreProvider.update(this.datastore$, { id: mergedRecord.id, lastModifiedDate: existingRecord.lastModifiedDate }, mergedRecord),
+                    mergedRecord);
+            }));
     }
 
     private getUserSyncData(record: HistoryRecord, userEmail: string): SyncData | undefined {
         return (record.syncData || []).find(syncData => syncData.userEmail === userEmail);
     }
 
-    private getCurrentUser(): UserInfo {
-        const currentUser = this.userStore.getCurrentUser();
+    private getCurrentUser(): Observable<UserInfo> {
+        return this.userStore.getCurrentUser().pipe(map(currentUser => {
+            if (currentUser === null) {
+                throw Error("Unable to sync when current user is not set");
+            }
 
-        if (currentUser === null) {
-            throw Error("Unable to sync when current user is not set");
-        }
-
-        return currentUser;
+            return currentUser;
+        }));
     }
 
     private checkThatRecordUpdated(updateResult: Observable<HistoryRecord>, record: HistoryRecord): Observable<void> {
