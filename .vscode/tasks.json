@@ -82,6 +82,16 @@
             "type": "npm",
             "script": "create-release",
             "problemMatcher": []
+        },
+        {
+            "label": "firebase: deploy",
+            "group": "build",
+            "type": "shell",
+            "command": "firebase deploy",
+            "options": {
+                "cwd": "${workspaceFolder}/src/firebase"
+            },
+            "problemMatcher": []
         }
     ]
 }

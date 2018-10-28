@@ -1,0 +1,45 @@
+body {
+    background: #ECEFF1;
+    color: rgba(0, 0, 0, 0.87);
+    font-family: Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  .message-holder {
+    text-align: center;
+  }
+
+  .message {
+    background: white;
+    display: inline-block;
+    margin: 100px auto 16px;
+    padding: 16px 24px 16px;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  }
+
+  .message h1 {
+    font-size: 22px;
+    font-weight: 300;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 0 0 16px;
+  }
+
+  .message p {
+    font-size: 14px;
+    display: inline;
+  }
+
+  .message .clipboard {
+    width: 15px;
+    height: 15px;
+    margin-left: 5px;
+    opacity: 0.6;
+    cursor: pointer;
+    vertical-align: top;
+  }
+
+  .message .clipboard:hover {
+    opacity: 1;
+  }
