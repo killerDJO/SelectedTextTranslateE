@@ -1,5 +1,5 @@
 <template>
-  <div class="content-holder">
+  <div class="content-holder" @keyup.enter="confirmIfValid()">
     <div class="login-view">
       <div class="form-group">
         <label>Email address</label>

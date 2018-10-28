@@ -36,13 +36,13 @@ export default class SignUp extends HistoryLoginViewBase<SignUpData, ValidationR
         if (!this.data.passwordConfirmation) {
             validationResult.passwordConfirmation = "Password confirmation must not be empty.";
         }
-    }
 
-    protected validateNonEmptyFields(validationResult: ValidationResult): void {
         if (this.data.passwordConfirmation && this.data.password !== this.data.passwordConfirmation) {
             validationResult.password = validationResult.passwordConfirmation = "Password and password confirmation must be equal.";
         }
+    }
 
+    protected validateNonEmptyFields(validationResult: ValidationResult): void {
         if (this.signUpResponse !== null) {
             if (this.signUpResponse.validationCode === SignUpResponseValidationCode.InvalidEmail) {
                 validationResult.email = "Email is invalid.";

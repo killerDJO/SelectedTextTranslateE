@@ -104,6 +104,10 @@ export default class ResetPassword extends HistoryLoginViewBase<ResetPasswordDat
             if (!this.data.passwordConfirmation) {
                 validationResult.passwordConfirmation = "Password confirmation must not be empty.";
             }
+
+            if (this.data.passwordConfirmation && this.data.password !== this.data.passwordConfirmation) {
+                validationResult.password = validationResult.passwordConfirmation = "Password and password confirmation must be equal.";
+            }
         }
     }
 
@@ -133,10 +137,6 @@ export default class ResetPassword extends HistoryLoginViewBase<ResetPasswordDat
         }
 
         if (this.currentStep === ResetPasswordStep.Password) {
-            if (this.data.passwordConfirmation && this.data.password !== this.data.passwordConfirmation) {
-                validationResult.password = validationResult.passwordConfirmation = "Password and password confirmation must be equal.";
-            }
-
             if (this.passwordResetResponse !== null) {
                 if (this.passwordResetResponse.validationCode === PasswordResetResponseValidationCode.ExpiredActionCode) {
                     validationResult.password = "Token has expired. Repeat the password reset procedure.";
