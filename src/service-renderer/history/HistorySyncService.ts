@@ -101,19 +101,19 @@ export class HistorySyncService {
 
         await this.waitForSyncToFinish();
 
-        if (this.isContinuousSyncStarted) {
-            return;
-        }
-
-        this.logger.info("History records sync started.");
-
         if (isContinuous) {
+            if (this.isContinuousSyncStarted) {
+                return;
+            }
+
             this.destroyObserveRecordSubscription();
             this.observeRecordSubscription = this.messageBus.observeValue<HistoryRecord>(Messages.HistorySync.HistoryRecord, historyRecord => this.syncSingleRecord(historyRecord));
             this.isContinuousSyncStarted = isContinuous;
         }
 
-        this.syncRecords(historySyncSettings.interval);
+        this.logger.info("History records sync started.");
+
+        this.syncRecords(historySyncSettings.interval, isContinuous);
     }
 
     private stopSync(): void {
@@ -138,11 +138,11 @@ export class HistorySyncService {
         this.currentUser$.next(this.firebaseClient.getAccountInfo());
     }
 
-    private async syncRecords(syncInterval: number): Promise<void> {
+    private async syncRecords(syncInterval: number, isContinuous: boolean): Promise<void> {
         try {
             await this.syncAllRecords();
         } finally {
-            if (this.isContinuousSyncStarted) {
+            if (this.isContinuousSyncStarted && isContinuous) {
                 this.continuousInterval = setInterval(() => this.syncAllRecords(), syncInterval);
             }
         }

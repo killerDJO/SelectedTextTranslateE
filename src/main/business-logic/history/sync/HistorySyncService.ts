@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import * as Datastore from "nedb";
-import { Observable, of, Subject, Subscription } from "rxjs";
+import { Observable, of, Subject, Subscription, empty } from "rxjs";
 import { tap, map, concatMap } from "rxjs/operators";
 
 import { Messages } from "common/messaging/Messages";
@@ -28,7 +28,7 @@ export class HistorySyncService {
     private readonly messageBus: MessageBus;
 
     private historyUpdateSubscription: Subscription | null = null;
-    private syncActionsQueue$: Observable<void> = new Observable<void>();
+    private syncActionsQueue$: Observable<void> = empty();
     private currentHistorySyncSettings: HistorySyncSettings | null = null;
 
     public isSyncInProgress$!: Observable<boolean>;
@@ -75,7 +75,8 @@ export class HistorySyncService {
     private runActionOnSyncActionsQueue(action: () => Observable<void>): void {
         this.syncActionsQueue$.subscribe({
             complete: () => {
-                this.syncActionsQueue$ = this.syncActionsQueue$.pipe(concatMap(action));
+                const actionResult = action();
+                this.syncActionsQueue$ = this.syncActionsQueue$.pipe(concatMap(() => actionResult));
             }
         });
     }
@@ -114,7 +115,8 @@ export class HistorySyncService {
         } else if (!newHistorySyncSettings.isContinuousSyncEnabled) {
             this.stopContinuousSync();
         } else if (newHistorySyncSettings.isContinuousSyncEnabled && (!this.currentHistorySyncSettings.isContinuousSyncEnabled || this.currentHistorySyncSettings.interval !== newHistorySyncSettings.interval)) {
-            this.stopContinuousSync().subscribe(() => this.startContinuousSync());
+            this.stopContinuousSync();
+            this.startContinuousSync();
         }
     }
 
