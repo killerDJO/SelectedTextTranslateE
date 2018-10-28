@@ -17,10 +17,15 @@ input {
     cursor: initial;
 
     &[type="text"],
-    &[type="email"] {
+    &[type="email"],
+    &[type="number"] {
         &:disabled {
             background-color: $color-background;
         }
+    }
+
+    &[type="number"] {
+        padding-right: 0;
     }
 }
 

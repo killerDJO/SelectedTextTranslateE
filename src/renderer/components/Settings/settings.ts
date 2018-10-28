@@ -1,4 +1,4 @@
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Watch } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 import * as _ from "lodash";
 
@@ -7,13 +7,16 @@ import { EditableHotkeySettings } from "common/dto/settings/editable-settings/Ed
 import { EditableScalingSettings } from "common/dto/settings/editable-settings/EditableScalingSettings";
 import { EditablePlaySettings } from "common/dto/settings/editable-settings/EditablePlaySettings";
 import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
+import { EditableHistorySettings } from "common/dto/settings/editable-settings/EditableHistorySettings";
 import { ScalingState } from "common/dto/settings/ScalingState";
+import { SettingsGroup } from "common/dto/settings/SettingsGroup";
 
 import HotkeySettings from "components/settings/hotkeys-settings/HotkeySettings.vue";
 import ScalingSettings from "components/settings/scaling-settings/ScalingSettings.vue";
 import PlaySettings from "components/settings/play-settings/PlaySettings.vue";
 import LanguageSettings from "components/settings/language-settings/LanguageSettings.vue";
 import StartupSettings from "components/settings/startup-settings/StartupSettings.vue";
+import HistorySettings from "components/settings/history-settings/HistorySettings.vue";
 
 const ns = namespace("app/settings");
 
@@ -23,7 +26,8 @@ const ns = namespace("app/settings");
         ScalingSettings,
         PlaySettings,
         LanguageSettings,
-        StartupSettings
+        StartupSettings,
+        HistorySettings
     }
 })
 export default class Settings extends Vue {
@@ -31,6 +35,7 @@ export default class Settings extends Vue {
     @ns.State public defaultSettings!: EditableSettings | null;
     @ns.State public scalingState!: ScalingState | null;
     @ns.State public isStartupEnabled!: boolean;
+    @ns.State public currentSettingsGroup!: SettingsGroup | null;
 
     @ns.Action private readonly setup!: () => void;
     @ns.Action private readonly updateSettings!: (settings: EditableSettings) => void;
@@ -40,6 +45,9 @@ export default class Settings extends Vue {
     @ns.Action public readonly setStartupState!: (isStartupEnabled: boolean) => void;
 
     @ns.Action public readonly changeScaling!: (scaleFactor: number) => void;
+
+    public readonly settingsGroupToElementMap: { [key: string]: HTMLElement } = {};
+    public readonly SettingsGroup: typeof SettingsGroup = SettingsGroup;
 
     public mounted(): void {
         this.setup();
@@ -59,6 +67,20 @@ export default class Settings extends Vue {
 
     public updateLanguageSettings(languageSettings: EditableLanguageSettings): void {
         this.updateEditableSettings(settings => settings.language = languageSettings);
+    }
+
+    public updateHistorySettings(historySettings: EditableHistorySettings): void {
+        this.updateEditableSettings(settings => settings.history = historySettings);
+    }
+
+    @Watch("currentSettingsGroup")
+    public onCurrentSettingsGroupChanged(): void {
+        if (this.currentSettingsGroup !== null) {
+            const currentGroupElement = this.$refs[this.currentSettingsGroup];
+            if (currentGroupElement instanceof Vue) {
+                (currentGroupElement as Vue).$el.scrollIntoView();
+            }
+        }
     }
 
     private updateEditableSettings(settingsSetting: (settings: EditableSettings) => void): void {

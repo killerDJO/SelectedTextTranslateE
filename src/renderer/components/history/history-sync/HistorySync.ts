@@ -42,6 +42,7 @@ export default class HistorySync extends Vue {
     @ns.Action public readonly verifyPasswordResetToken!: (token: string) => void;
     @ns.Action public readonly resetPassword!: (request: PasswordResetRequest) => void;
     @ns.Action public readonly signOut!: () => void;
+    @ns.Action public readonly showHistorySettings!: () => void;
     @ns.Action public readonly syncOneTime!: () => void;
 
     @Prop(Object)
@@ -102,7 +103,7 @@ export default class HistorySync extends Vue {
     }
 
     public openSettings(): void {
-        console.log("openSettings");
+        this.showHistorySettings();
     }
 
     private runHistoryAction(action: () => void) {

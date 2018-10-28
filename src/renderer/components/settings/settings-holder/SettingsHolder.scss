@@ -17,6 +17,7 @@ $items-size: 400px;
         min-width: $items-size + $margin-large;
         padding: $padding-default;
         margin-bottom: $margin-default;
+        display: grid;
     }
 
     /deep/ .settings-separator {
@@ -27,5 +28,16 @@ $items-size: 400px;
 
     /deep/ .settings-item {
         max-width: $items-size;
+        display: grid;
+    }
+
+    /deep/ .form-group {
+        margin-bottom: 0;
+
+        label {
+            margin-bottom: 0;
+            line-height: 1;
+            margin-top: $margin-small;
+        }
     }
 }

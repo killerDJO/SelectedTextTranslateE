@@ -5,6 +5,7 @@ import { ViewNames } from "common/ViewNames";
 import { ScalingState } from "common/dto/settings/ScalingState";
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { Messages } from "common/messaging/Messages";
+import { SettingsGroup } from "common/dto/settings/SettingsGroup";
 
 import { DeepPartial } from "utils/deep-partial";
 import { mapSubject } from "utils/map-subject";
@@ -56,6 +57,11 @@ export class SettingsView extends ViewBase {
             this.messageBus.registerObservable(Messages.Settings.StartupState, startupState$).subscription);
     }
 
+    public showSettingsGroup(settingsGroup: SettingsGroup): void {
+        this.show();
+        this.messageBus.sendValue<SettingsGroup>(Messages.Settings.SettingsGroup, settingsGroup);
+    }
+
     private setSettingsInternal(name: string, settings$: Observable<Settings>): void {
         this.registerSubscription(
             this.messageBus.registerObservable(name, settings$.pipe(map(settings => this.getEditableSettings(settings)))).subscription);
@@ -91,6 +97,10 @@ export class SettingsView extends ViewBase {
                 sourceLanguage: settings.language.sourceLanguage,
                 targetLanguage: settings.language.targetLanguage,
                 allLanguages: this.context.settingsProvider.getLanguages()
+            },
+            history: {
+                isContinuousSyncEnabled: settings.history.sync.isContinuousSyncEnabled,
+                syncInterval: settings.history.sync.interval
             }
         };
     }
@@ -119,6 +129,12 @@ export class SettingsView extends ViewBase {
             language: {
                 sourceLanguage: settings.language.sourceLanguage,
                 targetLanguage: settings.language.targetLanguage
+            },
+            history: {
+                sync: {
+                    interval: settings.history.syncInterval,
+                    isContinuousSyncEnabled: settings.history.isContinuousSyncEnabled
+                }
             }
         };
     }

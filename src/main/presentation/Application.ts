@@ -6,6 +6,7 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 import { ViewNames } from "common/ViewNames";
+import { SettingsGroup } from "common/dto/settings/SettingsGroup";
 
 import { Updater } from "install/Updater";
 import { StartupHandler } from "install/StartupHandler";
@@ -85,6 +86,7 @@ export class Application {
 
         historyView.signOut$.subscribe(() => this.historySyncService.signOutUser().subscribe());
         historyView.syncOneTime$.subscribe(() => this.historySyncService.startSingleSync());
+        historyView.showHistorySettings$.subscribe(() => this.settingsView.showSettingsGroup(SettingsGroup.History));
 
         this.setupTranslateResultView(historyView, true);
     }

@@ -98,6 +98,9 @@ export const historySync: Module<HistorySyncState, RootState> = {
         },
         syncOneTime(): void {
             messageBus.sendCommand<void>(Messages.History.SyncOneTime);
+        },
+        showHistorySettings(): void {
+            messageBus.sendCommand<void>(Messages.History.ShowHistorySettings);
         }
     }
 };

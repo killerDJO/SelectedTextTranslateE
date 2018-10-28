@@ -6,6 +6,7 @@ import { RootState } from "root.store";
 import { Messages } from "common/messaging/Messages";
 import { EditableSettings } from "common/dto/settings/editable-settings/EditableSettings";
 import { ScalingState } from "common/dto/settings/ScalingState";
+import { SettingsGroup } from "common/dto/settings/SettingsGroup";
 
 import { MessageBus } from "common/renderer/MessageBus";
 
@@ -16,6 +17,7 @@ interface SettingsState {
     defaultSettings: EditableSettings | null;
     scalingState: ScalingState | null;
     isStartupEnabled: boolean;
+    currentSettingsGroup: SettingsGroup | null;
 }
 
 export const settings: Module<SettingsState, RootState> = {
@@ -24,7 +26,8 @@ export const settings: Module<SettingsState, RootState> = {
         settings: null,
         scalingState: null,
         isStartupEnabled: false,
-        defaultSettings: null
+        defaultSettings: null,
+        currentSettingsGroup: null
     },
     mutations: {
         setSettings(state: SettingsState, editableSettings: EditableSettings): void {
@@ -38,6 +41,9 @@ export const settings: Module<SettingsState, RootState> = {
         },
         setStartupState(state: SettingsState, isStartupEnabled: boolean): void {
             state.isStartupEnabled = isStartupEnabled;
+        },
+        setCurrentSettingsGroup(state: SettingsState, currentSettingsGroup: SettingsGroup): void {
+            state.currentSettingsGroup = currentSettingsGroup;
         }
     },
     actions: {
@@ -46,6 +52,7 @@ export const settings: Module<SettingsState, RootState> = {
             messageBus.observeValue<EditableSettings>(Messages.Settings.DefaultEditableSettings, defaultSettings => commit("setDefaultSettings", defaultSettings));
             messageBus.observeValue<ScalingState>(Messages.Settings.ScalingState, scalingState => commit("setScalingState", scalingState));
             messageBus.observeValue<boolean>(Messages.Settings.StartupState, isStartupEnabled => commit("setStartupState", isStartupEnabled));
+            messageBus.observeValue<SettingsGroup>(Messages.Settings.SettingsGroup, currentSettingsGroup => commit("setCurrentSettingsGroup", currentSettingsGroup));
         },
         updateSettings({ state }, editableSettings: EditableSettings): void {
             if (_.isEqual(state.settings, editableSettings)) {

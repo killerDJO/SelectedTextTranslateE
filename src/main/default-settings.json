@@ -59,6 +59,7 @@
         "databaseName": "history.db",
         "pageSize": 25,
         "sync": {
+            "isContinuousSyncEnabled": true,
             "interval": 60000
         }
     },

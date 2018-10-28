@@ -48,6 +48,7 @@ export class Messages {
         public static readonly VerifyPasswordResetToken = "history-verify-password-reset-token";
         public static readonly ResetPassword = "history-reset-password";
         public static readonly SyncOneTime = "history-one-time";
+        public static readonly ShowHistorySettings = "show-history-settings";
         public static readonly CurrentUser = "history-current-user";
         public static readonly SyncState = "history-sync-state";
     };
@@ -79,6 +80,7 @@ export class Messages {
         public static readonly EditableSettings = "editable-settings";
         public static readonly DefaultEditableSettings = "default-editable-settings";
         public static readonly ScalingState = "scaling-state";
+        public static readonly SettingsGroup = "settings-group";
         public static readonly StartupState = "startup-state";
         public static readonly EditableSettingsUpdated = "editable-settings-updated";
         public static readonly PauseHotkeysRequest = "pause-hotkeys-request";
