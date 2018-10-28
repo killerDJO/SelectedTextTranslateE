@@ -18,7 +18,7 @@ import { TextTranslator } from "business-logic/translation/TextTranslator";
 import { TextExtractor } from "business-logic/translation/TextExtractor";
 import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { HistoryStore } from "business-logic/history/HistoryStore";
-import { HistorySyncService } from "business-logic/history/HistorySyncService";
+import { HistorySyncService } from "business-logic/history/sync/HistorySyncService";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 
 import { Taskbar } from "presentation/Taskbar";
@@ -31,6 +31,7 @@ import { HistoryView } from "presentation/views/HistoryView";
 import { SettingsView } from "presentation/views/SettingsView";
 import { Scaler } from "presentation/framework/scaling/Scaler";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
+import { AccountHandler } from "business-logic/history/sync/AccountHandler";
 
 @injectable()
 export class Application {
@@ -50,7 +51,8 @@ export class Application {
         private readonly updater: Updater,
         private readonly searchExecutor: SearchExecutor,
         private readonly startupHandler: StartupHandler,
-        private readonly historySyncService: HistorySyncService) {
+        private readonly historySyncService: HistorySyncService,
+        private readonly accountHandler: AccountHandler) {
 
         this.createTaskbar();
         this.setupHotkeys();
@@ -77,14 +79,14 @@ export class Application {
         historyView.subscribeToHistoryUpdate(this.historySyncService.syncStateUpdated$);
 
         historyView.subscribeToHistorySyncState(this.historySyncService.isSyncInProgress$);
-        historyView.subscribeToHistoryUser(this.historySyncService.currentUser$);
-        historyView.handleSignIn(request => this.historySyncService.signInUser(request));
-        historyView.handleSignUp(request => this.historySyncService.signUpUser(request));
-        historyView.handleSendPasswordResetToken(request => this.historySyncService.sendPasswordResetToken(request));
-        historyView.handlePasswordReset(request => this.historySyncService.resetPassword(request));
-        historyView.handleVerifyPasswordResetToken(request => this.historySyncService.verifyPasswordResetToken(request));
+        historyView.subscribeToHistoryUser(this.accountHandler.currentUser$);
+        historyView.handleSignIn(request => this.accountHandler.signInUser(request));
+        historyView.handleSignUp(request => this.accountHandler.signUpUser(request));
+        historyView.handleSendPasswordResetToken(request => this.accountHandler.sendPasswordResetToken(request));
+        historyView.handlePasswordReset(request => this.accountHandler.resetPassword(request));
+        historyView.handleVerifyPasswordResetToken(request => this.accountHandler.verifyPasswordResetToken(request));
 
-        historyView.signOut$.subscribe(() => this.historySyncService.signOutUser().subscribe());
+        historyView.signOut$.subscribe(() => this.accountHandler.signOutUser().subscribe());
         historyView.syncOneTime$.subscribe(() => this.historySyncService.startSingleSync());
         historyView.showHistorySettings$.subscribe(() => this.settingsView.showSettingsGroup(SettingsGroup.History));
 

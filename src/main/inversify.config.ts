@@ -25,10 +25,11 @@ import { TranslationResponseParser } from "business-logic/translation/Translatio
 import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { SearchExecutor } from "business-logic/search/SearchExecutor";
-import { HistorySyncService } from "business-logic/history/HistorySyncService";
+import { HistorySyncService } from "business-logic/history/sync/HistorySyncService";
 import { HistoryMigration } from "business-logic/history/migrations/base/HistoryMigration";
 import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
 import { RecordIdGenerator } from "business-logic/history/RecordIdGenerator";
+import { AccountHandler } from "business-logic/history/sync/AccountHandler";
 
 import { AddUniqueIdConstraint } from "business-logic/history/migrations/1_AddUniqueIdConstraint";
 import { AddIdentifierMigration } from "business-logic/history/migrations/2_AddIdentifierMigration";
@@ -94,6 +95,7 @@ class Binder {
     private bindHistory(): void {
         this.container.bind<HistoryStore>(HistoryStore).toSelf().inSingletonScope();
         this.container.bind<HistorySyncService>(HistorySyncService).toSelf().inSingletonScope();
+        this.container.bind<AccountHandler>(AccountHandler).toSelf().inSingletonScope();
         this.container.bind<HistoryDatabaseProvider>(HistoryDatabaseProvider).toSelf().inSingletonScope();
         this.container.bind<RecordIdGenerator>(RecordIdGenerator).toSelf();
 

@@ -1,7 +1,7 @@
 import { BehaviorSubject } from "rxjs";
 
 import { FirebaseClient } from "infrastructure/FirebaseClient";
-import { MessageBus } from "common/renderer/MessageBus";
+import { MessageBus, Subscription } from "common/renderer/MessageBus";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { Messages } from "common/messaging/Messages";
 import { SignRequest } from "common/dto/history/account/SignRequest";
@@ -27,7 +27,9 @@ export class HistorySyncService {
 
     private readonly collectionId: string = "history";
 
-    private isSyncStarted: boolean = false;
+    private isContinuousSyncStarted: boolean = false;
+    private observeRecordSubscription: Subscription | null = null;
+    private continuousInterval: NodeJS.Timer | null = null;
 
     private readonly syncTask$: BehaviorSubject<Promise<void> | null> = new BehaviorSubject(null);
     private readonly currentUser$: BehaviorSubject<AccountInfo | null> = new BehaviorSubject(null);
@@ -70,17 +72,18 @@ export class HistorySyncService {
             await this.waitForSyncToFinish();
             await this.firebaseClient.signOut();
             this.updateCurrentUser();
+            this.logger.info("Sign out successful");
         });
 
         this.messageBus.observeNotification(Messages.HistorySync.StopSync, () => {
-            if (this.isSyncStarted) {
+            if (this.isContinuousSyncStarted) {
                 this.stopSync();
             }
         });
 
-        this.messageBus.observeValue(Messages.HistorySync.StartSync, (isContinuous: boolean) => {
-            if (!this.isSyncStarted || !isContinuous) {
-                this.startSync(isContinuous);
+        this.messageBus.observeValue(Messages.HistorySync.StartSync, async (isContinuous: boolean) => {
+            if (!this.isContinuousSyncStarted || !isContinuous) {
+                await this.startSync(isContinuous);
             }
         });
 
@@ -88,33 +91,47 @@ export class HistorySyncService {
         this.syncTask$.subscribe(syncTask => this.messageBus.sendCommand(Messages.HistorySync.IsSyncInProgress, syncTask !== null));
     }
 
-    private async startSync(isContinuous: boolean) {
+    private async startSync(isContinuous: boolean): Promise<void> {
         const historySyncSettings = await this.messageBus.sendCommand<void, HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings);
-        const userInfo = await this.messageBus.sendCommand<void, UserInfo | null>(Messages.HistorySync.UserInfo);
 
-        if (!userInfo) {
-            this.logger.warning("Unable to start sync. User credentials are not provided.");
+        if (this.firebaseClient.getAccountInfo() === null) {
+            this.logger.warning("Unable to start sync. User must be signed in.");
             return;
         }
 
         await this.waitForSyncToFinish();
 
-        this.isSyncStarted = isContinuous;
+        if (this.isContinuousSyncStarted) {
+            return;
+        }
+
         this.logger.info("History records sync started.");
 
-        await this.firebaseClient.signOut();
-        const signInResponse = await this.firebaseClient.signIn(userInfo.email, userInfo.password);
-        this.updateCurrentUser();
-
-        if (!signInResponse.isSuccessful) {
-            throw Error(`Error performing sign in. ${signInResponse.validationCode}`);
+        if (isContinuous) {
+            this.destroyObserveRecordSubscription();
+            this.observeRecordSubscription = this.messageBus.observeValue<HistoryRecord>(Messages.HistorySync.HistoryRecord, historyRecord => this.syncSingleRecord(historyRecord));
+            this.isContinuousSyncStarted = isContinuous;
         }
 
         this.syncRecords(historySyncSettings.interval);
     }
 
     private stopSync(): void {
-        this.isSyncStarted = false;
+        this.destroyObserveRecordSubscription();
+
+        if (this.continuousInterval !== null) {
+            clearInterval(this.continuousInterval);
+        }
+
+        this.isContinuousSyncStarted = false;
+        this.logger.info("History records sync stopped.");
+    }
+
+    private destroyObserveRecordSubscription(): void {
+        if (this.observeRecordSubscription !== null) {
+            this.observeRecordSubscription.unsubscribe();
+            this.observeRecordSubscription = null;
+        }
     }
 
     private updateCurrentUser(): void {
@@ -122,13 +139,11 @@ export class HistorySyncService {
     }
 
     private async syncRecords(syncInterval: number): Promise<void> {
-        this.messageBus.observeValue<HistoryRecord>(Messages.HistorySync.HistoryRecord, historyRecord => this.syncSingleRecord(historyRecord));
-
         try {
             await this.syncAllRecords();
         } finally {
-            if (this.isSyncStarted) {
-                setTimeout(() => this.syncAllRecords(), syncInterval);
+            if (this.isContinuousSyncStarted) {
+                this.continuousInterval = setInterval(() => this.syncAllRecords(), syncInterval);
             }
         }
     }

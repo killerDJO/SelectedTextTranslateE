@@ -1,6 +1,6 @@
 import { injectable } from "inversify";
 import * as Datastore from "nedb";
-import { Observable, of, Subject, Subscription, AsyncSubject } from "rxjs";
+import { Observable, of, Subject, Subscription } from "rxjs";
 import { tap, map, concatMap } from "rxjs/operators";
 
 import { Messages } from "common/messaging/Messages";
@@ -8,16 +8,6 @@ import { HistoryRecord, SyncData } from "common/dto/history/HistoryRecord";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
-import { AccountInfo } from "common/dto/history/account/AccountInfo";
-import { SignRequest } from "common/dto/history/account/SignRequest";
-import { SignInResponse } from "common/dto/history/account/SignInResponse";
-import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
-import { AuthResponse } from "common/dto/history/account/AuthResponse";
-import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
-import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
-import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
-import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
-import { UserInfo } from "common/dto/UserInfo";
 
 import { MessageBus } from "infrastructure/MessageBus";
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
@@ -28,8 +18,8 @@ import { DatastoreProvider } from "data-access/DatastoreProvider";
 import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { NotificationSender } from "infrastructure/NotificationSender";
-import { UserStore } from "infrastructure/UserStore";
+import { AccountHandler } from "business-logic/history/sync/AccountHandler";
+import { AccountInfo } from "common/dto/history/account/AccountInfo";
 
 @injectable()
 export class HistorySyncService {
@@ -38,8 +28,9 @@ export class HistorySyncService {
     private readonly messageBus: MessageBus;
 
     private historyUpdateSubscription: Subscription | null = null;
+    private syncActionsQueue$: Observable<void> = new Observable<void>();
+    private currentHistorySyncSettings: HistorySyncSettings | null = null;
 
-    public currentUser$!: Observable<AccountInfo | null>;
     public isSyncInProgress$!: Observable<boolean>;
 
     constructor(
@@ -49,90 +40,81 @@ export class HistorySyncService {
         private readonly historyDatabaseProvider: HistoryDatabaseProvider,
         private readonly settingsProvider: SettingsProvider,
         private readonly logger: Logger,
-        private readonly notificationSender: NotificationSender,
-        private readonly userStore: UserStore) {
+        private readonly accountHandler: AccountHandler) {
 
         this.datastore$ = this.historyDatabaseProvider.historyDatastore$;
         this.messageBus = new MessageBus(this.serviceRendererProvider.getServiceRenderer());
 
         this.setupMessageBus();
-        this.signInIfHasSavedData();
+        this.subscribeToSettingsChange();
     }
 
     public get syncStateUpdated$(): Observable<HistoryRecord> {
         return this.syncStateUpdatedSubject$;
     }
 
-    public signInUser(signRequest: SignRequest): Observable<SignInResponse> {
-        this.logger.info(`Sign in to account ${signRequest.email}.`);
-        return this.messageBus.sendValue<SignRequest, SignInResponse>(Messages.HistorySync.SignIn, signRequest).pipe(
-            tap(response => this.trySaveUserCredentials(signRequest, response)),
-            tap(response => this.logUnsuccessfulResponse(response))
-        );
-    }
-
-    public signUpUser(signRequest: SignRequest): Observable<SignUpResponse> {
-        this.logger.info(`Sign up to account ${signRequest.email}.`);
-        return this.messageBus.sendValue<SignRequest, SignUpResponse>(Messages.HistorySync.SignUp, signRequest).pipe(
-            tap(response => this.logUnsuccessfulResponse(response)),
-            concatMap(response => response.isSuccessful ? this.signInUser(signRequest).pipe(map(_ => response)) : of(response))
-        );
-    }
-
-    public sendPasswordResetToken(email: string): Observable<SendResetTokenResponse> {
-        this.logger.info(`Sending reset email to account ${email}.`);
-        return this.messageBus.sendValue<string, SendResetTokenResponse>(Messages.HistorySync.SendPasswordResetToken, email).pipe(
-            tap(response => this.logUnsuccessfulResponse(response))
-        );
-    }
-
-    public verifyPasswordResetToken(token: string): Observable<VerifyResetTokenResponse> {
-        this.logger.info("Verifying password reset token.");
-        return this.messageBus.sendValue<string, VerifyResetTokenResponse>(Messages.HistorySync.VerifyPasswordResetToken, token).pipe(
-            tap(response => this.logUnsuccessfulResponse(response))
-        );
-    }
-
-    public resetPassword(resetPasswordRequest: PasswordResetRequest): Observable<PasswordResetResponse> {
-        this.logger.info("Resetting password.");
-        return this.messageBus.sendValue<PasswordResetRequest, PasswordResetResponse>(Messages.HistorySync.ResetPassword, resetPasswordRequest).pipe(
-            tap(response => this.logUnsuccessfulResponse(response))
-        );
-    }
-
-    public signOutUser(): Observable<void> {
-        this.logger.info("Sign out from account");
-        return this.messageBus.sendNotification(Messages.HistorySync.SignOut).pipe(
-            concatMap(() => this.userStore.clearCurrentUser().pipe(map(() => undefined)))
-        );
-    }
-
     public startContinuousSync(): void {
-        this.messageBus.sendValue(Messages.HistorySync.StartSync, true);
-        this.historyUpdateSubscription = this.messageBus.registerObservable(Messages.HistorySync.HistoryRecord, this.historyStore.historyUpdated$).subscription;
+        this.runActionOnSyncActionsQueue(() => {
+            this.destroyHistoryUpdateSubscription();
+            this.historyUpdateSubscription = this.messageBus.registerObservable(Messages.HistorySync.HistoryRecord, this.historyStore.historyUpdated$).subscription;
+            return this.messageBus.sendValue(Messages.HistorySync.StartSync, true);
+        });
     }
 
     public stopContinuousSync(): void {
-        if (this.historyUpdateSubscription !== null) {
-            this.historyUpdateSubscription.unsubscribe();
-        }
-
-        this.messageBus.sendNotification(Messages.HistorySync.StopSync);
+        this.runActionOnSyncActionsQueue(() => {
+            this.destroyHistoryUpdateSubscription();
+            return this.messageBus.sendNotification(Messages.HistorySync.StopSync);
+        });
     }
 
     public startSingleSync(): void {
         this.messageBus.sendValue(Messages.HistorySync.StartSync, false);
     }
 
-    private trySaveUserCredentials(signRequest: SignRequest, signResponse: SignInResponse): void {
-        if (signResponse.isSuccessful) {
-            this.userStore.setCurrentUser({ email: signRequest.email, password: signRequest.password });
+    private runActionOnSyncActionsQueue(action: () => Observable<void>): void {
+        this.syncActionsQueue$.subscribe({
+            complete: () => {
+                this.syncActionsQueue$ = this.syncActionsQueue$.pipe(concatMap(action));
+            }
+        });
+    }
+
+    private destroyHistoryUpdateSubscription(): void {
+        if (this.historyUpdateSubscription !== null) {
+            this.historyUpdateSubscription.unsubscribe();
+            this.historyUpdateSubscription = null;
         }
     }
 
-    private logUnsuccessfulResponse(signResponse: AuthResponse<any>): void {
-        if (!signResponse.isSuccessful) {
-            this.logger.info(`Authorization error. ${signResponse.validationCode}`);
+    private subscribeToSettingsChange(): void {
+        this.settingsProvider.getSettings()
+            .subscribe(newSettings => {
+                const newHistorySyncSettings = newSettings.history.sync;
+
+                if (this.accountHandler.currentUser$.value !== null) {
+                    this.synchronizeSyncState(newHistorySyncSettings);
+                }
+
+                this.currentHistorySyncSettings = newHistorySyncSettings;
+            });
+
+        this.accountHandler.currentUser$.subscribe(currentUser => {
+            if (this.getHistorySyncSettings().isContinuousSyncEnabled && currentUser !== null) {
+                this.startContinuousSync();
+            }
+        });
+    }
+
+    private synchronizeSyncState(newHistorySyncSettings: HistorySyncSettings): void {
+        if (this.currentHistorySyncSettings === null) {
+            if (newHistorySyncSettings.isContinuousSyncEnabled) {
+                this.startContinuousSync();
+            }
+        } else if (!newHistorySyncSettings.isContinuousSyncEnabled) {
+            this.stopContinuousSync();
+        } else if (newHistorySyncSettings.isContinuousSyncEnabled && (!this.currentHistorySyncSettings.isContinuousSyncEnabled || this.currentHistorySyncSettings.interval !== newHistorySyncSettings.interval)) {
+            this.stopContinuousSync().subscribe(() => this.startContinuousSync());
         }
     }
 
@@ -145,25 +127,8 @@ export class HistorySyncService {
         this.messageBus.handleCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime, () => this.getLastSyncTime());
         this.messageBus.sendValue<FirebaseSettings>(Messages.HistorySync.FirebaseSettings, settings.firebase);
         this.messageBus.handleCommand<void, HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings, () => of(this.getHistorySyncSettings()));
-        this.messageBus.handleCommand<void, UserInfo | null>(Messages.HistorySync.UserInfo, () => this.userStore.getCurrentUser());
 
         this.isSyncInProgress$ = this.messageBus.observeCommand<boolean>(Messages.HistorySync.IsSyncInProgress);
-        this.currentUser$ = this.messageBus.observeCommand<AccountInfo | null>(Messages.HistorySync.CurrentUser);
-    }
-
-    private signInIfHasSavedData(): void {
-        this.userStore.getCurrentUser().pipe(concatMap(userInfo => {
-            if (!userInfo) {
-                return of();
-            }
-            return this.signInUser({ email: userInfo.email, password: userInfo.password })
-                .pipe(tap<SignInResponse>(response => {
-                    if (!response.isSuccessful) {
-                        this.userStore.clearCurrentUser();
-                        this.notificationSender.showNonCriticalError("Error singing in into a history account.", new Error(response.validationCode));
-                    }
-                }));
-        })).subscribe();
     }
 
     private getHistorySyncSettings(): HistorySyncSettings {
@@ -174,12 +139,11 @@ export class HistorySyncService {
         return this.datastoreProvider
             .find<HistoryRecord>(this.datastore$, {})
             .pipe(
-                concatMap(records => this.getCurrentUser().pipe(map(user => ({ records, user })))),
-                map(({ records, user }) => this.getLastSyncTimeFromRecords(user, records))
+                map(records => this.getLastSyncTimeFromRecords(this.getCurrentUser(), records))
             );
     }
 
-    private getLastSyncTimeFromRecords(currentUser: UserInfo, records: HistoryRecord[]): string | undefined {
+    private getLastSyncTimeFromRecords(currentUser: AccountInfo, records: HistoryRecord[]): string | undefined {
         let maxTimestamp: string | undefined;
 
         for (const record of records) {
@@ -197,7 +161,7 @@ export class HistorySyncService {
         return maxTimestamp;
     }
 
-    private getServerTimestamp(record: HistoryRecord, currentUser: UserInfo): string | undefined {
+    private getServerTimestamp(record: HistoryRecord, currentUser: AccountInfo): string | undefined {
         const syncData = this.getUserSyncData(record, currentUser.email);
         if (!syncData) {
             return undefined;
@@ -208,12 +172,10 @@ export class HistorySyncService {
     private getHistoryRecordsToSync(): Observable<HistoryRecord[]> {
         return this.datastoreProvider
             .find<HistoryRecord>(this.datastore$, {})
-            .pipe(
-                concatMap(records => this.getCurrentUser().pipe(map(user => ({ records, user })))),
-                map(({ records, user }) => records.filter(record => this.isRecordModified(record, user))));
+            .pipe(map(records => records.filter(record => this.isRecordModified(record, this.getCurrentUser()))));
     }
 
-    private isRecordModified(record: HistoryRecord, currentUser: UserInfo): boolean {
+    private isRecordModified(record: HistoryRecord, currentUser: AccountInfo): boolean {
         const syncData = this.getUserSyncData(record, currentUser.email);
         return !syncData || syncData.lastModifiedDate !== record.lastModifiedDate;
     }
@@ -237,8 +199,7 @@ export class HistorySyncService {
             targetLanguage: serverRecord.targetLanguage
         };
         return this.historyStore.getRecord(recordKey).pipe(
-            concatMap(existingRecord => this.getCurrentUser().pipe(map(currentUser => ({ existingRecord, currentUser })))),
-            concatMap(({ existingRecord, currentUser }) => {
+            concatMap(existingRecord => {
                 if (!existingRecord) {
                     this.logger.info(`New ${this.getLogKey(serverRecord)} has been created from server.`);
                     this.datastoreProvider.insert(this.datastore$, serverRecord)
@@ -247,6 +208,7 @@ export class HistorySyncService {
                     return of(void 0);
                 }
 
+                const currentUser = this.getCurrentUser();
                 const existingSyncData = this.getUserSyncData(existingRecord, currentUser.email);
                 const serverSyncData = this.getUserSyncData(serverRecord, currentUser.email);
 
@@ -301,14 +263,12 @@ export class HistorySyncService {
         return (record.syncData || []).find(syncData => syncData.userEmail === userEmail);
     }
 
-    private getCurrentUser(): Observable<UserInfo> {
-        return this.userStore.getCurrentUser().pipe(map(currentUser => {
-            if (currentUser === null) {
-                throw Error("Unable to sync when current user is not set");
-            }
+    private getCurrentUser(): AccountInfo {
+        if (this.accountHandler.currentUser$.value === null) {
+            throw Error("Unable to sync when current user is not set");
+        }
 
-            return currentUser;
-        }));
+        return this.accountHandler.currentUser$.value;
     }
 
     private checkThatRecordUpdated(updateResult: Observable<HistoryRecord>, record: HistoryRecord): Observable<void> {
