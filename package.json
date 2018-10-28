@@ -21,7 +21,7 @@
     "create-release": "npm run full-build-prod && npm run pack && npm run create-installer",
     "pack": "node build-scripts/package.js",
     "create-installer": "node build-scripts/create-installer.js",
-    "native-rebuild": "node build-scripts/build-native.js"
+    "native-rebuild": "node build-scripts/build-native.js && npx electron-rebuild"
   },
   "dependencies": {
     "axios": "0.18.0",

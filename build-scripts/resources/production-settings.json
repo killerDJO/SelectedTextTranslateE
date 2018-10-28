@@ -1,0 +1,8 @@
+{
+    "firebase": {
+        "apiKey": "test",
+        "authDomain": "test",
+        "projectId": "test",
+        "firestoreBaseUrl": "https://firestore.googleapis.com/v1beta1"
+    }
+}

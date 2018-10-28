@@ -1,6 +1,8 @@
 const packager = require("electron-packager");
 const path = require("path");
 const del = require("del");
+const fs = require("fs");
+const _ = require("lodash");
 
 const packageConfig = {
     arch: "x64",
@@ -8,6 +10,7 @@ const packageConfig = {
     dir: path.join(__dirname, "../"),
     icon: path.join(__dirname, "../dist/app/main/icons/tray.ico"),
     ignore: pathsFilter,
+    afterCopy: [modifySettings],
     executableName: "Selected Text Translate",
     out: path.join(__dirname, "../dist/package"),
     overwrite: true,
@@ -50,4 +53,14 @@ function pathsFilter(currentPath) {
     }
 
     return !currentPath.startsWith("/dist/app");
+}
+
+function modifySettings(buildPath, electronVersion, platform, arch, callback) {
+    const defaultSettingsPath = path.join(buildPath, "dist/app/main/default-settings.json");
+    const productionSettingsPath = path.join(__dirname, "resources/production-settings.json");
+    const defaultSettings = JSON.parse(fs.readFileSync(defaultSettingsPath));
+    const productionSettings = JSON.parse(fs.readFileSync(productionSettingsPath));
+    const mergedSettings = _.extend(defaultSettings, productionSettings);
+    fs.writeFileSync(defaultSettingsPath, JSON.stringify(mergedSettings, null, 4))
+    callback();
 }
