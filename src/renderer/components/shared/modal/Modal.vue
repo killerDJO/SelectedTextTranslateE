@@ -1,7 +1,7 @@
 <template>
-  <transition name="modal" v-if="show">
+  <transition name="modal" v-if="show" >
     <div class="modal-mask">
-      <div class="modal-wrapper">
+      <div class="modal-wrapper" @keyup.esc="close">
         <div class="modal-container clearfix">
           <div class="modal-header">
             <div class="header-content">

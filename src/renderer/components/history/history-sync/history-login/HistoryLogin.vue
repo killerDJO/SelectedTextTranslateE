@@ -1,5 +1,5 @@
 <template>
-  <modal :show.sync="show$">
+  <modal :show.sync="show$" :is-action-in-progress="isLoginActionInProgress">
     <span slot="header">Sing In to sync history accross devices</span>
     <div slot="body">
       <div class="login-tabs">

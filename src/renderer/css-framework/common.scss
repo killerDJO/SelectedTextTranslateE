@@ -19,7 +19,7 @@ input {
     &[type="text"],
     &[type="email"] {
         &:disabled {
-            background-color: $color-border;
+            background-color: $color-background;
         }
     }
 }

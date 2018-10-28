@@ -145,7 +145,7 @@ export default class ResetPassword extends HistoryLoginViewBase<ResetPasswordDat
                     validationResult.password = "Token is invalid. Repeat the password reset procedure.";
                 }
                 if (this.passwordResetResponse.validationCode === PasswordResetResponseValidationCode.WeakPassword) {
-                    validationResult.password = "Password is too weak.";
+                    validationResult.password = "Password is too weak, it should have at least 6 characters.";
                 }
             }
         }

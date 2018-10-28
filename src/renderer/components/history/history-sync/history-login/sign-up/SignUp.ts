@@ -53,7 +53,7 @@ export default class SignUp extends HistoryLoginViewBase<SignUpData, ValidationR
             }
 
             if (this.signUpResponse.validationCode === SignUpResponseValidationCode.WeakPassword) {
-                validationResult.password = "Password is too weak.";
+                validationResult.password = "Password is too weak, it should have at least 6 characters.";
             }
         }
     }

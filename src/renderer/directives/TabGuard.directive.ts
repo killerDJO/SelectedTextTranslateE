@@ -6,11 +6,11 @@ import Directive from "decorators/VueDirective";
 export class TabGuard implements DirectiveOptions {
     public bind(element: HTMLElement): void {
         element.tabIndex = 0;
-        element.addEventListener("focus", this.handleFocus);
+        element.addEventListener("focus", event => this.handleFocus(event));
     }
 
     public unbind(element: HTMLElement): void {
-        element.removeEventListener("focus", this.handleFocus);
+        element.removeEventListener("focus", event => this.handleFocus(event));
     }
 
     private handleFocus(event: Event) {
@@ -24,9 +24,24 @@ export class TabGuard implements DirectiveOptions {
             return;
         }
 
-        const firstFocusableItem = parentElement.querySelector("[tabindex]:not([tabindex='-1'])");
-        if (firstFocusableItem instanceof HTMLElement) {
-            firstFocusableItem.focus();
+        const focusableItems = parentElement.querySelectorAll("[tabindex]:not([tabindex='-1'])");
+        for (const focusableItem of focusableItems) {
+            if (focusableItem instanceof HTMLElement && !this.isElementHidden(focusableItem)) {
+                focusableItem.focus();
+                return;
+            }
         }
+    }
+
+    private isElementHidden(element: HTMLElement): boolean {
+        if (getComputedStyle(element).display === "none") {
+            return true;
+        }
+
+        if (element.parentElement === null) {
+            return false;
+        }
+
+        return this.isElementHidden(element.parentElement);
     }
 }
