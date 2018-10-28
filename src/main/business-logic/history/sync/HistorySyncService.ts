@@ -8,6 +8,8 @@ import { HistoryRecord, SyncData } from "common/dto/history/HistoryRecord";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
+import { SyncRequest } from "common/dto/history/SyncRequest";
+import { AccountInfo } from "common/dto/history/account/AccountInfo";
 
 import { MessageBus } from "infrastructure/MessageBus";
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
@@ -19,7 +21,6 @@ import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseP
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { AccountHandler } from "business-logic/history/sync/AccountHandler";
-import { AccountInfo } from "common/dto/history/account/AccountInfo";
 
 @injectable()
 export class HistorySyncService {
@@ -57,7 +58,7 @@ export class HistorySyncService {
         this.runActionOnSyncActionsQueue(() => {
             this.destroyHistoryUpdateSubscription();
             this.historyUpdateSubscription = this.messageBus.registerObservable(Messages.HistorySync.HistoryRecord, this.historyStore.historyUpdated$).subscription;
-            return this.messageBus.sendValue(Messages.HistorySync.StartSync, true);
+            return this.messageBus.sendValue<SyncRequest>(Messages.HistorySync.StartSync, { isContinuous: true, isForcedPull: false });
         });
     }
 
@@ -68,8 +69,8 @@ export class HistorySyncService {
         });
     }
 
-    public startSingleSync(): void {
-        this.messageBus.sendValue(Messages.HistorySync.StartSync, false);
+    public startSingleSync(isForcedPull: boolean): void {
+        this.messageBus.sendValue<SyncRequest>(Messages.HistorySync.StartSync, { isContinuous: false, isForcedPull: isForcedPull });
     }
 
     private runActionOnSyncActionsQueue(action: () => Observable<void>): void {

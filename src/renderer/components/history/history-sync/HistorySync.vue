@@ -10,7 +10,7 @@
         v-else
         :text="'Sync Now'"
         @click="syncOneTime"
-        :dropItems="[{text: 'Sign Out', callback: signOut}, {text: 'Settings', callback: openSettings}]"/>
+        :dropItems="[{text: 'Sign Out', callback: signOut}, {text: 'Settings', callback: openSettings}, {text: 'Forced Sync', callback: syncOneTimeForced}]"/>
       <div v-if="isSyncInProgress" class="sync-indicator" />
     </div>
     <span v-if="currentUser !== null" class="current-user-label">Signed in as {{currentUser.email}}</span>

@@ -48,6 +48,7 @@ export class Messages {
         public static readonly VerifyPasswordResetToken = "history-verify-password-reset-token";
         public static readonly ResetPassword = "history-reset-password";
         public static readonly SyncOneTime = "history-one-time";
+        public static readonly SyncOneTimeForced = "history-one-time-forced";
         public static readonly ShowHistorySettings = "show-history-settings";
         public static readonly CurrentUser = "history-current-user";
         public static readonly SyncState = "history-sync-state";

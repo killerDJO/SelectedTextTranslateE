@@ -87,7 +87,8 @@ export class Application {
         historyView.handleVerifyPasswordResetToken(request => this.accountHandler.verifyPasswordResetToken(request));
 
         historyView.signOut$.subscribe(() => this.accountHandler.signOutUser().subscribe());
-        historyView.syncOneTime$.subscribe(() => this.historySyncService.startSingleSync());
+        historyView.syncOneTime$.subscribe(() => this.historySyncService.startSingleSync(false));
+        historyView.syncOneTimeForced$.subscribe(() => this.historySyncService.startSingleSync(true));
         historyView.showHistorySettings$.subscribe(() => this.settingsView.showSettingsGroup(SettingsGroup.History));
 
         this.setupTranslateResultView(historyView, true);

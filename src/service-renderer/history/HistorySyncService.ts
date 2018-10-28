@@ -11,7 +11,7 @@ import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
 import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
-import { UserInfo } from "common/dto/UserInfo";
+import { SyncRequest } from "common/dto/history/SyncRequest";
 import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
 import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
 import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
@@ -81,9 +81,9 @@ export class HistorySyncService {
             }
         });
 
-        this.messageBus.observeValue(Messages.HistorySync.StartSync, async (isContinuous: boolean) => {
-            if (!this.isContinuousSyncStarted || !isContinuous) {
-                await this.startSync(isContinuous);
+        this.messageBus.observeValue<SyncRequest>(Messages.HistorySync.StartSync, async (syncRequest: SyncRequest) => {
+            if (!this.isContinuousSyncStarted || !syncRequest.isContinuous) {
+                await this.startSync(syncRequest.isContinuous, syncRequest.isForcedPull);
             }
         });
 
@@ -91,7 +91,7 @@ export class HistorySyncService {
         this.syncTask$.subscribe(syncTask => this.messageBus.sendCommand(Messages.HistorySync.IsSyncInProgress, syncTask !== null));
     }
 
-    private async startSync(isContinuous: boolean): Promise<void> {
+    private async startSync(isContinuous: boolean, isForcedPull: boolean): Promise<void> {
         const historySyncSettings = await this.messageBus.sendCommand<void, HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings);
 
         if (this.firebaseClient.getAccountInfo() === null) {
@@ -113,7 +113,7 @@ export class HistorySyncService {
 
         this.logger.info("History records sync started.");
 
-        this.syncRecords(historySyncSettings.interval, isContinuous);
+        this.syncRecords(historySyncSettings.interval, isContinuous, isForcedPull);
     }
 
     private stopSync(): void {
@@ -138,32 +138,32 @@ export class HistorySyncService {
         this.currentUser$.next(this.firebaseClient.getAccountInfo());
     }
 
-    private async syncRecords(syncInterval: number, isContinuous: boolean): Promise<void> {
+    private async syncRecords(syncInterval: number, isContinuous: boolean, isForcedPull: boolean): Promise<void> {
         try {
-            await this.syncAllRecords();
+            await this.syncAllRecords(isForcedPull);
         } finally {
             if (this.isContinuousSyncStarted && isContinuous) {
-                this.continuousInterval = setInterval(() => this.syncAllRecords(), syncInterval);
+                this.continuousInterval = setInterval(() => this.syncAllRecords(isForcedPull), syncInterval);
             }
         }
     }
 
-    private async syncAllRecords(): Promise<void> {
+    private async syncAllRecords(isForcedPull: boolean): Promise<void> {
         await this.waitForSyncToFinish();
 
         try {
-            this.syncTask$.next(this.syncAllRecordsUnsafe());
+            this.syncTask$.next(this.syncAllRecordsUnsafe(isForcedPull));
             await this.syncTask$.value;
         } finally {
             this.syncTask$.next(null);
         }
     }
 
-    private async syncAllRecordsUnsafe(): Promise<void> {
+    private async syncAllRecordsUnsafe(isForcedPull: boolean): Promise<void> {
         try {
             this.logger.info("Start history records sync.");
             this.logger.info("Start history records pull.");
-            await this.pullRecords();
+            await this.pullRecords(isForcedPull);
             this.logger.info("End history records pull.");
             this.logger.info("Start history records push.");
             await this.pushRecords();
@@ -179,12 +179,12 @@ export class HistorySyncService {
 
         if (await this.writeRecord(historyRecord)) {
             this.logger.info("Failed to sync individual record. Falling back to a full sync.");
-            await this.syncAllRecords();
+            await this.syncAllRecords(false);
         }
     }
 
-    private async pullRecords(): Promise<void> {
-        const lastSyncTime = await this.messageBus.sendCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime);
+    private async pullRecords(isForcedPull: boolean): Promise<void> {
+        const lastSyncTime = !isForcedPull ? await this.messageBus.sendCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime) : undefined;
         const documents = await this.firebaseClient.getDocuments<ServerHistoryRecord>(this.collectionId, lastSyncTime);
         const accountInfo = this.firebaseClient.getAccountInfo();
 

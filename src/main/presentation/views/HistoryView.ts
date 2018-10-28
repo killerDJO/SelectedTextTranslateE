@@ -28,6 +28,7 @@ export class HistoryView extends TranslateResultView {
     public readonly signOut$: Observable<void>;
     public readonly showHistorySettings$: Observable<void>;
     public readonly syncOneTime$: Observable<void>;
+    public readonly syncOneTimeForced$: Observable<void>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.History, viewContext, {
@@ -43,6 +44,7 @@ export class HistoryView extends TranslateResultView {
         this.signOut$ = this.messageBus.observeCommand<void>(Messages.History.SignOut);
         this.showHistorySettings$ = this.messageBus.observeCommand<void>(Messages.History.ShowHistorySettings);
         this.syncOneTime$ = this.messageBus.observeCommand<void>(Messages.History.SyncOneTime);
+        this.syncOneTimeForced$ = this.messageBus.observeCommand<void>(Messages.History.SyncOneTimeForced);
     }
 
     public setHistoryRecords(historyRecords: HistoryRecordsResponse): void {

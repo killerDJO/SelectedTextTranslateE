@@ -44,6 +44,7 @@ export default class HistorySync extends Vue {
     @ns.Action public readonly signOut!: () => void;
     @ns.Action public readonly showHistorySettings!: () => void;
     @ns.Action public readonly syncOneTime!: () => void;
+    @ns.Action public readonly syncOneTimeForced!: () => void;
 
     @Prop(Object)
     public currentUser!: AccountInfo | null;
