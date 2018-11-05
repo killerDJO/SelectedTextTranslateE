@@ -13,9 +13,13 @@ export class DatastoreProvider {
     constructor(private readonly storageFolderProvider: StorageFolderProvider) {
     }
 
+    public getDatabaseFilename(name: string): string {
+        return path.join(this.storageFolderProvider.getPath(), name);
+    }
+
     public openDatabase(name: string): Datastore {
         return new Datastore({
-            filename: path.join(this.storageFolderProvider.getPath(), name),
+            filename: this.getDatabaseFilename(name),
             autoload: true
         });
     }

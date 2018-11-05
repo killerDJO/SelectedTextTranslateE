@@ -13,6 +13,7 @@
     "typescript.tsdk": "./node_modules/typescript/lib",
     "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
     "cSpell.words": [
+        "Backuper",
         "Bootstrapper",
         "KEYEVENTF",
         "VUEJS",

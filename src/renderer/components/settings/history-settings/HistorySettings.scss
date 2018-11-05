@@ -6,3 +6,21 @@
         display: block;
     }
 }
+
+.form-group.inline-form-group {
+    display: flex;
+    align-items: center;
+    margin-top: $margin-small;
+
+    label {
+        line-height: 1;
+        margin-top: 0;
+        margin-right: $margin-small;
+        overflow: visible;
+    }
+
+    input {
+        width: 50px;
+        display: inline-block;
+    }
+}

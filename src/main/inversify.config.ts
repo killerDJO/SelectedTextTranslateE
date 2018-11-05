@@ -16,25 +16,30 @@ import { StartupItemsProvider } from "install/StartupItemsProvider";
 import { RequestProvider } from "data-access/RequestProvider";
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 
-import { HistoryStore } from "business-logic/history/HistoryStore";
 import { HashProvider } from "business-logic/translation/HashProvider";
 import { TextExtractor } from "business-logic/translation/TextExtractor";
 import { TextTranslator } from "business-logic/translation/TextTranslator";
 import { TranslatePageParser } from "business-logic/translation/TranslatePageParser";
 import { TranslationResponseParser } from "business-logic/translation/TranslationResponseParser";
 import { TextPlayer } from "business-logic/translation/TextPlayer";
+
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+
 import { SearchExecutor } from "business-logic/search/SearchExecutor";
+
 import { HistorySyncService } from "business-logic/history/sync/HistorySyncService";
-import { HistoryMigration } from "business-logic/history/migrations/base/HistoryMigration";
-import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
+import { HistoryMigration } from "business-logic/history/persistence/migrations/base/HistoryMigration";
+import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
 import { RecordIdGenerator } from "business-logic/history/RecordIdGenerator";
 import { AccountHandler } from "business-logic/history/sync/AccountHandler";
+import { HistoryMigrator } from "business-logic/history/persistence/HistoryMigrator";
+import { HistoryBackuper } from "business-logic/history/persistence/HistoryBackuper";
+import { HistoryStore } from "business-logic/history/HistoryStore";
 
-import { AddUniqueIdConstraint } from "business-logic/history/migrations/1_AddUniqueIdConstraint";
-import { AddIdentifierMigration } from "business-logic/history/migrations/2_AddIdentifierMigration";
-import { RemoveDuplicatedRecordsMigration } from "business-logic/history/migrations/3_RemoveDuplicatedRecordsMigration";
-import { AddLastModificationTimeMigration } from "business-logic/history/migrations/4_AddLastModificationTimeMigration";
+import { AddUniqueIdConstraint } from "business-logic/history/persistence/migrations/1_AddUniqueIdConstraint";
+import { AddIdentifierMigration } from "business-logic/history/persistence/migrations/2_AddIdentifierMigration";
+import { RemoveDuplicatedRecordsMigration } from "business-logic/history/persistence/migrations/3_RemoveDuplicatedRecordsMigration";
+import { AddLastModificationTimeMigration } from "business-logic/history/persistence/migrations/4_AddLastModificationTimeMigration";
 
 import { MessageBus } from "infrastructure/MessageBus";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
@@ -97,6 +102,8 @@ class Binder {
         this.container.bind<HistorySyncService>(HistorySyncService).toSelf().inSingletonScope();
         this.container.bind<AccountHandler>(AccountHandler).toSelf().inSingletonScope();
         this.container.bind<HistoryDatabaseProvider>(HistoryDatabaseProvider).toSelf().inSingletonScope();
+        this.container.bind<HistoryMigrator>(HistoryMigrator).toSelf().inSingletonScope();
+        this.container.bind<HistoryBackuper>(HistoryBackuper).toSelf().inSingletonScope();
         this.container.bind<RecordIdGenerator>(RecordIdGenerator).toSelf();
 
         this.container.bind<HistoryMigration>(HistoryMigration).to(AddLastModificationTimeMigration);

@@ -100,7 +100,12 @@ export class SettingsView extends ViewBase {
             },
             history: {
                 isContinuousSyncEnabled: settings.history.sync.isContinuousSyncEnabled,
-                syncInterval: settings.history.sync.interval
+                syncInterval: settings.history.sync.interval,
+                backupOnApplicationStart: settings.history.sync.backupOnApplicationStart,
+                backupOnApplicationStartNumberToKeep: settings.history.sync.backupOnApplicationStartNumberToKeep,
+                backupRegularly: settings.history.sync.backupRegularly,
+                backupRegularlyNumberToKeep: settings.history.sync.backupRegularlyNumberToKeep,
+                backupRegularlyIntervalDays: settings.history.sync.backupRegularlyIntervalDays
             }
         };
     }
@@ -133,7 +138,12 @@ export class SettingsView extends ViewBase {
             history: {
                 sync: {
                     interval: settings.history.syncInterval,
-                    isContinuousSyncEnabled: settings.history.isContinuousSyncEnabled
+                    isContinuousSyncEnabled: settings.history.isContinuousSyncEnabled,
+                    backupOnApplicationStart: settings.history.backupOnApplicationStart,
+                    backupOnApplicationStartNumberToKeep: settings.history.backupOnApplicationStartNumberToKeep,
+                    backupRegularly: settings.history.backupRegularly,
+                    backupRegularlyNumberToKeep: settings.history.backupRegularlyNumberToKeep,
+                    backupRegularlyIntervalDays: settings.history.backupRegularlyIntervalDays
                 }
             }
         };

@@ -26,8 +26,6 @@ export class ServiceRendererProvider {
             });
             this.serviceRenderer.loadURL(`file:${path.resolve(__dirname, "..\\service-renderer\\index.html")}`);
 
-            this.serviceRenderer.webContents.toggleDevTools();
-
             const messageBus = new MessageBus(this.serviceRenderer);
 
             messageBus.observeCommand<string>(Messages.ServiceRenderer.LogInfo).subscribe(message => this.logger.info(message));

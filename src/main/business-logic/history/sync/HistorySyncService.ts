@@ -17,7 +17,7 @@ import { Logger } from "infrastructure/Logger";
 
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 
-import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
+import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { AccountHandler } from "business-logic/history/sync/AccountHandler";

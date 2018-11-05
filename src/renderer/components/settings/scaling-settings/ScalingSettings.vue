@@ -13,7 +13,7 @@
       <link-button @click="resetScaleFactor" :text="'Set Default Scale Factor'" /><span class="reset-label"> - change to {{scalingState.autoScaleFactor * 100 | percent}}</span>
     </div>
     <div class="settings-separator"/>
-    <checkbox v-model="currentScalingSettings.scaleTranslationViewOnly" :label="'Scale Translation View Only'" />
+    <checkbox v-model="currentScalingSettings.scaleTranslationViewOnly" :label="'Scale translation view only'" />
   </settings-holder>
 </template>
 

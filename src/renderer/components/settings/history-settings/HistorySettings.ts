@@ -24,13 +24,43 @@ export default class HistorySettings extends Vue {
     }
 
     public set syncIntervalMinutes(interval: number) {
-        interval = interval || 1;
-        this.currentHistorySettings.syncInterval = interval * HistorySettings.MillisecondsInSecond * HistorySettings.SecondsInMinutes;
+        this.currentHistorySettings.syncInterval = this.ensureMinValue(interval, 1) * HistorySettings.MillisecondsInSecond * HistorySettings.SecondsInMinutes;
+        this.$forceUpdate();
+    }
+
+    public get numberOfStartupBackupsToKeep(): number {
+        return this.currentHistorySettings.backupOnApplicationStartNumberToKeep;
+    }
+
+    public set numberOfStartupBackupsToKeep(numberOfBackups: number) {
+        this.currentHistorySettings.backupOnApplicationStartNumberToKeep = this.ensureMinValue(numberOfBackups, 0);
+        this.$forceUpdate();
+    }
+
+    public get numberOfRegularBackupsToKeep(): number {
+        return this.currentHistorySettings.backupRegularlyNumberToKeep;
+    }
+
+    public set numberOfRegularBackupsToKeep(numberOfBackups: number) {
+        this.currentHistorySettings.backupRegularlyNumberToKeep = this.ensureMinValue(numberOfBackups, 0);
+        this.$forceUpdate();
+    }
+
+    public get backupRegularlyIntervalDays(): number {
+        return this.currentHistorySettings.backupRegularlyIntervalDays;
+    }
+
+    public set backupRegularlyIntervalDays(interval: number) {
+        this.currentHistorySettings.backupRegularlyIntervalDays = this.ensureMinValue(interval, 1);
         this.$forceUpdate();
     }
 
     @Watch("currentHistorySettings", { deep: true })
     public raiseUpdatedEvent(): void {
         this.$emit("history-settings-updated", this.currentHistorySettings);
+    }
+
+    private ensureMinValue(value: number, minValue: number): number {
+        return Math.max(value, minValue);
     }
 }

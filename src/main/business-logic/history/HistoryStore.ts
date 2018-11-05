@@ -17,7 +17,7 @@ import { DatastoreProvider } from "data-access/DatastoreProvider";
 
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { HistorySettings } from "business-logic/settings/dto/Settings";
-import { HistoryDatabaseProvider } from "business-logic/history/HistoryDatabaseProvider";
+import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
 import { RecordIdGenerator } from "business-logic/history/RecordIdGenerator";
 
 @injectable()
