@@ -70,7 +70,6 @@ export interface TranslationViewSettings extends ViewSize {
 
 export interface HistorySettings extends ViewSize {
     readonly pageSize: number;
-    readonly databaseName: string;
     readonly sync: HistorySyncSettings;
 }
 

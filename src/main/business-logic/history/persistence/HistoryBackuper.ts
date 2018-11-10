@@ -10,6 +10,7 @@ import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 
 import { Logger } from "infrastructure/Logger";
 import { NotificationSender } from "infrastructure/NotificationSender";
+import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
 
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 
@@ -41,45 +42,47 @@ export class HistoryBackuper {
         private readonly settingsProvider: SettingsProvider,
         private readonly logger: Logger,
         private readonly notificationSender: NotificationSender,
-        private readonly datastoreProvider: DatastoreProvider) {
+        private readonly datastoreProvider: DatastoreProvider,
+        private readonly storageFolderProvider: StorageFolderProvider) {
 
         this.currentSyncSettings = this.getHistorySettings().sync;
-        this.settingsProvider.getSettings().subscribe(newSettings => this.onRegularSyncSettingsChanged(newSettings.history.sync));
     }
 
-    public createBackups(): Observable<void> {
+    public createBackups(databaseFileName: string): Observable<void> {
         const historySyncSettings = this.getHistorySettings().sync;
 
         let startupBackupTask$ = empty();
         let regularBackupTask$ = empty();
 
         if (historySyncSettings.backupOnApplicationStart) {
-            startupBackupTask$ = this.createStartupBackup();
+            startupBackupTask$ = this.createStartupBackup(databaseFileName);
         }
 
         if (historySyncSettings.backupRegularly) {
             regularBackupTask$ = new Observable<never>(observer => {
-                this.startRegularBackup();
+                this.startRegularBackup(databaseFileName);
                 observer.complete();
             });
         }
 
+        this.settingsProvider.getSettings().subscribe(newSettings => this.onRegularSyncSettingsChanged(newSettings.history.sync, databaseFileName));
+
         return concat(startupBackupTask$, regularBackupTask$);
     }
 
-    private createStartupBackup(): Observable<never> {
+    private createStartupBackup(databaseFileName: string): Observable<never> {
         const numberOfBackupsToStore = this.getHistorySettings().sync.backupOnApplicationStartNumberToKeep;
-        return this.runBackup(BackupType.Startup, numberOfBackupsToStore);
+        return this.runBackup(BackupType.Startup, numberOfBackupsToStore, databaseFileName);
     }
 
-    private onRegularSyncSettingsChanged(newSettings: HistorySyncSettings): void {
+    private onRegularSyncSettingsChanged(newSettings: HistorySyncSettings, databaseFileName: string): void {
         if (!newSettings.backupRegularly) {
             this.stopRegularBackup();
         } else if (!this.currentSyncSettings.backupRegularly && newSettings.backupRegularly) {
-            this.startRegularBackup();
+            this.startRegularBackup(databaseFileName);
         } else if (this.currentSyncSettings.backupRegularlyIntervalDays !== newSettings.backupRegularlyIntervalDays) {
             this.stopRegularBackup();
-            this.startRegularBackup();
+            this.startRegularBackup(databaseFileName);
         }
 
         this.currentSyncSettings = newSettings;
@@ -93,7 +96,7 @@ export class HistoryBackuper {
         }
     }
 
-    private startRegularBackup(): void {
+    private startRegularBackup(databaseFileName: string): void {
         let interval = this.getRegularBackupInterval();
 
         if (this.lastRegularBackupDate === null) {
@@ -108,10 +111,10 @@ export class HistoryBackuper {
         this.regularSyncTask = setTimeout(
             () => {
                 const numberOfBackupsToStore = this.getHistorySettings().sync.backupRegularlyNumberToKeep;
-                this.runBackup(BackupType.Regular, numberOfBackupsToStore).subscribe({
+                this.runBackup(BackupType.Regular, numberOfBackupsToStore, databaseFileName).subscribe({
                     complete: () => {
                         this.lastRegularBackupDate = new Date();
-                        this.startRegularBackup();
+                        this.startRegularBackup(databaseFileName);
                     }
                 });
             },
@@ -126,11 +129,11 @@ export class HistoryBackuper {
         return this.getHistorySettings().sync.backupRegularlyIntervalDays * HoursInDay * MinutesInHour * SecondsInMinute * MillisecondsInSecond;
     }
 
-    private runBackup(backupType: BackupType, numberOfBackupsToStore: number): Observable<never> {
+    private runBackup(backupType: BackupType, numberOfBackupsToStore: number, databaseFileName: string): Observable<never> {
         return this.ensureBackupsFolderExists(backupType).pipe(
             concatMap(() => this.getExistingBackups(backupType)),
             concatMap(backups => this.deletePreviousBackups(backups, numberOfBackupsToStore, backupType)),
-            concatMap(() => this.createBackup(backupType))
+            concatMap(() => this.createBackup(backupType, databaseFileName))
         );
     }
 
@@ -139,15 +142,14 @@ export class HistoryBackuper {
     }
 
     private getBackupsFolderPath(backupType: BackupType): string {
-        const databaseFilename = this.getDatabaseFilename();
-        const backupsFolder = path.join(databaseFilename, "..", "backups", backupType);
+        const backupsFolder = path.join(this.storageFolderProvider.getPath(), "backups", backupType);
         return backupsFolder;
     }
 
-    private createBackup(backupType: BackupType): Observable<never> {
-        const databaseFilename = this.getDatabaseFilename();
+    private createBackup(backupType: BackupType, databaseFileName: string): Observable<never> {
+        const databaseFilename = this.getDatabaseFilename(databaseFileName);
         const backupsFolder = this.getBackupsFolderPath(backupType);
-        const backupFilename = this.generateBackupFileName();
+        const backupFilename = this.generateBackupFileName(databaseFileName);
         const backupPath = path.join(backupsFolder, backupFilename);
 
         return new Observable(observer => {
@@ -223,13 +225,13 @@ export class HistoryBackuper {
         return result$;
     }
 
-    private getDatabaseFilename(): string {
-        return this.datastoreProvider.getDatabaseFilename(this.getHistorySettings().databaseName);
+    private getDatabaseFilename(databaseFileName: string): string {
+        return this.datastoreProvider.getDatabaseFilename(databaseFileName);
     }
 
-    private generateBackupFileName(): string {
+    private generateBackupFileName(databaseFileName: string): string {
         const formattedDate = moment().format(HistoryBackuper.DateFormat);
-        return `${this.getHistorySettings().databaseName}.${formattedDate}.${HistoryBackuper.BackupExtension}`;
+        return `${databaseFileName}.${formattedDate}.${HistoryBackuper.BackupExtension}`;
     }
 
     private getBackupCreatedDateFromFileName(filename: string): Date | null {

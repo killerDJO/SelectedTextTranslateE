@@ -56,7 +56,6 @@
         "searchPattern": "https://www.google.com.ua/search?safe=off&source=hp&q={{query}}"
     },
     "history": {
-        "databaseName": "history.db",
         "pageSize": 25,
         "sync": {
             "isContinuousSyncEnabled": true,
