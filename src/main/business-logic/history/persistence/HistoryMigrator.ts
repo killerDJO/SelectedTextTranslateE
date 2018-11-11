@@ -40,8 +40,8 @@ export class HistoryMigrator {
     }
 
     private runMigration(datastore: Datastore, migration: HistoryMigration): Observable<void> {
-        this.logger.info(`Start running migration: ${migration.name}`);
-        return migration.migrate(datastore).pipe(
+        return new Observable(() => this.logger.info(`Start running migration: ${migration.name}`)).pipe(
+            concatMap(() => migration.migrate(datastore)),
             tap({
                 complete: () => {
                     this.logger.info(`End running migration: ${migration.name}`);

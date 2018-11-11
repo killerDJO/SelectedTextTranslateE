@@ -154,8 +154,12 @@ export class HistoryBackuper {
 
         return new Observable(observer => {
             fs.copyFile(databaseFilename, backupPath, fs.constants.COPYFILE_EXCL, (error: NodeJS.ErrnoException) => {
-                if (!!error && error.code === "EEXIST") {
-                    this.notificationSender.showNonCriticalError(`Error creating ${backupType} backup. File already exists.`, error);
+                if (!!error) {
+                    if (error.code === "EEXIST") {
+                        this.notificationSender.showNonCriticalError(`Error creating ${backupType} backup. File already exists.`, error);
+                    } else if (error.code === "ENOENT") {
+                        this.logger.info("No history database exists to create backup.");
+                    }
                 } else {
                     this.handleFsError(error);
                     this.logger.info(`Backup ${backupFilename} successfully created. Type: ${backupType}.`);
