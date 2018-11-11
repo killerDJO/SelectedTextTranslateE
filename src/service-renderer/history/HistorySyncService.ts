@@ -1,6 +1,5 @@
 import { BehaviorSubject } from "rxjs";
 
-import { FirebaseClient } from "infrastructure/FirebaseClient";
 import { MessageBus, Subscription } from "common/renderer/MessageBus";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { Messages } from "common/messaging/Messages";
@@ -17,6 +16,7 @@ import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRe
 import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
 import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 
+import { FirebaseClient } from "infrastructure/FirebaseClient";
 import { Logger } from "infrastructure/Logger";
 import { OutOfSyncError } from "infrastructure/OutOfSyncError";
 

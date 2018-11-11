@@ -5,7 +5,6 @@ import { injectable } from "inversify";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { SignRequest } from "common/dto/history/account/SignRequest";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";
-
 import { Messages } from "common/messaging/Messages";
 import { SignUpResponse } from "common/dto/history/account/SignUpResponse";
 import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
@@ -13,7 +12,6 @@ import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyReset
 import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
 import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
 import { AuthResponse } from "common/dto/history/account/AuthResponse";
-import { UserInfo } from "common/dto/UserInfo";
 
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
 import { Logger } from "infrastructure/Logger";

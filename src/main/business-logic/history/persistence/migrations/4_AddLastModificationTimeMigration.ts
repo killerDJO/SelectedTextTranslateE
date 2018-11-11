@@ -1,7 +1,9 @@
 import { injectable } from "inversify";
 
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
+
 import { DatastoreProvider } from "data-access/DatastoreProvider";
+
 import { HistoryRecordsMigration } from "business-logic/history/persistence/migrations/base/HistoryRecordsMigration";
 
 @injectable()

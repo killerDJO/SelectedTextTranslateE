@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 import { DatastoreProvider } from "data-access/DatastoreProvider";
+
 import { HistoryMigration } from "business-logic/history/persistence/migrations/base/HistoryMigration";
 
 @injectable()
