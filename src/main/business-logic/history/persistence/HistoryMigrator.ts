@@ -1,6 +1,6 @@
 import { injectable, multiInject } from "inversify";
 import * as Datastore from "nedb";
-import { concat, Observable, of } from "rxjs";
+import { concat, Observable, of, from } from "rxjs";
 import { tap, concatMap } from "rxjs/operators";
 
 import { Logger } from "infrastructure/Logger";
@@ -34,13 +34,17 @@ export class HistoryMigrator {
                 return concat(...migrationsToApply.map(migration => this.runMigration(datastore, migration)));
             }),
             tap({
-                complete: () => this.logger.info("End running history migrations.")
+                complete: () => {
+                    datastore.persistence.compactDatafile();
+                    this.logger.info("End running history migrations.");
+                }
             })
         );
     }
 
     private runMigration(datastore: Datastore, migration: HistoryMigration): Observable<void> {
-        return new Observable(() => this.logger.info(`Start running migration: ${migration.name}`)).pipe(
+        return of(null).pipe(
+            tap(() => this.logger.info(`Start running migration: ${migration.name}`)),
             concatMap(() => migration.migrate(datastore)),
             tap({
                 complete: () => {
