@@ -131,6 +131,7 @@ export class Application {
             .pipe(concatMap(() => this.textExtractor.getSelectedText()))
             .subscribe(text => this.playText({ text }));
         this.hotkeysRegistry.inputText$.subscribe(() => this.translationView.showTextInput());
+        this.hotkeysRegistry.areHotkeysSuspended$.subscribe(areHotkeysSuspended => areHotkeysSuspended ? this.taskbar.suspend() : this.taskbar.resume());
     }
 
     private createTaskbar(): void {

@@ -22,6 +22,7 @@ export interface HotkeySettings {
     readonly showDefinition: Hotkey[];
     readonly playText: Hotkey[];
     readonly inputText: Hotkey[];
+    readonly toggleSuspend: Hotkey[];
 }
 
 export interface TranslationEngineSettings {

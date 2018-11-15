@@ -33,6 +33,14 @@ export class Taskbar {
         });
     }
 
+    public suspend(): void {
+        this.isSuspended$.next(true);
+    }
+
+    public resume(): void {
+        this.isSuspended$.next(false);
+    }
+
     private createTaskBar(): void {
         this.tray = new Tray(this.iconsProvider.getIconPath("tray"));
         this.tray.setToolTip("Selected text translate..");

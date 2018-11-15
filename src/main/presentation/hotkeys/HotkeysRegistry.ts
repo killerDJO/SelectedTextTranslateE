@@ -1,5 +1,5 @@
 import { globalShortcut } from "electron";
-import { Subject } from "rxjs";
+import { Subject, BehaviorSubject } from "rxjs";
 import { injectable } from "inversify";
 
 import { Hotkey } from "common/dto/settings/Hotkey";
@@ -12,11 +12,12 @@ import { HotkeySettings } from "business-logic/settings/dto/Settings";
 
 @injectable()
 export class HotkeysRegistry {
-
     private areHotkeysPaused: boolean = false;
-    private areHotkeysSuspended: boolean = false;
     private currentHotkeys: HotkeySettings;
 
+    private readonly toggleSuspend$: Subject<void> = new Subject();
+
+    public readonly areHotkeysSuspended$: BehaviorSubject<boolean> = new BehaviorSubject(false);
     public readonly translate$: Subject<void> = new Subject();
     public readonly playText$: Subject<void> = new Subject();
     public readonly showDefinition$: Subject<void> = new Subject();
@@ -28,6 +29,8 @@ export class HotkeysRegistry {
         private readonly logger: Logger) {
         this.currentHotkeys = this.getHotkeys();
         this.settingsProvider.getSettings().subscribe(() => this.remapHotkeys());
+
+        this.toggleSuspend$.subscribe(() => this.processToggleSuspend());
     }
 
     public registerHotkeys(): void {
@@ -45,14 +48,21 @@ export class HotkeysRegistry {
     }
 
     public suspendHotkeys(): void {
-        this.areHotkeysSuspended = true;
+        this.areHotkeysSuspended$.next(true);
         this.unregisterAllHotkeys(this.currentHotkeys);
     }
 
     public enableHotkeys(): void {
-        this.areHotkeysSuspended = false;
+        this.areHotkeysSuspended$.next(false);
         this.registerAllHotkeys(this.currentHotkeys);
+    }
 
+    private processToggleSuspend(): void {
+        if (this.areHotkeysSuspended$.value) {
+            this.enableHotkeys();
+        } else {
+            this.suspendHotkeys();
+        }
     }
 
     private getHotkeys(): HotkeySettings {
@@ -60,7 +70,7 @@ export class HotkeysRegistry {
     }
 
     private get areHotkeysDisabled(): boolean {
-        return this.areHotkeysPaused || this.areHotkeysSuspended;
+        return this.areHotkeysPaused || this.areHotkeysSuspended$.value;
     }
 
     private remapHotkeys(): void {
@@ -69,12 +79,12 @@ export class HotkeysRegistry {
             return;
         }
 
-        this.unregisterAllHotkeys(this.currentHotkeys);
-        this.registerAllHotkeys(this.getHotkeys());
+        this.unregisterAllHotkeys(this.currentHotkeys, true);
+        this.registerAllHotkeys(this.getHotkeys(), true);
         this.currentHotkeys = this.getHotkeys();
     }
 
-    private registerAllHotkeys(hotkeys: HotkeySettings): void {
+    private registerAllHotkeys(hotkeys: HotkeySettings, includeSuspendHotkey: boolean = false): void {
         if (this.areHotkeysDisabled) {
             return;
         }
@@ -83,13 +93,21 @@ export class HotkeysRegistry {
         this.registerCommand(hotkeys.playText, () => this.playText$.next());
         this.registerCommand(hotkeys.inputText, () => this.inputText$.next());
         this.registerCommand(hotkeys.showDefinition, () => this.showDefinition$.next());
+
+        if (includeSuspendHotkey) {
+            this.registerCommand(hotkeys.toggleSuspend, () => this.toggleSuspend$.next());
+        }
     }
 
-    private unregisterAllHotkeys(hotkeys: HotkeySettings): void {
+    private unregisterAllHotkeys(hotkeys: HotkeySettings, includeSuspendHotkey: boolean = false): void {
         this.unregisterCommand(hotkeys.translate);
         this.unregisterCommand(hotkeys.playText);
         this.unregisterCommand(hotkeys.inputText);
         this.unregisterCommand(hotkeys.showDefinition);
+
+        if (includeSuspendHotkey) {
+            this.unregisterCommand(hotkeys.toggleSuspend);
+        }
     }
 
     private registerCommand(hotkeys: Hotkey[], action: () => void): void {

@@ -139,6 +139,16 @@
                     "T"
                 ]
             }
+        ],
+        "toggleSuspend": [
+            {
+                "keys": [
+                    "Shift",
+                    "Control",
+                    "Alt",
+                    "S"
+                ]
+            }
         ]
     },
     "update": {

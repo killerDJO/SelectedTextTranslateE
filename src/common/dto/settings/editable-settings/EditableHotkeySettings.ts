@@ -10,6 +10,7 @@ export interface GlobalHotkeySettings {
     readonly playText: Hotkey[];
     readonly showDefinition: Hotkey[];
     readonly inputText: Hotkey[];
+    readonly toggleSuspend: Hotkey[];
 }
 
 export interface LocalHotkeySettings {

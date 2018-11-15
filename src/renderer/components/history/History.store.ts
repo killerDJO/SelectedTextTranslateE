@@ -13,11 +13,11 @@ import { TranslateResultViews } from "common/dto/translation/TranslateResultView
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
+import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 
 import { MessageBus } from "common/renderer/MessageBus";
 
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
-import { PlayTextRequest } from 'common/dto/translation/PlayTextRequest';
 
 const messageBus = new MessageBus();
 
