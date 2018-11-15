@@ -1,4 +1,4 @@
-import { Module } from "vuex";
+import { Module, ActionContext } from "vuex";
 
 import { RootState } from "root.store";
 import { historySync } from "./history-sync/HistorySync.store";
@@ -17,6 +17,7 @@ import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { MessageBus } from "common/renderer/MessageBus";
 
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
+import { PlayTextRequest } from 'common/dto/translation/PlayTextRequest';
 
 const messageBus = new MessageBus();
 
@@ -128,6 +129,12 @@ export const history: Module<HistoryState, RootState> = {
                     targetLanguage: request.record.targetLanguage,
                     isArchived: request.isArchived
                 });
-        }
+        },
+        playRecord(_, record: HistoryRecord): void {
+            messageBus.sendCommand<PlayTextRequest>(Messages.TranslateResult.PlayTextCommand, {
+                text: record.sentence,
+                language: record.sourceLanguage
+            });
+        },
     }
 };

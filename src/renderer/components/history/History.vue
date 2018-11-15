@@ -28,17 +28,17 @@
         <tbody v-if="historyRecords.length !== 0">
           <tr v-for="record in historyRecords" :key="record.sentence + record.isForcedTranslation + record.sourceLanguage + record.targetLanguage" @click="translateHistoryRecord(record)">
             <td class="word-column" v-overflow-tooltip>
-              <div class="synced-icon-holder">
-                <i class="icon icon-cloud-thunder synced-icon" v-if="!isRecordSyncedWithServer(record)" title="Record is not synced with server"/>
-              </div>
               <icon-button v-if="record.isStarred" @click="setStarredStatus({record: record, isStarred: false})" :title="'Unmark Translation'" :tab-index="-1">
                 <span class="icon icon-star" />
               </icon-button>
               <icon-button v-else @click="setStarredStatus({record: record, isStarred: true})" :title="'Mark Translation'" :tab-index="-1">
                   <span class="icon icon-star-empty" />
               </icon-button>
-              {{record.sentence}}
+              <div class="word-holder">{{record.sentence}}</div>
               <span class="icon icon-flash" v-if="record.isForcedTranslation" title="Forced Translation"></span>
+              <icon-button @click="playRecord(record)" :title="'Play'" :tab-index="-1" class="play-icon-holder">
+                <span class="play-icon " />
+              </icon-button>
             </td>
             <td class="translation-column" v-overflow-tooltip>
               <span v-if="!!record.translateResult.sentence.translation">{{record.translateResult.sentence.translation}}</span>
@@ -47,7 +47,10 @@
             <td class="times-column">{{record.translationsNumber !== 0 ? record.translationsNumber : "-"}}</td>
             <td class="source-language-column" v-overflow-tooltip>{{languages.get(record.sourceLanguage) || record.sourceLanguage}}</td>
             <td class="target-language-column" v-overflow-tooltip>{{languages.get(record.targetLanguage) || record.targetLanguage}}</td>
-            <td class="last-translated-column" v-overflow-tooltip>{{record.lastTranslatedDate | date-time}}</td>
+            <td class="last-translated-column" v-overflow-tooltip>
+              {{record.lastTranslatedDate | date-time}}
+              <i class="icon icon-cloud-thunder synced-icon" v-if="!isRecordSyncedWithServer(record)" title="Record is not synced with server"/>
+            </td>
             <td class="archived-column">
               <icon-button v-if="record.isArchived" title="Restore" @click="setArchivedStatus({record: record, isArchived: false})" :tab-index="-1"><i class="icon icon-trash restore"/></icon-button>
               <icon-button v-else title="Archive" @click="setArchivedStatus({record: record, isArchived: true})" :tab-index="-1"><i class="icon icon-trash archive"/></icon-button>

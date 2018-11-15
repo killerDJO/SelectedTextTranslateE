@@ -52,6 +52,7 @@ export default class History extends Vue {
     @ns.Action private readonly setup!: () => void;
     @ns.Action private readonly requestHistoryRecords!: () => void;
     @ns.Action public readonly setArchivedStatus!: (request: { record: HistoryRecord; isArchived: boolean }) => void;
+    @ns.Action public readonly playRecord!: (record: HistoryRecord) => void;
 
     @ns.Action public readonly playText!: () => void;
     @ns.Action public readonly translateText!: (request: TranslationRequest) => void;

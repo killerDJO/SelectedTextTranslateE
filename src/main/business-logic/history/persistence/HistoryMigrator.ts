@@ -1,6 +1,6 @@
 import { injectable, multiInject } from "inversify";
 import * as Datastore from "nedb";
-import { concat, Observable, of, from } from "rxjs";
+import { concat, Observable, of } from "rxjs";
 import { tap, concatMap } from "rxjs/operators";
 
 import { Logger } from "infrastructure/Logger";

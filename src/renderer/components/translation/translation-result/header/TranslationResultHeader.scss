@@ -49,10 +49,10 @@
             background-size: contain;
             background-repeat: no-repeat;
             display: inline-block;
-            background-image: url("icons/play.svg");
+            background-image: url("~icons/play.svg");
     
             &:hover{
-                background-image: url("icons/play-hovered.svg");
+                background-image: url("~icons/play-hovered.svg");
             }
         }
     }
