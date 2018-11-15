@@ -8,10 +8,10 @@ import { ViewNames } from "common/ViewNames";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
-import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 
 import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
+import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
 
 export class TranslationView extends TranslateResultView {
 
@@ -27,14 +27,11 @@ export class TranslationView extends TranslateResultView {
         this.window.setAlwaysOnTop(true);
         this.window.setSkipTaskbar(true);
 
-        //this.window.on("blur", () => this.hide());
+        this.window.on("blur", () => this.hide());
         this.window.on("hide", () => this.currentTranslation = null);
 
         this.setupSaveDimensions();
-
-        this.messageBus.registerObservable<LanguageSettings>(
-            Messages.Translation.LanguageSettings,
-            this.context.settingsProvider.getSettings().pipe(map(settings => settings.language)));
+        this.setupSubscriptions();
     }
 
     public showTextInput(): void {
@@ -104,6 +101,15 @@ export class TranslationView extends TranslateResultView {
         const debouncedSaveDimension = _.debounce(() => this.saveDimensions(), oneSecond);
         this.window.on("resize", debouncedSaveDimension);
         this.window.on("move", debouncedSaveDimension);
+    }
+
+    private setupSubscriptions(): void {
+        this.messageBus.registerObservable<EditableLanguageSettings>(
+            Messages.Translation.LanguageSettings,
+            this.context.settingsProvider.getSettings().pipe(map(settings => ({
+                ...settings.language,
+                allLanguages: this.context.settingsProvider.getLanguages()
+            }))));
     }
 
     private saveDimensions(): void {

@@ -1,35 +1,47 @@
 <template>
   <div class="settings">
     <div v-if="!!settings && !!defaultSettings">
-      <hotkey-settings
-        :ref="SettingsGroup.Hotkey"
-        :hotkey-settings="settings.hotkeys"
-        :default-hotkey-settings="defaultSettings.hotkeys"
-        @hotkey-input-started="pauseHotkeys"
-        @hotkey-input-completed="enableHotkeys"
-        @hotkeys-updated="updateHotkeySettings"/>
-      <scaling-settings
-        :ref="SettingsGroup.Scaling"
-        :scaling-settings="settings.scaling"
-        :scaling-state="scalingState"
-        @scaling-settings-updated="updateScalingSettings"
-        @scaling-changed="changeScaling"/>
-      <history-settings
-        :ref="SettingsGroup.History"
-        :history-settings="settings.history"
-        @history-settings-updated="updateHistorySettings"/>
-      <play-settings
-        :ref="SettingsGroup.Play"
-        :play-settings="settings.play"
-        @play-settings-updated="updatePlaySettings"/>
-      <language-settings
-        :ref="SettingsGroup.Language"
-        :language-settings="settings.language"
-        @language-settings-updated="updateLanguageSettings"/>
-      <startup-settings
-        :ref="SettingsGroup.Startup"
-        :is-startup-enabled="isStartupEnabled"
-        @set-startup-state="setStartupState"/>
+      <settings-holder :title="'Hotkeys'">
+        <hotkey-settings
+          :ref="SettingsGroup.Hotkey"
+          :hotkey-settings="settings.hotkeys"
+          :default-hotkey-settings="defaultSettings.hotkeys"
+          @hotkey-input-started="pauseHotkeys"
+          @hotkey-input-completed="enableHotkeys"
+          @hotkeys-updated="updateHotkeySettings"/>
+      </settings-holder>
+      <settings-holder :title="'Scaling'">
+        <scaling-settings
+          :ref="SettingsGroup.Scaling"
+          :scaling-settings="settings.scaling"
+          :scaling-state="scalingState"
+          @scaling-settings-updated="updateScalingSettings"
+          @scaling-changed="changeScaling"/>
+      </settings-holder>
+      <settings-holder :title="'History'">
+        <history-settings
+          :ref="SettingsGroup.History"
+          :history-settings="settings.history"
+          @history-settings-updated="updateHistorySettings"/>
+      </settings-holder>
+      <settings-holder :title="'Play'">
+        <play-settings
+          :ref="SettingsGroup.Play"
+          :play-settings="settings.play"
+          @play-settings-updated="updatePlaySettings"/>
+      </settings-holder>
+      <settings-holder :title="'Language'">
+        <language-settings
+          :ref="SettingsGroup.Language"
+          :language-settings="settings.language"
+          @language-settings-updated="updateLanguageSettings"/>
+      </settings-holder>
+      <settings-holder :title="'Startup'">
+        <startup-settings
+          :ref="SettingsGroup.Startup"
+          :is-startup-enabled="isStartupEnabled"
+          @set-startup-state="setStartupState"/>
+       </settings-holder>
       <link-button @click="openSettingsFile" :text="'Open Settings File'" class="open-file"/>
     </div>
   </div>

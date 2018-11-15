@@ -11,6 +11,7 @@ import { EditableHistorySettings } from "common/dto/settings/editable-settings/E
 import { ScalingState } from "common/dto/settings/ScalingState";
 import { SettingsGroup } from "common/dto/settings/SettingsGroup";
 
+import SettingsHolder from "components/settings/settings-holder/SettingsHolder.vue";
 import HotkeySettings from "components/settings/hotkeys-settings/HotkeySettings.vue";
 import ScalingSettings from "components/settings/scaling-settings/ScalingSettings.vue";
 import PlaySettings from "components/settings/play-settings/PlaySettings.vue";
@@ -22,6 +23,7 @@ const ns = namespace("app/settings");
 
 @Component({
     components: {
+        SettingsHolder,
         HotkeySettings,
         ScalingSettings,
         PlaySettings,

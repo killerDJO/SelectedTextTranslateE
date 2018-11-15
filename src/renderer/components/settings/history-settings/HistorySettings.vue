@@ -1,5 +1,5 @@
 <template>
-  <settings-holder :title="'History'">
+  <div>
     <checkbox v-model="currentHistorySettings.isContinuousSyncEnabled" :label="'Enable continuous history sync'" />
     <div class="settings-item interval-item" v-if="currentHistorySettings.isContinuousSyncEnabled">
       <div class="form-group">
@@ -23,7 +23,7 @@
       <label>Number of previous regular backups to keep:</label>
       <input v-tab-index type="number" min="0" class="form-control" v-model.number="numberOfRegularBackupsToKeep">
     </div>
-  </settings-holder>
+  </div>
 </template>
 
 <script src="./HistorySettings.ts" lang="ts"></script>

@@ -137,7 +137,7 @@ export const translateResultActions = {
             historyRecord => ({
                 text: historyRecord.sentence,
                 isForcedTranslation: historyRecord.isForcedTranslation,
-                refreshCache: true,
+                refreshCache: false,
                 sourceLanguage: language,
                 targetLanguage: historyRecord.targetLanguage
             }));

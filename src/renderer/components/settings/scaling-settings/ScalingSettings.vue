@@ -1,5 +1,5 @@
 <template>
-  <settings-holder :title="'Scaling'" v-if="!!scalingState && !!currentScalingSettings">
+  <div v-if="!!scalingState && !!currentScalingSettings">
     <div class="scaling-input settings-item">
       <span class="current-scale-factor">Current Scale Factor - {{scalingState.scaleFactor * 100 | percent}}</span>
       <slider
@@ -14,7 +14,7 @@
     </div>
     <div class="settings-separator"/>
     <checkbox v-model="currentScalingSettings.scaleTranslationViewOnly" :label="'Scale translation view only'" />
-  </settings-holder>
+  </div>
 </template>
 
 <script src="./ScalingSettings.ts" lang="ts"></script>

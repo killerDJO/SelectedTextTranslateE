@@ -4,13 +4,7 @@ import * as _ from "lodash";
 import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
 import { Language } from "common/dto/settings/Language";
 
-import SettingsHolder from "components/settings/settings-holder/SettingsHolder.vue";
-
-@Component({
-    components: {
-        SettingsHolder
-    }
-})
+@Component
 export default class LanguageSettings extends Vue {
     @Prop(Object)
     public readonly languageSettings!: EditableLanguageSettings;

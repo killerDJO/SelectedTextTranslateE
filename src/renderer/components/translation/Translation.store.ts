@@ -5,7 +5,7 @@ import { RootState } from "root.store";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
-import { LanguageSettings } from "common/dto/settings/LanguageSettings";
+import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
 import { Messages } from "common/messaging/Messages";
 
 import { MessageBus } from "common/renderer/MessageBus";
@@ -16,7 +16,8 @@ const messageBus = new MessageBus();
 
 interface TranslationState extends TranslateResultState {
     showInput: boolean;
-    languageSettings: LanguageSettings | null;
+    isVisible: boolean;
+    languageSettings: EditableLanguageSettings | null;
 }
 
 export const translation: Module<TranslationState, RootState> = {
@@ -29,7 +30,8 @@ export const translation: Module<TranslationState, RootState> = {
         showInput: false,
         languages: new Map<string, string>(),
         languageSettings: null,
-        isOffline: false
+        isOffline: false,
+        isVisible: false
     },
     mutations: {
         ...translateResultMutations,
@@ -41,6 +43,7 @@ export const translation: Module<TranslationState, RootState> = {
             state.translationHistoryRecord = null;
             state.isTranslationInProgress = false;
             state.showInput = false;
+            state.isVisible = false;
         },
         setTranslationInProgress(state: TranslationState): void {
             translateResultMutations.setTranslationInProgress(state);
@@ -50,7 +53,10 @@ export const translation: Module<TranslationState, RootState> = {
             state.showInput = true;
             state.translationHistoryRecord = null;
         },
-        setLanguageSettings(state: TranslationState, languageSettings: LanguageSettings): void {
+        setVisible(state: TranslationState): void {
+            state.isVisible = true;
+        },
+        setLanguageSettings(state: TranslationState, languageSettings: EditableLanguageSettings): void {
             state.languageSettings = languageSettings;
         }
     },
@@ -59,8 +65,9 @@ export const translation: Module<TranslationState, RootState> = {
         setup(context): void {
             translateResultActions.setup(context);
             messageBus.observeNotification(Messages.Translation.ShowInputCommand, () => context.commit("setShowInput"));
-            messageBus.observeValue<LanguageSettings>(Messages.Translation.LanguageSettings, languageSettings => context.commit("setLanguageSettings", languageSettings));
+            messageBus.observeValue<EditableLanguageSettings>(Messages.Translation.LanguageSettings, languageSettings => context.commit("setLanguageSettings", languageSettings));
             remote.getCurrentWindow().on("hide", () => context.commit("clearTranslateResult"));
+            remote.getCurrentWindow().on("show", () => context.commit("setVisible"));
         }
     }
 };

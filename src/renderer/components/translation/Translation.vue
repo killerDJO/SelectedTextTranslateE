@@ -1,5 +1,5 @@
 <template>
-    <div class="translation" v-if="isInitialized">
+    <div class="translation" v-if="isInitialized && isVisible">
         <translation-result
             v-if="hasResult || isTranslationInProgress"
             :default-view="defaultTranslateResultView"
@@ -21,7 +21,6 @@
             <translation-input
                 @translate-text="translateText"
                 @play-text="playTextFromRequest"
-                :languages="languages"
                 :language-settings="languageSettings" />
         </div>
     </div>
