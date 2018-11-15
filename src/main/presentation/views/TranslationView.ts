@@ -1,5 +1,6 @@
 import { screen } from "electron";
 import { BehaviorSubject, Subject } from "rxjs";
+import { map } from "rxjs/operators";
 import * as _ from "lodash";
 
 import { Messages } from "common/messaging/Messages";
@@ -7,6 +8,7 @@ import { ViewNames } from "common/ViewNames";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
+import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 
 import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
@@ -25,10 +27,14 @@ export class TranslationView extends TranslateResultView {
         this.window.setAlwaysOnTop(true);
         this.window.setSkipTaskbar(true);
 
-        this.window.on("blur", () => this.hide());
+        //this.window.on("blur", () => this.hide());
         this.window.on("hide", () => this.currentTranslation = null);
 
         this.setupSaveDimensions();
+
+        this.messageBus.registerObservable<LanguageSettings>(
+            Messages.Translation.LanguageSettings,
+            this.context.settingsProvider.getSettings().pipe(map(settings => settings.language)));
     }
 
     public showTextInput(): void {

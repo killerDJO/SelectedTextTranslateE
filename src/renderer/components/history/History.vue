@@ -37,7 +37,7 @@
               <div class="word-holder">{{record.sentence}}</div>
               <span class="icon icon-flash" v-if="record.isForcedTranslation" title="Forced Translation"></span>
               <icon-button @click="playRecord(record)" :title="'Play'" :tab-index="-1" class="play-icon-holder">
-                <span class="play-icon " />
+                <span class="play-icon" />
               </icon-button>
             </td>
             <td class="translation-column" v-overflow-tooltip>

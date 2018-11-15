@@ -146,6 +146,9 @@ export const translateResultActions = {
         commit("setTranslationInProgress");
         messageBus.sendCommand<TranslationRequest>(Messages.TranslateResult.TranslateCommand, request);
     },
+    playTextFromRequest(_: ActionContext<TranslateResultState, RootState>, request: PlayTextRequest): void {
+        messageBus.sendCommand<PlayTextRequest>(Messages.TranslateResult.PlayTextCommand, request);
+    },
     search({ state }: ActionContext<TranslateResultState, RootState>): void {
         executeCommand<string>(state, Messages.TranslateResult.Search, historyRecord => historyRecord.sentence);
     },

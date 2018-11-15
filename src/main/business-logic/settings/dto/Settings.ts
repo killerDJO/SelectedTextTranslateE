@@ -2,6 +2,7 @@ import { RendererSettings } from "common/dto/settings/renderer-settings/Renderer
 import { Hotkey } from "common/dto/settings/Hotkey";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
+import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 
 export interface Settings {
@@ -77,11 +78,6 @@ export interface HistorySettings extends ViewSize {
 export interface UpdateSettings {
     readonly feedUrl: string;
     readonly releasesUrl: string;
-}
-
-export interface LanguageSettings {
-    readonly sourceLanguage: string;
-    readonly targetLanguage: string;
 }
 
 export interface SearchSettings {

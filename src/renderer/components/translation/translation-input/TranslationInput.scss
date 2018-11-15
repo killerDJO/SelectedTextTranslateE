@@ -1,9 +1,38 @@
 .translation-input{
     padding: $padding-default 25px;
     text-align: center;
+    margin-bottom: 0;
 
     > label {
         font-size: $font-medium;
         margin-bottom: 0;
+    }
+
+    .input-holder {
+        width: 100%;
+        display: flex;
+        align-items: center;
+
+        .form-control {
+            padding-right: 25px;
+        }
+
+        .play-icon-holder {
+            margin-left: -20px;
+
+            .play-icon {
+                width: 12px;
+                height: 12px;
+                background-size: contain;
+                background-repeat: no-repeat;
+                display: inline-block;
+                background-image: url("~icons/play.svg");
+                
+        
+                &:hover{
+                    background-image: url("~icons/play-hovered.svg");
+                }
+            }
+        }
     }
 }

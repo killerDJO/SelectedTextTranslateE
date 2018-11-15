@@ -5,6 +5,7 @@ import { RootState } from "root.store";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
+import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 import { Messages } from "common/messaging/Messages";
 
 import { MessageBus } from "common/renderer/MessageBus";
@@ -15,6 +16,7 @@ const messageBus = new MessageBus();
 
 interface TranslationState extends TranslateResultState {
     showInput: boolean;
+    languageSettings: LanguageSettings | null;
 }
 
 export const translation: Module<TranslationState, RootState> = {
@@ -26,6 +28,7 @@ export const translation: Module<TranslationState, RootState> = {
         defaultTranslateResultView: TranslateResultViews.Translation,
         showInput: false,
         languages: new Map<string, string>(),
+        languageSettings: null,
         isOffline: false
     },
     mutations: {
@@ -46,6 +49,9 @@ export const translation: Module<TranslationState, RootState> = {
         setShowInput(state: TranslationState): void {
             state.showInput = true;
             state.translationHistoryRecord = null;
+        },
+        setLanguageSettings(state: TranslationState, languageSettings: LanguageSettings): void {
+            state.languageSettings = languageSettings;
         }
     },
     actions: {
@@ -53,6 +59,7 @@ export const translation: Module<TranslationState, RootState> = {
         setup(context): void {
             translateResultActions.setup(context);
             messageBus.observeNotification(Messages.Translation.ShowInputCommand, () => context.commit("setShowInput"));
+            messageBus.observeValue<LanguageSettings>(Messages.Translation.LanguageSettings, languageSettings => context.commit("setLanguageSettings", languageSettings));
             remote.getCurrentWindow().on("hide", () => context.commit("clearTranslateResult"));
         }
     }

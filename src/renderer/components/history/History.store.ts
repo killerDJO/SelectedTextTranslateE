@@ -131,7 +131,7 @@ export const history: Module<HistoryState, RootState> = {
                 });
         },
         playRecord(_, record: HistoryRecord): void {
-            messageBus.sendCommand<PlayTextRequest>(Messages.TranslateResult.PlayTextCommand, {
+            translateResultActions.playTextFromRequest(_, {
                 text: record.sentence,
                 language: record.sourceLanguage
             });

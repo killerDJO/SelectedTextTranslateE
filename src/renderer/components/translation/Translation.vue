@@ -1,10 +1,7 @@
 <template>
     <div class="translation" v-if="isInitialized">
-        <div v-if="showInput">
-            <translation-input @translate-text="translateText"/>
-        </div>
         <translation-result
-            v-else-if="hasResult || isTranslationInProgress"
+            v-if="hasResult || isTranslationInProgress"
             :default-view="defaultTranslateResultView"
             :history-record="translationHistoryRecord"
             :is-in-progress="isTranslationInProgress"
@@ -20,8 +17,12 @@
             @search="search"
             @set-starred-status="setStarredStatus"/>
         <div v-else>
-            <div  class="no-text-data">No text data selected</div>
-            <translation-input @translate-text="translateText"/>
+            <div class="no-text-data" v-if="!showInput">No text data selected</div>
+            <translation-input
+                @translate-text="translateText"
+                @play-text="playTextFromRequest"
+                :languages="languages"
+                :language-settings="languageSettings" />
         </div>
     </div>
 </template>
