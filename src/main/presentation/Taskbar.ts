@@ -1,4 +1,4 @@
-import { Menu, Tray, app, dialog } from "electron";
+import { Menu, Tray, app, dialog, nativeImage, NativeImage } from "electron";
 import { Subject, BehaviorSubject, fromEventPattern } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 import { injectable } from "inversify";
@@ -26,7 +26,7 @@ export class Taskbar {
     public watchPlayingState(isPlaying$: BehaviorSubject<boolean>) {
         isPlaying$.pipe(distinctUntilChanged()).subscribe(isPlaying => {
             if (isPlaying) {
-                this.tray.setImage(this.iconsProvider.getIconPath("tray-playing"));
+                this.tray.setImage(this.getIcon("tray-playing"));
             } else {
                 this.tray.setImage(this.getCurrentIcon());
             }
@@ -42,9 +42,13 @@ export class Taskbar {
     }
 
     private createTaskBar(): void {
-        this.tray = new Tray(this.iconsProvider.getIconPath("tray"));
+        this.tray = new Tray(this.getIcon("tray"));
         this.tray.setToolTip("Selected text translate..");
         this.tray.setContextMenu(this.createContextMenu());
+    }
+
+    private getIcon(iconType: string): NativeImage {
+        return nativeImage.createFromPath(this.iconsProvider.getIconPath(iconType));
     }
 
     private updateTraySuspendedState(): void {
@@ -52,8 +56,8 @@ export class Taskbar {
         this.tray.setContextMenu(this.createContextMenu());
     }
 
-    private getCurrentIcon(): string {
-        return this.iconsProvider.getIconPath(this.isSuspended$.value ? "tray-suspended" : "tray")
+    private getCurrentIcon(): NativeImage {
+        return this.getIcon(this.isSuspended$.value ? "tray-suspended" : "tray");
     }
 
     private createContextMenu(): Electron.Menu {
