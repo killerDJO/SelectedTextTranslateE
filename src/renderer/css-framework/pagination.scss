@@ -36,6 +36,7 @@
             color: $pagination-color;
             background-color: $color-background;
             border-color: $color-border;
+            outline: none;
         }
 
         > a:hover {
@@ -54,6 +55,13 @@
             color: $color-black;
             cursor: default;
             background-color: $color-border;
+        }
+    }
+
+    > :not(.active):not(.disabled) {
+        > a:hover,
+        > a:focus {
+            @include outline();
         }
     }
 

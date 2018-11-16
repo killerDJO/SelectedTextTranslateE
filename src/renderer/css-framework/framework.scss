@@ -35,3 +35,9 @@ $outline-width: 2px;
 %box-shadow {
     box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.75);
 }
+
+@mixin outline() {
+    box-shadow: 0 0 0 $outline-width $color-outline;
+    border-radius: $border-radius;
+    outline: none;
+  }

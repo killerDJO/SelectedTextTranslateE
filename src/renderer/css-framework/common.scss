@@ -7,9 +7,7 @@ body {
 }
 
 .focusable:focus {
-    box-shadow: 0 0 0 $outline-width $color-outline;
-    border-radius: $border-radius;
-    outline: none;
+    @include outline();
     z-index: 100;
 }
 
