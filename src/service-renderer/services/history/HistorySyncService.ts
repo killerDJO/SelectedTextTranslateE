@@ -4,7 +4,7 @@ import { MessageBus, Subscription } from "common/renderer/MessageBus";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { Messages } from "common/messaging/Messages";
 import { SignRequest } from "common/dto/history/account/SignRequest";
-import { ServerHistoryRecord } from "history/ServerHistoryRecord";
+import { ServerHistoryRecord } from "services/history/ServerHistoryRecord";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 import { SignInResponse } from "common/dto/history/account/SignInResponse";

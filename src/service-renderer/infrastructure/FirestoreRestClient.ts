@@ -159,9 +159,7 @@ export class FirestoreRestClient {
     }
 
     private parseDocument<TResult extends FirebaseDocument>(document: any): TResult {
-        const result: any = {
-            timestamp: document.document.updateTime
-        };
+        const result: any = {};
 
         const fields = document.document.fields;
         for (const key of Object.keys(fields)) {
@@ -170,6 +168,8 @@ export class FirestoreRestClient {
                 result[key] = value.stringValue;
             }
         }
+
+        result.timestamp = document.document.updateTime;
 
         return result;
     }

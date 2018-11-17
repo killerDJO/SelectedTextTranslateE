@@ -8,27 +8,33 @@ import { app } from "electron";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 
 import { Logger } from "infrastructure/Logger";
+import { MessageBus } from "infrastructure/MessageBus";
 import { replaceAllPattern } from "utils/replace-pattern";
 
 import { RequestProvider } from "data-access/RequestProvider";
-import * as nativeExtensions from "native/native-extensions.node";
+import { PlayFileRequest } from "common/dto/translation/PlayFileRequest";
 
 import { HashProvider } from "business-logic/translation/HashProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
+import { Messages } from "common/messaging/Messages";
 
 @injectable()
 export class TextPlayer {
 
     private readonly tempFilePath: string;
+    private readonly messageBus: MessageBus;
     public isPlayInProgress$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
         private readonly requestProvider: RequestProvider,
         private readonly hashProvider: HashProvider,
         private readonly settingsProvider: SettingsProvider,
-        private readonly logger: Logger) {
+        private readonly logger: Logger,
+        private readonly serviceRendererProvider: ServiceRendererProvider) {
 
         this.tempFilePath = path.resolve(app.getPath("temp"), "STT_audio.mp3");
+        this.messageBus = new MessageBus(this.serviceRendererProvider.getServiceRenderer());
     }
 
     public playText(request: PlayTextRequest): Observable<void> {
@@ -54,18 +60,10 @@ export class TextPlayer {
     }
 
     private playFile(): Observable<void> {
-        return new Observable<void>(observer => {
-            const volume = this.settingsProvider.getSettings().value.engine.playVolume;
-            nativeExtensions.playFile(this.tempFilePath, volume, error => {
-                this.isPlayInProgress$.next(false);
-                if (!!error) {
-                    observer.error(new Error(error));
-                } else {
-                    observer.next();
-                    observer.complete();
-                }
-            });
-        });
+        const volume = this.settingsProvider.getSettings().value.engine.playVolume;
+        return this.messageBus.sendValue<PlayFileRequest>(Messages.ServiceRenderer.PlayFile, { filePath: this.tempFilePath, volume: volume }).pipe(
+            tap(() => this.isPlayInProgress$.next(false))
+        );
     }
 
     private getLogKey(text: string, language: string): string {
