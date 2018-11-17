@@ -174,7 +174,7 @@ export class HistorySyncService {
 
     private getHistoryRecordsToSync(): Observable<HistoryRecord[]> {
         return this.datastoreProvider
-            .find<HistoryRecord>(this.datastore$, {})
+            .find<HistoryRecord>(this.datastore$, {}, { lastTranslatedDate: -1 })
             .pipe(map(records => records.filter(record => this.isRecordModified(record, this.getCurrentUser()))));
     }
 

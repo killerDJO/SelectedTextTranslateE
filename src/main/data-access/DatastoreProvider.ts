@@ -57,10 +57,10 @@ export class DatastoreProvider {
         });
     }
 
-    public find<TResult>(datastore$: Observable<Datastore>, query: any): Observable<TResult[]> {
+    public find<TResult>(datastore$: Observable<Datastore>, query: any, sortQuery: any = {}): Observable<TResult[]> {
         return this.runOnDatastore(datastore$, datastore => {
             return new Observable<TResult[]>(observer => {
-                datastore.find<TResult>(query, (error, records) => {
+                datastore.find<TResult>(query).sort(sortQuery).exec((error, records) => {
                     this.handleError(error);
                     observer.next(records);
                     observer.complete();

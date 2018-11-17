@@ -20,6 +20,8 @@ export default class DropButton extends Vue {
     @Prop(String)
     public text!: string;
 
+    private placement: Popper.Position = "bottom";
+
     private drop: Popper | null = null;
     public isDropVisible: boolean = false;
 
@@ -29,16 +31,16 @@ export default class DropButton extends Vue {
 
     public openDrop(): void {
         this.drop = new Popper(this.$refs.dropTarget as Element, this.$refs.dropContent as Element, {
-            placement: "bottom",
+            placement: this.placement,
             positionFixed: false,
             modifiers: {
                 computeStyle: {
                     gpuAcceleration: false
                 },
                 shift: {
-                    fn(data, options) {
-                        if (data.placement === "bottom") {
-                            data.placement = data.offsets.popper.width > data.offsets.reference.width ? "bottom-start" : "bottom-end";
+                    fn: (data, options) => {
+                        if (data.placement === this.placement) {
+                            data.placement = (data.offsets.popper.width > data.offsets.reference.width ? `${this.placement}-start` : `${this.placement}-end`) as Popper.Placement;
                         }
 
                         if (!!Popper.Defaults.modifiers && !!Popper.Defaults.modifiers.shift && Popper.Defaults.modifiers.shift.fn) {
