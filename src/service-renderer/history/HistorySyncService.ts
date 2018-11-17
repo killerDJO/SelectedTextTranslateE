@@ -151,6 +151,10 @@ export class HistorySyncService {
     private async syncAllRecords(isForcedPull: boolean): Promise<void> {
         await this.waitForSyncToFinish();
 
+        if (!this.canSync()) {
+            return;
+        }
+
         try {
             this.syncTask$.next(this.syncAllRecordsUnsafe(isForcedPull));
             await this.syncTask$.value;
@@ -176,6 +180,10 @@ export class HistorySyncService {
 
     private async syncSingleRecord(historyRecord: HistoryRecord): Promise<void> {
         await this.waitForSyncToFinish();
+
+        if (!this.canSync()) {
+            return;
+        }
 
         if (await this.writeRecord(historyRecord)) {
             this.logger.info("Failed to sync individual record. Falling back to a full sync.");
@@ -293,5 +301,14 @@ export class HistorySyncService {
 
     private deserializeRecord(serializedRecord: string): HistoryRecord {
         return JSON.parse(decodeURIComponent(escape(atob(serializedRecord))));
+    }
+
+    private canSync(): boolean {
+        if (!navigator.onLine) {
+            this.logger.warning("Unable to sync records when offline.");
+            return false;
+        }
+
+        return true;
     }
 }
