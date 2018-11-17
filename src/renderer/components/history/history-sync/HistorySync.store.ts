@@ -1,4 +1,4 @@
-import { Module } from "vuex";
+import { Module, Commit } from "vuex";
 
 import { RootState } from "root.store";
 
@@ -12,6 +12,8 @@ import { PasswordResetResponse } from "common/dto/history/account/PasswordResetR
 import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
 import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
 import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
+import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
+import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
 
 const messageBus = new MessageBus();
 
@@ -24,6 +26,7 @@ interface HistorySyncState {
     sendResetTokenResponse: SendResetTokenResponse | null;
     passwordResetResponse: PasswordResetResponse | null;
     verifyResetTokenResponse: VerifyResetTokenResponse | null;
+    passwordChangeResponse: PasswordChangeResponse | null;
 }
 
 export const historySync: Module<HistorySyncState, RootState> = {
@@ -34,6 +37,7 @@ export const historySync: Module<HistorySyncState, RootState> = {
         signUpResponse: null,
         sendResetTokenResponse: null,
         passwordResetResponse: null,
+        passwordChangeResponse: null,
         verifyResetTokenResponse: null
     },
     mutations: {
@@ -54,6 +58,9 @@ export const historySync: Module<HistorySyncState, RootState> = {
         },
         setPasswordResetResponse(state: HistorySyncState, passwordResetResponse: PasswordResetResponse | null): void {
             state.passwordResetResponse = passwordResetResponse;
+        },
+        setPasswordChangeResponse(state: HistorySyncState, passwordChangeResponse: PasswordChangeResponse | null): void {
+            state.passwordChangeResponse = passwordChangeResponse;
         }
     },
     actions: {
@@ -67,6 +74,7 @@ export const historySync: Module<HistorySyncState, RootState> = {
             commit("setVerifyResetTokenResponse", null);
             commit("setPasswordResetResponse", null);
             commit("setSendResetTokenResponse", null);
+            commit("setPasswordChangeResponse", null);
         },
         signIn({ commit }, request: SignRequest): void {
             messageBus
@@ -92,6 +100,11 @@ export const historySync: Module<HistorySyncState, RootState> = {
             messageBus
                 .sendCommand<PasswordResetRequest>(Messages.History.ResetPassword, request)
                 .then(response => commit("setPasswordResetResponse", response));
+        },
+        changePassword({ commit }, request: PasswordChangeRequest): void {
+            messageBus
+                .sendCommand<PasswordChangeRequest>(Messages.History.ChangePassword, request)
+                .then(response => commit("setPasswordChangeResponse", response));
         },
         signOut(): void {
             messageBus.sendCommand<void>(Messages.History.SignOut);

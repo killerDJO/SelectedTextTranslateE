@@ -4,14 +4,18 @@ import { SignRequest } from "common/dto/history/account/SignRequest";
 import { SignUpResponse, SignUpResponseValidationCode } from "common/dto/history/account/SignUpResponse";
 
 import HistoryLoginFooter from "../history-login-footer/HistoryLoginFooter.vue";
-import HistoryLoginViewBase, { DataBase, ValidationResultBase } from "components/history/history-sync/history-login/HistoryLoginViewBase";
+import { SignedOutViewBase, SignedOutDataBase, SignedOutValidationResultBase } from "components/history/history-sync/history-login/base/SignedOutViewBase";
+import { PasswordInputData, PasswordInputValidationResult, PasswordInputValidator } from "components/history/history-sync/history-login/base/PasswordInputValidator";
 
 @Component({
     components: {
         HistoryLoginFooter
     }
 })
-export default class SignUp extends HistoryLoginViewBase<SignUpData, ValidationResult> {
+export default class SignUp extends SignedOutViewBase<SignUpData, ValidationResult> {
+
+    private readonly passwordInputValidator = new PasswordInputValidator();
+
     @Prop(Object)
     public signUpResponse!: SignUpResponse | null;
 
@@ -29,17 +33,7 @@ export default class SignUp extends HistoryLoginViewBase<SignUpData, ValidationR
     }
 
     protected validateEmptyFields(validationResult: ValidationResult): void {
-        if (!this.data.password) {
-            validationResult.password = "Password must not be empty.";
-        }
-
-        if (!this.data.passwordConfirmation) {
-            validationResult.passwordConfirmation = "Password confirmation must not be empty.";
-        }
-
-        if (this.data.passwordConfirmation && this.data.password !== this.data.passwordConfirmation) {
-            validationResult.password = validationResult.passwordConfirmation = "Password and password confirmation must be equal.";
-        }
+        this.passwordInputValidator.validateEmptyFields(this.data, validationResult);
     }
 
     protected validateNonEmptyFields(validationResult: ValidationResult): void {
@@ -53,18 +47,16 @@ export default class SignUp extends HistoryLoginViewBase<SignUpData, ValidationR
             }
 
             if (this.signUpResponse.validationCode === SignUpResponseValidationCode.WeakPassword) {
-                validationResult.password = "Password is too weak, it should have at least 6 characters.";
+                this.passwordInputValidator.addWeakPasswordResult(validationResult);
             }
         }
     }
 }
 
-interface SignUpData extends DataBase {
-    readonly password: string;
-    readonly passwordConfirmation: string;
+interface SignUpData extends SignedOutDataBase, PasswordInputData {
 }
 
-class ValidationResult extends ValidationResultBase {
+class ValidationResult extends SignedOutValidationResultBase implements PasswordInputValidationResult {
     public password: string | null = null;
     public passwordConfirmation: string | null = null;
 }

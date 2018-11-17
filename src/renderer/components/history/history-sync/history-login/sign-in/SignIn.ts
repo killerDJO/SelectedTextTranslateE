@@ -3,7 +3,7 @@ import { Component, Prop, Watch } from "vue-property-decorator";
 import { SignInResponse, SignInResponseValidationCode } from "common/dto/history/account/SignInResponse";
 
 import HistoryLoginFooter from "../history-login-footer/HistoryLoginFooter.vue";
-import HistoryLoginViewBase, { DataBase, ValidationResultBase } from "../HistoryLoginViewBase";
+import { SignedOutViewBase, SignedOutDataBase, SignedOutValidationResultBase } from "components/history/history-sync/history-login/base/SignedOutViewBase";
 import { SignRequest } from "common/dto/history/account/SignRequest";
 
 @Component({
@@ -11,7 +11,7 @@ import { SignRequest } from "common/dto/history/account/SignRequest";
         HistoryLoginFooter
     }
 })
-export default class SignIn extends HistoryLoginViewBase<SignInData, ValidationResultBase> {
+export default class SignIn extends SignedOutViewBase<SignInData, ValidationResult> {
     @Prop(Object)
     public signInResponse!: SignInResponse | null;
 
@@ -55,11 +55,11 @@ export default class SignIn extends HistoryLoginViewBase<SignInData, ValidationR
     }
 }
 
-interface SignInData extends DataBase {
+interface SignInData extends SignedOutDataBase {
     readonly password: string;
     readonly email: string;
 }
 
-class ValidationResult extends ValidationResultBase {
+class ValidationResult extends SignedOutValidationResultBase {
     public password: string | null = null;
 }

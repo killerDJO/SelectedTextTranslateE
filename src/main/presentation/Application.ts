@@ -84,6 +84,7 @@ export class Application {
         historyView.handleSignUp(request => this.accountHandler.signUpUser(request));
         historyView.handleSendPasswordResetToken(request => this.accountHandler.sendPasswordResetToken(request));
         historyView.handlePasswordReset(request => this.accountHandler.resetPassword(request));
+        historyView.handlePasswordChange(request => this.accountHandler.changePassword(request));
         historyView.handleVerifyPasswordResetToken(request => this.accountHandler.verifyPasswordResetToken(request));
 
         historyView.signOut$.subscribe(() => this.accountHandler.signOutUser().subscribe());

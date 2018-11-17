@@ -6,14 +6,16 @@ import { SendResetTokenResponseValidationCode, SendResetTokenResponse } from "co
 import { VerifyResetTokenResponseValidationCode, VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 
 import HistoryLoginFooter from "../history-login-footer/HistoryLoginFooter.vue";
-import HistoryLoginViewBase, { DataBase, ValidationResultBase } from "components/history/history-sync/history-login/HistoryLoginViewBase";
+import { SignedOutViewBase, SignedOutDataBase, SignedOutValidationResultBase } from "components/history/history-sync/history-login/base/SignedOutViewBase";
+import { PasswordInputData, PasswordInputValidationResult, PasswordInputValidator } from "components/history/history-sync/history-login/base/PasswordInputValidator";
 
 @Component({
     components: {
         HistoryLoginFooter
     }
 })
-export default class ResetPassword extends HistoryLoginViewBase<ResetPasswordData, ValidationResult> {
+export default class ResetPassword extends SignedOutViewBase<ResetPasswordData, ValidationResult> {
+    private readonly passwordInputValidator = new PasswordInputValidator();
 
     @Prop(Object)
     public sendResetTokenResponse!: SendResetTokenResponse | null;
@@ -97,17 +99,7 @@ export default class ResetPassword extends HistoryLoginViewBase<ResetPasswordDat
                 validationResult.token = "Confirmation Token must not be empty.";
             }
         } else if (this.currentStep === ResetPasswordStep.Password) {
-            if (!this.data.password) {
-                validationResult.password = "Password must not be empty.";
-            }
-
-            if (!this.data.passwordConfirmation) {
-                validationResult.passwordConfirmation = "Password confirmation must not be empty.";
-            }
-
-            if (this.data.passwordConfirmation && this.data.password !== this.data.passwordConfirmation) {
-                validationResult.password = validationResult.passwordConfirmation = "Password and password confirmation must be equal.";
-            }
+            this.passwordInputValidator.validateEmptyFields(this.data, validationResult);
         }
     }
 
@@ -141,11 +133,13 @@ export default class ResetPassword extends HistoryLoginViewBase<ResetPasswordDat
                 if (this.passwordResetResponse.validationCode === PasswordResetResponseValidationCode.ExpiredActionCode) {
                     validationResult.password = "Token has expired. Repeat the password reset procedure.";
                 }
+
                 if (this.passwordResetResponse.validationCode === PasswordResetResponseValidationCode.InvalidActionCode) {
                     validationResult.password = "Token is invalid. Repeat the password reset procedure.";
                 }
+
                 if (this.passwordResetResponse.validationCode === PasswordResetResponseValidationCode.WeakPassword) {
-                    validationResult.password = "Password is too weak, it should have at least 6 characters.";
+                    this.passwordInputValidator.addWeakPasswordResult(validationResult);
                 }
             }
         }
@@ -171,13 +165,11 @@ enum ResetPasswordStep {
     Password = "password"
 }
 
-interface ResetPasswordData extends DataBase {
+interface ResetPasswordData extends SignedOutDataBase, PasswordInputData {
     readonly token: string;
-    readonly password: string;
-    readonly passwordConfirmation: string;
 }
 
-class ValidationResult extends ValidationResultBase {
+class ValidationResult extends SignedOutValidationResultBase implements PasswordInputValidationResult {
     public token: string | null = null;
     public password: string | null = null;
     public passwordConfirmation: string | null = null;

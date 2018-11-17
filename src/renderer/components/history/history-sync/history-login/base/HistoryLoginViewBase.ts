@@ -1,6 +1,6 @@
-import { Vue, Component, Watch } from "vue-property-decorator";
+import { Vue, Watch } from "vue-property-decorator";
 
-export default abstract class HistoryLoginViewBase<TData extends DataBase, TValidationResult extends ValidationResultBase> extends Vue {
+export abstract class HistoryLoginViewBase<TData, TValidationResult extends ValidationResultBase> extends Vue {
     protected shouldValidateEmptyFields: boolean = false;
     protected data: TData;
 
@@ -26,10 +26,6 @@ export default abstract class HistoryLoginViewBase<TData extends DataBase, TVali
         const validationResult = this.createEmptyValidationResult();
 
         if (this.shouldValidateEmptyFields) {
-            if (!this.data.email) {
-                validationResult.email = "Email must not be empty.";
-            }
-
             this.validateEmptyFields(validationResult);
         }
 
@@ -57,12 +53,6 @@ export default abstract class HistoryLoginViewBase<TData extends DataBase, TVali
     protected abstract confirmAction(): void;
 }
 
-export interface DataBase {
-    email: string;
-}
-
 export class ValidationResultBase {
     [key: string]: string | null;
-
-    public email: string | null = null;
 }

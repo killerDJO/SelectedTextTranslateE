@@ -12,6 +12,8 @@ import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyReset
 import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
 import { PasswordResetResponse } from "common/dto/history/account/PasswordResetResponse";
 import { AuthResponse } from "common/dto/history/account/AuthResponse";
+import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
+import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
 
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
 import { Logger } from "infrastructure/Logger";
@@ -38,46 +40,44 @@ export class AccountHandler {
     }
 
     public signInUser(signRequest: SignRequest): Observable<SignInResponse> {
-        this.logger.info(`Sign in to account ${signRequest.email}.`);
-        return this.messageBus.sendValue<SignRequest, SignInResponse>(Messages.HistorySync.SignIn, signRequest).pipe(
-            tap(response => this.trySaveUserCredentials(signRequest, response)),
-            tap(response => this.logUnsuccessfulResponse(response))
+        return this.executeAuthAction(signRequest, Messages.HistorySync.SignIn, `Sign in to account ${signRequest.email}.`).pipe(
+            tap(response => this.trySaveUserCredentials(signRequest, response))
         );
     }
 
     public signUpUser(signRequest: SignRequest): Observable<SignUpResponse> {
-        this.logger.info(`Sign up to account ${signRequest.email}.`);
-        return this.messageBus.sendValue<SignRequest, SignUpResponse>(Messages.HistorySync.SignUp, signRequest).pipe(
-            tap(response => this.logUnsuccessfulResponse(response)),
+        return this.executeAuthAction(signRequest, Messages.HistorySync.SignUp, `Sign up to account ${signRequest.email}.`).pipe(
             concatMap(response => response.isSuccessful ? this.signInUser(signRequest).pipe(map(_ => response)) : of(response))
         );
     }
 
     public sendPasswordResetToken(email: string): Observable<SendResetTokenResponse> {
-        this.logger.info(`Sending reset email to account ${email}.`);
-        return this.messageBus.sendValue<string, SendResetTokenResponse>(Messages.HistorySync.SendPasswordResetToken, email).pipe(
-            tap(response => this.logUnsuccessfulResponse(response))
-        );
+        return this.executeAuthAction(email, Messages.HistorySync.SendPasswordResetToken, `Sending reset email to account ${email}.`);
     }
 
     public verifyPasswordResetToken(token: string): Observable<VerifyResetTokenResponse> {
-        this.logger.info("Verifying password reset token.");
-        return this.messageBus.sendValue<string, VerifyResetTokenResponse>(Messages.HistorySync.VerifyPasswordResetToken, token).pipe(
-            tap(response => this.logUnsuccessfulResponse(response))
-        );
+        return this.executeAuthAction(token, Messages.HistorySync.VerifyPasswordResetToken, "Verifying password reset token.");
     }
 
     public resetPassword(resetPasswordRequest: PasswordResetRequest): Observable<PasswordResetResponse> {
-        this.logger.info("Resetting password.");
-        return this.messageBus.sendValue<PasswordResetRequest, PasswordResetResponse>(Messages.HistorySync.ResetPassword, resetPasswordRequest).pipe(
-            tap(response => this.logUnsuccessfulResponse(response))
-        );
+        return this.executeAuthAction(resetPasswordRequest, Messages.HistorySync.ResetPassword, "Resetting password.");
+    }
+
+    public changePassword(changePasswordRequest: PasswordChangeRequest): Observable<PasswordChangeResponse> {
+        return this.executeAuthAction(changePasswordRequest, Messages.HistorySync.ChangePassword, "Changing password.");
     }
 
     public signOutUser(): Observable<void> {
-        this.logger.info("Sign out from account");
+        this.logger.info("Sign out from account.");
         return this.messageBus.sendNotification(Messages.HistorySync.SignOut).pipe(
             concatMap(() => this.userStore.clearCurrentUser().pipe(map(() => undefined)))
+        );
+    }
+
+    private executeAuthAction<TRequest, TResponse extends AuthResponse<any>>(request: TRequest, message: string, logMessage: string): Observable<TResponse> {
+        this.logger.info(logMessage);
+        return this.messageBus.sendValue<TRequest, TResponse>(message, request).pipe(
+            tap(response => this.logUnsuccessfulResponse(response))
         );
     }
 
@@ -89,7 +89,7 @@ export class AccountHandler {
 
     private logUnsuccessfulResponse(signResponse: AuthResponse<any>): void {
         if (!signResponse.isSuccessful) {
-            this.logger.info(`Authorization error. ${signResponse.validationCode}`);
+            this.logger.info(`Authorization error: ${signResponse.validationCode}.`);
         }
     }
 

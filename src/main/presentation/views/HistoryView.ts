@@ -14,6 +14,8 @@ import { PasswordResetResponse } from "common/dto/history/account/PasswordResetR
 import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
 import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
 import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
+import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
+import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
 
 import { mapSubject } from "utils/map-subject";
 
@@ -69,6 +71,10 @@ export class HistoryView extends TranslateResultView {
 
     public handlePasswordReset(handler: (passwordResetRequest: PasswordResetRequest) => Observable<PasswordResetResponse>): void {
         this.messageBus.handleCommand<PasswordResetRequest, PasswordResetResponse>(Messages.History.ResetPassword, handler);
+    }
+
+    public handlePasswordChange(handler: (passwordChangeRequest: PasswordChangeRequest) => Observable<PasswordChangeResponse>): void {
+        this.messageBus.handleCommand<PasswordChangeRequest, PasswordChangeResponse>(Messages.History.ChangePassword, handler);
     }
 
     public subscribeToHistoryUpdate(historyUpdate$: Observable<HistoryRecord>): void {

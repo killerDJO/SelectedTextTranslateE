@@ -7,22 +7,32 @@ import { PasswordResetResponse } from "common/dto/history/account/PasswordResetR
 import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
 import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
 import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
+import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
+import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
 
 import SignIn from "./sign-in/SignIn.vue";
 import SignUp from "./sign-up/SignUp.vue";
 import ResetPassword from "./reset-password/ResetPassword.vue";
+import ChangePassword from "./change-password/ChangePassword.vue";
 
 export enum Tabs {
     SignIn = "SignIn",
     SignUp = "SignUp",
-    RestorePassword = "RestorePassword"
+    RestorePassword = "RestorePassword",
+    ChangePassword = "ChangePassword"
+}
+
+export enum States {
+    SignedOut = "signed-out",
+    SignedIn = "signed-in"
 }
 
 @Component({
     components: {
         SignIn,
         SignUp,
-        ResetPassword
+        ResetPassword,
+        ChangePassword
     }
 })
 export default class HistoryLogin extends Vue {
@@ -39,6 +49,9 @@ export default class HistoryLogin extends Vue {
     })
     public initialTab!: Tabs;
 
+    @Prop(String)
+    public state!: States;
+
     @Prop(Object)
     public signInResponse!: SignInResponse | null;
 
@@ -53,6 +66,9 @@ export default class HistoryLogin extends Vue {
 
     @Prop(Object)
     public verifyResetTokenResponse!: VerifyResetTokenResponse | null;
+
+    @Prop(Object)
+    public passwordChangeResponse!: PasswordChangeResponse | null;
 
     public currentTab: Tabs = Tabs.SignIn;
     public Tabs: typeof Tabs = Tabs;
@@ -82,6 +98,17 @@ export default class HistoryLogin extends Vue {
         return this.currentTab === tab ? "active" : "";
     }
 
+    public isTabVisible(tab: Tabs): boolean {
+        const tabToStateMap = {
+            [Tabs.SignIn]: States.SignedOut,
+            [Tabs.SignUp]: States.SignedOut,
+            [Tabs.RestorePassword]: States.SignedOut,
+            [Tabs.ChangePassword]: States.SignedIn
+        };
+
+        return tabToStateMap[tab] === this.state;
+    }
+
     public signIn(signInData: SignRequest): void {
         this.$emit("sign-in", signInData);
     }
@@ -100,6 +127,10 @@ export default class HistoryLogin extends Vue {
 
     public resetPassword(request: PasswordResetRequest): void {
         this.$emit("reset-password", request);
+    }
+
+    public changePassword(request: PasswordChangeRequest): void {
+        this.$emit("change-password", request);
     }
 
     public showRestorePassword(): void {

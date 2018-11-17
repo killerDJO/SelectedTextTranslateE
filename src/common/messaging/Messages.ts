@@ -48,6 +48,7 @@ export class Messages {
         public static readonly SendPasswordResetToken = "history-send-password-reset-token";
         public static readonly VerifyPasswordResetToken = "history-verify-password-reset-token";
         public static readonly ResetPassword = "history-reset-password";
+        public static readonly ChangePassword = "history-change-password";
         public static readonly SyncOneTime = "history-one-time";
         public static readonly SyncOneTimeForced = "history-one-time-forced";
         public static readonly ShowHistorySettings = "show-history-settings";
@@ -76,6 +77,7 @@ export class Messages {
         public static readonly SendPasswordResetToken = "send-password-reset-token";
         public static readonly VerifyPasswordResetToken = "verify-password-reset-token";
         public static readonly ResetPassword = "reset-password";
+        public static readonly ChangePassword = "change-password";
     };
 
     public static Settings = class {

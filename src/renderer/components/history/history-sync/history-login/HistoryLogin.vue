@@ -3,9 +3,10 @@
     <span slot="header">Sing In to sync history accross devices</span>
     <div slot="body">
       <div class="login-tabs">
-        <span class="login-tab" :class="getTabClass(Tabs.SignIn)" @click="setCurrentTab(Tabs.SignIn)">Sign In</span>
-        <span class="login-tab" :class="getTabClass(Tabs.SignUp)" @click="setCurrentTab(Tabs.SignUp)">Sign Up</span>
+        <span class="login-tab" :class="getTabClass(Tabs.SignIn)" @click="setCurrentTab(Tabs.SignIn)" v-if="isTabVisible(Tabs.SignIn)">Sign In</span>
+        <span class="login-tab" :class="getTabClass(Tabs.SignUp)" @click="setCurrentTab(Tabs.SignUp)" v-if="isTabVisible(Tabs.SignUp)">Sign Up</span>
         <span class="login-tab" :class="getTabClass(Tabs.RestorePassword)" @click="setCurrentTab(Tabs.RestorePassword)" v-if="currentTab === Tabs.RestorePassword">Reset Password</span>
+        <span class="login-tab" :class="getTabClass(Tabs.ChangePassword)" @click="setCurrentTab(Tabs.ChangePassword)" v-if="isTabVisible(Tabs.ChangePassword)">Change Password</span>
       </div>
       <div class="login-contents">
         <div class="login-content" :class="getTabClass(Tabs.SignIn)">
@@ -23,7 +24,7 @@
             @reset-responses="resetResponses"
             :sign-up-response="signUpResponse" />
         </div>
-        <div class="login-content" :class="getTabClass(Tabs.RestorePassword)" @close="close">
+        <div class="login-content" :class="getTabClass(Tabs.RestorePassword)">
           <reset-password
             @close="close"
             @send-password-reset-token="sendPasswordResetToken"
@@ -33,6 +34,13 @@
             :send-reset-token-response="sendResetTokenResponse"
             :verify-reset-token-response="verifyResetTokenResponse"
             :password-reset-response="passwordResetResponse"/>
+        </div>
+        <div class="login-content" :class="getTabClass(Tabs.ChangePassword)">
+          <change-password
+            @close="close"
+            @change-password="changePassword"
+            @reset-responses="resetResponses"
+            :password-change-response="passwordChangeResponse"/>
         </div>
       </div>
       <div class="login-loading-overlay" v-show="isLoginActionInProgress" />

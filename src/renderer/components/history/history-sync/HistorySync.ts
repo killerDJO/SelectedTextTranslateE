@@ -10,14 +10,11 @@ import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRe
 import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
 import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 import { AuthResponse } from "common/dto/history/account/AuthResponse";
+import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
+import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
 
-import HistoryLogin from "./history-login/HistoryLogin.vue";
-
-export enum Tabs {
-    SignIn = "SignIn",
-    SignUp = "SignUp",
-    RestorePassword = "RestorePassword"
-}
+import HistoryLogin from "components/history/history-sync/history-login/HistoryLogin.vue";
+import { States, Tabs } from "components/history/history-sync/history-login/HistoryLogin";
 
 const ns = namespace("app/history/sync");
 
@@ -33,6 +30,7 @@ export default class HistorySync extends Vue {
     @ns.State public sendResetTokenResponse!: PasswordResetResponse | null;
     @ns.State public verifyResetTokenResponse!: VerifyResetTokenResponse | null;
     @ns.State public passwordResetResponse!: SendResetTokenResponse | null;
+    @ns.State public passwordChangeResponse!: PasswordChangeResponse | null;
 
     @ns.Action public readonly setup!: () => void;
     @ns.Action public readonly resetResponses!: () => void;
@@ -41,6 +39,7 @@ export default class HistorySync extends Vue {
     @ns.Action public readonly sendPasswordResetToken!: (email: string) => void;
     @ns.Action public readonly verifyPasswordResetToken!: (token: string) => void;
     @ns.Action public readonly resetPassword!: (request: PasswordResetRequest) => void;
+    @ns.Action public readonly changePassword!: (request: PasswordChangeRequest) => void;
     @ns.Action public readonly signOut!: () => void;
     @ns.Action public readonly showHistorySettings!: () => void;
     @ns.Action public readonly syncOneTime!: () => void;
@@ -57,6 +56,10 @@ export default class HistorySync extends Vue {
 
     public mounted() {
         this.setup();
+    }
+
+    public get loginState(): States {
+        return this.currentUser !== null ? States.SignedIn : States.SignedOut;
     }
 
     public signIn$(signRequest: SignRequest): void {
@@ -79,6 +82,10 @@ export default class HistorySync extends Vue {
         this.runHistoryAction(() => this.resetPassword(request));
     }
 
+    public changePassword$(request: PasswordChangeRequest): void {
+        this.runHistoryAction(() => this.changePassword(request));
+    }
+
     @Watch("sendResetTokenResponse")
     @Watch("verifyResetTokenResponse")
     public onResponseSet(newResponse: AuthResponse<any> | null) {
@@ -88,23 +95,31 @@ export default class HistorySync extends Vue {
     @Watch("signInResponse")
     @Watch("signUpResponse")
     @Watch("passwordResetResponse")
+    @Watch("passwordChangeResponse")
     public onFinalResponseSet(newResponse: AuthResponse<any> | null) {
         this.stopAction(newResponse);
         this.closeModalOnSuccess(newResponse);
     }
 
     public showSignIn(): void {
-        this.showLoginDialog = true;
-        this.currentDialogTab = Tabs.SignIn;
+        this.showLoginTab(Tabs.SignIn);
     }
 
     public showSignUp(): void {
-        this.showLoginDialog = true;
-        this.currentDialogTab = Tabs.SignUp;
+        this.showLoginTab(Tabs.SignUp);
+    }
+
+    public showChangePassword(): void {
+        this.showLoginTab(Tabs.ChangePassword);
     }
 
     public openSettings(): void {
         this.showHistorySettings();
+    }
+
+    private showLoginTab(tab: Tabs): void {
+        this.showLoginDialog = true;
+        this.currentDialogTab = tab;
     }
 
     private runHistoryAction(action: () => void) {

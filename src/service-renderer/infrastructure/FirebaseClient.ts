@@ -8,6 +8,7 @@ import { SignUpResponse, SignUpResponseValidationCode } from "common/dto/history
 import { SendResetTokenResponse, SendResetTokenResponseValidationCode } from "common/dto/history/account/SendResetTokenResponse";
 import { PasswordResetResponse, PasswordResetResponseValidationCode } from "common/dto/history/account/PasswordResetResponse";
 import { VerifyResetTokenResponse, VerifyResetTokenResponseValidationCode } from "common/dto/history/account/VerifyResetTokenResponse";
+import { PasswordChangeResponse, PasswordChangeResponseValidationCode } from "common/dto/history/account/PasswordChangeResponse";
 import { AuthResponse } from "common/dto/history/account/AuthResponse";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 
@@ -52,6 +53,27 @@ export class FirebaseClient {
 
     public confirmPasswordReset(token: string, password: string): Promise<PasswordResetResponse> {
         return this.handleAuthResponse<PasswordResetResponseValidationCode>(firebase.auth().confirmPasswordReset(token, password), this.mapPasswordResetValidationCodes);
+    }
+
+    public async changePassword(oldPassword: string, newPassword: string): Promise<PasswordChangeResponse> {
+        const currentUser = this.getCurrentUser();
+
+        const credentials = firebase.auth.EmailAuthProvider.credential(currentUser.email as string, oldPassword);
+        try {
+            await currentUser.reauthenticateAndRetrieveDataWithCredential(credentials);
+        } catch (error) {
+
+            if (error.code === "auth/wrong-password") {
+                return {
+                    isSuccessful: false,
+                    validationCode: PasswordChangeResponseValidationCode.WrongPassword
+                };
+            }
+
+            throw new Error("Unable to change password because current user is not found");
+        }
+
+        return this.handleAuthResponse<PasswordChangeResponseValidationCode>(currentUser.updatePassword(newPassword), this.mapPasswordChangeValidationCodes);
     }
 
     public getAccountInfo(): AccountInfo | null {
@@ -123,6 +145,14 @@ export class FirebaseClient {
             "auth/expired-action-code": PasswordResetResponseValidationCode.ExpiredActionCode,
             "auth/invalid-action-code": PasswordResetResponseValidationCode.InvalidActionCode,
             "auth/weak-password": PasswordResetResponseValidationCode.WeakPassword
+        };
+
+        return responsesMap[code];
+    }
+
+    private mapPasswordChangeValidationCodes(code: string): PasswordChangeResponseValidationCode {
+        const responsesMap: { [key: string]: PasswordChangeResponseValidationCode } = {
+            "auth/weak-password": PasswordChangeResponseValidationCode.WeakPassword
         };
 
         return responsesMap[code];

@@ -15,6 +15,8 @@ import { PasswordResetResponse } from "common/dto/history/account/PasswordResetR
 import { PasswordResetRequest } from "common/dto/history/account/PasswordResetRequest";
 import { SendResetTokenResponse } from "common/dto/history/account/SendResetTokenResponse";
 import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
+import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
+import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
 
 import { FirebaseClient } from "infrastructure/FirebaseClient";
 import { Logger } from "infrastructure/Logger";
@@ -65,6 +67,10 @@ export class HistorySyncService {
 
         this.messageBus.observeValue<string, VerifyResetTokenResponse>(Messages.HistorySync.VerifyPasswordResetToken, async token => {
             return this.firebaseClient.verifyPasswordResetToken(token);
+        });
+
+        this.messageBus.observeValue<PasswordChangeRequest, PasswordChangeResponse>(Messages.HistorySync.ChangePassword, async passwordChangeRequest => {
+            return this.firebaseClient.changePassword(passwordChangeRequest.oldPassword, passwordChangeRequest.newPassword);
         });
 
         this.messageBus.observeNotification(Messages.HistorySync.SignOut, async () => {
@@ -185,7 +191,7 @@ export class HistorySyncService {
             return;
         }
 
-        if (await this.writeRecord(historyRecord)) {
+        if (!(await this.writeRecord(historyRecord))) {
             this.logger.info("Failed to sync individual record. Falling back to a full sync.");
             await this.syncAllRecords(false);
         }
@@ -225,6 +231,10 @@ export class HistorySyncService {
 
     private async writeRecord(record: HistoryRecord): Promise<boolean> {
         this.logger.info(`Write record with id ${record.id} to the server.`);
+
+        if (!this.canSync()) {
+            return false;
+        }
 
         const sanitizedRecord = {
             id: record.id,
@@ -280,13 +290,13 @@ export class HistorySyncService {
         } catch (error) {
             if (error instanceof OutOfSyncError) {
                 this.logger.warning("Failed to write record. Records are out of sync.");
-                return true;
+                return false;
             }
 
             this.logger.error("Error writing record", error);
         }
 
-        return false;
+        return true;
     }
 
     private async waitForSyncToFinish(): Promise<void> {
