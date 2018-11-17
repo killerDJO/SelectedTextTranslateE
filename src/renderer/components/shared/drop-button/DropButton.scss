@@ -39,13 +39,13 @@
         border: $border-width solid $color-border;
         background-color: $color-white;
 
-        &[x-placement='bottom-end']{
+        &[x-placement^='bottom']{
             border-bottom-left-radius: $border-radius;
             border-bottom-right-radius: $border-radius;
             margin-top: -$border-width;
         }
 
-        &[x-placement='top-end']{
+        &[x-placement^='top']{
             border-top-left-radius: $border-radius;
             border-top-right-radius: $border-radius;
             margin-bottom: -$border-width;

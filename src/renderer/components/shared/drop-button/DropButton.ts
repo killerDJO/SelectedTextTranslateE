@@ -29,11 +29,24 @@ export default class DropButton extends Vue {
 
     public openDrop(): void {
         this.drop = new Popper(this.$refs.dropTarget as Element, this.$refs.dropContent as Element, {
-            placement: "bottom-end",
+            placement: "bottom",
             positionFixed: false,
             modifiers: {
                 computeStyle: {
                     gpuAcceleration: false
+                },
+                shift: {
+                    fn(data, options) {
+                        if (data.placement === "bottom") {
+                            data.placement = data.offsets.popper.width > data.offsets.reference.width ? "bottom-start" : "bottom-end";
+                        }
+
+                        if (!!Popper.Defaults.modifiers && !!Popper.Defaults.modifiers.shift && Popper.Defaults.modifiers.shift.fn) {
+                            return Popper.Defaults.modifiers.shift.fn(data, options);
+                        }
+
+                        return data;
+                    }
                 },
                 preventOverflow: {
                     boundariesElement: document.querySelector(".view") as Element
