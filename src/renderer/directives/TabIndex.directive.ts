@@ -18,7 +18,8 @@ export class AutoFocus implements DirectiveOptions {
     }
 
     private handleKeyDown(event: KeyboardEvent) {
-        if (event.key === "Enter" || event.key === " ") {
+        const isInputElement = event.target !== null && event.target instanceof HTMLInputElement;
+        if (event.key === "Enter" || (!isInputElement && event.key === " ")) {
             if (event.target instanceof HTMLElement) {
                 event.target.click();
                 event.preventDefault();

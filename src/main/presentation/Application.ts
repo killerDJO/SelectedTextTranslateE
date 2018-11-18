@@ -20,6 +20,8 @@ import { TextPlayer } from "business-logic/translation/TextPlayer";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { HistorySyncService } from "business-logic/history/sync/HistorySyncService";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { AccountHandler } from "business-logic/history/sync/AccountHandler";
+import { TagsEngine } from "business-logic/history/TagsEngine";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -31,7 +33,6 @@ import { HistoryView } from "presentation/views/HistoryView";
 import { SettingsView } from "presentation/views/SettingsView";
 import { Scaler } from "presentation/framework/scaling/Scaler";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
-import { AccountHandler } from "business-logic/history/sync/AccountHandler";
 
 @injectable()
 export class Application {
@@ -52,7 +53,8 @@ export class Application {
         private readonly searchExecutor: SearchExecutor,
         private readonly startupHandler: StartupHandler,
         private readonly historySyncService: HistorySyncService,
-        private readonly accountHandler: AccountHandler) {
+        private readonly accountHandler: AccountHandler,
+        private readonly tagsEngine: TagsEngine) {
 
         this.createTaskbar();
         this.setupHotkeys();
@@ -91,6 +93,9 @@ export class Application {
         historyView.syncOneTime$.subscribe(() => this.historySyncService.startSingleSync(false));
         historyView.syncOneTimeForced$.subscribe(() => this.historySyncService.startSingleSync(true));
         historyView.showHistorySettings$.subscribe(() => this.settingsView.showSettingsGroup(SettingsGroup.History));
+
+        historyView.updateCurrentTags$.subscribe(tags => this.tagsEngine.updateCurrentTags(tags));
+        historyView.setTagSettings(this.tagsEngine.getEditableTagSettings());
 
         this.setupTranslateResultView(historyView, true);
     }

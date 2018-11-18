@@ -35,6 +35,7 @@ import { AccountHandler } from "business-logic/history/sync/AccountHandler";
 import { HistoryMigrator } from "business-logic/history/persistence/HistoryMigrator";
 import { HistoryBackuper } from "business-logic/history/persistence/HistoryBackuper";
 import { HistoryStore } from "business-logic/history/HistoryStore";
+import { TagsEngine } from "business-logic/history/TagsEngine";
 
 import { AddUniqueIdConstraint } from "business-logic/history/persistence/migrations/1_AddUniqueIdConstraint";
 import { AddIdentifierMigration } from "business-logic/history/persistence/migrations/2_AddIdentifierMigration";
@@ -110,6 +111,8 @@ class Binder {
         this.container.bind<HistoryMigration>(HistoryMigration).to(AddIdentifierMigration);
         this.container.bind<HistoryMigration>(HistoryMigration).to(RemoveDuplicatedRecordsMigration);
         this.container.bind<HistoryMigration>(HistoryMigration).to(AddUniqueIdConstraint);
+
+        this.container.bind<TagsEngine>(TagsEngine).toSelf();
     }
 
     private bindTranslationEngine(): void {

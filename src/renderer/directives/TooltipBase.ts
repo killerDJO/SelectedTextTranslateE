@@ -1,29 +1,25 @@
 import Tooltip from "tooltip.js";
 import { DirectiveOptions, VNodeDirective } from "vue";
 
+import { DirectivesBase } from "directives/DirectivesBase";
+
 interface TooltipData {
     tooltip: Tooltip;
     binding: VNodeDirective;
 }
 
-interface Callback {
-    readonly event: string;
-    listener(): void;
-}
-
-export abstract class TooltipBase implements DirectiveOptions {
+export abstract class TooltipBase extends DirectivesBase implements DirectiveOptions {
 
     private readonly tooltipsMap: Map<HTMLElement, TooltipData> = new Map();
-    private readonly callbacksMap: Map<HTMLElement, Callback[]> = new Map();
 
     public bind(element: HTMLElement, binding: VNodeDirective): void {
         this.createTooltip(element, binding);
     }
 
     public unbind(element: HTMLElement): void {
+        super.unbind(element);
+
         const tooltipData = this.getTooltipData(element);
-        const callbacks = this.callbacksMap.get(element) || [];
-        callbacks.forEach(callback => element.removeEventListener(callback.event, callback.listener));
         if (tooltipData !== null) {
             this.destroyTooltip(element, tooltipData);
         }
@@ -82,13 +78,6 @@ export abstract class TooltipBase implements DirectiveOptions {
 
     protected getTooltipData(element: HTMLElement): TooltipData | null {
         return this.tooltipsMap.get(element) || null;
-    }
-
-    protected registerCallback(element: HTMLElement, event: string, callback: () => void): void {
-        const callbacks: Callback[] = this.callbacksMap.get(element) || [];
-        callbacks.push({ event, listener: callback });
-        element.addEventListener(event, callback);
-        this.callbacksMap.set(element, callbacks);
     }
 
     private createTooltip(element: HTMLElement, binding: VNodeDirective) {

@@ -16,6 +16,7 @@ import { SendResetTokenResponse } from "common/dto/history/account/SendResetToke
 import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
 import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
+import { EditableTagsSettings } from "common/dto/settings/editable-settings/EditableTagsSettings";
 
 import { mapSubject } from "utils/map-subject";
 
@@ -26,6 +27,7 @@ export class HistoryView extends TranslateResultView {
 
     public readonly historyRecordsRequest$!: Observable<HistoryRecordsRequest>;
     public readonly archiveRecord$: Observable<ArchiveRequest>;
+    public readonly updateCurrentTags$: Observable<ReadonlyArray<string>>;
 
     public readonly signOut$: Observable<void>;
     public readonly showHistorySettings$: Observable<void>;
@@ -47,10 +49,15 @@ export class HistoryView extends TranslateResultView {
         this.showHistorySettings$ = this.messageBus.observeCommand<void>(Messages.History.ShowHistorySettings);
         this.syncOneTime$ = this.messageBus.observeCommand<void>(Messages.History.SyncOneTime);
         this.syncOneTimeForced$ = this.messageBus.observeCommand<void>(Messages.History.SyncOneTimeForced);
+        this.updateCurrentTags$ = this.messageBus.observeCommand<ReadonlyArray<string>>(Messages.History.UpdateCurrentTags);
     }
 
     public setHistoryRecords(historyRecords: HistoryRecordsResponse): void {
         this.messageBus.sendValue(Messages.History.HistoryRecords, historyRecords);
+    }
+
+    public setTagSettings(tagSettings: Observable<EditableTagsSettings>): void {
+        this.registerSubscription(this.messageBus.registerObservable<EditableTagsSettings>(Messages.History.TagsSettings, tagSettings).subscription);
     }
 
     public handleSignIn(handler: (signRequest: SignRequest) => Observable<SignInResponse>): void {

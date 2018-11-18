@@ -160,5 +160,8 @@
         "authDomain": "stte-cad70.firebaseapp.com",
         "projectId": "stte-cad70",
         "firestoreBaseUrl": "https://firestore.googleapis.com/v1beta1"
+    },
+    "tags": {
+        "currentTags": []
     }
 }

@@ -1,19 +1,20 @@
 import { DirectiveOptions } from "vue";
 
 import Directive from "decorators/VueDirective";
+import { DirectivesBase } from "directives/DirectivesBase";
 
 @Directive("tab-guard")
-export class TabGuard implements DirectiveOptions {
+export class TabGuard extends DirectivesBase implements DirectiveOptions {
     public bind(element: HTMLElement): void {
         element.tabIndex = 0;
-        element.addEventListener("focus", event => this.handleFocus(event));
+        this.registerCallback(element, "focus", event => this.handleFocus(event));
     }
 
     public unbind(element: HTMLElement): void {
-        element.removeEventListener("focus", event => this.handleFocus(event));
+        super.unbind(element);
     }
 
-    private handleFocus(event: Event) {
+    private handleFocus(event: Event): void {
         if (!(event.target instanceof HTMLElement)) {
             return;
         }

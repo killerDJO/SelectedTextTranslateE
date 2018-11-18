@@ -1,5 +1,5 @@
 <template>
-  <div class="drop-wrapper" ref="dropTarget" @focusout="handleFocusOut">
+  <div class="drop-wrapper" ref="dropTarget" v-focus-lost="closeDrop">
     <span v-tab-index="tabIndex" @click.stop.prevent="click" class="drop-button-wrapper">
       <div class="drop-button" @click.stop.prevent="click" tabindex="-1">{{text}}</div>
     </span>

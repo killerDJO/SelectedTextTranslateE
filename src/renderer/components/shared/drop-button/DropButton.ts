@@ -75,20 +75,4 @@ export default class DropButton extends Vue {
     public beforeDestroy(): void {
         this.closeDrop();
     }
-
-    public handleFocusOut(event: FocusEvent): void {
-        let isFocusLost = true;
-        let element: Element | null = event.relatedTarget as Element;
-        while (element !== null) {
-            if (this.$refs.dropTarget === element) {
-                isFocusLost = false;
-                break;
-            }
-            element = element.parentElement;
-        }
-
-        if (isFocusLost) {
-            this.closeDrop();
-        }
-    }
 }

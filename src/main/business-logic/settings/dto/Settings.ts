@@ -15,6 +15,7 @@ export interface Settings {
     readonly language: LanguageSettings;
     readonly search: SearchSettings;
     readonly firebase: FirebaseSettings;
+    readonly tags: TagSettings;
 }
 
 export interface HotkeySettings {
@@ -86,4 +87,8 @@ export interface UpdateSettings {
 
 export interface SearchSettings {
     readonly searchPattern: string;
+}
+
+export interface TagSettings {
+    readonly currentTags: ReadonlyArray<string>;
 }

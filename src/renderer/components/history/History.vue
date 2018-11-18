@@ -2,7 +2,9 @@
   <div class="history clearfix">
     <div class="grid-holder" :class="{'translation-visible': isTranslationVisible}">
       <div class="results-header clearfix">
-        <p class="title">Translation History</p>
+        <div class="tags" v-if="!!tagsSettings">
+          <span class="tags-label">Active Tags:</span> <tags-editor :tags-settings="tagsSettings" @update-tags="updateCurrentTags"/>
+        </div>
         <div>
           <checkbox v-model="showLanguages" :label="'Show Languages'" :left-to-right="true" />
           <checkbox v-model="includeArchived$" :label="'Show Archived'" :left-to-right="true" />

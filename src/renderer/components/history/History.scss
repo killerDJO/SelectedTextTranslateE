@@ -2,14 +2,6 @@
 .history {
     padding: $padding-small $padding-large 0 $padding-large;
 
-    .title {
-        $select-height: 25px;
-        line-height: $select-height;
-        font-size: $font-large;
-        font-weight: bold;
-        display: inline;
-    }
-
     .grid-holder {
         display: grid;
         grid-column-gap: $padding-large;
@@ -27,9 +19,15 @@
             align-items: center;
             grid-template-columns: 1fr auto;
 
-            .title {
-                text-align: left;
+            .tags {
                 grid-column: 1;
+                display: inline-flex;
+                align-items: center;
+
+                .tags-label {
+                    font-weight: bold;
+                    margin-right: $margin-small;
+                }
             }
 
             .checkbox {

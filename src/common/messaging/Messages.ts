@@ -54,6 +54,9 @@ export class Messages {
         public static readonly ShowHistorySettings = "show-history-settings";
         public static readonly CurrentUser = "history-current-user";
         public static readonly SyncState = "history-sync-state";
+
+        public static readonly TagsSettings = "history-current-tags";
+        public static readonly UpdateCurrentTags = "history-update-current-tags";
     };
 
     public static HistorySync = class {

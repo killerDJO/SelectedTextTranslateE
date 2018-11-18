@@ -1,0 +1,57 @@
+$line-height: 22px;
+
+.tags-editor {
+    display: inline-flex;
+    align-items: baseline;
+}
+
+.no-tags {
+    color: $color-gray;
+    font-size: $font-medium;
+    margin-right: $margin-small;
+    line-height: $line-height;
+}
+
+.add-tag-holder,
+.confirm-add-tag-holder {
+    color: $color-gray;
+
+    &:hover {
+        color: $color-black;
+    }
+}
+
+.remove-tag-holder {
+    margin-left: 3px;
+    color: $color-gray;
+
+    &:hover {
+        color: $color-error;
+    }
+}
+
+.tag-input-wrapper {
+    align-self: center;
+
+    .confirm-add-tag-holder {
+        margin-left: $margin-small;
+    }
+
+    .tag-input {
+        height: $line-height;
+        align-self: center;
+        border-radius: $border-radius;
+        border: $border-width solid $color-border;
+        max-width: 100%;
+        padding: 0 $padding-small;
+    }
+}
+
+.tag {
+    margin-right: $margin-small;
+    border-radius: $border-radius;
+    border: $border-width solid $color-border;
+    padding: 0 $padding-small;
+    display: inline-flex;
+    align-items: center;
+}
