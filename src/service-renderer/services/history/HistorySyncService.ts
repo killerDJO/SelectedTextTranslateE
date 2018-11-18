@@ -249,7 +249,8 @@ export class HistorySyncService {
             lastTranslatedDate: record.lastTranslatedDate,
             lastModifiedDate: record.lastModifiedDate,
             isStarred: record.isStarred,
-            isArchived: record.isArchived
+            isArchived: record.isArchived,
+            tags: record.tags
         };
         const serializedRecord = this.serializeRecord(sanitizedRecord);
 

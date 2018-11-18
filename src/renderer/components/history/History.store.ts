@@ -13,7 +13,6 @@ import { TranslateResultViews } from "common/dto/translation/TranslateResultView
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
-import { EditableTagsSettings } from "common/dto/settings/editable-settings/EditableTagsSettings";
 
 import { MessageBus } from "common/renderer/MessageBus";
 
@@ -23,7 +22,7 @@ const messageBus = new MessageBus();
 
 interface HistoryState extends TranslateResultState {
     historyRecords: ReadonlyArray<HistoryRecord>;
-    tagsSettings: EditableTagsSettings | null;
+    currentTags: ReadonlyArray<string>;
     currentUser: AccountInfo | null;
     pageNumber: number;
     pageSize: number;
@@ -43,7 +42,7 @@ export const history: Module<HistoryState, RootState> = {
     },
     state: {
         historyRecords: [],
-        tagsSettings: null,
+        currentTags: [],
         currentUser: null,
         pageNumber: 1,
         pageSize: 0,
@@ -99,8 +98,8 @@ export const history: Module<HistoryState, RootState> = {
         setCurrentUser(state: HistoryState, currentUser: AccountInfo | null): void {
             state.currentUser = currentUser;
         },
-        setTagsSettings(state: HistoryState, tagsSettings: EditableTagsSettings | null): void {
-            state.tagsSettings = tagsSettings;
+        setCurrentTags(state: HistoryState, currentTags: ReadonlyArray<string>): void {
+            state.currentTags = currentTags;
         }
     },
     actions: {
@@ -111,7 +110,7 @@ export const history: Module<HistoryState, RootState> = {
             const { commit, dispatch } = context;
             messageBus.observeValue<HistoryRecordsResponse>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
             messageBus.observeValue<AccountInfo | null>(Messages.History.CurrentUser, currentUser => commit("setCurrentUser", currentUser));
-            messageBus.observeValue<EditableTagsSettings | null>(Messages.History.TagsSettings, tagsSettings => commit("setTagsSettings", tagsSettings));
+            messageBus.observeValue<ReadonlyArray<string>>(Messages.History.CurrentTags, currentTags => commit("setCurrentTags", currentTags));
             messageBus.observeNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
         },
         requestHistoryRecords({ state }): void {

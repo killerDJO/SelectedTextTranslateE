@@ -46,6 +46,14 @@
                     color: $color-error;
                 }
             }
+
+            .title {
+                $select-height: 25px;
+                line-height: $select-height;
+                font-size: $font-large;
+                font-weight: bold;
+                display: inline;
+            }
         }
 
         .results {
@@ -62,7 +70,11 @@
 
             .word-column,
             .translation-column {
-                width: 35%;
+                width: 27%;
+            }
+
+            .tags-column {
+                width: 16%;
             }
 
             .source-language-column,

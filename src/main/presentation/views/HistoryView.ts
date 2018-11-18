@@ -16,7 +16,6 @@ import { SendResetTokenResponse } from "common/dto/history/account/SendResetToke
 import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
 import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
-import { EditableTagsSettings } from "common/dto/settings/editable-settings/EditableTagsSettings";
 
 import { mapSubject } from "utils/map-subject";
 
@@ -56,8 +55,8 @@ export class HistoryView extends TranslateResultView {
         this.messageBus.sendValue(Messages.History.HistoryRecords, historyRecords);
     }
 
-    public setTagSettings(tagSettings: Observable<EditableTagsSettings>): void {
-        this.registerSubscription(this.messageBus.registerObservable<EditableTagsSettings>(Messages.History.TagsSettings, tagSettings).subscription);
+    public setCurrentTags(tags: Observable<ReadonlyArray<string>>): void {
+        this.registerSubscription(this.messageBus.registerObservable<ReadonlyArray<string>>(Messages.History.CurrentTags, tags).subscription);
     }
 
     public handleSignIn(handler: (signRequest: SignRequest) => Observable<SignInResponse>): void {

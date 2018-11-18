@@ -10,9 +10,11 @@ import { Messages } from "common/messaging/Messages";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { StarRequest } from "common/dto/translation/StarRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
+import { UpdateTagsRequest } from "common/dto/translation/UpdateTagsRequest";
 import { Language } from "common/dto/settings/Language";
 
 import { MessageBus } from "common/renderer/MessageBus";
+import { TranslationKey } from "common/dto/translation/TranslationKey";
 
 const messageBus = new MessageBus();
 
@@ -156,13 +158,18 @@ export const translateResultActions = {
         messageBus.sendCommand<StarRequest>(
             Messages.TranslateResult.StarTranslateResult,
             {
-                sentence: request.record.sentence,
-                isForcedTranslation: request.record.isForcedTranslation,
-                sourceLanguage: request.record.sourceLanguage,
-                targetLanguage: request.record.targetLanguage,
+                ...getTranslationKey(request.record),
                 isStarred: request.isStarred
             });
-    }
+    },
+    updateTags(_: ActionContext<TranslateResultState, RootState>, request: { record: HistoryRecord; tags: ReadonlyArray<string> }): void {
+        messageBus.sendCommand<UpdateTagsRequest>(
+            Messages.TranslateResult.UpdateTags,
+            {
+                ...getTranslationKey(request.record),
+                tags: request.tags
+            });
+    },
 };
 
 function executeCommand<TRequest>(state: TranslateResultState, commandName: string, inputGetter: (historyRecord: HistoryRecord) => TRequest): void {
@@ -176,4 +183,13 @@ function executeCommand<TRequest>(state: TranslateResultState, commandName: stri
 function executeCommandWithProgress<TRequest>(state: TranslateResultState, commit: Commit, commandName: string, inputGetter: (historyRecord: HistoryRecord) => TRequest): void {
     commit("setTranslationInProgress");
     executeCommand<TRequest>(state, commandName, inputGetter);
+}
+
+function getTranslationKey(record: HistoryRecord): TranslationKey {
+    return {
+        sentence: record.sentence,
+        isForcedTranslation: record.isForcedTranslation,
+        sourceLanguage: record.sourceLanguage,
+        targetLanguage: record.targetLanguage
+    };
 }

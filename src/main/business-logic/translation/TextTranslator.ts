@@ -74,7 +74,7 @@ export class TextTranslator {
         this.logger.info(`Serving translation ${this.getLogKey(key)} from dictionary.`);
 
         if (incrementTranslationsNumber) {
-            return this.historyStore.incrementTranslationsNumber(key);
+            return this.historyStore.incrementTranslationsNumber(historyRecord);
         }
 
         return of(historyRecord);

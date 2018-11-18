@@ -1,30 +1,30 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import * as _ from "lodash";
 
-import { EditableTagsSettings } from "common/dto/settings/editable-settings/EditableTagsSettings";
-
 @Component
 export default class TagsEditor extends Vue {
     @Prop()
-    public tagsSettings!: EditableTagsSettings;
+    public tags!: ReadonlyArray<string>;
 
     public isTagInputVisible: boolean = false;
     public tagToAdd: string = "";
 
-    private currentTagSettings!: EditableTagsSettings;
+    private currentTags!: string[];
 
-    @Watch("tagsSettings", { immediate: true })
+    @Watch("tags", { immediate: true })
     public onTagsSettingsChanged(): void {
-        this.currentTagSettings = this.tagsSettings;
+        this.currentTags = (this.tags || []).slice();
+        this.currentTags.sort();
+        this.$forceUpdate();
     }
 
     public updateCurrentTags(): void {
-        this.$emit("update-tags", this.currentTagSettings.currentTags);
+        this.$emit("update-tags", this.currentTags);
         this.$forceUpdate();
     }
 
     public removeTag(tagToRemove: string): void {
-        this.currentTagSettings.currentTags = this.currentTagSettings.currentTags.filter(tag => tag !== tagToRemove);
+        this.currentTags = this.currentTags.filter(tag => tag !== tagToRemove);
         this.updateCurrentTags();
     }
 
@@ -33,8 +33,8 @@ export default class TagsEditor extends Vue {
             return;
         }
 
-        this.currentTagSettings.currentTags.push(this.tagToAdd);
-        this.currentTagSettings.currentTags = _.uniq(this.currentTagSettings.currentTags);
+        this.currentTags.push(this.tagToAdd);
+        this.currentTags = _.uniq(this.currentTags).sort();
         this.tagToAdd = "";
         this.isTagInputVisible = false;
         this.updateCurrentTags();

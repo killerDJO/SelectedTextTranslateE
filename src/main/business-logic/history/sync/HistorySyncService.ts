@@ -245,6 +245,7 @@ export class HistorySyncService {
                     translationsNumber: serverRecord.translationsNumber + (existingRecord.translationsNumber - serverTranslationsNumber),
                     isArchived: newerRecord.isArchived,
                     isStarred: newerRecord.isStarred,
+                    tags: newerRecord.tags,
                     syncData: [
                         ...filteredSyncData,
                         {

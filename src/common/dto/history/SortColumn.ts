@@ -5,5 +5,6 @@ export enum SortColumn {
     Translation = 4,
     SourceLanguage = 5,
     TargetLanguage = 6,
-    IsArchived = 7
+    IsArchived = 7,
+    Tags = 8
 }

@@ -1,14 +1,20 @@
 $line-height: 22px;
+$margin: 3px;
 
 .tags-editor {
     display: inline-flex;
     align-items: baseline;
+    flex-wrap: wrap;
+    max-width: 100%;
+    padding-right: $padding-small;
+    margin-bottom: -$margin;
 }
 
 .no-tags {
     color: $color-gray;
     font-size: $font-medium;
     margin-right: $margin-small;
+    margin-bottom: $margin;
     line-height: $line-height;
 }
 
@@ -22,7 +28,7 @@ $line-height: 22px;
 }
 
 .remove-tag-holder {
-    margin-left: 3px;
+    margin-left: $margin;
     color: $color-gray;
 
     &:hover {
@@ -32,9 +38,11 @@ $line-height: 22px;
 
 .tag-input-wrapper {
     align-self: center;
+    max-width: 100%;
+    margin-bottom: $margin;
 
     .confirm-add-tag-holder {
-        margin-left: $margin-small;
+        margin-left: $margin;
     }
 
     .tag-input {
@@ -42,8 +50,12 @@ $line-height: 22px;
         align-self: center;
         border-radius: $border-radius;
         border: $border-width solid $color-border;
-        max-width: 100%;
+        max-width: calc(100% - 20px);
         padding: 0 $padding-small;
+
+        &:focus {
+            border-color: $color-outline;
+        }
     }
 }
 
@@ -54,4 +66,7 @@ $line-height: 22px;
     padding: 0 $padding-small;
     display: inline-flex;
     align-items: center;
+    margin-bottom: $margin;
+    background-color: $color-white;
+    height: $line-height;
 }

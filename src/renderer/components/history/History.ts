@@ -8,7 +8,6 @@ import { TranslationViewRendererSettings } from "common/dto/settings/views-setti
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
-import { EditableTagsSettings } from "common/dto/settings/editable-settings/EditableTagsSettings";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
@@ -27,7 +26,7 @@ const ns = namespace("app/history");
 })
 export default class History extends Vue {
     @ns.State public historyRecords!: HistoryRecord[];
-    @ns.State public tagsSettings!: EditableTagsSettings | null;
+    @ns.State public currentTags!: ReadonlyArray<string>;
     @ns.State public currentUser!: AccountInfo | null;
     @ns.State public pageNumber!: number;
     @ns.State public pageSize!: number;
@@ -62,6 +61,7 @@ export default class History extends Vue {
     @ns.Action public readonly playText!: () => void;
     @ns.Action public readonly translateText!: (request: TranslationRequest) => void;
     @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
+    @ns.Action public readonly updateTags!: (request: { record: HistoryRecord; tags: ReadonlyArray<string> }) => void;
     @ns.Action public readonly translateSuggestion!: () => void;
     @ns.Action public readonly forceTranslation!: () => void;
     @ns.Action public readonly refreshTranslation!: () => void;
@@ -117,6 +117,10 @@ export default class History extends Vue {
 
     public get hasRecords(): boolean {
         return this.totalRecords !== 0;
+    }
+
+    public updateRecordTags(record: HistoryRecord, tags: ReadonlyArray<string>) {
+        this.updateTags({ record, tags });
     }
 
     public translateHistoryRecord(record: HistoryRecord): void {

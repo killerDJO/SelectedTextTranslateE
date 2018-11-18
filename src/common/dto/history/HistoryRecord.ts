@@ -14,6 +14,7 @@ export interface HistoryRecord {
     readonly lastModifiedDate: number;
     readonly isStarred: boolean;
     readonly isArchived: boolean;
+    readonly tags?: ReadonlyArray<string>;
 
     readonly syncData?: SyncData[];
 }

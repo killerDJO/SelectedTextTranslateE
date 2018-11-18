@@ -33,6 +33,7 @@ export class Messages {
         public static readonly TranslateCommand = "translate-command";
         public static readonly TranslationResultViewSettings = "translation-result-view-settings";
         public static readonly StarTranslateResult = "star-translate-result";
+        public static readonly UpdateTags = "update-tags";
         public static readonly Search = "search";
     };
 
@@ -55,7 +56,7 @@ export class Messages {
         public static readonly CurrentUser = "history-current-user";
         public static readonly SyncState = "history-sync-state";
 
-        public static readonly TagsSettings = "history-current-tags";
+        public static readonly CurrentTags = "history-current-tags";
         public static readonly UpdateCurrentTags = "history-update-current-tags";
     };
 

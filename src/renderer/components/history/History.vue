@@ -2,8 +2,8 @@
   <div class="history clearfix">
     <div class="grid-holder" :class="{'translation-visible': isTranslationVisible}">
       <div class="results-header clearfix">
-        <div class="tags" v-if="!!tagsSettings">
-          <span class="tags-label">Active Tags:</span> <tags-editor :tags-settings="tagsSettings" @update-tags="updateCurrentTags"/>
+        <div class="tags" v-if="!!currentTags">
+          <span class="tags-label">Active Tags:</span> <tags-editor :tags="currentTags" @update-tags="updateCurrentTags"/>
         </div>
         <div>
           <checkbox v-model="showLanguages" :label="'Show Languages'" :left-to-right="true" />
@@ -20,6 +20,7 @@
           <tr>
             <sortable-header class="word-column" :sort-column="SortColumn.Input" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Word</sortable-header>
             <sortable-header class="translation-column" :sort-column="SortColumn.Translation" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Translation</sortable-header>
+            <sortable-header class="tags-column" :sort-column="SortColumn.Tags" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Tags</sortable-header>
             <sortable-header class="times-column" :sort-column="SortColumn.TimesTranslated" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Times</sortable-header>
             <sortable-header class="source-language-column" :sort-column="SortColumn.SourceLanguage" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Source</sortable-header>
             <sortable-header class="target-language-column" :sort-column="SortColumn.TargetLanguage" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Target</sortable-header>
@@ -45,6 +46,9 @@
             <td class="translation-column" v-overflow-tooltip>
               <span v-if="!!record.translateResult.sentence.translation">{{record.translateResult.sentence.translation}}</span>
               <span v-else class="no-translation">No Translation</span>
+            </td>
+            <td class="tags-column">
+              <tags-editor :tags="record.tags" @update-tags="updateRecordTags(record, $event)"/>
             </td>
             <td class="times-column">{{record.translationsNumber !== 0 ? record.translationsNumber : "-"}}</td>
             <td class="source-language-column" v-overflow-tooltip>{{languages.get(record.sourceLanguage) || record.sourceLanguage}}</td>

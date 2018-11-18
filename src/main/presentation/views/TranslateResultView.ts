@@ -4,6 +4,7 @@ import { Messages } from "common/messaging/Messages";
 import { ViewNames } from "common/ViewNames";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { StarRequest } from "common/dto/translation/StarRequest";
+import { UpdateTagsRequest } from "common/dto/translation/UpdateTagsRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
@@ -20,6 +21,7 @@ export abstract class TranslateResultView extends ViewBase {
     public readonly search$: Observable<string>;
     public readonly translateText$: Observable<TranslationRequest>;
     public readonly starTranslateResult$: Observable<StarRequest>;
+    public readonly updateTags$: Observable<UpdateTagsRequest>;
 
     constructor(viewName: ViewNames, context: ViewContext, viewOptions: ViewOptions) {
         super(viewName, context, viewOptions);
@@ -29,6 +31,7 @@ export abstract class TranslateResultView extends ViewBase {
         this.playText$ = this.messageBus.observeCommand(Messages.TranslateResult.PlayTextCommand);
         this.translateText$ = this.messageBus.observeCommand<TranslationRequest>(Messages.TranslateResult.TranslateCommand);
         this.starTranslateResult$ = this.messageBus.observeCommand<StarRequest>(Messages.TranslateResult.StarTranslateResult);
+        this.updateTags$ = this.messageBus.observeCommand<UpdateTagsRequest>(Messages.TranslateResult.UpdateTags);
         this.search$ = this.messageBus.observeCommand<string>(Messages.TranslateResult.Search);
     }
 

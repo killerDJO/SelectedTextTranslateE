@@ -1,6 +1,7 @@
-import { Observable, Subject, of } from "rxjs";
+import { Observable, Subject } from "rxjs";
 import { tap, map, concatMap } from "rxjs/operators";
 import * as Datastore from "nedb";
+import * as _ from "lodash";
 import { injectable } from "inversify";
 
 import { TranslateResult } from "common/dto/translation/TranslateResult";
@@ -19,6 +20,7 @@ import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { HistorySettings } from "business-logic/settings/dto/Settings";
 import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
 import { RecordIdGenerator } from "business-logic/history/RecordIdGenerator";
+import { TagsEngine } from "business-logic/history/TagsEngine";
 
 @injectable()
 export class HistoryStore {
@@ -33,6 +35,7 @@ export class HistoryStore {
         private readonly settingsProvider: SettingsProvider,
         private readonly historyDatabaseProvider: HistoryDatabaseProvider,
         private readonly recordIdGenerator: RecordIdGenerator,
+        private readonly tagsEngine: TagsEngine,
         private readonly logger: Logger) {
 
         this.historySettings = this.settingsProvider.getSettings().value.history;
@@ -59,7 +62,8 @@ export class HistoryStore {
             isStarred: false,
             isArchived: false,
             ...this.getModificationFields(currentTime),
-            syncData: []
+            syncData: [],
+            tags: this.tagsEngine.getCurrentTags().value.slice()
         });
 
         return insert$.pipe(
@@ -68,11 +72,12 @@ export class HistoryStore {
         );
     }
 
-    public updateTranslateResult(translateResult: TranslateResult, key: TranslationKey, incrementTranslationsNumber: boolean): Observable<HistoryRecord> {
+    public updateTranslateResult(translateResult: TranslateResult, record: HistoryRecord, incrementTranslationsNumber: boolean): Observable<HistoryRecord> {
         const currentTime = new Date();
         const setQuery: any = {
             updatedDate: currentTime,
             translateResult: translateResult,
+            tags: this.getTags(record),
             ...this.getModificationFields(currentTime)
         };
 
@@ -82,28 +87,28 @@ export class HistoryStore {
 
         const update$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore$,
-            this.getSearchQuery(key),
+            this.getSearchQuery(record),
             {
                 $set: setQuery,
                 $inc: { translationsNumber: incrementTranslationsNumber ? 1 : 0 }
             });
 
         return update$.pipe(
-            tap(() => this.logger.info(`Translation ${this.getLogKey(key)} is updated in history.`)),
-            tap(record => this.notifyAboutUpdate(record))
+            tap(() => this.logger.info(`Translation ${this.getLogKey(record)} is updated in history.`)),
+            tap(updatedRecord => this.notifyAboutUpdate(updatedRecord))
         );
     }
 
-    public incrementTranslationsNumber(key: TranslationKey): Observable<HistoryRecord> {
+    public incrementTranslationsNumber(record: HistoryRecord): Observable<HistoryRecord> {
         const currentTime = new Date();
         const increment$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore$,
-            this.getSearchQuery(key),
-            { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime, ...this.getModificationFields(currentTime) } });
+            this.getSearchQuery(record),
+            { $inc: { translationsNumber: 1 }, $set: { lastTranslatedDate: currentTime, tags: this.getTags(record), ...this.getModificationFields(currentTime) } });
 
         return increment$.pipe(
-            tap(() => this.logger.info(`Translations number ${this.getLogKey(key)} is incremented.`)),
-            tap(record => this.notifyAboutUpdate(record))
+            tap(() => this.logger.info(`Translations number ${this.getLogKey(record)} is incremented.`)),
+            tap(updatedRecord => this.notifyAboutUpdate(updatedRecord))
         );
     }
 
@@ -123,7 +128,8 @@ export class HistoryStore {
             [SortColumn.Translation]: "translateResult.sentence.translation",
             [SortColumn.SourceLanguage]: "sourceLanguage",
             [SortColumn.TargetLanguage]: "targetLanguage",
-            [SortColumn.IsArchived]: "isArchived"
+            [SortColumn.IsArchived]: "isArchived",
+            [SortColumn.Tags]: "tags"
         };
 
         const sortQuery: any = {};
@@ -157,14 +163,22 @@ export class HistoryStore {
     }
 
     public setStarredStatus(key: TranslationKey, isStarred: boolean): Observable<HistoryRecord> {
-        return this.setStatus(key, { isStarred: isStarred }, `Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`);
+        return this.updateRecord(key, { isStarred: isStarred }, `Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`);
     }
 
     public setArchivedStatus(key: TranslationKey, isArchived: boolean): Observable<HistoryRecord> {
-        return this.setStatus(key, { isArchived: isArchived }, `Translation ${this.getLogKey(key)} has changed its archived status to ${isArchived}.`);
+        return this.updateRecord(key, { isArchived: isArchived }, `Translation ${this.getLogKey(key)} has changed its archived status to ${isArchived}.`);
     }
 
-    private setStatus(key: TranslationKey, updateQuery: any, logMessage: string): Observable<HistoryRecord> {
+    public updateTags(key: TranslationKey, tags: ReadonlyArray<string>): Observable<HistoryRecord> {
+        return this.updateRecord(key, { tags: tags }, `Translation ${this.getLogKey(key)} has changed its tags to ${tags.join(", ")}.`);
+    }
+
+    private getTags(record: HistoryRecord): ReadonlyArray<string> {
+        return _.uniq((record.tags || []).concat(this.tagsEngine.getCurrentTags().value)).sort().slice();
+    }
+
+    private updateRecord(key: TranslationKey, updateQuery: any, logMessage: string): Observable<HistoryRecord> {
         const setStatus$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore$,
             this.getSearchQuery(key),

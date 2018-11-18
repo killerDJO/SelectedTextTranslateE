@@ -95,23 +95,28 @@ export class Application {
         historyView.showHistorySettings$.subscribe(() => this.settingsView.showSettingsGroup(SettingsGroup.History));
 
         historyView.updateCurrentTags$.subscribe(tags => this.tagsEngine.updateCurrentTags(tags));
-        historyView.setTagSettings(this.tagsEngine.getEditableTagSettings());
+        historyView.setCurrentTags(this.tagsEngine.getCurrentTags());
 
         this.setupTranslateResultView(historyView, true);
     }
 
-    private setupTranslateResultView(translateResultView: TranslateResultView, skipStatistic: boolean, starCallback?: (historyRecord: HistoryRecord) => void): void {
+    private setupTranslateResultView(translateResultView: TranslateResultView, skipStatistic: boolean, updateRecordCallback?: (historyRecord: HistoryRecord) => void): void {
         translateResultView.playText$.subscribe(request => this.playText(request));
         translateResultView.translateText$.subscribe(request => this.translateText(request, skipStatistic, translateResultView));
         translateResultView.search$.subscribe(text => this.searchExecutor.search(text));
         translateResultView.starTranslateResult$
             .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest, starRequest.isStarred)))
-            .subscribe(historyRecord => {
-                translateResultView.updateTranslateResult(historyRecord);
-                if (!!starCallback) {
-                    starCallback(historyRecord);
-                }
-            });
+            .subscribe(historyRecord => this.updateRecordAfterChange(translateResultView, historyRecord, updateRecordCallback));
+        translateResultView.updateTags$
+            .pipe(concatMap(updateTagsRequest => this.historyStore.updateTags(updateTagsRequest, updateTagsRequest.tags)))
+            .subscribe(historyRecord => this.updateRecordAfterChange(translateResultView, historyRecord, updateRecordCallback));
+    }
+
+    private updateRecordAfterChange(translateResultView: TranslateResultView, historyRecord: HistoryRecord, updateRecordCallback?: (historyRecord: HistoryRecord) => void): void {
+        translateResultView.updateTranslateResult(historyRecord);
+        if (!!updateRecordCallback) {
+            updateRecordCallback(historyRecord);
+        }
     }
 
     private setupSettingsView(settingsView: SettingsView): void {
