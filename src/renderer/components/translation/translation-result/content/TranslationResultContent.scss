@@ -11,6 +11,10 @@
         margin-bottom: $margin-default;
         display: flex;
 
+        &.tags-visible {
+            margin-bottom: $margin-small;
+        }
+
         .action {
             margin-right: $margin-small;
         }
@@ -19,5 +23,9 @@
             color: $color-gray;
             font-size: $font-small;
         }
+    }
+
+    .tags {
+        margin-bottom: $margin-default;
     }
 }

@@ -76,6 +76,10 @@ export default class TranslationResult extends Vue {
         this.$emit("set-starred-status", { record: this.historyRecord, isStarred });
     }
 
+    public updateTags(tags: ReadonlyArray<string>): void {
+        this.$emit("update-tags", { record: this.historyRecord, tags });
+    }
+
     @Watch("isInProgress", { immediate: true })
     public progressStatusChanged(): void {
 

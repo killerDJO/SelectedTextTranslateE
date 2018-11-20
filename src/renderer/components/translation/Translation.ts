@@ -41,6 +41,7 @@ export default class Translation extends Vue {
     @ns.Action public readonly changeLanguage!: () => void;
     @ns.Action public readonly search!: () => void;
     @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
+    @ns.Action public readonly updateTags!: (request: { record: HistoryRecord; tags: ReadonlyArray<string> }) => void;
 
     constructor() {
         super();

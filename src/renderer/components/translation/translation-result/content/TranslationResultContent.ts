@@ -8,12 +8,14 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import TranslationResultContentCategory from "components/translation/translation-result/content/category/TranslationResultContentCategory.vue";
 import TranslationResultDefinitionCategory from "components/translation/translation-result/content/definitions/TranslationResultDefinitionCategory.vue";
 import TranslationResultStatistic from "components/translation/translation-result/content/statistic/TranslationResultStatistic.vue";
+import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
 
 @Component({
     components: {
         TranslationResultContentCategory,
         TranslationResultDefinitionCategory,
-        TranslationResultStatistic
+        TranslationResultStatistic,
+        TagsEditor
     }
 })
 export default class TranslationResultContent extends Vue {
@@ -39,6 +41,7 @@ export default class TranslationResultContent extends Vue {
     public TranslateResultViews: typeof TranslateResultViews = TranslateResultViews;
 
     public currentView: TranslateResultViews = TranslateResultViews.Translation;
+    public showTags: boolean = false;
 
     public get hasCategories(): boolean {
         return !!this.historyRecord.translateResult.categories.length;
@@ -54,6 +57,19 @@ export default class TranslationResultContent extends Vue {
 
     public get languageSuggestion(): string | null {
         return this.historyRecord.translateResult.sentence.languageSuggestion;
+    }
+
+    public get toggleTagsButtonText(): string {
+        if (this.showTags) {
+            return "Hide Tags";
+        }
+
+        const tagsNumber = (this.historyRecord.tags || []).length;
+        if (tagsNumber === 0) {
+            return "Add Tags";
+        }
+
+        return `Show ${tagsNumber} Tag${tagsNumber > 1 ? "s" : ""}`;
     }
 
     public mounted() {
@@ -92,5 +108,9 @@ export default class TranslationResultContent extends Vue {
 
     public search(): void {
         this.$emit("search");
+    }
+
+    public updateTags(tags: ReadonlyArray<string>): void {
+        this.$emit("update-tags", tags);
     }
 }

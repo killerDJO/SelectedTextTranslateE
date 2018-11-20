@@ -1,4 +1,6 @@
 $line-height: 22px;
+$compact-line-height: 16px;
+
 $margin: 3px;
 
 .tags-editor {
@@ -8,65 +10,82 @@ $margin: 3px;
     max-width: 100%;
     padding-right: $padding-small;
     margin-bottom: -$margin;
-}
 
-.no-tags {
-    color: $color-gray;
-    font-size: $font-medium;
-    margin-right: $margin-small;
-    margin-bottom: $margin;
-    line-height: $line-height;
-}
+    &.compact {
+        font-size: $font-small;
 
-.add-tag-holder,
-.confirm-add-tag-holder {
-    color: $color-gray;
+        .no-tags {
+            line-height: $compact-line-height;
+        }
 
-    &:hover {
-        color: $color-black;
-    }
-}
+        .tag {
+            height: $compact-line-height;
+            margin-right: $margin;
+            line-height: $compact-line-height;
+        }
 
-.remove-tag-holder {
-    margin-left: $margin;
-    color: $color-gray;
-
-    &:hover {
-        color: $color-error;
-    }
-}
-
-.tag-input-wrapper {
-    align-self: center;
-    max-width: 100%;
-    margin-bottom: $margin;
-
-    .confirm-add-tag-holder {
-        margin-left: $margin;
-    }
-
-    .tag-input {
-        height: $line-height;
-        align-self: center;
-        border-radius: $border-radius;
-        border: $border-width solid $color-border;
-        max-width: calc(100% - 20px);
-        padding: 0 $padding-small;
-
-        &:focus {
-            border-color: $color-outline;
+        .tag-input-wrapper .tag-input {
+            height: $compact-line-height;
         }
     }
-}
 
-.tag {
-    margin-right: $margin-small;
-    border-radius: $border-radius;
-    border: $border-width solid $color-border;
-    padding: 0 $padding-small;
-    display: inline-flex;
-    align-items: center;
-    margin-bottom: $margin;
-    background-color: $color-white;
-    height: $line-height;
+    .tag {
+        margin-right: $margin-small;
+        border-radius: $border-radius;
+        border: $border-width solid $color-border;
+        padding: 0 $padding-small;
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: $margin;
+        background-color: $color-white;
+        height: $line-height;
+    }
+
+    .no-tags {
+        color: $color-gray;
+        margin-right: $margin-small;
+        margin-bottom: $margin;
+        line-height: $line-height;
+    }
+
+    .add-tag-holder,
+    .confirm-add-tag-holder {
+        color: $color-gray;
+    
+        &:hover {
+            color: $color-black;
+        }
+    }
+    
+    .remove-tag-holder {
+        margin-left: $margin;
+        color: $color-gray;
+    
+        &:hover {
+            color: $color-error;
+        }
+    }
+    
+    .tag-input-wrapper {
+        align-self: center;
+        max-width: 100%;
+        margin-bottom: $margin;
+    
+        .confirm-add-tag-holder {
+            margin-left: $margin;
+        }
+    
+        .tag-input {
+            height: $line-height;
+            align-self: center;
+            border-radius: $border-radius;
+            border: $border-width solid $color-border;
+            max-width: calc(100% - 20px);
+            padding: 0 $padding-small;
+    
+            &:focus {
+                border-color: $color-outline;
+            }
+        }
+    }
 }

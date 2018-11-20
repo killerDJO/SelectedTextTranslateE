@@ -48,7 +48,7 @@
               <span v-else class="no-translation">No Translation</span>
             </td>
             <td class="tags-column">
-              <tags-editor :tags="record.tags" @update-tags="updateRecordTags(record, $event)"/>
+              <tags-editor :tags="record.tags" @update-tags="updateRecordTags(record, $event)" :compact-view="true"/>
             </td>
             <td class="times-column">{{record.translationsNumber !== 0 ? record.translationsNumber : "-"}}</td>
             <td class="source-language-column" v-overflow-tooltip>{{languages.get(record.sourceLanguage) || record.sourceLanguage}}</td>
@@ -87,7 +87,8 @@
               @change-language="changeLanguage"
               @play-text="playText"
               @search="search"
-              @set-starred-status="setStarredStatus"/>
+              @set-starred-status="setStarredStatus"
+              @update-tags="updateTags"/>
       </div>
       <div class="results-footer">
         <history-sync class="sync-control" :current-user="currentUser"/>

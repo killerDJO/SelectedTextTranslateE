@@ -23,7 +23,8 @@
                 @search="search"
                 @translate="translateText"
                 @change-language="changeLanguage"
-                @refresh-translation="refreshTranslation"/>
+                @refresh-translation="refreshTranslation"
+                @update-tags="updateTags"/>
         </div>
     </div>
 </template>

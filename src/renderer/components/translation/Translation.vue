@@ -15,7 +15,8 @@
             @change-language="changeLanguage"
             @play-text="playText"
             @search="search"
-            @set-starred-status="setStarredStatus"/>
+            @set-starred-status="setStarredStatus"
+            @update-tags="updateTags"/>
         <div v-else>
             <div class="no-text-data" v-if="!showInput">No text data selected</div>
             <translation-input

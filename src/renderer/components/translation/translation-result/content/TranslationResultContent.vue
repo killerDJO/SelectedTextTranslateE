@@ -1,7 +1,8 @@
 <template>
     <div class="content" :class="{'is-embedded': isEmbedded}">
-        <div class="actions">
+        <div class="actions" :class="{'tags-visible': showTags}">
             <link-button :text="'Translate from ' + languages.get(languageSuggestion)" @click="changeLanguage" class="action" v-if="hasLanguageSuggestion"/>
+            <link-button :text="toggleTagsButtonText"  class="action" @click="showTags = !showTags" />
             <link-button :text="'Show Translations'" class="action" @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories" />
             <link-button :text="'Show Definitions'"  class="action" @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions" />
             <link-button :text="'Search'" @click="search" class="action"/>
@@ -11,6 +12,9 @@
                 @click="currentView = TranslateResultViews.Statistic"
                 v-if="currentView !== TranslateResultViews.Statistic" />
             <span class="action offline-status" v-if="isOffline">Offline</span>
+        </div>
+        <div class="tags" v-if="showTags">
+          <tags-editor :tags="historyRecord.tags" @update-tags="updateTags"/>
         </div>
         <translation-result-content-category
             v-if="currentView === TranslateResultViews.Translation"

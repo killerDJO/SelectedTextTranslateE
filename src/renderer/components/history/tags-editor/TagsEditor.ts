@@ -6,6 +6,12 @@ export default class TagsEditor extends Vue {
     @Prop()
     public tags!: ReadonlyArray<string>;
 
+    @Prop({
+        type: Boolean,
+        default: false
+    })
+    public compactView!: boolean;
+
     public isTagInputVisible: boolean = false;
     public tagToAdd: string = "";
 
