@@ -214,6 +214,7 @@ export class HistorySyncService {
                         serverTimestamp: document.timestamp,
                         lastModifiedDate: serverRecord.lastModifiedDate,
                         serverTranslationsNumber: serverRecord.translationsNumber,
+                        serverTags: serverRecord.tags,
                         userEmail: accountInfo.email
                     }
                 ]
@@ -284,7 +285,8 @@ export class HistorySyncService {
                         userEmail: accountInfo.email,
                         lastModifiedDate: record.lastModifiedDate,
                         serverTimestamp: updatedTimestamp,
-                        serverTranslationsNumber: record.translationsNumber
+                        serverTranslationsNumber: record.translationsNumber,
+                        serverTags: record.tags
                     }
                 ]
             });

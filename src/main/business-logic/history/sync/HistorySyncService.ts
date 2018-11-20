@@ -233,6 +233,7 @@ export class HistorySyncService {
                 const filteredSyncData = (existingRecord.syncData || []).filter(syncData => syncData.userEmail !== currentUser.email);
 
                 const serverTranslationsNumber = !existingSyncData ? 0 : (existingSyncData.serverTranslationsNumber || 0);
+                const serverTags = !existingSyncData ? [] : (existingSyncData.serverTags || []);
 
                 const mergedRecord: HistoryRecord = {
                     ...recordKey,
@@ -245,13 +246,14 @@ export class HistorySyncService {
                     translationsNumber: serverRecord.translationsNumber + (existingRecord.translationsNumber - serverTranslationsNumber),
                     isArchived: newerRecord.isArchived,
                     isStarred: newerRecord.isStarred,
-                    tags: newerRecord.tags,
+                    tags: this.mergeTags(existingRecord.tags || [], serverTags, serverRecord.tags || []),
                     syncData: [
                         ...filteredSyncData,
                         {
                             userEmail: currentUser.email,
                             serverTimestamp: serverSyncData.serverTimestamp,
-                            serverTranslationsNumber: serverRecord.translationsNumber
+                            serverTranslationsNumber: serverRecord.translationsNumber,
+                            serverTags: serverRecord.tags
                         }
                     ]
                 };
@@ -261,6 +263,16 @@ export class HistorySyncService {
                     this.datastoreProvider.update(this.datastore$, { id: mergedRecord.id, lastModifiedDate: existingRecord.lastModifiedDate }, mergedRecord),
                     mergedRecord);
             }));
+    }
+
+    private mergeTags(currentTags: ReadonlyArray<string>, currentServerTags: ReadonlyArray<string>, serverTags: ReadonlyArray<string>): ReadonlyArray<string> {
+        const addedTags = this.getMissingTags(currentTags, currentServerTags);
+        const removedTags = this.getMissingTags(currentServerTags, currentTags);
+        return this.getMissingTags(serverTags.slice().concat(addedTags), removedTags);
+    }
+
+    private getMissingTags(baseTags: ReadonlyArray<string>, targetTags: ReadonlyArray<string>): ReadonlyArray<string> {
+        return baseTags.filter(baseTag => !targetTags.some(targetTag => targetTag === baseTag));
     }
 
     private getUserSyncData(record: HistoryRecord, userEmail: string): SyncData | undefined {

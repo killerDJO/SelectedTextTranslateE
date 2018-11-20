@@ -1,6 +1,6 @@
 <template>
   <div class="tags-editor" :class="{'compact': compactView}">
-    <span class="no-tags" v-if="currentTags.length === 0 && !isTagInputVisible">[No Tags]</span>
+    <span class="no-tags" v-if="currentTags.length === 0 && !isTagInputVisible">No Tags</span>
     <span class="tag" v-else v-for="tag in currentTags" :key="tag">
       {{tag}}
       <icon-button @click="removeTag(tag)" :title="'Remove Tag'" class="remove-tag-holder">

@@ -24,4 +24,5 @@ export interface SyncData {
     readonly serverTimestamp?: string;
     readonly lastModifiedDate?: number;
     readonly serverTranslationsNumber?: number;
+    readonly serverTags?: ReadonlyArray<string>;
 }
