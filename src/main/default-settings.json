@@ -112,16 +112,16 @@
                         "isVisible": false
                     },
                     {
+                        "column": "TimesTranslated",
+                        "isVisible": true
+                    },
+                    {
                         "column": "SourceLanguage",
                         "isVisible": false
                     },
                     {
                         "column": "TargetLanguage",
                         "isVisible": false
-                    },
-                    {
-                        "column": "TimesTranslated",
-                        "isVisible": true
                     },
                     {
                         "column": "LastTranslatedDate",

@@ -139,6 +139,11 @@ export default class History extends Vue {
         return this.totalRecords !== 0;
     }
 
+    public isColumnVisible(column: SortColumn): boolean {
+        const columnSetting = this.columnSettings.find(setting => setting.column === column);
+        return !!columnSetting && columnSetting.isChecked;
+    }
+
     public updateRecordTags(record: HistoryRecord, tags: ReadonlyArray<string>) {
         this.updateTags({ record, tags });
     }

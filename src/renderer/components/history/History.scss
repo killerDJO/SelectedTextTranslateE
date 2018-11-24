@@ -80,7 +80,8 @@
 
             .source-language-column,
             .target-language-column {
-                display: none;
+                display: table-cell;
+                width: 10%;
             }
 
             .times-column {
