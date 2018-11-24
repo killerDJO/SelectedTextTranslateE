@@ -1,4 +1,5 @@
-import { Module, ActionContext } from "vuex";
+import { Module } from "vuex";
+import * as _ from "lodash";
 
 import { RootState } from "root.store";
 import { historySync } from "./history-sync/HistorySync.store";
@@ -18,9 +19,9 @@ import { HistoryViewRendererSettings, ColumnSettings } from "common/dto/settings
 import { MessageBus } from "common/renderer/MessageBus";
 
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
-import { stat } from "fs";
 
 const messageBus = new MessageBus();
+const throttledRefresh = _.throttle(requestHistoryRecords, 100, { trailing: true });
 
 interface HistoryState extends TranslateResultState {
     isInitialized: boolean;
@@ -125,16 +126,7 @@ export const history: Module<HistoryState, RootState> = {
             messageBus.observeNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
         },
         requestHistoryRecords({ state }): void {
-            messageBus.sendCommand<HistoryRecordsRequest>(
-                Messages.History.RequestHistoryRecords,
-                {
-                    pageNumber: state.pageNumber,
-                    pageSize: state.pageSize,
-                    sortColumn: state.sortColumn,
-                    sortOrder: state.sortOrder,
-                    starredOnly: state.starredOnly,
-                    includeArchived: state.includeArchived
-                });
+            throttledRefresh(state);
         },
         setArchivedStatus(_, request: { record: HistoryRecord; isArchived: boolean }): void {
             messageBus.sendCommand<ArchiveRequest>(
@@ -161,3 +153,16 @@ export const history: Module<HistoryState, RootState> = {
         }
     }
 };
+
+function requestHistoryRecords(state: HistoryState): void {
+    messageBus.sendCommand<HistoryRecordsRequest>(
+        Messages.History.RequestHistoryRecords,
+        {
+            pageNumber: state.pageNumber,
+            pageSize: state.pageSize,
+            sortColumn: state.sortColumn,
+            sortOrder: state.sortOrder,
+            starredOnly: state.starredOnly,
+            includeArchived: state.includeArchived
+        });
+}
