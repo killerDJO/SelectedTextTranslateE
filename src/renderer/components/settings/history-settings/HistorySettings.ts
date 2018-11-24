@@ -55,6 +55,15 @@ export default class HistorySettings extends Vue {
         this.$forceUpdate();
     }
 
+    public get numberOfRecordsPerPage(): number {
+        return this.currentHistorySettings.numberOfRecordsPerPage;
+    }
+
+    public set numberOfRecordsPerPage(records: number) {
+        this.currentHistorySettings.numberOfRecordsPerPage = this.ensureMinValue(records, 1);
+        this.$forceUpdate();
+    }
+
     @Watch("currentHistorySettings", { deep: true })
     public raiseUpdatedEvent(): void {
         this.$emit("history-settings-updated", this.currentHistorySettings);

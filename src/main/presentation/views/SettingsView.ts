@@ -100,6 +100,7 @@ export class SettingsView extends ViewBase {
                 allLanguages: this.context.settingsProvider.getLanguages()
             },
             history: {
+                numberOfRecordsPerPage: settings.views.history.renderer.pageSize,
                 isContinuousSyncEnabled: settings.history.sync.isContinuousSyncEnabled,
                 syncInterval: settings.history.sync.interval,
                 backupOnApplicationStart: settings.history.sync.backupOnApplicationStart,
@@ -146,6 +147,13 @@ export class SettingsView extends ViewBase {
                     backupRegularly: settings.history.backupRegularly,
                     backupRegularlyNumberToKeep: settings.history.backupRegularlyNumberToKeep,
                     backupRegularlyIntervalDays: settings.history.backupRegularlyIntervalDays
+                }
+            },
+            views: {
+                history: {
+                    renderer: {
+                        pageSize: settings.history.numberOfRecordsPerPage
+                    }
                 }
             }
         };
