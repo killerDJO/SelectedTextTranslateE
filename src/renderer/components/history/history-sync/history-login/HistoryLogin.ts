@@ -72,6 +72,7 @@ export default class HistoryLogin extends Vue {
 
     public currentTab: Tabs = Tabs.SignIn;
     public Tabs: typeof Tabs = Tabs;
+    public States: typeof States = States;
 
     @Watch("show")
     public onShown() {

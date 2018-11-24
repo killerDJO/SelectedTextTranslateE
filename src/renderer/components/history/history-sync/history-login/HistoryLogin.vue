@@ -1,6 +1,6 @@
 <template>
   <modal :show.sync="show$" :is-action-in-progress="isLoginActionInProgress">
-    <span slot="header">Sing In to sync history accross devices</span>
+    <span slot="header">{{ state === States.SignedOut ? "Sing In to sync history accross devices" : "Edit account" }}</span>
     <div slot="body">
       <div class="login-tabs">
         <span class="login-tab" :class="getTabClass(Tabs.SignIn)" @click="setCurrentTab(Tabs.SignIn)" v-if="isTabVisible(Tabs.SignIn)">Sign In</span>
