@@ -1,0 +1,10 @@
+.drop-item-value{
+    cursor: pointer;
+    padding: $padding-small $padding-default;
+    outline: none;
+
+    &:hover {
+        background-color: $color-selection;
+        color: $color-white;
+    }
+}

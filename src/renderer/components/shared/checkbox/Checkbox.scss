@@ -2,6 +2,14 @@
     line-height: 1;
     display: inline-flex;
 
+    &.disabled {
+        opacity: 0.5;
+
+        label .input-wrapper .form-checkbox {
+            cursor: not-allowed;
+        }
+    }
+
     label {
         display: flex;
         margin: 0;

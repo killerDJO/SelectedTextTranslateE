@@ -56,7 +56,6 @@
         "searchPattern": "https://www.google.com.ua/search?safe=off&source=hp&q={{query}}"
     },
     "history": {
-        "pageSize": 25,
         "sync": {
             "isContinuousSyncEnabled": true,
             "interval": 60000,
@@ -96,7 +95,44 @@
         },
         "history": {
             "width": 70,
-            "height": 55
+            "height": 55,
+            "renderer": {
+                "pageSize": 20,
+                "columns": [
+                    {
+                        "column": "Input",
+                        "isVisible": true
+                    },
+                    {
+                        "column": "Translation",
+                        "isVisible": true
+                    },
+                    {
+                        "column": "Tags",
+                        "isVisible": false
+                    },
+                    {
+                        "column": "SourceLanguage",
+                        "isVisible": false
+                    },
+                    {
+                        "column": "TargetLanguage",
+                        "isVisible": false
+                    },
+                    {
+                        "column": "TimesTranslated",
+                        "isVisible": true
+                    },
+                    {
+                        "column": "LastTranslatedDate",
+                        "isVisible": true
+                    },
+                    {
+                        "column": "IsArchived",
+                        "isVisible": true
+                    }
+                ]
+            }
         },
         "settings": {
             "width": 35,

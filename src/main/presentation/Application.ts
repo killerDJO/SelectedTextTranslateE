@@ -95,6 +95,7 @@ export class Application {
         historyView.showHistorySettings$.subscribe(() => this.settingsView.showSettingsGroup(SettingsGroup.History));
 
         historyView.updateCurrentTags$.subscribe(tags => this.tagsEngine.updateCurrentTags(tags));
+        historyView.updateColumnSettings$.subscribe(columns => this.settingsProvider.updateSettings({ views: { history: { renderer: { columns: columns } } } }));
         historyView.setCurrentTags(this.tagsEngine.getCurrentTags());
 
         this.setupTranslateResultView(historyView, true);

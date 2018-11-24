@@ -30,6 +30,7 @@
                 }
             }
 
+            .columns-customizer,
             .checkbox {
                 margin-left: $margin-default;
             }
@@ -149,19 +150,6 @@
             .no-records-available {
                 text-align: center;
                 font-style: italic;
-            }
-
-            &.show-languages{
-                .source-language-column,
-                .target-language-column {
-                    display: table-cell;
-                    width: 10%;
-                }
-
-                .word-column,
-                .translation-column {
-                    width: 27%;
-                }
             }
         }
 

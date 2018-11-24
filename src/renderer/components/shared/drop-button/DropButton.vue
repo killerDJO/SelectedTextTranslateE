@@ -17,11 +17,13 @@
       <ul class="drop-items">
         <li
           class="drop-item"
-          v-for="item in dropItems"
+          v-for="item in items"
           :key="item.text"
           v-tab-index="tabIndex"
-          @click.stop.prevent="processItemClick(item.callback)">
-          <div class="drop-item-value" @click.stop.prevent="processItemClick(item.callback)" tabindex="-1">{{item.text}}</div>
+          @click.stop.prevent="itemClick(item)">
+          <slot :item="item">
+            {{ item.text }}
+          </slot>
         </li>
       </ul>
     </div>

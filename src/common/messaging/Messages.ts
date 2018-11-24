@@ -58,6 +58,9 @@ export class Messages {
 
         public static readonly CurrentTags = "history-current-tags";
         public static readonly UpdateCurrentTags = "history-update-current-tags";
+
+        public static readonly HistorySettings = "history-settings";
+        public static readonly UpdateColumnSettings = "history-update-column-settings";
     };
 
     public static HistorySync = class {

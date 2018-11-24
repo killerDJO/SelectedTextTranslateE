@@ -15,6 +15,9 @@ export default class SortableHeader extends Vue {
     @Prop()
     public currentSortColumn!: SortColumn;
 
+    @Prop(Map)
+    public columnToNameMap!: Map<SortColumn, string>;
+
     public SortOrder: typeof SortOrder = SortOrder;
 
     public isSortArrowHidden(sortOrder: SortOrder): boolean {

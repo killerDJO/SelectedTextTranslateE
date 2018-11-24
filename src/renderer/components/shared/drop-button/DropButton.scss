@@ -38,6 +38,7 @@
 
         border: $border-width solid $color-border;
         background-color: $color-white;
+        z-index: 1000;
 
         &[x-placement^='bottom']{
             border-bottom-left-radius: $border-radius;
@@ -61,17 +62,6 @@
 
                 &:not(:last-child) {
                     border-bottom: $border-width solid $color-border;
-                }
-
-                &:hover {
-                    background-color: $color-selection;
-                    color: $color-white;
-                }
-
-                .drop-item-value{
-                    cursor: pointer;
-                    padding: $padding-small $padding-default;
-                    outline: none;
                 }
             }
         }

@@ -1,5 +1,6 @@
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { namespace } from "vuex-class";
+import * as _ from "lodash";
 
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SortColumn } from "common/dto/history/SortColumn";
@@ -8,13 +9,19 @@ import { TranslationViewRendererSettings } from "common/dto/settings/views-setti
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
+import { ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
 import HistorySync from "components/history/history-sync/HistorySync.vue";
 import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
+import { DropCheckItem } from "components/shared/drop-check-button/DropCheckButton";
 
 const ns = namespace("app/history");
+
+interface ColumnDisplaySettings extends DropCheckItem {
+    readonly column: SortColumn;
+}
 
 @Component({
     components: {
@@ -25,10 +32,12 @@ const ns = namespace("app/history");
     }
 })
 export default class History extends Vue {
+    @ns.State public isInitialized!: boolean;
     @ns.State public historyRecords!: HistoryRecord[];
     @ns.State public currentTags!: ReadonlyArray<string>;
     @ns.State public currentUser!: AccountInfo | null;
     @ns.State public pageNumber!: number;
+    @ns.State public columns!: ReadonlyArray<ColumnSettings>;
     @ns.State public pageSize!: number;
     @ns.State public totalRecords!: number;
     @ns.State public sortColumn!: SortColumn;
@@ -57,6 +66,7 @@ export default class History extends Vue {
     @ns.Action public readonly setArchivedStatus!: (request: { record: HistoryRecord; isArchived: boolean }) => void;
     @ns.Action public readonly playRecord!: (record: HistoryRecord) => void;
     @ns.Action public readonly updateCurrentTags!: (tags: ReadonlyArray<string>) => void;
+    @ns.Action public readonly updateColumns!: (tags: ReadonlyArray<ColumnSettings>) => void;
 
     @ns.Action public readonly playText!: () => void;
     @ns.Action public readonly translateText!: (request: TranslationRequest) => void;
@@ -69,7 +79,17 @@ export default class History extends Vue {
     @ns.Action public readonly changeLanguage!: () => void;
 
     public SortColumn: typeof SortColumn = SortColumn;
-    public showLanguages: boolean = false;
+    public columnToNameMap: Map<SortColumn, string> = new Map<SortColumn, string>([
+        [SortColumn.Input, "Word"],
+        [SortColumn.Translation, "Translation"],
+        [SortColumn.Tags, "Tags"],
+        [SortColumn.TimesTranslated, "Times"],
+        [SortColumn.SourceLanguage, "Source"],
+        [SortColumn.TargetLanguage, "Target"],
+        [SortColumn.LastTranslatedDate, "Last Translated"],
+        [SortColumn.IsArchived, "Status"]
+    ]);
+    public columnSettings: ReadonlyArray<ColumnDisplaySettings> = [];
 
     public mounted() {
         this.setup();
@@ -148,6 +168,7 @@ export default class History extends Vue {
     }
 
     @Watch("pageNumber")
+    @Watch("pageSize")
     @Watch("sortColumn")
     @Watch("sortOrder")
     @Watch("starredOnly")
@@ -155,5 +176,35 @@ export default class History extends Vue {
     @Watch("currentUser")
     public refreshRecords(): void {
         this.requestHistoryRecords();
+    }
+
+    @Watch("columns", { deep: true, immediate: true })
+    public buildColumnDisplaySettings(): void {
+        this.columnSettings = this.columns.map(columnSetting => ({
+            column: columnSetting.column,
+            text: this.columnToNameMap.has(columnSetting.column) ? this.columnToNameMap.get(columnSetting.column) as string : columnSetting.column.toString(),
+            isChecked: columnSetting.isVisible,
+            isDisabled: false
+        }));
+    }
+
+    @Watch("columnSettings", { deep: true })
+    public onColumnSettingsChanged() {
+        this.setColumnSettingsDisabledState();
+
+        const updatedColumns: ColumnSettings[] = this.columnSettings.map(setting => ({
+            column: setting.column,
+            isVisible: setting.isChecked
+        }));
+
+        if (!_.isEqual(this.columns, updatedColumns)) {
+            this.updateColumns(updatedColumns);
+        }
+    }
+
+    private setColumnSettingsDisabledState(): void {
+        const numberOfHiddenColumns = this.columnSettings.filter(setting => !setting.isChecked).length;
+        const shouldDisableColumnsHide = numberOfHiddenColumns >= (this.columnSettings.length - 1);
+        this.columnSettings.forEach(setting => setting.isDisabled = setting.isChecked && shouldDisableColumnsHide);
     }
 }

@@ -14,6 +14,18 @@ export default class Checkbox extends Vue {
     })
     public leftToRight!: boolean;
 
+    @Prop({
+        type: Boolean,
+        default: false
+    })
+    public disabled!: boolean;
+
+    @Prop({
+        type: Number,
+        default: 0
+    })
+    public tabIndex!: number;
+
     public get isChecked$(): boolean {
         return this.value;
     }

@@ -1,16 +1,18 @@
 <template>
   <div class="history-sync">
     <div class="drop-wrapper">
-      <drop-button
+      <drop-list-button
             v-if="currentUser === null"
             :text="'Sign In'"
+            :overflow-position="'start'"
             @click="showSignIn"
-            :dropItems="[{text: 'Sign Up', callback: showSignUp}, {text: 'Settings', callback: openSettings}]"/>
-      <drop-button
+            :items="[{text: 'Sign Up', callback: showSignUp}, {text: 'Settings', callback: openSettings}]"/>
+      <drop-list-button
         v-else
         :text="'Sync Now'"
+        :overflow-position="'start'"
         @click="syncOneTime"
-        :dropItems="[{text: 'Sign Out', callback: signOut}, {text: 'Settings', callback: openSettings}, {text: 'Change Password', callback: showChangePassword}, {text: 'Forced Sync', callback: syncOneTimeForced}]"/>
+        :items="[{text: 'Sign Out', callback: signOut}, {text: 'Settings', callback: openSettings}, {text: 'Change Password', callback: showChangePassword}, {text: 'Forced Sync', callback: syncOneTimeForced}]"/>
       <div v-if="isSyncInProgress" class="sync-indicator" />
     </div>
     <span v-if="currentUser !== null" class="current-user-label">Signed in as {{currentUser.email}}</span>

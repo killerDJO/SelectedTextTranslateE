@@ -1,4 +1,5 @@
 import { Observable } from "rxjs";
+import { map } from "rxjs/operators";
 
 import { ViewNames } from "common/ViewNames";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
@@ -16,6 +17,7 @@ import { SendResetTokenResponse } from "common/dto/history/account/SendResetToke
 import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyResetTokenResponse";
 import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
 import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
+import { HistoryViewRendererSettings, ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
 
 import { mapSubject } from "utils/map-subject";
 
@@ -27,6 +29,7 @@ export class HistoryView extends TranslateResultView {
     public readonly historyRecordsRequest$!: Observable<HistoryRecordsRequest>;
     public readonly archiveRecord$: Observable<ArchiveRequest>;
     public readonly updateCurrentTags$: Observable<ReadonlyArray<string>>;
+    public readonly updateColumnSettings$: Observable<ReadonlyArray<ColumnSettings>>;
 
     public readonly signOut$: Observable<void>;
     public readonly showHistorySettings$: Observable<void>;
@@ -41,6 +44,9 @@ export class HistoryView extends TranslateResultView {
             isScalingEnabled: mapSubject(viewContext.scalingSettings, scaling => !scaling.scaleTranslationViewOnly)
         });
 
+        const historySettings$ = this.context.settingsProvider.getSettings().pipe(map(settings => settings.views.history.renderer));
+        this.registerSubscription(this.messageBus.registerObservable<HistoryViewRendererSettings>(Messages.History.HistorySettings, historySettings$).subscription);
+
         this.historyRecordsRequest$ = this.messageBus.observeCommand<HistoryRecordsRequest>(Messages.History.RequestHistoryRecords);
         this.archiveRecord$ = this.messageBus.observeCommand<ArchiveRequest>(Messages.History.ArchiveRecord);
 
@@ -48,7 +54,9 @@ export class HistoryView extends TranslateResultView {
         this.showHistorySettings$ = this.messageBus.observeCommand<void>(Messages.History.ShowHistorySettings);
         this.syncOneTime$ = this.messageBus.observeCommand<void>(Messages.History.SyncOneTime);
         this.syncOneTimeForced$ = this.messageBus.observeCommand<void>(Messages.History.SyncOneTimeForced);
+
         this.updateCurrentTags$ = this.messageBus.observeCommand<ReadonlyArray<string>>(Messages.History.UpdateCurrentTags);
+        this.updateColumnSettings$ = this.messageBus.observeCommand<ReadonlyArray<ColumnSettings>>(Messages.History.UpdateColumnSettings);
     }
 
     public setHistoryRecords(historyRecords: HistoryRecordsResponse): void {

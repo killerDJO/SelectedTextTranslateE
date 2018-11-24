@@ -1,10 +1,11 @@
 import { Component, Prop, Vue } from "vue-property-decorator";
-import Popper, { BaseModifier } from "popper.js";
+import Popper from "popper.js";
 
 export interface DropItem {
     readonly text: string;
-    callback(): void;
 }
+
+export type PositionModifier = "start" | "end";
 
 @Component
 export default class DropButton extends Vue {
@@ -15,18 +16,38 @@ export default class DropButton extends Vue {
     public tabIndex!: number;
 
     @Prop(Array)
-    public dropItems!: DropItem[];
+    public items!: DropItem[];
 
     @Prop(String)
     public text!: string;
 
-    private placement: Popper.Position = "bottom";
+    @Prop({
+        type: String,
+        default: "bottom"
+    })
+    public placement!: Popper.Position;
+
+    @Prop({
+        type: String,
+        default: "end"
+    })
+    public overflowPosition!: PositionModifier;
+
+    @Prop({
+        type: String,
+        default: "end"
+    })
+    public preferredPosition!: PositionModifier;
 
     private drop: Popper | null = null;
     public isDropVisible: boolean = false;
 
     public click(): void {
         this.$emit("click");
+    }
+
+    public itemClick(item: DropItem) {
+        this.$emit("item-click", item);
     }
 
     public openDrop(): void {
@@ -40,7 +61,7 @@ export default class DropButton extends Vue {
                 shift: {
                     fn: (data, options) => {
                         if (data.placement === this.placement) {
-                            data.placement = (data.offsets.popper.width > data.offsets.reference.width ? `${this.placement}-start` : `${this.placement}-end`) as Popper.Placement;
+                            data.placement = (data.offsets.popper.width > data.offsets.reference.width ? `${this.placement}-${this.overflowPosition}` : `${this.placement}-${this.preferredPosition}`) as Popper.Placement;
                         }
 
                         if (!!Popper.Defaults.modifiers && !!Popper.Defaults.modifiers.shift && Popper.Defaults.modifiers.shift.fn) {
@@ -65,11 +86,6 @@ export default class DropButton extends Vue {
             this.drop.destroy();
             this.drop = null;
         }
-    }
-
-    public processItemClick(callback: () => void) {
-        callback();
-        this.closeDrop();
     }
 
     public beforeDestroy(): void {

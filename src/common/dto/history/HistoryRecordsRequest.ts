@@ -5,6 +5,7 @@ export interface HistoryRecordsRequest {
     sortColumn: SortColumn;
     sortOrder: SortOrder;
     pageNumber: number;
+    pageSize: number;
     starredOnly: boolean;
     includeArchived: boolean;
 }

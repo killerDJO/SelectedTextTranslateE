@@ -13,17 +13,21 @@ import { TranslateResultViews } from "common/dto/translation/TranslateResultView
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
+import { HistoryViewRendererSettings, ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
 
 import { MessageBus } from "common/renderer/MessageBus";
 
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
+import { stat } from "fs";
 
 const messageBus = new MessageBus();
 
 interface HistoryState extends TranslateResultState {
+    isInitialized: boolean;
     historyRecords: ReadonlyArray<HistoryRecord>;
     currentTags: ReadonlyArray<string>;
     currentUser: AccountInfo | null;
+    columns: ReadonlyArray<ColumnSettings>;
     pageNumber: number;
     pageSize: number;
     totalRecords: number;
@@ -41,9 +45,11 @@ export const history: Module<HistoryState, RootState> = {
         sync: historySync
     },
     state: {
+        isInitialized: false,
         historyRecords: [],
         currentTags: [],
         currentUser: null,
+        columns: [],
         pageNumber: 1,
         pageSize: 0,
         totalRecords: 0,
@@ -62,10 +68,14 @@ export const history: Module<HistoryState, RootState> = {
     },
     mutations: {
         ...translateResultMutations,
+        setSettings(state: HistoryState, settings: HistoryViewRendererSettings): void {
+            state.columns = settings.columns;
+            state.pageSize = settings.pageSize;
+            state.isInitialized = true;
+        },
         setRecords(state: HistoryState, historyRecordsResponse: HistoryRecordsResponse): void {
             state.historyRecords = historyRecordsResponse.records;
             state.pageNumber = historyRecordsResponse.pageNumber;
-            state.pageSize = historyRecordsResponse.pageSize;
             state.totalRecords = historyRecordsResponse.totalRecords;
         },
         setPageNumber(state: HistoryState, pageNumber: number): void {
@@ -108,6 +118,7 @@ export const history: Module<HistoryState, RootState> = {
             translateResultActions.setup(context);
 
             const { commit, dispatch } = context;
+            messageBus.observeValue<HistoryViewRendererSettings>(Messages.History.HistorySettings, settings => commit("setSettings", settings));
             messageBus.observeValue<HistoryRecordsResponse>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
             messageBus.observeValue<AccountInfo | null>(Messages.History.CurrentUser, currentUser => commit("setCurrentUser", currentUser));
             messageBus.observeValue<ReadonlyArray<string>>(Messages.History.CurrentTags, currentTags => commit("setCurrentTags", currentTags));
@@ -118,6 +129,7 @@ export const history: Module<HistoryState, RootState> = {
                 Messages.History.RequestHistoryRecords,
                 {
                     pageNumber: state.pageNumber,
+                    pageSize: state.pageSize,
                     sortColumn: state.sortColumn,
                     sortOrder: state.sortOrder,
                     starredOnly: state.starredOnly,
@@ -143,6 +155,9 @@ export const history: Module<HistoryState, RootState> = {
         },
         updateCurrentTags(_, tags: ReadonlyArray<string>) {
             messageBus.sendCommand<ReadonlyArray<string>>(Messages.History.UpdateCurrentTags, tags);
+        },
+        updateColumns(_, columns: ReadonlyArray<ColumnSettings>) {
+            messageBus.sendCommand<ReadonlyArray<ColumnSettings>>(Messages.History.UpdateColumnSettings, columns);
         }
     }
 };

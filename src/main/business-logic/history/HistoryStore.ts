@@ -16,8 +16,6 @@ import { Logger } from "infrastructure/Logger";
 
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 
-import { SettingsProvider } from "business-logic/settings/SettingsProvider";
-import { HistorySettings } from "business-logic/settings/dto/Settings";
 import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
 import { RecordIdGenerator } from "business-logic/history/RecordIdGenerator";
 import { TagsEngine } from "business-logic/history/TagsEngine";
@@ -28,17 +26,13 @@ export class HistoryStore {
     private readonly datastore$: Observable<Datastore>;
     private readonly historyUpdatedSubject$: Subject<HistoryRecord> = new Subject();
 
-    private readonly historySettings: HistorySettings;
-
     constructor(
         private readonly datastoreProvider: DatastoreProvider,
-        private readonly settingsProvider: SettingsProvider,
         private readonly historyDatabaseProvider: HistoryDatabaseProvider,
         private readonly recordIdGenerator: RecordIdGenerator,
         private readonly tagsEngine: TagsEngine,
         private readonly logger: Logger) {
 
-        this.historySettings = this.settingsProvider.getSettings().value.history;
         this.datastore$ = this.historyDatabaseProvider.historyDatastore$;
     }
 
@@ -147,15 +141,14 @@ export class HistoryStore {
         }
 
         const count$ = this.datastoreProvider.count(this.datastore$, searchQuery);
-        const pageSize = this.historySettings.pageSize;
 
         return this.datastoreProvider
-            .findPaged<HistoryRecord>(this.datastore$, searchQuery, sortQuery, request.pageNumber, pageSize).pipe(
+            .findPaged<HistoryRecord>(this.datastore$, searchQuery, sortQuery, request.pageNumber, request.pageSize).pipe(
                 concatMap(historyRecords => count$.pipe(map(count => {
                     return {
                         records: historyRecords,
                         pageNumber: request.pageNumber,
-                        pageSize: pageSize,
+                        pageSize: request.pageSize,
                         totalRecords: count
                     };
                 })))

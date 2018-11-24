@@ -1,31 +1,34 @@
 <template>
-  <div class="history clearfix">
+  <div class="history clearfix" v-if="isInitialized">
     <div class="grid-holder" :class="{'translation-visible': isTranslationVisible}">
       <div class="results-header clearfix">
         <div class="tags" v-if="!!currentTags">
           <span class="tags-label">Active Tags:</span> <tags-editor :tags="currentTags" @update-tags="updateCurrentTags"/>
         </div>
         <div>
-          <checkbox v-model="showLanguages" :label="'Show Languages'" :left-to-right="true" />
-          <checkbox v-model="includeArchived$" :label="'Show Archived'" :left-to-right="true" />
+          <checkbox v-model="includeArchived$" :label="'Show Archived'" :left-to-right="true"/>
           <checkbox v-model="starredOnly$" :label="'Starred Only'" :left-to-right="true" />
+           <drop-check-button
+              class="columns-customizer"
+              :text="'Columns'"
+              :items="columnSettings"/>
         </div>
       </div>
       <div class="translation-results-header" v-if="isTranslationVisible">
         <icon-button title="Hide Translation" @click="hideTranslation"><i class="icon icon-cancel"/></icon-button>
         <p class="title">Translation</p>
       </div>
-      <table class="table-striped results non-clickable" :class="{'show-languages': showLanguages}">
+      <table class="table-striped results non-clickable">
         <thead>
           <tr>
-            <sortable-header class="word-column" :sort-column="SortColumn.Input" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Word</sortable-header>
-            <sortable-header class="translation-column" :sort-column="SortColumn.Translation" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Translation</sortable-header>
-            <sortable-header class="tags-column" :sort-column="SortColumn.Tags" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Tags</sortable-header>
-            <sortable-header class="times-column" :sort-column="SortColumn.TimesTranslated" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Times</sortable-header>
-            <sortable-header class="source-language-column" :sort-column="SortColumn.SourceLanguage" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Source</sortable-header>
-            <sortable-header class="target-language-column" :sort-column="SortColumn.TargetLanguage" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Target</sortable-header>
-            <sortable-header class="last-translated-column" :sort-column="SortColumn.LastTranslatedDate" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Last Translated</sortable-header>
-            <sortable-header class="archived-column" :sort-column="SortColumn.IsArchived" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$">Status</sortable-header>
+            <sortable-header class="word-column" :sort-column="SortColumn.Input" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$" :column-to-name-map="columnToNameMap" />
+            <sortable-header class="translation-column" :sort-column="SortColumn.Translation" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$" :column-to-name-map="columnToNameMap" />
+            <sortable-header class="tags-column" :sort-column="SortColumn.Tags" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$" :column-to-name-map="columnToNameMap" />
+            <sortable-header class="times-column" :sort-column="SortColumn.TimesTranslated" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$" :column-to-name-map="columnToNameMap" />
+            <sortable-header class="source-language-column" :sort-column="SortColumn.SourceLanguage" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$" :column-to-name-map="columnToNameMap" />
+            <sortable-header class="target-language-column" :sort-column="SortColumn.TargetLanguage" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$" :column-to-name-map="columnToNameMap" />
+            <sortable-header class="last-translated-column" :sort-column="SortColumn.LastTranslatedDate" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$" :column-to-name-map="columnToNameMap" />
+            <sortable-header class="archived-column" :sort-column="SortColumn.IsArchived" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$" :column-to-name-map="columnToNameMap" />
           </tr>
         </thead>
         <tbody v-if="historyRecords.length !== 0">

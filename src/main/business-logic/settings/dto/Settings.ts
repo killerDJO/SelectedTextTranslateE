@@ -3,6 +3,7 @@ import { Hotkey } from "common/dto/settings/Hotkey";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { HistoryViewRendererSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
 
 export interface Settings {
     readonly renderer: RendererSettings;
@@ -46,7 +47,7 @@ export interface TranslationEngineSettings {
 export interface ViewsSettings {
     readonly translation: TranslationViewSettings;
     readonly settings: ViewSize;
-    readonly history: ViewSize;
+    readonly history: HistoryViewSettings;
     readonly engine: ViewsEngineSettings;
 }
 
@@ -75,8 +76,11 @@ export interface TranslationViewSettings extends ViewSize {
     readonly renderer: TranslationViewRendererSettings;
 }
 
+export interface HistoryViewSettings extends ViewSize {
+    readonly renderer: HistoryViewRendererSettings;
+}
+
 export interface HistorySettings extends ViewSize {
-    readonly pageSize: number;
     readonly sync: HistorySyncSettings;
 }
 
