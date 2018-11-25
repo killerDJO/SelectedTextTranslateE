@@ -39,10 +39,19 @@ export class TagsEngine {
     }
 
     private getDistinctTags(records: HistoryRecord[]): string[] {
-        return _.uniq(_.flatMap(records, record => record.tags || []));
+        return _.uniq(_.flatMap(records, record => record.tags || []).concat(this.getCurrentTags().value));
     }
 
     private filterTags(input: string, tags: string[]): string[] {
-        return tags.filter(tag => tag.includes(input));
+        const inputTokens = this.tokenizeTag(input);
+        return tags.filter(tag => this.areTokensMatch(inputTokens, this.tokenizeTag(tag)));
+    }
+
+    private tokenizeTag(tag: string): string[] {
+        return tag.split(" ").map(token => token.toLowerCase().trim()).filter(token => !!token);
+    }
+
+    private areTokensMatch(input: string[], target: string[]): boolean {
+        return input.every(token => target.some(targetToken => targetToken.includes(token)));
     }
 }
