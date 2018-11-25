@@ -50,7 +50,7 @@
               <span v-if="!!record.translateResult.sentence.translation">{{record.translateResult.sentence.translation}}</span>
               <span v-else class="no-translation">No Translation</span>
             </td>
-            <td class="tags-column" v-if="isColumnVisible(SortColumn.Tags)">
+            <td class="tags-column" v-if="isColumnVisible(SortColumn.Tags)" @click.stop.prevent>
               <tags-editor :tags="record.tags" @update-tags="updateRecordTags(record, $event)" :compact-view="true"/>
             </td>
             <td class="times-column" v-if="isColumnVisible(SortColumn.TimesTranslated)">{{record.translationsNumber !== 0 ? record.translationsNumber : "-"}}</td>
@@ -60,7 +60,7 @@
               {{record.lastTranslatedDate | date-time}}
               <i class="icon icon-cloud-thunder synced-icon" v-if="!isRecordSyncedWithServer(record)" title="Record is not synced with server"/>
             </td>
-            <td class="archived-column" v-if="isColumnVisible(SortColumn.IsArchived)">
+            <td class="archived-column" v-if="isColumnVisible(SortColumn.IsArchived)" @click.stop.prevent>
               <icon-button v-if="record.isArchived" title="Restore" @click="setArchivedStatus({record: record, isArchived: false})" :tab-index="-1"><i class="icon icon-trash restore"/></icon-button>
               <icon-button v-else title="Archive" @click="setArchivedStatus({record: record, isArchived: true})" :tab-index="-1"><i class="icon icon-trash archive"/></icon-button>
             </td>

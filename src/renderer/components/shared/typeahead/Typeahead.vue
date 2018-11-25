@@ -1,5 +1,5 @@
 <template>
-  <div class="drop-wrapper" ref="dropTarget" v-focus-lost="closeDrop">
+  <div class="drop-wrapper" :class="{'compact': compactView}" ref="dropTarget" v-focus-lost="closeDrop">
     <input type="text"
       ref="input"
       v-model="input$"

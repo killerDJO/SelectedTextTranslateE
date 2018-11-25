@@ -1,8 +1,22 @@
 $line-height: 22px;
+$compact-line-height: 16px;
 
 .drop-wrapper {
     display: inline-flex;
     position: relative;
+
+    &.compact {
+        font-size: $font-small;
+
+        input[type="text"] {
+            height: $compact-line-height;
+        }
+
+        .drop-content .drop-items .drop-item {
+            padding: $padding-small $padding-small;
+            line-height: $font-small;
+        }
+    }
 
     input[type="text"] {
         height: $line-height;
@@ -17,7 +31,7 @@ $line-height: 22px;
         }
     }
 
-    .drop-content{
+    .drop-content {
         position: fixed;
         left: -10000px;
 

@@ -5,10 +5,10 @@
     </span>
 
     <div class="drop-trigger">
-      <icon-button v-if="!isDropVisible" @click="openDrop" :title="'Show Options'">
+      <icon-button v-if="!isDropVisible" @click="openDrop()" :title="'Show Options'">
         <span class="icon icon-down-open" />
       </icon-button>
-      <icon-button v-else @click="closeDrop" :title="'Hide Options'">
+      <icon-button v-else @click="closeDrop()" :title="'Hide Options'">
         <span class="icon icon-up-open" />
       </icon-button>
     </div>

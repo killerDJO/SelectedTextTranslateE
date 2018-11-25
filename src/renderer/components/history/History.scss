@@ -76,6 +76,11 @@
 
             .tags-column {
                 width: 16%;
+                overflow: visible;
+
+                .tags-editor {
+                    vertical-align: middle;
+                }
             }
 
             .source-language-column,

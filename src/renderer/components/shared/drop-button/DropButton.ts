@@ -1,5 +1,6 @@
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop } from "vue-property-decorator";
 import Popper from "popper.js";
+import { DropBase } from "../DropBase";
 
 export interface DropItem {
     readonly text: string;
@@ -8,7 +9,7 @@ export interface DropItem {
 export type PositionModifier = "start" | "end";
 
 @Component
-export default class DropButton extends Vue {
+export default class DropButton extends DropBase {
     @Prop({
         type: Number,
         default: 0
@@ -39,9 +40,6 @@ export default class DropButton extends Vue {
     })
     public preferredPosition!: PositionModifier;
 
-    private drop: Popper | null = null;
-    public isDropVisible: boolean = false;
-
     public click(): void {
         this.$emit("click");
     }
@@ -51,44 +49,20 @@ export default class DropButton extends Vue {
     }
 
     public openDrop(): void {
-        this.drop = new Popper(this.$refs.dropTarget as Element, this.$refs.dropContent as Element, {
-            placement: this.placement,
-            positionFixed: false,
-            modifiers: {
-                computeStyle: {
-                    gpuAcceleration: false
-                },
-                shift: {
-                    fn: (data, options) => {
-                        if (data.placement === this.placement) {
-                            data.placement = (data.offsets.popper.width > data.offsets.reference.width ? `${this.placement}-${this.overflowPosition}` : `${this.placement}-${this.preferredPosition}`) as Popper.Placement;
-                        }
-
-                        if (!!Popper.Defaults.modifiers && !!Popper.Defaults.modifiers.shift && Popper.Defaults.modifiers.shift.fn) {
-                            return Popper.Defaults.modifiers.shift.fn(data, options);
-                        }
-
-                        return data;
+        this.openDropInternal(this.$refs.dropTarget as Element, this.$refs.dropContent as Element, this.placement, {
+            shift: {
+                fn: (data, options) => {
+                    if (data.placement === this.placement) {
+                        data.placement = (data.offsets.popper.width > data.offsets.reference.width ? `${this.placement}-${this.overflowPosition}` : `${this.placement}-${this.preferredPosition}`) as Popper.Placement;
                     }
-                },
-                preventOverflow: {
-                    boundariesElement: document.querySelector(".view") as Element
+
+                    if (!!Popper.Defaults.modifiers && !!Popper.Defaults.modifiers.shift && Popper.Defaults.modifiers.shift.fn) {
+                        return Popper.Defaults.modifiers.shift.fn(data, options);
+                    }
+
+                    return data;
                 }
-            }
+            },
         });
-        this.isDropVisible = true;
-    }
-
-    public closeDrop(): void {
-        this.isDropVisible = false;
-
-        if (this.drop !== null) {
-            this.drop.destroy();
-            this.drop = null;
-        }
-    }
-
-    public beforeDestroy(): void {
-        this.closeDrop();
     }
 }

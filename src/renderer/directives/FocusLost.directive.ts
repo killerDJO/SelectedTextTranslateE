@@ -1,4 +1,4 @@
-import { DirectiveOptions, VNodeDirective } from "vue";
+import { DirectiveOptions, VNodeDirective, VNode } from "vue";
 import * as _ from "lodash";
 
 import Directive from "decorators/VueDirective";
@@ -6,13 +6,15 @@ import { DirectivesBase } from "directives/DirectivesBase";
 
 @Directive("focus-lost")
 export class AutoFocus extends DirectivesBase implements DirectiveOptions {
-    public bind(element: HTMLElement, binding: VNodeDirective): void {
+    public bind(element: HTMLElement, binding: VNodeDirective, vNode: VNode): void {
         if (!binding.value || !_.isFunction(binding.value)) {
             throw new Error("Function value must be provided for the focus-lost binding");
         }
 
-        this.registerCallback(element, "focusout", event => this.handleFocusOut(event as FocusEvent, binding.value));
-        this.registerCallback(document.body, "click", event => this.handleBodyClick(event as MouseEvent, element, binding.value));
+        const callback = binding.value.bind(vNode.context);
+
+        this.registerCallback(element, "focusout", event => this.handleFocusOut(event as FocusEvent, callback));
+        this.registerCallback(document.body, "click", event => this.handleBodyClick(event as MouseEvent, element, callback));
     }
 
     public unbind(element: HTMLElement): void {

@@ -11,9 +11,8 @@
         <span class="icon icon-plus" />
     </icon-button>
     <div class="tag-input-wrapper" v-focus-lost="hideTagInput">
-      <!-- <input type="text" class="tag-input"  v-model="tagToAdd" @keydown.enter.stop="addTag" v-tab-index v-auto-focus/> -->
-      <typeahead v-if="isTagInputVisible" :suggestions="suggestions" :auto-focus="true" @get-suggestions="getSuggestions" @suggestion-selected="addTag"/>
-      <icon-button @click="addTag()" :title="'Add Tag'" v-if="isTagInputVisible" class="confirm-add-tag-holder">
+      <typeahead v-if="isTagInputVisible" :suggestions="suggestions" :auto-focus="true" :compact-view="compactView" @get-suggestions="getSuggestions" @input-selected="addTag" @input-changed="setCurrentTag"/>
+      <icon-button @click="addCurrentTag()" :title="'Add Tag'" v-if="isTagInputVisible" class="confirm-add-tag-holder">
           <span class="icon icon-check" />
       </icon-button>
     </div>

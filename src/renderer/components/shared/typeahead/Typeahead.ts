@@ -1,8 +1,8 @@
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import Popper from "popper.js";
+import { Component, Prop, Watch } from "vue-property-decorator";
+import { DropBase } from "../DropBase";
 
 @Component
-export default class Typeahead extends Vue {
+export default class Typeahead extends DropBase {
     @Prop({
         type: Number,
         default: 0
@@ -21,13 +21,17 @@ export default class Typeahead extends Vue {
     })
     public autoFocus!: boolean;
 
+    @Prop({
+        type: Boolean,
+        default: false
+    })
+    public compactView!: boolean;
+
     @Prop(Array)
     public suggestions!: string[];
 
     public input: string = "";
     public selectedSuggestionsIndex: number = -1;
-
-    private drop: Popper | null = null;
 
     public get input$(): string {
         return this.input;
@@ -46,6 +50,11 @@ export default class Typeahead extends Vue {
         }
     }
 
+    @Watch("input")
+    public onInputChanged(): void {
+        this.$emit("input-changed", this.input);
+    }
+
     @Watch("suggestions", { deep: true, immediate: true })
     public onSuggestionsChanged(): void {
         if (this.suggestions.length > 0) {
@@ -61,7 +70,7 @@ export default class Typeahead extends Vue {
             this.input = this.suggestions[this.selectedSuggestionsIndex];
             this.selectedSuggestionsIndex = -1;
         } else {
-            this.$emit("suggestion-selected", this.input);
+            this.$emit("input-selected", this.input);
         }
 
         this.closeDrop();
@@ -94,28 +103,6 @@ export default class Typeahead extends Vue {
     }
 
     public openDrop(): void {
-        this.drop = new Popper(this.$refs.dropTarget as Element, this.$refs.dropContent as Element, {
-            placement: "bottom",
-            positionFixed: false,
-            modifiers: {
-                computeStyle: {
-                    gpuAcceleration: false
-                },
-                preventOverflow: {
-                    boundariesElement: document.querySelector(".view") as Element
-                }
-            }
-        });
-    }
-
-    public closeDrop(): void {
-        if (this.drop !== null) {
-            this.drop.destroy();
-            this.drop = null;
-        }
-    }
-
-    public beforeDestroy(): void {
-        this.closeDrop();
+        this.openDropInternal(this.$refs.dropTarget as Element, this.$refs.dropContent as Element, "bottom", {});
     }
 }

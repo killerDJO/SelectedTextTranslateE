@@ -70,9 +70,11 @@ $margin: 3px;
         align-self: center;
         max-width: 100%;
         margin-bottom: $margin;
+        display: inline-flex;
     
         .confirm-add-tag-holder {
             margin-left: $margin;
+            align-self: center;
         }
     }
 }

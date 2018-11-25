@@ -1,7 +1,8 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import * as _ from "lodash";
+
 import { MessageBus } from "common/renderer/MessageBus";
-import { Messages } from 'common/messaging/Messages';
+import { Messages } from "common/messaging/Messages";
 
 @Component
 export default class TagsEditor extends Vue {
@@ -18,6 +19,7 @@ export default class TagsEditor extends Vue {
     public suggestions: ReadonlyArray<string> = [];
 
     private currentTags!: string[];
+    private currentTag: string = "";
     private readonly messageBus: MessageBus = new MessageBus();
 
     @Watch("tags", { immediate: true })
@@ -35,6 +37,14 @@ export default class TagsEditor extends Vue {
     public removeTag(tagToRemove: string): void {
         this.currentTags = this.currentTags.filter(tag => tag !== tagToRemove);
         this.updateCurrentTags();
+    }
+
+    public setCurrentTag(tag: string): void {
+        this.currentTag = tag;
+    }
+
+    public addCurrentTag(): void {
+        this.addTag(this.currentTag);
     }
 
     public addTag(tag: string): void {
