@@ -24,7 +24,9 @@ const messageBus = new MessageBus();
 const throttledRefresh = _.throttle(requestHistoryRecords, 100, { trailing: true });
 
 interface HistoryState extends TranslateResultState {
-    isInitialized: boolean;
+    areSettingsInitialized: boolean;
+    areRecordsFetched: boolean;
+
     historyRecords: ReadonlyArray<HistoryRecord>;
     currentTags: ReadonlyArray<string>;
     currentUser: AccountInfo | null;
@@ -46,7 +48,8 @@ export const history: Module<HistoryState, RootState> = {
         sync: historySync
     },
     state: {
-        isInitialized: false,
+        areSettingsInitialized: false,
+        areRecordsFetched: false,
         historyRecords: [],
         currentTags: [],
         currentUser: null,
@@ -67,17 +70,21 @@ export const history: Module<HistoryState, RootState> = {
         isTranslationVisible: false,
         isOffline: false
     },
+    getters: {
+        isInitialized: state => state.areRecordsFetched && state.areSettingsInitialized
+    },
     mutations: {
         ...translateResultMutations,
         setSettings(state: HistoryState, settings: HistoryViewRendererSettings): void {
             state.columns = settings.columns;
             state.pageSize = settings.pageSize;
-            state.isInitialized = true;
+            state.areSettingsInitialized = true;
         },
         setRecords(state: HistoryState, historyRecordsResponse: HistoryRecordsResponse): void {
             state.historyRecords = historyRecordsResponse.records;
             state.pageNumber = historyRecordsResponse.pageNumber;
             state.totalRecords = historyRecordsResponse.totalRecords;
+            state.areRecordsFetched = true;
         },
         setPageNumber(state: HistoryState, pageNumber: number): void {
             state.pageNumber = pageNumber;
@@ -126,7 +133,9 @@ export const history: Module<HistoryState, RootState> = {
             messageBus.observeNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
         },
         requestHistoryRecords({ state }): void {
-            throttledRefresh(state);
+            if (state.areSettingsInitialized) {
+                throttledRefresh(state);
+            }
         },
         setArchivedStatus(_, request: { record: HistoryRecord; isArchived: boolean }): void {
             messageBus.sendCommand<ArchiveRequest>(

@@ -32,7 +32,6 @@ interface ColumnDisplaySettings extends DropCheckItem {
     }
 })
 export default class History extends Vue {
-    @ns.State public isInitialized!: boolean;
     @ns.State public historyRecords!: HistoryRecord[];
     @ns.State public currentTags!: ReadonlyArray<string>;
     @ns.State public currentUser!: AccountInfo | null;
@@ -52,6 +51,8 @@ export default class History extends Vue {
     @ns.State public isOffline!: boolean;
     @ns.State public isTranslationVisible!: boolean;
     @ns.State public defaultTranslateResultView!: TranslateResultViews;
+
+    @ns.Getter public isInitialized!: boolean;
 
     @ns.Mutation private readonly setPageNumber!: (pageNumber: number) => void;
     @ns.Mutation private readonly setSortColumn!: (sortColumn: SortColumn) => void;
@@ -93,7 +94,6 @@ export default class History extends Vue {
 
     public mounted() {
         this.setup();
-        this.requestHistoryRecords();
     }
 
     public set sortColumn$(value: SortColumn) {
@@ -179,6 +179,7 @@ export default class History extends Vue {
     @Watch("starredOnly")
     @Watch("includeArchived")
     @Watch("currentUser")
+    @Watch("isInitialized")
     public refreshRecords(): void {
         this.requestHistoryRecords();
     }
