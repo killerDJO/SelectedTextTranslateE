@@ -12,6 +12,7 @@ export class AutoFocus extends DirectivesBase implements DirectiveOptions {
         }
 
         this.registerCallback(element, "focusout", event => this.handleFocusOut(event as FocusEvent, binding.value));
+        this.registerCallback(document.body, "click", event => this.handleBodyClick(event as MouseEvent, element, binding.value));
     }
 
     public unbind(element: HTMLElement): void {
@@ -19,22 +20,35 @@ export class AutoFocus extends DirectivesBase implements DirectiveOptions {
     }
 
     private handleFocusOut(event: FocusEvent, callback: () => void): void {
-        let isFocusLost = true;
-        let element: Element | null = event.relatedTarget as Element;
-        const currentTarget = event.currentTarget;
-        if (event.currentTarget === null) {
+        const element: Element | null = event.relatedTarget as Element;
+        if (element === null) {
             return;
         }
 
+        const currentTarget = event.currentTarget;
+        if (currentTarget === null) {
+            return;
+        }
+
+        this.triggerFocusLostIfElementOutside(element, currentTarget as HTMLElement, callback);
+    }
+
+    private handleBodyClick(event: MouseEvent, parentElement: HTMLElement, callback: () => void): void {
+        const element: Element | null = event.target as Element;
+        this.triggerFocusLostIfElementOutside(element, parentElement, callback);
+    }
+
+    private triggerFocusLostIfElementOutside(element: Element | null, parentElement: Element, callback: () => void) {
+        let isOutside = true;
         while (element !== null) {
-            if (currentTarget === element) {
-                isFocusLost = false;
+            if (parentElement === element) {
+                isOutside = false;
                 break;
             }
             element = element.parentElement;
         }
 
-        if (isFocusLost) {
+        if (isOutside) {
             callback();
         }
     }

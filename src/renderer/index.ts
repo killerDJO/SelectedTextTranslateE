@@ -25,6 +25,7 @@ import AppButton from "components/shared/app-button/AppButton.vue";
 import DropListButton from "components/shared/drop-list-button/DropListButton.vue";
 import DropCheckButton from "components/shared/drop-check-button/DropCheckButton.vue";
 import Password from "components/shared/password/Password.vue";
+import Typeahead from "components/shared/typeahead/Typeahead.vue";
 
 class Bootstrapper {
 
@@ -68,6 +69,7 @@ class Bootstrapper {
         Vue.component("drop-list-button", DropListButton);
         Vue.component("drop-check-button", DropCheckButton);
         Vue.component("password", Password);
+        Vue.component("typeahead", Typeahead);
     }
 
     private static registerPlugins(): void {

@@ -24,6 +24,7 @@
     "native-rebuild": "node build-scripts/build-native.js && npx electron-rebuild"
   },
   "dependencies": {
+    "awesomplete": "^1.1.3",
     "axios": "0.18.0",
     "electron-store": "2.0.0",
     "firebase": "5.5.7",

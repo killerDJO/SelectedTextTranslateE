@@ -47,4 +47,8 @@ export abstract class TranslateResultView extends ViewBase {
     public updateTranslateResult(historyRecord: HistoryRecord): Subject<void> {
         return this.messageBus.sendValue<HistoryRecord>(Messages.TranslateResult.UpdateTranslateResult, historyRecord);
     }
+
+    public handleGetTagSuggestions(handler: (input: string) => Observable<ReadonlyArray<string>>): void {
+        this.messageBus.handleCommand<string, ReadonlyArray<string>>(Messages.TranslateResult.GetTagSuggestions, handler);
+    }
 }

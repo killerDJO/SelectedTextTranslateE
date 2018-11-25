@@ -1,5 +1,7 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import * as _ from "lodash";
+import { MessageBus } from "common/renderer/MessageBus";
+import { Messages } from 'common/messaging/Messages';
 
 @Component
 export default class TagsEditor extends Vue {
@@ -13,9 +15,10 @@ export default class TagsEditor extends Vue {
     public compactView!: boolean;
 
     public isTagInputVisible: boolean = false;
-    public tagToAdd: string = "";
+    public suggestions: ReadonlyArray<string> = [];
 
     private currentTags!: string[];
+    private readonly messageBus: MessageBus = new MessageBus();
 
     @Watch("tags", { immediate: true })
     public onTagsSettingsChanged(): void {
@@ -34,24 +37,29 @@ export default class TagsEditor extends Vue {
         this.updateCurrentTags();
     }
 
-    public addTag(): void {
-        if (!this.tagToAdd) {
+    public addTag(tag: string): void {
+        if (!tag) {
             return;
         }
 
-        this.currentTags.push(this.tagToAdd);
+        this.currentTags.push(tag);
         this.currentTags = _.uniq(this.currentTags).sort();
-        this.tagToAdd = "";
         this.isTagInputVisible = false;
         this.updateCurrentTags();
     }
 
     public showTagInput(): void {
-        this.tagToAdd = "";
+        this.suggestions = [];
         this.isTagInputVisible = true;
     }
 
     public hideTagInput(): void {
         this.isTagInputVisible = false;
+    }
+
+    public getSuggestions(input: string): void {
+        this.messageBus
+            .sendCommand<string, ReadonlyArray<string>>(Messages.TranslateResult.GetTagSuggestions, input)
+            .then(suggestions => this.suggestions = suggestions);
     }
 }

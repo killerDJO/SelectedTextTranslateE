@@ -111,6 +111,7 @@ export class Application {
         translateResultView.updateTags$
             .pipe(concatMap(updateTagsRequest => this.historyStore.updateTags(updateTagsRequest, updateTagsRequest.tags)))
             .subscribe(historyRecord => this.updateRecordAfterChange(translateResultView, historyRecord, updateRecordCallback));
+        translateResultView.handleGetTagSuggestions(input => this.tagsEngine.getSuggestions(input));
     }
 
     private updateRecordAfterChange(translateResultView: TranslateResultView, historyRecord: HistoryRecord, updateRecordCallback?: (historyRecord: HistoryRecord) => void): void {

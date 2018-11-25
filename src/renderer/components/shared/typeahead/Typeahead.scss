@@ -1,0 +1,63 @@
+$line-height: 22px;
+
+.drop-wrapper {
+    display: inline-flex;
+    position: relative;
+
+    input[type="text"] {
+        height: $line-height;
+        align-self: center;
+        border-radius: $border-radius;
+        border: $border-width solid $color-border;
+        max-width: 100%;
+        padding: 0 $padding-small;
+
+        &:focus {
+            border-color: $color-outline;
+        }
+    }
+
+    .drop-content{
+        position: fixed;
+        left: -10000px;
+
+        width: 100%;
+
+        border: $border-width solid $color-border;
+        background-color: $color-white;
+        z-index: 1000;
+        border-radius: $border-radius;
+
+        &[x-placement^='bottom']{
+            margin-top: $outline-width;
+        }
+
+        &[x-placement^='top']{
+            margin-bottom: $outline-width;
+        }
+
+        .drop-items {
+            margin: 0;
+            list-style: none;
+            padding: 0;
+
+            .drop-item {
+                white-space: nowrap;
+
+                cursor: pointer;
+                padding: $padding-small $padding-default;
+                outline: none;
+            
+                &:hover,
+                &.selected {
+                    background-color: $color-selection;
+                    color: $color-white;
+                }
+
+                &:not(:last-child) {
+                    border-bottom: $border-width solid $color-border;
+                }
+            }
+        }
+    }
+}

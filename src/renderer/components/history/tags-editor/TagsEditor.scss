@@ -74,18 +74,5 @@ $margin: 3px;
         .confirm-add-tag-holder {
             margin-left: $margin;
         }
-    
-        .tag-input {
-            height: $line-height;
-            align-self: center;
-            border-radius: $border-radius;
-            border: $border-width solid $color-border;
-            max-width: calc(100% - 20px);
-            padding: 0 $padding-small;
-    
-            &:focus {
-                border-color: $color-outline;
-            }
-        }
     }
 }
