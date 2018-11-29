@@ -7,7 +7,7 @@
         grid-column-gap: $padding-large;
         grid-template-columns: 1fr;
 
-        &.translation-visible {
+        &.sidebar-visible {
             grid-template-columns: 1fr 30%;
         }
 
@@ -36,7 +36,7 @@
             }
         }
 
-        .translation-results-header {
+        .sidebar-header {
             grid-row: 1;
 
             .icon-cancel {
@@ -159,7 +159,7 @@
             }
         }
 
-        .translation-result-holder{
+        .sidebar{
             grid-row: 2;
             grid-row-start: 2;
             grid-row-end: 5;

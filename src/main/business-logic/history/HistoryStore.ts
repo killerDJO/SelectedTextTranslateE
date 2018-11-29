@@ -11,9 +11,9 @@ import { SortColumn } from "common/dto/history/SortColumn";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
+import { HistoryFilter } from "common/dto/history/HistoryFilter";
 
 import { Logger } from "infrastructure/Logger";
-
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 
 import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
@@ -132,14 +132,7 @@ export class HistoryStore {
             sortQuery.lastTranslatedDate = -1;
         }
 
-        const searchQuery: any = {};
-        if (request.starredOnly) {
-            searchQuery.isStarred = true;
-        }
-        if (!request.includeArchived) {
-            searchQuery.isArchived = false;
-        }
-
+        const searchQuery: any = this.buildFilterQuery(request.filter);
         const count$ = this.datastoreProvider.count(this.datastore$, searchQuery);
 
         return this.datastoreProvider
@@ -165,6 +158,19 @@ export class HistoryStore {
 
     public updateTags(key: TranslationKey, tags: ReadonlyArray<string>): Observable<HistoryRecord> {
         return this.updateRecord(key, { tags: tags }, `Translation ${this.getLogKey(key)} has changed its tags to ${tags.join(", ")}.`);
+    }
+
+    private buildFilterQuery(filter: HistoryFilter): any {
+        const query: any = {};
+
+        if (filter.starredOnly) {
+            query.isStarred = true;
+        }
+        if (!filter.includeArchived) {
+            query.isArchived = false;
+        }
+
+        return query;
     }
 
     private getTags(record: HistoryRecord): ReadonlyArray<string> {

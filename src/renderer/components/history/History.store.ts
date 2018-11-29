@@ -19,6 +19,7 @@ import { HistoryViewRendererSettings, ColumnSettings } from "common/dto/settings
 import { MessageBus } from "common/renderer/MessageBus";
 
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
+import { HistoryFilter } from "common/dto/history/HistoryFilter";
 
 const messageBus = new MessageBus();
 const throttledRefresh = _.throttle(requestHistoryRecords, 100, { trailing: true });
@@ -36,8 +37,7 @@ interface HistoryState extends TranslateResultState {
     totalRecords: number;
     sortColumn: SortColumn;
     sortOrder: SortOrder;
-    starredOnly: boolean;
-    includeArchived: boolean;
+    filter: HistoryFilter;
 
     isTranslationVisible: boolean;
 }
@@ -59,8 +59,20 @@ export const history: Module<HistoryState, RootState> = {
         totalRecords: 0,
         sortColumn: SortColumn.LastTranslatedDate,
         sortOrder: SortOrder.Desc,
-        starredOnly: false,
-        includeArchived: false,
+        filter: {
+            starredOnly: false,
+            includeArchived: false,
+            input: undefined,
+            maxLastTranslatedDate: undefined,
+            maxTranslatedTime: undefined,
+            minLastTranslatedDate: undefined,
+            minTranslatedTime: undefined,
+            sourceLanguage: undefined,
+            targetLanguage: undefined,
+            translation: undefined,
+            tags: [],
+            unsyncedOnly: false
+        },
         languages: new Map<string, string>(),
 
         translationHistoryRecord: null,
@@ -95,11 +107,8 @@ export const history: Module<HistoryState, RootState> = {
         setSortOrder(state: HistoryState, sortOrder: SortOrder): void {
             state.sortOrder = sortOrder;
         },
-        setStarredOnly(state: HistoryState, starredOnly: boolean): void {
-            state.starredOnly = starredOnly;
-        },
-        setIncludeArchived(state: HistoryState, includeArchived: boolean): void {
-            state.includeArchived = includeArchived;
+        updateFilter(state: HistoryState, filter: Partial<HistoryFilter>): void {
+            state.filter = { ...state.filter, ...filter };
         },
         setTranslationInProgress(state: HistoryState): void {
             translateResultMutations.setTranslationInProgress(state);
@@ -171,7 +180,6 @@ function requestHistoryRecords(state: HistoryState): void {
             pageSize: state.pageSize,
             sortColumn: state.sortColumn,
             sortOrder: state.sortOrder,
-            starredOnly: state.starredOnly,
-            includeArchived: state.includeArchived
+            filter: state.filter
         });
 }

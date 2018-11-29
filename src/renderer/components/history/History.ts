@@ -10,9 +10,11 @@ import { TranslateResultViews } from "common/dto/translation/TranslateResultView
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
+import { HistoryFilter } from "common/dto/history/HistoryFilter";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
+import HistoryFilterComponent from "components/history/history-filter/HistoryFilter.vue";
 import HistorySync from "components/history/history-sync/HistorySync.vue";
 import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
 import { DropCheckItem } from "components/shared/drop-check-button/DropCheckButton";
@@ -28,7 +30,8 @@ interface ColumnDisplaySettings extends DropCheckItem {
         SortableHeader,
         TranslationResult,
         HistorySync,
-        TagsEditor
+        TagsEditor,
+        HistoryFilter: HistoryFilterComponent
     }
 })
 export default class History extends Vue {
@@ -41,8 +44,7 @@ export default class History extends Vue {
     @ns.State public totalRecords!: number;
     @ns.State public sortColumn!: SortColumn;
     @ns.State public sortOrder!: SortOrder;
-    @ns.State public starredOnly!: boolean;
-    @ns.State public includeArchived!: boolean;
+    @ns.State public filter!: HistoryFilter;
     @ns.State public languages!: Map<string, string>;
 
     @ns.State public translationHistoryRecord!: HistoryRecord | null;
@@ -57,8 +59,7 @@ export default class History extends Vue {
     @ns.Mutation private readonly setPageNumber!: (pageNumber: number) => void;
     @ns.Mutation private readonly setSortColumn!: (sortColumn: SortColumn) => void;
     @ns.Mutation private readonly setSortOrder!: (sortOrder: SortOrder) => void;
-    @ns.Mutation private readonly setStarredOnly!: (starredOnly: boolean) => void;
-    @ns.Mutation private readonly setIncludeArchived!: (includeArchived: boolean) => void;
+    @ns.Mutation private readonly updateFilter!: (filter: Partial<HistoryFilter>) => void;
 
     @ns.Mutation public readonly hideTranslation!: () => void;
 
@@ -91,6 +92,7 @@ export default class History extends Vue {
         [SortColumn.IsArchived, "Status"]
     ]);
     public columnSettings: ReadonlyArray<ColumnDisplaySettings> = [];
+    public isFilterVisible: boolean = false;
 
     public mounted() {
         this.setup();
@@ -118,17 +120,17 @@ export default class History extends Vue {
     }
 
     public set starredOnly$(value: boolean) {
-        this.setStarredOnly(value);
+        this.updateFilter({ starredOnly: value });
     }
     public get starredOnly$(): boolean {
-        return this.starredOnly;
+        return this.filter.starredOnly;
     }
 
     public set includeArchived$(value: boolean) {
-        this.setIncludeArchived(value);
+        this.updateFilter({ includeArchived: value });
     }
     public get includeArchived$(): boolean {
-        return this.includeArchived;
+        return this.filter.includeArchived;
     }
 
     public get pageCount(): number {
@@ -172,12 +174,15 @@ export default class History extends Vue {
         return currentSyncData.lastModifiedDate === record.lastModifiedDate;
     }
 
+    public hideFilter(): void {
+        this.isFilterVisible = false;
+    }
+
     @Watch("pageNumber")
     @Watch("pageSize")
     @Watch("sortColumn")
     @Watch("sortOrder")
-    @Watch("starredOnly")
-    @Watch("includeArchived")
+    @Watch("filter", { deep: true })
     @Watch("currentUser")
     @Watch("isInitialized")
     public refreshRecords(): void {

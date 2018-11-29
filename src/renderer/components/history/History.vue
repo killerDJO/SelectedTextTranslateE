@@ -1,6 +1,6 @@
 <template>
   <div class="history clearfix" v-if="isInitialized">
-    <div class="grid-holder" :class="{'translation-visible': isTranslationVisible}">
+    <div class="grid-holder" :class="{'sidebar-visible': isTranslationVisible || isFilterVisible}">
       <div class="results-header clearfix">
         <div class="tags" v-if="!!currentTags">
           <span class="tags-label">Active Tags:</span> <tags-editor :tags="currentTags" @update-tags="updateCurrentTags"/>
@@ -8,15 +8,20 @@
         <div>
           <checkbox v-model="includeArchived$" :label="'Show Archived'" :left-to-right="true"/>
           <checkbox v-model="starredOnly$" :label="'Starred Only'" :left-to-right="true" />
-           <drop-check-button
+          <app-button @click="isFilterVisible = !isFilterVisible" :text="'Filter'" />
+          <drop-check-button
               class="columns-customizer"
               :text="'Columns'"
               :items="columnSettings"/>
         </div>
       </div>
-      <div class="translation-results-header" v-if="isTranslationVisible">
+      <div class="sidebar-header" v-if="isTranslationVisible">
         <icon-button title="Hide Translation" @click="hideTranslation"><i class="icon icon-cancel"/></icon-button>
         <p class="title">Translation</p>
+      </div>
+      <div class="sidebar-header" v-else-if="isFilterVisible">
+        <icon-button title="Hide Filter" @click="hideFilter"><i class="icon icon-cancel"/></icon-button>
+        <p class="title">Filter</p>
       </div>
       <table class="table-striped results non-clickable">
         <thead>
@@ -74,7 +79,7 @@
           </tr>
         </tbody>
       </table>
-      <div v-if="isTranslationVisible" class="translation-result-holder">
+      <div v-if="isTranslationVisible" class="sidebar">
         <translation-result
               :default-view="defaultTranslateResultView"
               :history-record="translationHistoryRecord"
@@ -92,6 +97,11 @@
               @search="search"
               @set-starred-status="setStarredStatus"
               @update-tags="updateTags"/>
+      </div>
+      <div v-else-if="isFilterVisible" class="sidebar">
+        <history-filter
+              :filter="filter"
+              @filter-updated="updateFilter"/>
       </div>
       <div class="results-footer">
         <history-sync class="sync-control" :current-user="currentUser"/>
