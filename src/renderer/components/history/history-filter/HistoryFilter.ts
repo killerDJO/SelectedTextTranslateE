@@ -8,7 +8,7 @@ export default class HistoryFilter extends Vue {
 
     public currentFilter!: HistoryFilter;
 
-    @Watch("filter", { deep: true })
+    @Watch("filter", { deep: true, immediate: true })
     public onFilterChanged() {
         this.currentFilter = this.filter;
     }

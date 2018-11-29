@@ -8,7 +8,7 @@
         <div>
           <checkbox v-model="includeArchived$" :label="'Show Archived'" :left-to-right="true"/>
           <checkbox v-model="starredOnly$" :label="'Starred Only'" :left-to-right="true" />
-          <app-button @click="isFilterVisible = !isFilterVisible" :text="'Filter'" />
+          <toggle-button @click="isFilterVisible = !isFilterVisible" :text="'Filter'" :is-active="isFilterVisible" class="filter-button" v-tab-index/>
           <drop-check-button
               class="columns-customizer"
               :text="'Columns'"

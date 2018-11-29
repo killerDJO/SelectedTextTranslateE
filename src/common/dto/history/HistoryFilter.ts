@@ -1,7 +1,7 @@
 export interface HistoryFilter {
     readonly starredOnly: boolean;
     readonly includeArchived: boolean;
-    readonly input?: string;
+    readonly word?: string;
     readonly translation?: string;
     readonly minTranslatedTime?: number;
     readonly maxTranslatedTime?: number;

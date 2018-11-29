@@ -1,8 +1,12 @@
 <template>
-  <div class="history-filter">
-    <div class="form-group">
-      <label>Input:</label>
-      <input v-tab-index type="text" class="form-control" v-model="currentFilter.input">
+  <div>
+    <div class="form-group history-filter-item">
+      <label>Word:</label>
+      <input v-tab-index type="text" class="form-control" v-model="currentFilter.word">
+    </div>
+    <div class="form-group history-filter-item">
+      <label>Translation:</label>
+      <input v-tab-index type="text" class="form-control" v-model="currentFilter.translation">
     </div>
   </div>
 </template>

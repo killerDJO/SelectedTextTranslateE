@@ -22,6 +22,7 @@ import Checkbox from "components/shared/checkbox/Checkbox.vue";
 import IconButton from "components/shared/icon-button/IconButton.vue";
 import LinkButton from "components/shared/link-button/LinkButton.vue";
 import AppButton from "components/shared/app-button/AppButton.vue";
+import ToggleButton from "components/shared/toggle-button/ToggleButton.vue";
 import DropListButton from "components/shared/drop-list-button/DropListButton.vue";
 import DropCheckButton from "components/shared/drop-check-button/DropCheckButton.vue";
 import Password from "components/shared/password/Password.vue";
@@ -66,6 +67,7 @@ class Bootstrapper {
         Vue.component("icon-button", IconButton);
         Vue.component("link-button", LinkButton);
         Vue.component("app-button", AppButton);
+        Vue.component("toggle-button", ToggleButton);
         Vue.component("drop-list-button", DropListButton);
         Vue.component("drop-check-button", DropCheckButton);
         Vue.component("password", Password);

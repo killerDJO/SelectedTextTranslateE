@@ -35,6 +35,7 @@ import { AccountHandler } from "business-logic/history/sync/AccountHandler";
 import { HistoryMigrator } from "business-logic/history/persistence/HistoryMigrator";
 import { HistoryBackuper } from "business-logic/history/persistence/HistoryBackuper";
 import { HistoryStore } from "business-logic/history/HistoryStore";
+import { HistoryQuery } from "business-logic/history/HistoryQuery";
 import { TagsEngine } from "business-logic/history/TagsEngine";
 
 import { AddUniqueIdConstraint } from "business-logic/history/persistence/migrations/1_AddUniqueIdConstraint";
@@ -100,6 +101,7 @@ class Binder {
 
     private bindHistory(): void {
         this.container.bind<HistoryStore>(HistoryStore).toSelf().inSingletonScope();
+        this.container.bind<HistoryQuery>(HistoryQuery).toSelf().inSingletonScope();
         this.container.bind<HistorySyncService>(HistorySyncService).toSelf().inSingletonScope();
         this.container.bind<AccountHandler>(AccountHandler).toSelf().inSingletonScope();
         this.container.bind<HistoryDatabaseProvider>(HistoryDatabaseProvider).toSelf().inSingletonScope();

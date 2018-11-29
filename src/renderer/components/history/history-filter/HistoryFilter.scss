@@ -1,0 +1,5 @@
+.history-filter-item {
+    @extend %box-shadow;
+    padding: $padding-default;
+    border-radius: $border-radius;
+}

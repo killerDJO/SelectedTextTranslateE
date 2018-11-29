@@ -30,9 +30,13 @@
                 }
             }
 
-            .columns-customizer,
             .checkbox {
                 margin-left: $margin-default;
+            }
+
+            .columns-customizer,
+            .filter-button {
+                margin-left: $margin-small;
             }
         }
 
@@ -163,6 +167,8 @@
             grid-row: 2;
             grid-row-start: 2;
             grid-row-end: 5;
+            background-color: $color-white;
+            padding-top: $padding-small;
         }
 
         .results-footer {
