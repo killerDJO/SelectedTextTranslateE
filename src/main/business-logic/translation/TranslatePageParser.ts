@@ -72,7 +72,7 @@ export class TranslatePageParser {
     }
 
     private findScriptContent(node: Node): string | null {
-        if (node.nodeName.toLowerCase() === "script" && node.textContent !== null && node.textContent.indexOf("TKK=") !== -1) {
+        if (node.nodeName.toLowerCase() === "script" && node.textContent !== null && (node.textContent.indexOf("tkk") !== -1 || node.textContent.indexOf("TKK") !== -1)) {
             return node.textContent;
         }
 
