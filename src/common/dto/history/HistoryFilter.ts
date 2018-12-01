@@ -8,7 +8,7 @@ export interface HistoryFilter {
     readonly tags: string[];
     readonly sourceLanguage?: string;
     readonly targetLanguage?: string;
-    readonly minLastTranslatedDate?: number;
-    readonly maxLastTranslatedDate?: number;
+    readonly minLastTranslatedDate?: Date;
+    readonly maxLastTranslatedDate?: Date;
     readonly unsyncedOnly: boolean;
 }

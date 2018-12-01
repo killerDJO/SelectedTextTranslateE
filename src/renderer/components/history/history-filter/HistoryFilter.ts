@@ -5,7 +5,6 @@ import { HistoryFilter } from "common/dto/history/HistoryFilter";
 import { Language } from "common/dto/settings/Language";
 
 import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
-
 import { SelectedLanguages } from "components/shared/language-selector/LanguageSelector";
 
 @Component({
@@ -50,7 +49,11 @@ export default class HistoryFilterComponent extends Vue {
         this.validationResult = {};
 
         if (!!this.currentFilter.minTranslatedTime && !!this.currentFilter.maxTranslatedTime && this.currentFilter.minTranslatedTime > this.currentFilter.maxTranslatedTime) {
-            this.validationResult.minTranslatedTime = this.validationResult.maxTranslatedTime = "Minimum number of translations must be lower than maximum number of translations";
+            this.validationResult.minTranslatedTime = this.validationResult.maxTranslatedTime = "Minimum number must be lower than maximum number";
+        }
+
+        if (!!this.currentFilter.minLastTranslatedDate && !!this.currentFilter.maxLastTranslatedDate && this.currentFilter.minLastTranslatedDate > this.currentFilter.maxLastTranslatedDate) {
+            this.validationResult.minLastTranslatedDate = this.validationResult.maxLastTranslatedDate = "Start date must be lower than end date";
         }
     }
 
@@ -73,4 +76,7 @@ interface ValidationResult {
 
     minTranslatedTime?: string;
     maxTranslatedTime?: string;
+
+    minLastTranslatedDate?: string;
+    maxLastTranslatedDate?: string;
 }

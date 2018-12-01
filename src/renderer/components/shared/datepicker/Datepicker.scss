@@ -1,0 +1,64 @@
+.datepicker-holder {
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+
+    .clear-icon {
+        font-size: $font-large;
+        color: $color-gray;
+        margin-left: -14px;
+
+        &:hover {
+            color: $color-black;
+        }
+    }
+
+    .datepicker {
+        width: 100%;
+    }
+
+    /deep/ .calendar {
+        $cell-height: 25px;
+        $calendar-width: 225px;
+
+        width: $calendar-width;
+        border-radius: $border-radius;
+        border-color: $color-border;
+        margin-top: $border-width + $outline-width;
+    
+        header {
+            line-height: $cell-height;
+
+            .prev:not(.disabled):hover,
+            .next:not(.disabled):hover,
+            .up:not(.disabled):hover {
+                background: $color-background;
+            }
+        }
+
+        .cell {
+            height: $cell-height;
+            line-height: $cell-height;
+            border-radius: $border-radius;
+
+            &.selected:hover,
+            &.selected {
+                background: $color-selection;
+                border-color: $color-selection;
+                color: $color-white;
+            }
+
+            &:not(.blank):not(.disabled) {
+                &.day:hover,
+                &.month:hover,
+                &.year:hover {
+                    border-color: $color-selection;
+                }
+            }
+
+            &.highlighted:not(.selected) {
+                background: $color-border;
+            }
+        }
+    }
+}

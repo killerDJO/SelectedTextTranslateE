@@ -22,4 +22,20 @@
         display: block;
         height: 22px;
     }
+
+    label {
+        display: block;
+        margin-bottom: $margin-small;
+    }
+
+    /deep/ .form-control {
+        line-height: 1;
+    }
+
+    .date-selector {
+        display: grid;
+        grid-template-columns: 1fr 25px 1fr;
+        align-items: center;
+        justify-items: center;
+    }
 }
