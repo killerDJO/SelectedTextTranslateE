@@ -7,10 +7,11 @@
                 <span class="play-icon" />
             </icon-button>
         </div>
-        <language-settings
+         <language-selector
             class="input-language-settings"
-            :language-settings="currentLanguageSettings"
-            @language-settings-updated="updateLanguageSettings"/>
+            :languages="currentLanguageSettings"
+            :all-languages="allLanguages"
+            @languages-updated="updateLanguageSettings"/>
     </div>
 </template>
 

@@ -141,7 +141,7 @@ export const translateResultActions = {
                 isForcedTranslation: historyRecord.isForcedTranslation,
                 refreshCache: false,
                 sourceLanguage: language,
-                targetLanguage: historyRecord.targetLanguage
+                targetLanguage: historyRecord.sourceLanguage
             }));
     },
     translateText({ commit }: ActionContext<TranslateResultState, RootState>, request: TranslationRequest): void {

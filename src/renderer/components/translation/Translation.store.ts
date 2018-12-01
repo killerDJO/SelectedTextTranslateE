@@ -5,7 +5,7 @@ import { RootState } from "root.store";
 
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
-import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
+import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 import { Messages } from "common/messaging/Messages";
 
 import { MessageBus } from "common/renderer/MessageBus";
@@ -17,7 +17,7 @@ const messageBus = new MessageBus();
 interface TranslationState extends TranslateResultState {
     showInput: boolean;
     isVisible: boolean;
-    languageSettings: EditableLanguageSettings | null;
+    languageSettings: LanguageSettings | null;
 }
 
 export const translation: Module<TranslationState, RootState> = {
@@ -56,7 +56,7 @@ export const translation: Module<TranslationState, RootState> = {
         setVisible(state: TranslationState): void {
             state.isVisible = true;
         },
-        setLanguageSettings(state: TranslationState, languageSettings: EditableLanguageSettings): void {
+        setLanguageSettings(state: TranslationState, languageSettings: LanguageSettings): void {
             state.languageSettings = languageSettings;
         }
     },
@@ -65,7 +65,7 @@ export const translation: Module<TranslationState, RootState> = {
         setup(context): void {
             translateResultActions.setup(context);
             messageBus.observeNotification(Messages.Translation.ShowInputCommand, () => context.commit("setShowInput"));
-            messageBus.observeValue<EditableLanguageSettings>(Messages.Translation.LanguageSettings, languageSettings => context.commit("setLanguageSettings", languageSettings));
+            messageBus.observeValue<LanguageSettings>(Messages.Translation.LanguageSettings, languageSettings => context.commit("setLanguageSettings", languageSettings));
             remote.getCurrentWindow().on("hide", () => context.commit("clearTranslateResult"));
             remote.getCurrentWindow().on("show", () => context.commit("setVisible"));
         }

@@ -4,6 +4,7 @@ import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { HistoryViewRendererSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
+import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 
 export interface Settings {
     readonly renderer: RendererSettings;
@@ -25,11 +26,6 @@ export interface HotkeySettings {
     readonly playText: Hotkey[];
     readonly inputText: Hotkey[];
     readonly toggleSuspend: Hotkey[];
-}
-
-export interface LanguageSettings {
-    readonly sourceLanguage: string;
-    readonly targetLanguage: string;
 }
 
 export interface TranslationEngineSettings {

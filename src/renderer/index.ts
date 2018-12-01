@@ -27,6 +27,7 @@ import DropListButton from "components/shared/drop-list-button/DropListButton.vu
 import DropCheckButton from "components/shared/drop-check-button/DropCheckButton.vue";
 import Password from "components/shared/password/Password.vue";
 import Typeahead from "components/shared/typeahead/Typeahead.vue";
+import LanguageSelector from "components/shared/language-selector/LanguageSelector.vue";
 
 class Bootstrapper {
 
@@ -72,6 +73,7 @@ class Bootstrapper {
         Vue.component("drop-check-button", DropCheckButton);
         Vue.component("password", Password);
         Vue.component("typeahead", Typeahead);
+        Vue.component("language-selector", LanguageSelector);
     }
 
     private static registerPlugins(): void {

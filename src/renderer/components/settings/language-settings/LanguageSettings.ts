@@ -1,36 +1,30 @@
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import * as _ from "lodash";
+import { Component, Vue, Prop } from "vue-property-decorator";
 
 import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
-import { Language } from "common/dto/settings/Language";
+import { SelectedLanguages } from "components/shared/language-selector/LanguageSelector";
 
 @Component
 export default class LanguageSettings extends Vue {
     @Prop(Object)
     public readonly languageSettings!: EditableLanguageSettings;
 
-    public readonly currentLanguageSettings: EditableLanguageSettings = _.cloneDeep(this.languageSettings);
-
-    @Watch("currentLanguageSettings", { deep: true })
-    public raiseUpdatedEvent(): void {
-        this.$emit("language-settings-updated", this.currentLanguageSettings);
+    public get selectedLanguages(): SelectedLanguages {
+        return {
+            sourceLanguage: this.languageSettings.sourceLanguage,
+            targetLanguage: this.languageSettings.targetLanguage
+        };
     }
 
-    public switchLanguages(): void {
-        const originalSourceLanguage = this.currentLanguageSettings.sourceLanguage;
-        this.currentLanguageSettings.sourceLanguage = this.currentLanguageSettings.targetLanguage;
-        this.currentLanguageSettings.targetLanguage = originalSourceLanguage;
-    }
+    public onLanguagesUpdated(languages: SelectedLanguages): void {
+        if (languages.sourceLanguage === undefined || languages.targetLanguage === undefined) {
+            throw new Error("Language must be selected");
+        }
 
-    public get sourceLanguages(): ReadonlyArray<Language> {
-        return this.filterLanguages(this.currentLanguageSettings.targetLanguage);
-    }
-
-    public get targetLanguages(): ReadonlyArray<Language> {
-        return this.filterLanguages(this.currentLanguageSettings.sourceLanguage);
-    }
-
-    public filterLanguages(code: string): ReadonlyArray<Language> {
-        return _.filter<Language>(this.languageSettings.allLanguages, language => language.code !== code);
+        const updatedSettings: EditableLanguageSettings = {
+            sourceLanguage: languages.sourceLanguage,
+            targetLanguage: languages.targetLanguage,
+            allLanguages: this.languageSettings.allLanguages
+        };
+        this.$emit("language-settings-updated", updatedSettings);
     }
 }

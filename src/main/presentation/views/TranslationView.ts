@@ -9,9 +9,10 @@ import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 
+import { LanguageSettings } from "common/dto/settings/LanguageSettings";
+
 import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
-import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
 
 export class TranslationView extends TranslateResultView {
 
@@ -104,12 +105,9 @@ export class TranslationView extends TranslateResultView {
     }
 
     private setupSubscriptions(): void {
-        this.messageBus.registerObservable<EditableLanguageSettings>(
+        this.messageBus.registerObservable<LanguageSettings>(
             Messages.Translation.LanguageSettings,
-            this.context.settingsProvider.getSettings().pipe(map(settings => ({
-                ...settings.language,
-                allLanguages: this.context.settingsProvider.getLanguages()
-            }))));
+            this.context.settingsProvider.getSettings().pipe(map(settings => settings.language)));
     }
 
     private saveDimensions(): void {

@@ -30,10 +30,7 @@
                 }
             }
 
-            .checkbox {
-                margin-left: $margin-default;
-            }
-
+            .checkbox,
             .columns-customizer,
             .filter-button {
                 margin-left: $margin-small;
@@ -42,8 +39,12 @@
 
         .sidebar-header {
             grid-row: 1;
+            display: flex;
+            align-items: center;
 
             .icon-cancel {
+                margin-right: $margin-small;
+
                 cursor: pointer;
                 font-size: $font-large;
 

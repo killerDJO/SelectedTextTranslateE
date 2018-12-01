@@ -6,7 +6,7 @@ import { TranslationViewRendererSettings } from "common/dto/settings/views-setti
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
-import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
+import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
 
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
@@ -25,7 +25,7 @@ export default class Translation extends Vue {
     @ns.State public translationResultViewSettings!: TranslationViewRendererSettings | null;
     @ns.State public isTranslationInProgress!: boolean;
     @ns.State public languages!: Map<string, string>;
-    @ns.State public languageSettings!: EditableLanguageSettings;
+    @ns.State public languageSettings!: LanguageSettings;
     @ns.State public showInput!: boolean;
     @ns.State public defaultTranslateResultView!: TranslateResultViews;
     @ns.State public isOffline!: boolean;

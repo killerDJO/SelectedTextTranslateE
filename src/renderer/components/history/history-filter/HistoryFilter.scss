@@ -2,4 +2,24 @@
     @extend %box-shadow;
     padding: $padding-default;
     border-radius: $border-radius;
+
+    &.inline-inputs {
+        label {
+            display: block;
+            margin-bottom: $margin-small;
+        }
+
+        input {
+            width: 100px;
+        }
+
+        .validated-field {
+            width: auto;
+        }
+    }
+
+    .tags-filter {
+        display: block;
+        height: 22px;
+    }
 }

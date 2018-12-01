@@ -101,6 +101,7 @@
       <div v-else-if="isFilterVisible" class="sidebar">
         <history-filter
               :filter="filter"
+              :languages="languages"
               @filter-updated="updateFilter"/>
       </div>
       <div class="results-footer">

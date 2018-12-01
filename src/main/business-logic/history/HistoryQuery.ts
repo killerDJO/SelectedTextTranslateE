@@ -60,7 +60,7 @@ export class HistoryQuery {
     }
 
     private buildFilterQuery(filter: HistoryFilter): any {
-        const query: any = {};
+        const query: any = { $and: [] };
 
         if (filter.starredOnly) {
             query.isStarred = true;
@@ -76,6 +76,25 @@ export class HistoryQuery {
 
         if (!!filter.translation) {
             query["translateResult.sentence.translation"] = new RegExp(_.escapeRegExp(filter.translation));
+        }
+
+        if (_.isNumber(filter.minTranslatedTime) || _.isNumber(filter.maxTranslatedTime)) {
+            query.$and.push(...[
+                { translationsNumber: { $gte: filter.minTranslatedTime || 0 } },
+                { translationsNumber: { $lte: _.isNumber(filter.maxTranslatedTime) ? filter.maxTranslatedTime : Number.POSITIVE_INFINITY } }
+            ]);
+        }
+
+        if (filter.tags.length > 0) {
+            query.$and.push(...filter.tags.map(tag => ({ tags: { $elemMatch: tag } })));
+        }
+
+        if (!!filter.sourceLanguage) {
+            query.sourceLanguage = filter.sourceLanguage;
+        }
+
+        if (!!filter.targetLanguage) {
+            query.targetLanguage = filter.targetLanguage;
         }
 
         return query;

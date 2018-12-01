@@ -22,6 +22,7 @@
             <translation-input
                 @translate-text="translateText"
                 @play-text="playTextFromRequest"
+                :languages="languages"
                 :language-settings="languageSettings" />
         </div>
     </div>

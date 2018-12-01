@@ -3,18 +3,15 @@ import { Prop, Component, Watch } from "vue-property-decorator";
 
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
-import LanguageSettingsComponent from "components/settings/language-settings/LanguageSettings.vue";
-import { EditableLanguageSettings } from "common/dto/settings/editable-settings/EditableLanguageSettings";
+import { LanguageSettings } from "common/dto/settings/LanguageSettings";
+import { Language } from "common/dto/settings/Language";
 
-@Component({
-    components: {
-        LanguageSettings: LanguageSettingsComponent
-    }
-})
+@Component
 export default class TranslationInput extends Vue {
-    @Prop(Object) public languageSettings!: EditableLanguageSettings;
+    @Prop(Object) public languageSettings!: LanguageSettings;
+    @Prop(Map) public languages!: Map<string, string>;
 
-    public currentLanguageSettings: EditableLanguageSettings | null = null;
+    public currentLanguageSettings: LanguageSettings | null = null;
     public text: string = "";
 
     @Watch("languageSettings", { immediate: true, deep: true })
@@ -22,8 +19,16 @@ export default class TranslationInput extends Vue {
         this.currentLanguageSettings = this.languageSettings;
     }
 
-    public updateLanguageSettings(updatedLanguageSettings: EditableLanguageSettings): void {
+    public updateLanguageSettings(updatedLanguageSettings: LanguageSettings): void {
         this.currentLanguageSettings = updatedLanguageSettings;
+    }
+
+    public get allLanguages(): ReadonlyArray<Language> {
+        const result: Language[] = [];
+        for (const [key, value] of this.languages) {
+            result.push({ code: key, name: value });
+        }
+        return result;
     }
 
     public translate(): void {
