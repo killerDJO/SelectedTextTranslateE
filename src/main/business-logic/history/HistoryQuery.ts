@@ -97,6 +97,22 @@ export class HistoryQuery {
             query.targetLanguage = filter.targetLanguage;
         }
 
+        if (!!filter.minLastTranslatedDate) {
+            const minLastTranslatedDate = new Date(filter.minLastTranslatedDate);
+            const minDate = new Date(minLastTranslatedDate.getFullYear(), minLastTranslatedDate.getMonth(), minLastTranslatedDate.getDate());
+            query.$and.push(
+                { lastTranslatedDate: { $gte: minDate.getTime() } },
+            );
+        }
+
+        if (!!filter.maxLastTranslatedDate) {
+            const maxLastTranslatedDate = new Date(filter.maxLastTranslatedDate);
+            const maxDate = new Date(maxLastTranslatedDate.getFullYear(), maxLastTranslatedDate.getMonth(), maxLastTranslatedDate.getDate(), 24, 60, 60, 1000);
+            query.$and.push(
+                { lastTranslatedDate: { $lte: maxDate.getTime() } },
+            );
+        }
+
         return query;
     }
 }

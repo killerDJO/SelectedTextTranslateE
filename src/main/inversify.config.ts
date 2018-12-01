@@ -42,6 +42,7 @@ import { AddUniqueIdConstraint } from "business-logic/history/persistence/migrat
 import { AddIdentifierMigration } from "business-logic/history/persistence/migrations/2_AddIdentifierMigration";
 import { RemoveDuplicatedRecordsMigration } from "business-logic/history/persistence/migrations/3_RemoveDuplicatedRecordsMigration";
 import { AddLastModificationTimeMigration } from "business-logic/history/persistence/migrations/4_AddLastModificationTimeMigration";
+import { MigrateDatesToNumbers } from "business-logic/history/persistence/migrations/5_MigrateDatesToNumbers";
 
 import { MessageBus } from "infrastructure/MessageBus";
 import { RendererLocationProvider } from "presentation/infrastructure/RendererLocationProvider";
@@ -113,6 +114,7 @@ class Binder {
         this.container.bind<HistoryMigration>(HistoryMigration).to(AddIdentifierMigration);
         this.container.bind<HistoryMigration>(HistoryMigration).to(RemoveDuplicatedRecordsMigration);
         this.container.bind<HistoryMigration>(HistoryMigration).to(AddUniqueIdConstraint);
+        this.container.bind<HistoryMigration>(HistoryMigration).to(MigrateDatesToNumbers);
 
         this.container.bind<TagsEngine>(TagsEngine).toSelf();
     }

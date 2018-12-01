@@ -86,7 +86,7 @@ export class TextTranslator {
 
     private isHistoryRecordExpired(historyRecord: HistoryRecord): boolean {
         const currentTime = Date.now();
-        const elapsedMilliseconds = currentTime - (new Date(historyRecord.updatedDate)).getTime();
+        const elapsedMilliseconds = currentTime - historyRecord.updatedDate;
         const MillisecondsInSecond = 1000;
         const SecondsInMinute = 60;
         const MinutesInHour = 60;

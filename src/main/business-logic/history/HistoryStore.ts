@@ -37,7 +37,7 @@ export class HistoryStore {
     }
 
     public addTranslateResult(translateResult: TranslateResult, key: TranslationKey, incrementTranslationsNumber: boolean): Observable<HistoryRecord> {
-        const currentTime = new Date();
+        const currentTime = new Date().getTime();
         const insert$ = this.datastoreProvider.insert<HistoryRecord>(this.datastore$, {
             id: this.recordIdGenerator.generateId(key),
             sentence: key.sentence,
@@ -63,7 +63,7 @@ export class HistoryStore {
     }
 
     public updateTranslateResult(translateResult: TranslateResult, record: HistoryRecord, incrementTranslationsNumber: boolean): Observable<HistoryRecord> {
-        const currentTime = new Date();
+        const currentTime = new Date().getTime();
         const setQuery: any = {
             updatedDate: currentTime,
             translateResult: translateResult,
@@ -90,7 +90,7 @@ export class HistoryStore {
     }
 
     public incrementTranslationsNumber(record: HistoryRecord): Observable<HistoryRecord> {
-        const currentTime = new Date();
+        const currentTime = new Date().getTime();
         const increment$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore$,
             this.getSearchQuery(record),
@@ -151,9 +151,9 @@ export class HistoryStore {
         };
     }
 
-    private getModificationFields(modificationDate?: Date) {
+    private getModificationFields(modificationDate?: number) {
         return {
-            lastModifiedDate: (modificationDate || new Date()).getTime()
+            lastModifiedDate: modificationDate || new Date().getTime()
         };
     }
 

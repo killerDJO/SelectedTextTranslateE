@@ -238,10 +238,10 @@ export class HistorySyncService {
                 const mergedRecord: HistoryRecord = {
                     ...recordKey,
                     id: existingRecord.id,
-                    createdDate: newerRecord.createdDate,
+                    createdDate: this.ensureDate(newerRecord.createdDate),
                     translateResult: newerTranslateResultRecord.translateResult,
-                    updatedDate: newerTranslateResultRecord.updatedDate,
-                    lastTranslatedDate: newerRecord.lastTranslatedDate,
+                    updatedDate: this.ensureDate(newerTranslateResultRecord.updatedDate),
+                    lastTranslatedDate: this.ensureDate(newerRecord.lastTranslatedDate),
                     lastModifiedDate: newerRecord.lastModifiedDate,
                     translationsNumber: serverRecord.translationsNumber + (existingRecord.translationsNumber - serverTranslationsNumber),
                     isArchived: newerRecord.isArchived,
@@ -309,5 +309,9 @@ export class HistorySyncService {
 
     private notifyAboutUpdate(record: HistoryRecord): void {
         this.syncStateUpdatedSubject$.next(record);
+    }
+
+    private ensureDate(value: Date | string | number): number {
+        return new Date(value).getTime();
     }
 }
