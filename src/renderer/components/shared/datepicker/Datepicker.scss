@@ -19,7 +19,7 @@
 
     /deep/ .calendar {
         $cell-height: 25px;
-        $calendar-width: 225px;
+        $calendar-width: 215px;
 
         width: $calendar-width;
         border-radius: $border-radius;
@@ -43,21 +43,21 @@
 
             &.selected:hover,
             &.selected {
-                background: $color-selection;
-                border-color: $color-selection;
-                color: $color-white;
+                background: $color-border;
+                border-color: $color-border;
+                color: $color-black;
             }
 
             &:not(.blank):not(.disabled) {
                 &.day:hover,
                 &.month:hover,
                 &.year:hover {
-                    border-color: $color-selection;
+                    border-color: $color-border;
                 }
             }
 
             &.highlighted:not(.selected) {
-                background: $color-border;
+                background: $color-background;
             }
         }
     }

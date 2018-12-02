@@ -3,7 +3,7 @@
     <div class="grid-holder" :class="{'sidebar-visible': isTranslationVisible || isFilterVisible}">
       <div class="results-header clearfix">
         <div class="tags" v-if="!!currentTags">
-          <span class="tags-label">Active Tags:</span> <tags-editor :tags="currentTags" @update-tags="updateCurrentTags"/>
+          <span class="tags-label">Active Tags:</span> <tags-editor :tags="currentTags" @update-tags="updateCurrentTags" @tag-clicked="tagClicked" :clickable="true"/>
         </div>
         <div>
           <checkbox v-model="includeArchived$" :label="'Show Archived'" :left-to-right="true"/>
@@ -56,7 +56,7 @@
               <span v-else class="no-translation">No Translation</span>
             </td>
             <td class="tags-column" v-if="isColumnVisible(SortColumn.Tags)" @click.stop.prevent>
-              <tags-editor :tags="record.tags" @update-tags="updateRecordTags(record, $event)" :compact-view="true"/>
+              <tags-editor :tags="record.tags" @update-tags="updateRecordTags(record, $event)" @tag-clicked="tagClicked" :compact-view="true" :clickable="true"/>
             </td>
             <td class="times-column" v-if="isColumnVisible(SortColumn.TimesTranslated)">{{record.translationsNumber !== 0 ? record.translationsNumber : "-"}}</td>
             <td class="source-language-column" v-overflow-tooltip v-if="isColumnVisible(SortColumn.SourceLanguage)">{{languages.get(record.sourceLanguage) || record.sourceLanguage}}</td>
@@ -74,7 +74,7 @@
         <tbody v-else>
           <tr>
             <td colspan="4" class="no-records-available">
-              No {{starredOnly ? "Starred": ""}} History Records Avialable
+              No {{filter.starredOnly ? "Starred": ""}} History Records Avialable
             </td>
           </tr>
         </tbody>

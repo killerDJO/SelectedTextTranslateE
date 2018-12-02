@@ -152,6 +152,14 @@ export default class History extends Vue {
         this.updateTags({ record, tags });
     }
 
+    public tagClicked(tag: string): void {
+        this.updateFilter({
+            tags: this.filter.tags.concat([tag])
+        });
+        this.isFilterVisible = true;
+        this.hideTranslation();
+    }
+
     public translateHistoryRecord(record: HistoryRecord): void {
         this.translateText({
             text: record.sentence,

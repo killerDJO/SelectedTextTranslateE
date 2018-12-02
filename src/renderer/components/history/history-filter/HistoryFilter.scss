@@ -1,27 +1,30 @@
+$range-spacing: 25px;
+
 .history-filter-item {
     @extend %box-shadow;
     padding: $padding-default;
     line-height: 1;
     border-radius: $border-radius;
 
-    &.inline-inputs {
+    &.range-input {
+        display: grid;
+        grid-template: 'label label label' 'input . .';
+        grid-template-columns: 1fr $range-spacing 1fr;
+
         label {
-            display: block;
-            margin-bottom: $margin-small;
+            grid-area: label;
         }
 
-        input {
-            width: 100px;
-        }
-
-        .validated-field {
-            width: auto;
+        .inputs-wrapper {
+            grid-area: 'input';
+            display: flex;
+            align-items: center;
         }
     }
 
-    .tags-filter {
-        display: block;
-        height: 22px;
+    .range-separator {
+        width: 50px;
+        text-align: center;
     }
 
     label {
@@ -35,7 +38,7 @@
 
     .date-selector {
         display: grid;
-        grid-template-columns: 1fr 25px 1fr;
+        grid-template-columns: 1fr $range-spacing 1fr;
         align-items: center;
         justify-items: center;
     }

@@ -1,6 +1,6 @@
 <template>
-  <select class="form-control" v-model="selectedLanguage$">
-    <option v-for="language in allLanguages" :value="language.value" :key="language.value">
+  <select class="form-control" v-model="selectedLanguage$" :class="{'default-selected': !selectedLanguage$}">
+    <option v-for="language in allLanguages" :value="language.value" :key="language.value" class="language-option" :class="{'default': !language.value}">
       {{ language.name }}
     </option>
   </select>

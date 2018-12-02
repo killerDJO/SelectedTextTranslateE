@@ -15,6 +15,12 @@ export default class TagsEditor extends Vue {
     })
     public compactView!: boolean;
 
+    @Prop({
+        type: Boolean,
+        default: false
+    })
+    public clickable!: boolean;
+
     public isTagInputVisible: boolean = false;
     public suggestions: ReadonlyArray<string> = [];
 
@@ -45,6 +51,12 @@ export default class TagsEditor extends Vue {
 
     public addCurrentTag(): void {
         this.addTag(this.currentTag);
+    }
+
+    public onTagClicked(tag: string) {
+        if (this.clickable) {
+            this.$emit("tag-clicked", tag);
+        }
     }
 
     public addTag(tag: string): void {

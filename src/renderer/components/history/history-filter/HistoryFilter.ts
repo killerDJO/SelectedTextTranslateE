@@ -22,6 +22,21 @@ export default class HistoryFilterComponent extends Vue {
     public currentFilter: HistoryFilter = _.cloneDeep(this.filter);
     public validationResult: ValidationResult = {};
 
+    @Watch("filter", { deep: true })
+    public onFilterChanged(): void {
+        if (!_.isEqual(this.filter, this.currentFilter)) {
+            this.currentFilter = _.cloneDeep(this.filter);
+        }
+    }
+
+    @Watch("currentFilter", { deep: true })
+    public onCurrentFilterChanged() {
+        this.validate();
+        if (this.isValid()) {
+            this.$emit("filter-updated", this.currentFilter);
+        }
+    }
+
     public get selectedLanguages(): SelectedLanguages {
         return {
             sourceLanguage: this.currentFilter.sourceLanguage,
@@ -35,14 +50,6 @@ export default class HistoryFilterComponent extends Vue {
             result.push({ code: key, name: value });
         }
         return result;
-    }
-
-    @Watch("currentFilter", { deep: true })
-    public onCurrentFilterChanged() {
-        this.validate();
-        if (this.isValid()) {
-            this.$emit("filter-updated", this.currentFilter);
-        }
     }
 
     private validate(): void {

@@ -1,0 +1,11 @@
+.default-selected {
+    color: $color-gray;
+}
+
+.language-option {
+    color: $color-black;
+
+    &.default {
+        color: $color-gray;
+    }
+}
