@@ -1,6 +1,7 @@
 .history-filter-item {
     @extend %box-shadow;
     padding: $padding-default;
+    line-height: 1;
     border-radius: $border-radius;
 
     &.inline-inputs {

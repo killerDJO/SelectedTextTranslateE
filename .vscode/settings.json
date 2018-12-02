@@ -28,6 +28,7 @@
         "inversify",
         "keybd",
         "keytar",
-        "unmanaged"
+        "unmanaged",
+        "unsynced"
     ]
 }

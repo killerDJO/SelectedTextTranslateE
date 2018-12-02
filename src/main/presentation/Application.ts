@@ -22,7 +22,7 @@ import { HistorySyncService } from "business-logic/history/sync/HistorySyncServi
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { AccountHandler } from "business-logic/history/sync/AccountHandler";
 import { TagsEngine } from "business-logic/history/TagsEngine";
-import { HistoryQuery } from "business-logic/history/HistoryQuery";
+import { HistoryQueryExecutor } from "business-logic/history/HistoryQueryExecutor";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -49,7 +49,7 @@ export class Application {
         private readonly settingsProvider: SettingsProvider,
         private readonly notificationSender: NotificationSender,
         private readonly historyStore: HistoryStore,
-        private readonly historyQuery: HistoryQuery,
+        private readonly historyQueryExecutor: HistoryQueryExecutor,
         private readonly viewsRegistry: ViewsRegistry,
         private readonly updater: Updater,
         private readonly searchExecutor: SearchExecutor,
@@ -73,7 +73,7 @@ export class Application {
 
     private setupHistoryView(historyView: HistoryView): void {
         historyView.historyRecordsRequest$
-            .pipe(concatMap(request => this.historyQuery.getRecords(request)))
+            .pipe(concatMap(request => this.historyQueryExecutor.getRecords(request)))
             .subscribe(records => historyView.setHistoryRecords(records));
         historyView.archiveRecord$
             .pipe(concatMap(record => this.historyStore.setArchivedStatus(record, record.isArchived)))

@@ -154,19 +154,19 @@ export const translateResultActions = {
     search({ state }: ActionContext<TranslateResultState, RootState>): void {
         executeCommand<string>(state, Messages.TranslateResult.Search, historyRecord => historyRecord.sentence);
     },
-    setStarredStatus(_: ActionContext<TranslateResultState, RootState>, request: { record: HistoryRecord; isStarred: boolean }): void {
+    setStarredStatus(_: ActionContext<TranslateResultState, RootState>, request: { record: TranslationKey; isStarred: boolean }): void {
         messageBus.sendCommand<StarRequest>(
             Messages.TranslateResult.StarTranslateResult,
             {
-                ...getTranslationKey(request.record),
+                ...cloneTranslationKey(request.record),
                 isStarred: request.isStarred
             });
     },
-    updateTags(_: ActionContext<TranslateResultState, RootState>, request: { record: HistoryRecord; tags: ReadonlyArray<string> }): void {
+    updateTags(_: ActionContext<TranslateResultState, RootState>, request: { record: TranslationKey; tags: ReadonlyArray<string> }): void {
         messageBus.sendCommand<UpdateTagsRequest>(
             Messages.TranslateResult.UpdateTags,
             {
-                ...getTranslationKey(request.record),
+                ...cloneTranslationKey(request.record),
                 tags: request.tags
             });
     },
@@ -185,7 +185,7 @@ function executeCommandWithProgress<TRequest>(state: TranslateResultState, commi
     executeCommand<TRequest>(state, commandName, inputGetter);
 }
 
-function getTranslationKey(record: HistoryRecord): TranslationKey {
+function cloneTranslationKey(record: TranslationKey): TranslationKey {
     return {
         sentence: record.sentence,
         isForcedTranslation: record.isForcedTranslation,

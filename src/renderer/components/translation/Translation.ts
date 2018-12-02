@@ -8,6 +8,7 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 import { PlayTextRequest } from "common/dto/translation/PlayTextRequest";
+import { TranslationKey } from "common/dto/translation/TranslationKey";
 
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
 import TranslationInput from "components/translation/translation-input/TranslationInput.vue";
@@ -40,8 +41,8 @@ export default class Translation extends Vue {
     @ns.Action public readonly refreshTranslation!: () => void;
     @ns.Action public readonly changeLanguage!: () => void;
     @ns.Action public readonly search!: () => void;
-    @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
-    @ns.Action public readonly updateTags!: (request: { record: HistoryRecord; tags: ReadonlyArray<string> }) => void;
+    @ns.Action public readonly setStarredStatus!: (request: { record: TranslationKey; isStarred: boolean }) => void;
+    @ns.Action public readonly updateTags!: (request: { record: TranslationKey; tags: ReadonlyArray<string> }) => void;
 
     constructor() {
         super();

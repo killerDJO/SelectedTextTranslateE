@@ -52,7 +52,7 @@
               </icon-button>
             </td>
             <td class="translation-column" v-overflow-tooltip v-if="isColumnVisible(SortColumn.Translation)">
-              <span v-if="!!record.translateResult.sentence.translation">{{record.translateResult.sentence.translation}}</span>
+              <span v-if="!!record.translation">{{record.translation}}</span>
               <span v-else class="no-translation">No Translation</span>
             </td>
             <td class="tags-column" v-if="isColumnVisible(SortColumn.Tags)" @click.stop.prevent>
@@ -63,7 +63,7 @@
             <td class="target-language-column" v-overflow-tooltip v-if="isColumnVisible(SortColumn.TargetLanguage)">{{languages.get(record.targetLanguage) || record.targetLanguage}}</td>
             <td class="last-translated-column" v-overflow-tooltip v-if="isColumnVisible(SortColumn.LastTranslatedDate)">
               {{record.lastTranslatedDate | date-time}}
-              <i class="icon icon-cloud-thunder synced-icon" v-if="!isRecordSyncedWithServer(record)" title="Record is not synced with server"/>
+              <i class="icon icon-cloud-thunder synced-icon" v-if="!record.isSyncedWithServer" title="Record is not synced with server"/>
             </td>
             <td class="archived-column" v-if="isColumnVisible(SortColumn.IsArchived)" @click.stop.prevent>
               <icon-button v-if="record.isArchived" title="Restore" @click="setArchivedStatus({record: record, isArchived: false})" :tab-index="-1"><i class="icon icon-trash restore"/></icon-button>

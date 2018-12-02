@@ -42,6 +42,9 @@
         </validated-field>
       </div>
     </div>
+    <div class="form-group history-filter-item">
+      <checkbox v-model="currentFilter.unsyncedOnly" :label="'Unsynced only'" />
+    </div>
   </div>
 </template>
 

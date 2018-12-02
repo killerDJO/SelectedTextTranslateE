@@ -4,9 +4,8 @@ import * as _ from "lodash";
 import { RootState } from "root.store";
 import { historySync } from "./history-sync/HistorySync.store";
 
-import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
-import { HistoryRecordsResponse } from "common/dto/history/HistoryRecordsResponse";
+import { HistoryRecordsResponse, HistoryRecordViewModel } from "common/dto/history/HistoryRecordsResponse";
 import { Messages } from "common/messaging/Messages";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { SortColumn } from "common/dto/history/SortColumn";
@@ -15,11 +14,12 @@ import { TranslateResultResponse } from "common/dto/translation/TranslateResultR
 import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { HistoryViewRendererSettings, ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
+import { HistoryFilter } from "common/dto/history/HistoryFilter";
+import { TranslationKey } from "common/dto/translation/TranslationKey";
 
 import { MessageBus } from "common/renderer/MessageBus";
 
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
-import { HistoryFilter } from "common/dto/history/HistoryFilter";
 
 const messageBus = new MessageBus();
 const throttledRefresh = _.throttle(requestHistoryRecords, 100, { trailing: true });
@@ -28,7 +28,7 @@ interface HistoryState extends TranslateResultState {
     areSettingsInitialized: boolean;
     areRecordsFetched: boolean;
 
-    historyRecords: ReadonlyArray<HistoryRecord>;
+    historyRecords: ReadonlyArray<HistoryRecordViewModel>;
     currentTags: ReadonlyArray<string>;
     currentUser: AccountInfo | null;
     columns: ReadonlyArray<ColumnSettings>;
@@ -146,7 +146,7 @@ export const history: Module<HistoryState, RootState> = {
                 throttledRefresh(state);
             }
         },
-        setArchivedStatus(_, request: { record: HistoryRecord; isArchived: boolean }): void {
+        setArchivedStatus(__, request: { record: TranslationKey; isArchived: boolean }): void {
             messageBus.sendCommand<ArchiveRequest>(
                 Messages.History.ArchiveRecord,
                 {
@@ -157,16 +157,16 @@ export const history: Module<HistoryState, RootState> = {
                     isArchived: request.isArchived
                 });
         },
-        playRecord(_, record: HistoryRecord): void {
-            translateResultActions.playTextFromRequest(_, {
+        playRecord(context, record: TranslationKey): void {
+            translateResultActions.playTextFromRequest(context, {
                 text: record.sentence,
                 language: record.sourceLanguage
             });
         },
-        updateCurrentTags(_, tags: ReadonlyArray<string>) {
+        updateCurrentTags(__, tags: ReadonlyArray<string>) {
             messageBus.sendCommand<ReadonlyArray<string>>(Messages.History.UpdateCurrentTags, tags);
         },
-        updateColumns(_, columns: ReadonlyArray<ColumnSettings>) {
+        updateColumns(__, columns: ReadonlyArray<ColumnSettings>) {
             messageBus.sendCommand<ReadonlyArray<ColumnSettings>>(Messages.History.UpdateColumnSettings, columns);
         }
     }

@@ -11,6 +11,8 @@ import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
 import { HistoryFilter } from "common/dto/history/HistoryFilter";
+import { TranslationKey } from "common/dto/translation/TranslationKey";
+import { HistoryRecordViewModel } from "common/dto/history/HistoryRecordsResponse";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
@@ -35,7 +37,7 @@ interface ColumnDisplaySettings extends DropCheckItem {
     }
 })
 export default class History extends Vue {
-    @ns.State public historyRecords!: HistoryRecord[];
+    @ns.State public historyRecords!: HistoryRecordViewModel[];
     @ns.State public currentTags!: ReadonlyArray<string>;
     @ns.State public currentUser!: AccountInfo | null;
     @ns.State public pageNumber!: number;
@@ -65,15 +67,15 @@ export default class History extends Vue {
 
     @ns.Action private readonly setup!: () => void;
     @ns.Action private readonly requestHistoryRecords!: () => void;
-    @ns.Action public readonly setArchivedStatus!: (request: { record: HistoryRecord; isArchived: boolean }) => void;
-    @ns.Action public readonly playRecord!: (record: HistoryRecord) => void;
+    @ns.Action public readonly setArchivedStatus!: (request: { record: TranslationKey; isArchived: boolean }) => void;
+    @ns.Action public readonly playRecord!: (record: TranslationKey) => void;
     @ns.Action public readonly updateCurrentTags!: (tags: ReadonlyArray<string>) => void;
     @ns.Action public readonly updateColumns!: (tags: ReadonlyArray<ColumnSettings>) => void;
 
     @ns.Action public readonly playText!: () => void;
     @ns.Action public readonly translateText!: (request: TranslationRequest) => void;
-    @ns.Action public readonly setStarredStatus!: (request: { record: HistoryRecord; isStarred: boolean }) => void;
-    @ns.Action public readonly updateTags!: (request: { record: HistoryRecord; tags: ReadonlyArray<string> }) => void;
+    @ns.Action public readonly setStarredStatus!: (request: { record: TranslationKey; isStarred: boolean }) => void;
+    @ns.Action public readonly updateTags!: (request: { record: TranslationKey; tags: ReadonlyArray<string> }) => void;
     @ns.Action public readonly translateSuggestion!: () => void;
     @ns.Action public readonly forceTranslation!: () => void;
     @ns.Action public readonly refreshTranslation!: () => void;
@@ -159,21 +161,6 @@ export default class History extends Vue {
             targetLanguage: record.targetLanguage
         });
     }
-
-    public isRecordSyncedWithServer(record: HistoryRecord): boolean {
-        if (!this.currentUser) {
-            return false;
-        }
-
-        const currentUser = this.currentUser;
-        const currentSyncData = (record.syncData || []).find(syncData => syncData.userEmail === currentUser.email);
-        if (!currentSyncData) {
-            return false;
-        }
-
-        return currentSyncData.lastModifiedDate === record.lastModifiedDate;
-    }
-
     public hideFilter(): void {
         this.isFilterVisible = false;
     }

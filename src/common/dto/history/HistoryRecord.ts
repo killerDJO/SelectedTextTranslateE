@@ -1,11 +1,8 @@
 import { TranslateResult } from "common/dto/translation/TranslateResult";
+import { TranslationKey } from "common/dto/translation/TranslationKey";
 
-export interface HistoryRecord {
+export interface HistoryRecord extends TranslationKey {
     readonly id: string;
-    readonly sentence: string;
-    readonly isForcedTranslation: boolean;
-    readonly sourceLanguage: string;
-    readonly targetLanguage: string;
     readonly translateResult: TranslateResult;
     readonly translationsNumber: number;
     readonly createdDate: number;
