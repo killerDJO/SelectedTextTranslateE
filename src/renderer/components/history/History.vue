@@ -73,7 +73,7 @@
         </tbody>
         <tbody v-else>
           <tr>
-            <td colspan="100" class="no-records-available">
+            <td :colspan="numberOfVisibleColumns" class="no-records-available">
               No {{filter.starredOnly ? "Starred": ""}} History Records Avialable
             </td>
           </tr>

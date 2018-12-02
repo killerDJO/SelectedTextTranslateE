@@ -42,6 +42,21 @@ interface HistoryState extends TranslateResultState {
     isTranslationVisible: boolean;
 }
 
+const emptyFilter = {
+    starredOnly: false,
+    includeArchived: false,
+    input: undefined,
+    maxLastTranslatedDate: undefined,
+    maxTranslatedTime: undefined,
+    minLastTranslatedDate: undefined,
+    minTranslatedTime: undefined,
+    sourceLanguage: undefined,
+    targetLanguage: undefined,
+    translation: undefined,
+    tags: [],
+    unsyncedOnly: false
+};
+
 export const history: Module<HistoryState, RootState> = {
     namespaced: true,
     modules: {
@@ -60,18 +75,7 @@ export const history: Module<HistoryState, RootState> = {
         sortColumn: SortColumn.LastTranslatedDate,
         sortOrder: SortOrder.Desc,
         filter: {
-            starredOnly: false,
-            includeArchived: false,
-            input: undefined,
-            maxLastTranslatedDate: undefined,
-            maxTranslatedTime: undefined,
-            minLastTranslatedDate: undefined,
-            minTranslatedTime: undefined,
-            sourceLanguage: undefined,
-            targetLanguage: undefined,
-            translation: undefined,
-            tags: [],
-            unsyncedOnly: false
+            ...emptyFilter
         },
         languages: new Map<string, string>(),
 
@@ -109,6 +113,13 @@ export const history: Module<HistoryState, RootState> = {
         },
         updateFilter(state: HistoryState, filter: Partial<HistoryFilter>): void {
             state.filter = { ...state.filter, ...filter };
+        },
+        clearFilter(state: HistoryState): void {
+            state.filter = {
+                ...emptyFilter,
+                includeArchived: state.filter.includeArchived,
+                starredOnly: state.filter.starredOnly
+            };
         },
         setTranslationInProgress(state: HistoryState): void {
             translateResultMutations.setTranslationInProgress(state);

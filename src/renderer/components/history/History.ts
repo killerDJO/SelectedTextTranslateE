@@ -62,6 +62,7 @@ export default class History extends Vue {
     @ns.Mutation private readonly setSortColumn!: (sortColumn: SortColumn) => void;
     @ns.Mutation private readonly setSortOrder!: (sortOrder: SortOrder) => void;
     @ns.Mutation private readonly updateFilter!: (filter: Partial<HistoryFilter>) => void;
+    @ns.Mutation private readonly clearFilter!: () => void;
 
     @ns.Mutation public readonly hideTranslation!: () => void;
 
@@ -148,6 +149,10 @@ export default class History extends Vue {
         return !!columnSetting && columnSetting.isChecked;
     }
 
+    public get numberOfVisibleColumns(): number {
+        return this.columnSettings.filter(setting => setting.isChecked).length;
+    }
+
     public updateRecordTags(record: HistoryRecord, tags: ReadonlyArray<string>) {
         this.updateTags({ record, tags });
     }
@@ -182,6 +187,13 @@ export default class History extends Vue {
     @Watch("isInitialized")
     public refreshRecords(): void {
         this.requestHistoryRecords();
+    }
+
+    @Watch("isFilterVisible")
+    public onFilterVisibilityChanged(): void {
+        if (!this.isFilterVisible) {
+            this.clearFilter();
+        }
     }
 
     @Watch("columns", { deep: true, immediate: true })
