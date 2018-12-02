@@ -11,11 +11,12 @@ import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest"
 import { HistoryFilter } from "common/dto/history/HistoryFilter";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
-import { UserStore } from "infrastructure/UserStore";
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 
 import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
 import { UserInfo } from "common/dto/UserInfo";
+import { AccountHandler } from "business-logic/history/sync/AccountHandler";
+import { AccountInfo } from "common/dto/history/account/AccountInfo";
 
 @injectable()
 export class HistoryQueryExecutor {
@@ -24,7 +25,7 @@ export class HistoryQueryExecutor {
     constructor(
         private readonly datastoreProvider: DatastoreProvider,
         private readonly historyDatabaseProvider: HistoryDatabaseProvider,
-        private readonly userStore: UserStore) {
+        private readonly accountHandler: AccountHandler) {
 
         this.datastore$ = this.historyDatabaseProvider.historyDatastore$;
     }
@@ -47,25 +48,24 @@ export class HistoryQueryExecutor {
             sortQuery.lastTranslatedDate = -1;
         }
 
-        return this.userStore.getCurrentUser().pipe(concatMap(user => {
-            const searchQuery: any = this.buildFilterQuery(request.filter, user);
-            const count$ = this.datastoreProvider.count(this.datastore$, searchQuery);
+        const user = this.accountHandler.currentUser$.value;
+        const searchQuery: any = this.buildFilterQuery(request.filter, user);
+        const count$ = this.datastoreProvider.count(this.datastore$, searchQuery);
 
-            return this.datastoreProvider
-                .findPaged<HistoryRecord>(this.datastore$, searchQuery, sortQuery, request.pageNumber, request.pageSize).pipe(
-                    concatMap(historyRecords => count$.pipe(map(count => {
-                        return {
-                            records: historyRecords.map(record => this.mapRecordToViewModel(record, user)),
-                            pageNumber: request.pageNumber,
-                            pageSize: request.pageSize,
-                            totalRecords: count
-                        };
-                    })))
-                );
-        }));
+        return this.datastoreProvider
+            .findPaged<HistoryRecord>(this.datastore$, searchQuery, sortQuery, request.pageNumber, request.pageSize).pipe(
+                concatMap(historyRecords => count$.pipe(map(count => {
+                    return {
+                        records: historyRecords.map(record => this.mapRecordToViewModel(record, user)),
+                        pageNumber: request.pageNumber,
+                        pageSize: request.pageSize,
+                        totalRecords: count
+                    };
+                })))
+            );
     }
 
-    private mapRecordToViewModel(record: HistoryRecord, user: UserInfo | null): HistoryRecordViewModel {
+    private mapRecordToViewModel(record: HistoryRecord, user: AccountInfo | null): HistoryRecordViewModel {
         return {
             sentence: record.sentence,
             translation: record.translateResult.sentence.translation,
@@ -82,7 +82,7 @@ export class HistoryQueryExecutor {
         };
     }
 
-    private buildFilterQuery(filter: HistoryFilter, user: UserInfo | null): any {
+    private buildFilterQuery(filter: HistoryFilter, user: AccountInfo | null): any {
         const query: any = { $and: [] };
 
         this.filterStarredOnly(filter, query);
@@ -165,7 +165,7 @@ export class HistoryQueryExecutor {
         }
     }
 
-    private filterUnsynced(filter: HistoryFilter, query: any, user: UserInfo | null): void {
+    private filterUnsynced(filter: HistoryFilter, query: any, user: AccountInfo | null): void {
         if (!filter.unsyncedOnly) {
             return;
         }
@@ -180,7 +180,7 @@ export class HistoryQueryExecutor {
         };
     }
 
-    private isRecordSyncedWithServer(record: HistoryRecord, user: UserInfo | null): boolean {
+    private isRecordSyncedWithServer(record: HistoryRecord, user: AccountInfo | null): boolean {
         if (user === null) {
             return false;
         }

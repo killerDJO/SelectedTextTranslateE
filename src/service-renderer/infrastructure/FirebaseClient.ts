@@ -28,6 +28,7 @@ export class FirebaseClient {
             projectId: firebaseSettings.projectId
         });
 
+        firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
         this.setupFirestore();
     }
 
