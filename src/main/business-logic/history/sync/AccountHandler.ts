@@ -101,7 +101,7 @@ export class AccountHandler {
             return this.signInUser({ email: userInfo.email, password: userInfo.password })
                 .pipe(tap<SignInResponse>(response => {
                     if (!response.isSuccessful) {
-                        this.userStore.clearCurrentUser();
+                        this.userStore.clearCurrentUser().subscribe();
                         this.notificationSender.showNonCriticalError("Error signing in into a history account.", new Error(response.validationCode));
                     }
                 }));
