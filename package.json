@@ -2,7 +2,7 @@
   "name": "selected-text-translate",
   "private": true,
   "productName": "Selected Text Translate",
-  "version": "0.11.2",
+  "version": "0.11.3",
   "description": "Util to translate selected text.",
   "main": "dist/app/main/main.build.js",
   "author": "killerDJO",
