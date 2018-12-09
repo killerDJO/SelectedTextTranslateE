@@ -11,10 +11,11 @@
       :format="dateFormatter"
       :monday-first="true"
       :bootstrap-styling="true"
-      :calendar-class="'calendar'" />
+      :calendar-class="calendarClass" />
     <icon-button @click="clear()" :title="'Clear Date'" class="clear-icon">
         <span class="icon icon-cancel" />
     </icon-button>
+    <div ref="dropContent" class="drop-content" v-show="isPickerVisible"/>
   </div>
 </template>
 

@@ -1,4 +1,5 @@
 .datepicker-holder {
+    position: relative;
     display: inline-flex;
     align-items: center;
     width: 100%;
@@ -16,15 +17,28 @@
     .datepicker {
         width: 100%;
     }
+    
+    .drop-content {
+        z-index: 1000;
+        $margin: $border-width + $outline-width;
+
+        &[x-placement^='bottom']{
+            margin-top: $margin;
+        }
+
+        &[x-placement^='top']{
+            margin-bottom: $margin
+        }
+    }
 
     /deep/ .calendar {
         $cell-height: 25px;
         $calendar-width: 215px;
 
+        position: static;
         width: $calendar-width;
         border-radius: $border-radius;
         border-color: $color-border;
-        margin-top: $border-width + $outline-width;
     
         header {
             line-height: $cell-height;

@@ -8,7 +8,7 @@ export class DropBase extends Vue {
         return this.drop !== null;
     }
 
-    protected openDropInternal(dropTarget: Element, dropContent: Element, placement: Popper.Position, modifiers: Popper.Modifiers): void {
+    protected openDropInternal(dropTarget: Element, dropContent: Element, placement: Popper.Placement, modifiers: Popper.Modifiers): void {
         this.drop = new Popper(dropTarget, dropContent, {
             placement: placement,
             positionFixed: false,
