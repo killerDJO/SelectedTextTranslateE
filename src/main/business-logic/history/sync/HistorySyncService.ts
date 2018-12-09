@@ -205,10 +205,10 @@ export class HistorySyncService {
             concatMap(existingRecord => {
                 if (!existingRecord) {
                     this.logger.info(`New ${this.getLogKey(serverRecord)} has been created from server.`);
-                    this.datastoreProvider.insert(this.datastore$, serverRecord)
-                        .pipe(tap<HistoryRecord>(record => this.notifyAboutUpdate(record)))
-                        .subscribe();
-                    return of(void 0);
+                    return this.datastoreProvider.insert(this.datastore$, this.cleanupDatesInRecord(serverRecord)).pipe(
+                        tap<HistoryRecord>(record => this.notifyAboutUpdate(record)),
+                        map(() => void 0)
+                    );
                 }
 
                 const currentUser = this.getCurrentUser();
@@ -277,6 +277,15 @@ export class HistorySyncService {
 
     private getUserSyncData(record: HistoryRecord, userEmail: string): SyncData | undefined {
         return (record.syncData || []).find(syncData => syncData.userEmail === userEmail);
+    }
+
+    private cleanupDatesInRecord(record: HistoryRecord): HistoryRecord {
+        return {
+            ...record,
+            createdDate: this.ensureDate(record.createdDate),
+            updatedDate: this.ensureDate(record.updatedDate),
+            lastTranslatedDate: this.ensureDate(record.lastTranslatedDate),
+        };
     }
 
     private getCurrentUser(): AccountInfo {

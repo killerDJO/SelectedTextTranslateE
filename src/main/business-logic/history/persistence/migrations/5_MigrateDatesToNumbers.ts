@@ -10,19 +10,24 @@ import { HistoryRecordsMigration } from "business-logic/history/persistence/migr
 export class MigrateDatesToNumbers extends HistoryRecordsMigration {
 
     constructor(datastoreProvider: DatastoreProvider) {
-        super(5, "MigrateDatesToNumbers", datastoreProvider);
+        super(5, "MigrateDatesToNumbers.v2", datastoreProvider);
     }
 
     protected getSelectQuery() {
         return {};
     }
+
     protected getUpdateQuery(record: HistoryRecord) {
         return {
             $set: {
-                createdDate: new Date(record.createdDate).getTime(),
-                lastTranslatedDate: new Date(record.lastTranslatedDate).getTime(),
-                updatedDate: new Date(record.updatedDate).getTime(),
+                createdDate: this.ensureDate(record.createdDate),
+                lastTranslatedDate: this.ensureDate(record.lastTranslatedDate),
+                updatedDate: this.ensureDate(record.updatedDate),
             }
         };
+    }
+
+    private ensureDate(value: Date | string | number): number {
+        return new Date(value).getTime();
     }
 }
