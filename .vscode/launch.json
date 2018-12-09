@@ -14,19 +14,6 @@
             "cwd": "${workspaceRoot}",
             "program": "${workspaceFolder}/dist/app/main/main.build.js",
             "sourceMaps": true
-        },
-        {
-            "name": "Debug Renderer Process",
-            "type": "chrome",
-            "request": "launch",
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "runtimeArgs": [
-                "${workspaceFolder}/dist/app/main/main.build.js",
-                "--remote-debugging-port=9222"
-            ],
-            "timeout": 20000,
-            "sourceMaps": true,
-            "webRoot": "${workspaceRoot}"
         }
     ]
 }
