@@ -62,6 +62,10 @@ export class Messages {
 
         public static readonly HistorySettings = "history-settings";
         public static readonly UpdateColumnSettings = "history-update-column-settings";
+
+        public static Merging = class {
+            public static readonly MergeCandidates = "merge-candidates";
+        };
     };
 
     public static HistorySync = class {

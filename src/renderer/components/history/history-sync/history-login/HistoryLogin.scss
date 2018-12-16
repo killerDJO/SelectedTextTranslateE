@@ -20,6 +20,7 @@
 
 .login-contents {
     display: flex;
+    min-width: 400px;
 
     .login-content:not(.active){
         display: none;

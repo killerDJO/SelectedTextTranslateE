@@ -18,6 +18,7 @@ import { VerifyResetTokenResponse } from "common/dto/history/account/VerifyReset
 import { PasswordChangeRequest } from "common/dto/history/account/PasswordChangeRequest";
 import { PasswordChangeResponse } from "common/dto/history/account/PasswordChangeResponse";
 import { HistoryViewRendererSettings, ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
+import { MergeCandidate } from "common/dto/history/MergeCandidate";
 
 import { mapSubject } from "utils/map-subject";
 
@@ -89,6 +90,10 @@ export class HistoryView extends TranslateResultView {
 
     public handlePasswordChange(handler: (passwordChangeRequest: PasswordChangeRequest) => Observable<PasswordChangeResponse>): void {
         this.messageBus.handleCommand<PasswordChangeRequest, PasswordChangeResponse>(Messages.History.ChangePassword, handler);
+    }
+
+    public handleMergeCandidatesRequest(handler: () => Observable<ReadonlyArray<MergeCandidate>>): void {
+        this.messageBus.handleCommand<void, ReadonlyArray<MergeCandidate>>(Messages.History.Merging.MergeCandidates, handler);
     }
 
     public subscribeToHistoryUpdate(historyUpdate$: Observable<HistoryRecord>): void {

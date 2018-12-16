@@ -3,6 +3,7 @@ import * as _ from "lodash";
 
 import { RootState } from "root.store";
 import { historySync } from "./history-sync/HistorySync.store";
+import { historyMerger } from "./history-merger/HistoryMerger.store";
 
 import { HistoryRecordsRequest } from "common/dto/history/HistoryRecordsRequest";
 import { HistoryRecordsResponse, HistoryRecordViewModel } from "common/dto/history/HistoryRecordsResponse";
@@ -60,7 +61,8 @@ const emptyFilter = {
 export const history: Module<HistoryState, RootState> = {
     namespaced: true,
     modules: {
-        sync: historySync
+        sync: historySync,
+        merger: historyMerger
     },
     state: {
         areSettingsInitialized: false,

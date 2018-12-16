@@ -19,6 +19,7 @@ import TranslationResult from "components/translation/translation-result/Transla
 import HistoryFilterComponent from "components/history/history-filter/HistoryFilter.vue";
 import HistorySync from "components/history/history-sync/HistorySync.vue";
 import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
+import HistoryMerger from "components/history/history-merger/HistoryMerger.vue";
 import { DropCheckItem } from "components/shared/drop-check-button/DropCheckButton";
 
 const ns = namespace("app/history");
@@ -33,7 +34,8 @@ interface ColumnDisplaySettings extends DropCheckItem {
         TranslationResult,
         HistorySync,
         TagsEditor,
-        HistoryFilter: HistoryFilterComponent
+        HistoryFilter: HistoryFilterComponent,
+        HistoryMerger
     }
 })
 export default class History extends Vue {
@@ -96,6 +98,7 @@ export default class History extends Vue {
     ]);
     public columnSettings: ReadonlyArray<ColumnDisplaySettings> = [];
     public isFilterVisible: boolean = false;
+    public isMergerVisible: boolean = false;
 
     public mounted() {
         this.setup();

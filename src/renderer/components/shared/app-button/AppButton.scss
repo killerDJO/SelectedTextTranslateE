@@ -4,15 +4,15 @@
     .app-button {
         outline: none;
         width: 100%;
-        border: $border-width solid transparent;
+        border: $border-width solid $color-border;
         border-radius: $border-radius;
-        background-color: $color-button-primary;
-        color: $color-white;
+        background-color: $color-white;
+        color: $color-black;
         cursor: pointer;
         padding: $padding-default/2 $padding-default;
 
-        &:hover:not(:disabled) {
-            background-color: $color-button-primary-hovered;
+        &:hover:not(:disabled){
+            background-color: $color-background;
         }
 
         :not(:disabled){
@@ -22,9 +22,19 @@
         &:disabled {
             opacity: 0.5;
         }
+
+        &.primary {
+            background-color: $color-button-primary;
+            color: $color-white;
+            border: $border-width solid transparent;
+
+            &:hover:not(:disabled) {
+                background-color: $color-button-primary-hovered;
+            }
+        }
     }
 
     &.button-small .app-button{
-        padding: 2px 10px;
+        padding: 2px $padding-default;
     }
 }

@@ -23,6 +23,7 @@ import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { AccountHandler } from "business-logic/history/sync/AccountHandler";
 import { TagsEngine } from "business-logic/history/TagsEngine";
 import { HistoryQueryExecutor } from "business-logic/history/HistoryQueryExecutor";
+import { HistoryMerger } from "business-logic/history/HistoryMerger";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -56,7 +57,8 @@ export class Application {
         private readonly startupHandler: StartupHandler,
         private readonly historySyncService: HistorySyncService,
         private readonly accountHandler: AccountHandler,
-        private readonly tagsEngine: TagsEngine) {
+        private readonly tagsEngine: TagsEngine,
+        private readonly historyMerger: HistoryMerger) {
 
         this.createTaskbar();
         this.setupHotkeys();
@@ -90,6 +92,8 @@ export class Application {
         historyView.handlePasswordReset(request => this.accountHandler.resetPassword(request));
         historyView.handlePasswordChange(request => this.accountHandler.changePassword(request));
         historyView.handleVerifyPasswordResetToken(request => this.accountHandler.verifyPasswordResetToken(request));
+
+        historyView.handleMergeCandidatesRequest(() => this.historyMerger.getMergeCandidates());
 
         historyView.signOut$.subscribe(() => this.accountHandler.signOutUser().subscribe());
         historyView.syncOneTime$.subscribe(() => this.historySyncService.startSingleSync(false));

@@ -11,6 +11,12 @@ export default class AppButton extends Vue {
     })
     public disabled!: boolean;
 
+    @Prop({
+        type: Boolean,
+        default: true
+    })
+    public isPrimary!: boolean;
+
     public click(): void {
         this.$emit("click");
     }

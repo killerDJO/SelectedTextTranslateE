@@ -16,8 +16,7 @@
 
     .modal-container {
         position: relative;
-        max-width: 400px;
-        width: 80%;
+        width: fit-content;
         margin: 0px auto;
         background-color: $color-white;
         border-radius: $border-radius;

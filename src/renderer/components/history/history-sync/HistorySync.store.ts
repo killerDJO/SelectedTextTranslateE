@@ -1,4 +1,4 @@
-import { Module, Commit } from "vuex";
+import { Module } from "vuex";
 
 import { RootState } from "root.store";
 

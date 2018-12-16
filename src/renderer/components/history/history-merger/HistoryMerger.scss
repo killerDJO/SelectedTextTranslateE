@@ -1,0 +1,45 @@
+.merge-candidates {
+    min-height: 400px;
+    padding: $padding-default;
+    width: 50vw;
+    min-width: 600px;
+
+    .candidates {
+        .loading-records-indicator {
+            height: 50px;
+            background-image: url("../../../icons/loader.svg" );
+            background-repeat: no-repeat;
+            background-size: 30px;
+            background-color: $color-white;
+            background-position: center;
+        }
+
+        .no-records-available {
+            text-align: center;
+            font-style: italic;
+        }
+
+        .translation-column .no-translation {
+            font-style: italic;
+            color: $color-gray;
+        }
+
+        .word-column,
+        .translation-column {
+            width: 35%;
+        }
+
+        .candidates-column {
+            text-align: center;
+            width: 80px;
+        }
+    }
+}
+
+.footer {
+    border-top: $border-width solid $color-border;
+    padding: $padding-default;
+    justify-content: flex-end;
+    align-items: center;
+    display: flex;
+}

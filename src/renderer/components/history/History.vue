@@ -9,6 +9,7 @@
           <checkbox v-model="includeArchived$" :label="'Show Archived'" :left-to-right="true"/>
           <checkbox v-model="starredOnly$" :label="'Starred Only'" :left-to-right="true" />
           <toggle-button @click="isFilterVisible = !isFilterVisible" :text="'Filter'" :is-active="isFilterVisible" class="filter-button" v-tab-index/>
+          <toggle-button @click="isMergerVisible = !isMergerVisible" :text="'Merge'" :is-active="isMergerVisible" class="filter-button" v-tab-index/>
           <drop-check-button
               class="columns-customizer"
               :text="'Columns'"
@@ -118,6 +119,7 @@
           </paginate>
         </div>
       </div>
+      <history-merger :show.sync="isMergerVisible"/>
     </div>
   </div>
 </template>

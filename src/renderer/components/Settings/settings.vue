@@ -1,5 +1,5 @@
 <template>
-  <div class="settings">
+  <div class="settings clearfix">
     <div v-if="!!settings && !!defaultSettings">
       <settings-holder :title="'Hotkeys'">
         <hotkey-settings
