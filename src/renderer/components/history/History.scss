@@ -69,7 +69,7 @@
             margin-top: $margin-small;
 
             tbody tr:hover {
-                background-color: #eee;
+                background-color: $color-active;
 
                 .word-column .play-icon-holder {
                     display: inline-block;

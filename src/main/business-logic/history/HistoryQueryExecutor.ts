@@ -14,7 +14,6 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 
 import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
-import { UserInfo } from "common/dto/UserInfo";
 import { AccountHandler } from "business-logic/history/sync/AccountHandler";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 

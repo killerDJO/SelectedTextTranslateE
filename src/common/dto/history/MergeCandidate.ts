@@ -2,7 +2,7 @@ import { TranslationKey } from "common/dto/translation/TranslationKey";
 
 export interface MergeCandidate {
     readonly record: MergeHistoryRecord;
-    readonly candidates: ReadonlyArray<MergeHistoryRecord>;
+    readonly mergeRecords: ReadonlyArray<MergeHistoryRecord>;
 }
 
 export interface MergeHistoryRecord extends TranslationKey {

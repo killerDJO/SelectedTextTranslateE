@@ -110,23 +110,31 @@ export class HistoryStore {
             );
     }
 
+    public getActiveRecords(): Observable<HistoryRecord[]> {
+        return this.datastoreProvider.find<HistoryRecord>(this.datastore$, { isArchived: false });
+    }
+
     public setStarredStatus(key: TranslationKey, isStarred: boolean): Observable<HistoryRecord> {
-        return this.updateRecord(key, { isStarred: isStarred }, `Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`);
+        return this.updateRecordInternal(key, { isStarred: isStarred }, `Translation ${this.getLogKey(key)} has changed its starred status to ${isStarred}.`);
     }
 
     public setArchivedStatus(key: TranslationKey, isArchived: boolean): Observable<HistoryRecord> {
-        return this.updateRecord(key, { isArchived: isArchived }, `Translation ${this.getLogKey(key)} has changed its archived status to ${isArchived}.`);
+        return this.updateRecordInternal(key, { isArchived: isArchived }, `Translation ${this.getLogKey(key)} has changed its archived status to ${isArchived}.`);
     }
 
     public updateTags(key: TranslationKey, tags: ReadonlyArray<string>): Observable<HistoryRecord> {
-        return this.updateRecord(key, { tags: tags }, `Translation ${this.getLogKey(key)} has changed its tags to ${tags.join(", ")}.`);
+        return this.updateRecordInternal(key, { tags: tags }, `Translation ${this.getLogKey(key)} has changed its tags to ${tags.join(", ")}.`);
+    }
+
+    public updateRecord(record: HistoryRecord): Observable<HistoryRecord> {
+        return this.updateRecordInternal(record, record, `History record ${this.getLogKey(record)} has been updated.`);
     }
 
     private getTags(record: HistoryRecord): ReadonlyArray<string> {
         return _.uniq((record.tags || []).concat(this.tagsEngine.getCurrentTags().value)).sort().slice();
     }
 
-    private updateRecord(key: TranslationKey, updateQuery: any, logMessage: string): Observable<HistoryRecord> {
+    private updateRecordInternal(key: TranslationKey, updateQuery: any, logMessage: string): Observable<HistoryRecord> {
         const setStatus$ = this.datastoreProvider.update<HistoryRecord>(
             this.datastore$,
             this.getSearchQuery(key),

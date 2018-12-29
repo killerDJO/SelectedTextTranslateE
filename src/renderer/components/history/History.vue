@@ -119,7 +119,7 @@
           </paginate>
         </div>
       </div>
-      <history-merger :show.sync="isMergerVisible"/>
+      <history-merger :show.sync="isMergerVisible" :languages="languages"/>
     </div>
   </div>
 </template>

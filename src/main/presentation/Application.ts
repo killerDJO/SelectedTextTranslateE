@@ -93,6 +93,7 @@ export class Application {
         historyView.handlePasswordChange(request => this.accountHandler.changePassword(request));
         historyView.handleVerifyPasswordResetToken(request => this.accountHandler.verifyPasswordResetToken(request));
 
+        historyView.mergeRecords$.subscribe(request => this.historyMerger.mergeRecords(request).subscribe());
         historyView.handleMergeCandidatesRequest(() => this.historyMerger.getMergeCandidates());
 
         historyView.signOut$.subscribe(() => this.accountHandler.signOutUser().subscribe());

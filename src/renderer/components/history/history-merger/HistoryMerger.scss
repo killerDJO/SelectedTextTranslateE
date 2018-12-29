@@ -1,37 +1,93 @@
 .merge-candidates {
-    min-height: 400px;
-    padding: $padding-default;
+    min-height: 300px;
     width: 50vw;
     min-width: 600px;
+    padding: 0 $padding-default $padding-default $padding-default;
 
-    .candidates {
-        .loading-records-indicator {
-            height: 50px;
-            background-image: url("../../../icons/loader.svg" );
-            background-repeat: no-repeat;
-            background-size: 30px;
-            background-color: $color-white;
-            background-position: center;
+    .no-records-available {
+        text-align: center;
+        font-style: italic;
+    }
+
+    .candidates-view {
+
+        .candidates-view-header {
+            height: 30px;
+            align-items: center;
+            display: flex;
+        }
+    
+        .candidates {
+            .loading-records-indicator {
+                height: 50px;
+                background-image: url("../../../icons/loader.svg" );
+                background-repeat: no-repeat;
+                background-size: 30px;
+                background-color: $color-white;
+                background-position: center;
+            }
+
+            tbody tr:hover {
+                background-color: $color-active;
+            }
+    
+            .translation-column .no-translation {
+                font-style: italic;
+                color: $color-gray;
+            }
+    
+            .word-column,
+            .translation-column {
+                width: 30%;
+            }
+    
+            .candidates-column {
+                text-align: center;
+                width: 10%;
+            }
+    
+            .source-language-column,
+            .target-language-column {
+                width: 10%;
+            }
+        }
+    }
+
+    .candidate-view {
+        .candidate-view-header {
+            margin: $margin-small 0;
+
+            .back-button {
+                color: $color-gray;
+
+                &:hover {
+                    color: $color-black;
+                }
+            }
+
+            .sentence {
+                font-weight: bold;
+            }
         }
 
-        .no-records-available {
-            text-align: center;
-            font-style: italic;
-        }
-
-        .translation-column .no-translation {
-            font-style: italic;
-            color: $color-gray;
-        }
-
-        .word-column,
-        .translation-column {
-            width: 35%;
-        }
-
-        .candidates-column {
-            text-align: center;
-            width: 80px;
+        .candidate {
+            .word-column,
+            .translation-column {
+                width: 35%;
+            }
+    
+            .times-column {
+                width: 10%;
+            }
+    
+            .actions-column {
+                width: 20%;
+            }
+    
+            .times-column,
+            .actions-column {
+                text-align: center;
+            }
         }
     }
 }

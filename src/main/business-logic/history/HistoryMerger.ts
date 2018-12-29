@@ -1,26 +1,51 @@
 import { injectable } from "inversify";
-import * as Datastore from "nedb";
-import { Observable } from "rxjs";
+import { Observable, concat } from "rxjs";
+import { map, concatMap } from "rxjs/operators";
+import * as _ from "lodash";
 
-import { MergeCandidate, MergeHistoryRecord } from "common/dto/history/MergeCandidate";
-import { DatastoreProvider } from "data-access/DatastoreProvider";
-import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
-import { map } from "rxjs/operators";
+import { MergeRecordsRequest } from "common/dto/history/MergeRecordsRequest";
+import { MergeCandidate, MergeHistoryRecord } from "common/dto/history/MergeCandidate";
+
+import { HistoryStore } from "business-logic/history/HistoryStore";
 
 @injectable()
 export class HistoryMerger {
 
-    private readonly database$: Observable<Datastore>;
+    constructor(private readonly historyStore: HistoryStore) {
+    }
 
-    constructor(private readonly datastoreProvider: DatastoreProvider, historyDatabaseProvider: HistoryDatabaseProvider) {
-        this.database$ = historyDatabaseProvider.historyDatastore$;
+    public mergeRecords(request: MergeRecordsRequest): Observable<void> {
+        return this.historyStore.getRecord(request.sourceRecord).pipe(
+            concatMap(sourceRecord => this.historyStore.getRecord(request.targetRecord)
+                .pipe(concatMap(targetRecord => this.mergeRecordsInternal(sourceRecord, targetRecord))))
+        );
     }
 
     public getMergeCandidates(): Observable<ReadonlyArray<MergeCandidate>> {
-        return this.datastoreProvider.find<HistoryRecord>(this.database$, {}).pipe(
+        return this.historyStore.getActiveRecords().pipe(
             map(records => this.processHistoryRecords(records))
         );
+    }
+
+    private mergeRecordsInternal(sourceRecord: HistoryRecord | null, targetRecord: HistoryRecord | null): Observable<void> {
+        if (sourceRecord === null || targetRecord === null) {
+            throw new Error("Invalid operation.");
+        }
+
+        const updatedTargetRecord: HistoryRecord = {
+            ...targetRecord,
+            translationsNumber: targetRecord.translationsNumber + sourceRecord.translationsNumber,
+            tags: _.uniq((targetRecord.tags || []).concat(sourceRecord.tags || []))
+        }
+
+        const updatedSourceRecord: HistoryRecord = {
+            ...sourceRecord,
+            isArchived: true,
+            tags: _.uniq((sourceRecord.tags || []).concat(["Merged"]))
+        }
+
+        return concat(this.historyStore.updateRecord(updatedTargetRecord), this.historyStore.updateRecord(updatedSourceRecord)).pipe(map(() => void 0));
     }
 
     private processHistoryRecords(records: HistoryRecord[]): ReadonlyArray<MergeCandidate> {
@@ -47,7 +72,7 @@ export class HistoryMerger {
             if (candidates.length > 0) {
                 result.push({
                     record: record,
-                    candidates: candidates
+                    mergeRecords: candidates
                 });
             }
         }
