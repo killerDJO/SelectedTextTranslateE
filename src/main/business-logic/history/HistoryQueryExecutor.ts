@@ -111,13 +111,13 @@ export class HistoryQueryExecutor {
 
     private filterWord(filter: HistoryFilter, query: any): void {
         if (!!filter.word) {
-            query.sentence = new RegExp(_.escapeRegExp(filter.word));
+            query.sentence = new RegExp(_.escapeRegExp(filter.word), "i");
         }
     }
 
     private filterTranslation(filter: HistoryFilter, query: any): void {
         if (!!filter.translation) {
-            query["translateResult.sentence.translation"] = new RegExp(_.escapeRegExp(filter.translation));
+            query["translateResult.sentence.translation"] = new RegExp(_.escapeRegExp(filter.translation), "i");
         }
     }
 

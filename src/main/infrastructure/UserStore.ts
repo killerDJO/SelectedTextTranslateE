@@ -9,13 +9,21 @@ import { concatMap } from "rxjs/operators";
 export class UserStore {
     private static readonly ServiceName: string = "Selected Text Translate";
 
+    private get serviceName(): string {
+        if (process.env.NODE_ENV === "development") {
+            return `${UserStore.ServiceName} - Dev`;
+        }
+
+        return UserStore.ServiceName;
+    }
+
     public setCurrentUser(userInfo: UserInfo): Observable<void> {
-        return from(keytar.setPassword(UserStore.ServiceName, userInfo.email.toLowerCase(), userInfo.password));
+        return from(keytar.setPassword(this.serviceName, userInfo.email.toLowerCase(), userInfo.password));
     }
 
     public getCurrentUser(): AsyncSubject<UserInfo | null> {
         const result = new AsyncSubject<UserInfo | null>();
-        keytar.findCredentials(UserStore.ServiceName).then(credentials => {
+        keytar.findCredentials(this.serviceName).then(credentials => {
             if (credentials.length > 0) {
                 result.next({
                     email: credentials[0].account,
@@ -36,7 +44,7 @@ export class UserStore {
                 return of(false);
             }
 
-            return from(keytar.deletePassword(UserStore.ServiceName, currentUser.email));
+            return from(keytar.deletePassword(this.serviceName, currentUser.email));
         }));
     }
 }

@@ -19,6 +19,7 @@ export default class HistoryMerger extends Vue {
     @ns.State public mergeCandidates!: ReadonlyArray<MergeCandidate>;
 
     @ns.Mutation public removeRecordFromCandidate!: (request: { candidate: MergeCandidate, record: MergeHistoryRecord }) => void;
+    @ns.Mutation public promoteRecordToCandidate!: (request: { candidate: MergeCandidate, record: MergeHistoryRecord }) => void;
 
     @ns.Action public readonly fetchCandidates!: () => void;
     @ns.Action public readonly mergeRecords!: (request: MergeRecordsRequest) => void;
@@ -73,6 +74,10 @@ export default class HistoryMerger extends Vue {
     }
 
     public promote(mergeRecord: MergeHistoryRecord): void {
+        if (this.currentCandidate === null) {
+            throw Error("Unable to promote when candidate is not selected");
+        }
 
+        this.promoteRecordToCandidate({ candidate: this.currentCandidate, record: mergeRecord });
     }
 }
