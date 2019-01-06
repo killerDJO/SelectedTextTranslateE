@@ -16,8 +16,8 @@
               <th class="candidates-column">Candidates</th>
             </tr>
           </thead>
-          <tbody v-if="mergeCandidates.length !== 0 && !isActionInProgress">
-            <tr v-for="candidate of mergeCandidates" :key="candidate.record.id" v-if="candidate.mergeRecords.length" @click="showCandidate(candidate)">
+          <tbody v-if="filteredCandidates.length !== 0 && !isActionInProgress">
+            <tr v-for="candidate of filteredCandidates" :key="candidate.record.id" @click="showCandidate(candidate)">
               <td class="word-column" v-overflow-tooltip>
                 <div class="word-holder">{{candidate.record.sentence}}</div>
                 <span class="icon icon-flash" v-if="candidate.record.isForcedTranslation" title="Forced Translation"></span>
@@ -33,14 +33,14 @@
           </tbody>
           <tbody v-else-if="!isActionInProgress">
             <tr>
-              <td :colspan="3" class="no-records-available">
+              <td :colspan="columnsNumber" class="no-records-available">
                 No Records to Merge Avialable
               </td>
             </tr>
           </tbody>
           <tbody v-else>
             <tr>
-              <td :colspan="3" class="loading-records-indicator">
+              <td :colspan="columnsNumber" class="loading-records-indicator">
               </td>
             </tr>
           </tbody>
@@ -75,7 +75,7 @@
               <td class="times-column">{{mergeRecord.translationsNumber}}</td>
               <td class="actions-column">
                 <link-button @click="merge(mergeRecord)" :text="'Merge'" />
-                <link-button @click="ignore(mergeRecord)" :text="'Ignore'" />
+                <link-button @click="blacklist(mergeRecord)" :text="'Ignore'" />
                 <link-button @click="promote(mergeRecord)" :text="'Promote'" />
               </td>
             </tr>

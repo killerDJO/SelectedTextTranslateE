@@ -66,6 +66,7 @@ export class Messages {
         public static Merging = class {
             public static readonly MergeCandidates = "merge-candidates";
             public static readonly MergeRequest = "merge-request";
+            public static readonly BlacklistRequest = "blacklist-request";
         };
     };
 

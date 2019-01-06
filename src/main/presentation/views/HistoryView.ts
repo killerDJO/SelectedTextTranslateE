@@ -20,6 +20,7 @@ import { PasswordChangeResponse } from "common/dto/history/account/PasswordChang
 import { HistoryViewRendererSettings, ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
 import { MergeCandidate } from "common/dto/history/MergeCandidate";
 import { MergeRecordsRequest } from "common/dto/history/MergeRecordsRequest";
+import { BlacklistRecordsRequest } from "common/dto/history/BlacklistRecordsRequest";
 
 import { mapSubject } from "utils/map-subject";
 
@@ -32,6 +33,7 @@ export class HistoryView extends TranslateResultView {
     public readonly archiveRecord$: Observable<ArchiveRequest>;
     public readonly updateCurrentTags$: Observable<ReadonlyArray<string>>;
     public readonly mergeRecords$: Observable<MergeRecordsRequest>;
+    public readonly blacklistRecords$: Observable<BlacklistRecordsRequest>;
     public readonly updateColumnSettings$: Observable<ReadonlyArray<ColumnSettings>>;
 
     public readonly signOut$: Observable<void>;
@@ -62,6 +64,7 @@ export class HistoryView extends TranslateResultView {
         this.updateColumnSettings$ = this.messageBus.observeCommand<ReadonlyArray<ColumnSettings>>(Messages.History.UpdateColumnSettings);
 
         this.mergeRecords$ = this.messageBus.observeCommand<MergeRecordsRequest>(Messages.History.Merging.MergeRequest);
+        this.blacklistRecords$ = this.messageBus.observeCommand<BlacklistRecordsRequest>(Messages.History.Merging.BlacklistRequest);
     }
 
     public setHistoryRecords(historyRecords: HistoryRecordsResponse): void {

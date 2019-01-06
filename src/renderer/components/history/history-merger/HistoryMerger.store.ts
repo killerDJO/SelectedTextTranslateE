@@ -7,6 +7,7 @@ import { MessageBus } from "common/renderer/MessageBus";
 import { Messages } from "common/messaging/Messages";
 import { MergeCandidate, MergeHistoryRecord } from "common/dto/history/MergeCandidate";
 import { MergeRecordsRequest } from "common/dto/history/MergeRecordsRequest";
+import { BlacklistRecordsRequest } from "common/dto/history/BlacklistRecordsRequest";
 
 const messageBus = new MessageBus();
 
@@ -52,6 +53,9 @@ export const historyMerger: Module<HistoryMergerState, RootState> = {
         },
         mergeRecords({ }, request: MergeRecordsRequest): void {
             messageBus.sendCommand<MergeRecordsRequest>(Messages.History.Merging.MergeRequest, request);
+        },
+        blacklistRecords({ }, request: BlacklistRecordsRequest): void {
+            messageBus.sendCommand<BlacklistRecordsRequest>(Messages.History.Merging.BlacklistRequest, request);
         }
     }
 };

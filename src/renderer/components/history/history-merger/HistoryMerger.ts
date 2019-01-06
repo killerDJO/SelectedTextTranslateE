@@ -4,6 +4,7 @@ import { namespace } from "vuex-class";
 
 import { MergeCandidate, MergeHistoryRecord } from "common/dto/history/MergeCandidate";
 import { MergeRecordsRequest } from "common/dto/history/MergeRecordsRequest";
+import { BlacklistRecordsRequest } from "common/dto/history/BlacklistRecordsRequest";
 
 const ns = namespace("app/history/merger");
 
@@ -23,6 +24,7 @@ export default class HistoryMerger extends Vue {
 
     @ns.Action public readonly fetchCandidates!: () => void;
     @ns.Action public readonly mergeRecords!: (request: MergeRecordsRequest) => void;
+    @ns.Action public readonly blacklistRecords!: (request: BlacklistRecordsRequest) => void;
 
     public showLanguages: boolean = false;
     public currentCandidateIndex: number = -1;
@@ -49,6 +51,10 @@ export default class HistoryMerger extends Vue {
         return this.currentCandidate !== null;
     }
 
+    public get filteredCandidates(): ReadonlyArray<MergeCandidate> {
+        return this.mergeCandidates.filter(candidate => candidate.mergeRecords.length > 0);
+    }
+
     public showCandidate(candidate: MergeCandidate): void {
         this.currentCandidateIndex = this.mergeCandidates.indexOf(candidate);
     }
@@ -57,20 +63,28 @@ export default class HistoryMerger extends Vue {
         this.currentCandidateIndex = -1;
     }
 
-    public merge(mergeRecord: MergeHistoryRecord): void {
-        if (this.currentCandidate === null) {
-            throw Error("Unable to merge when candidate is not selected");
-        }
-
-        this.mergeRecords({
-            sourceRecord: mergeRecord,
-            targetRecord: this.currentCandidate.record
-        });
-        this.removeRecordFromCandidate({ candidate: this.currentCandidate, record: mergeRecord });
+    public get columnsNumber(): number {
+        const DefaultNumberOfColumns = 3;
+        const LanguagesColumns = 2;
+        return (this.showLanguages ? LanguagesColumns : 0) + DefaultNumberOfColumns;
     }
 
-    public ignore(mergeRecord: MergeHistoryRecord): void {
+    public merge(mergeRecord: MergeHistoryRecord): void {
+        this.executeAction(mergeRecord, candidate => {
+            this.mergeRecords({
+                sourceRecord: mergeRecord,
+                targetRecord: candidate.record
+            });
+        });
+    }
 
+    public blacklist(mergeRecord: MergeHistoryRecord): void {
+        this.executeAction(mergeRecord, candidate => {
+            this.blacklistRecords({
+                sourceRecordId: mergeRecord.id,
+                targetRecordId: candidate.record.id
+            });
+        });
     }
 
     public promote(mergeRecord: MergeHistoryRecord): void {
@@ -79,5 +93,19 @@ export default class HistoryMerger extends Vue {
         }
 
         this.promoteRecordToCandidate({ candidate: this.currentCandidate, record: mergeRecord });
+    }
+
+    private executeAction(mergeRecord: MergeHistoryRecord, action: (candidate: MergeCandidate) => void): void {
+        if (this.currentCandidate === null) {
+            throw Error("Unable to execute when candidate is not selected");
+        }
+
+        action(this.currentCandidate);
+
+        this.removeRecordFromCandidate({ candidate: this.currentCandidate, record: mergeRecord });
+
+        if (this.currentCandidate.mergeRecords.length === 0) {
+            this.backToCandidates();
+        }
     }
 }

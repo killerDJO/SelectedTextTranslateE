@@ -23,7 +23,7 @@ import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { AccountHandler } from "business-logic/history/sync/AccountHandler";
 import { TagsEngine } from "business-logic/history/TagsEngine";
 import { HistoryQueryExecutor } from "business-logic/history/HistoryQueryExecutor";
-import { HistoryMerger } from "business-logic/history/HistoryMerger";
+import { HistoryMerger } from "business-logic/history/merging/HistoryMerger";
 
 import { Taskbar } from "presentation/Taskbar";
 import { TranslationView } from "presentation/views/TranslationView";
@@ -94,6 +94,7 @@ export class Application {
         historyView.handleVerifyPasswordResetToken(request => this.accountHandler.verifyPasswordResetToken(request));
 
         historyView.mergeRecords$.subscribe(request => this.historyMerger.mergeRecords(request).subscribe());
+        historyView.blacklistRecords$.subscribe(request => this.historyMerger.blacklistRecords(request).subscribe());
         historyView.handleMergeCandidatesRequest(() => this.historyMerger.getMergeCandidates());
 
         historyView.signOut$.subscribe(() => this.accountHandler.signOutUser().subscribe());
