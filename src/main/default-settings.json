@@ -59,6 +59,7 @@
         "sync": {
             "isContinuousSyncEnabled": true,
             "interval": 60000,
+            "powerResumeDelaySeconds": 30,
             "backupOnApplicationStart": true,
             "backupOnApplicationStartNumberToKeep": 1,
             "backupRegularly": false,

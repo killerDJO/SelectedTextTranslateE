@@ -1,4 +1,6 @@
 import { BehaviorSubject } from "rxjs";
+import * as electron from "electron";
+const powerMonitor = electron.remote.powerMonitor;
 
 import { MessageBus, Subscription } from "common/renderer/MessageBus";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
@@ -30,6 +32,7 @@ export class HistorySyncService {
     private readonly collectionId: string = "history";
 
     private isContinuousSyncStarted: boolean = false;
+    private isSyncBlocked: boolean = false;
     private observeRecordSubscription: Subscription | null = null;
     private continuousInterval: NodeJS.Timer | null = null;
 
@@ -46,30 +49,36 @@ export class HistorySyncService {
 
     private setupSubscriptions(): void {
         this.messageBus.observeValue<SignRequest, SignInResponse>(Messages.HistorySync.SignIn, async signInRequest => {
+            await this.waitForNetworkEnabled();
             const signInResponse = await this.firebaseClient.signIn(signInRequest.email, signInRequest.password);
             this.updateCurrentUser();
             return signInResponse;
         });
 
         this.messageBus.observeValue<SignRequest, SignUpResponse>(Messages.HistorySync.SignUp, async signInRequest => {
+            await this.waitForNetworkEnabled();
             const signUpResponse = this.firebaseClient.signUp(signInRequest.email, signInRequest.password);
             this.updateCurrentUser();
             return signUpResponse;
         });
 
         this.messageBus.observeValue<PasswordResetRequest, PasswordResetResponse>(Messages.HistorySync.ResetPassword, async resetRequest => {
+            await this.waitForNetworkEnabled();
             return this.firebaseClient.confirmPasswordReset(resetRequest.token, resetRequest.password);
         });
 
         this.messageBus.observeValue<string, SendResetTokenResponse>(Messages.HistorySync.SendPasswordResetToken, async email => {
+            await this.waitForNetworkEnabled();
             return this.firebaseClient.sendPasswordResetToken(email);
         });
 
         this.messageBus.observeValue<string, VerifyResetTokenResponse>(Messages.HistorySync.VerifyPasswordResetToken, async token => {
+            await this.waitForNetworkEnabled();
             return this.firebaseClient.verifyPasswordResetToken(token);
         });
 
         this.messageBus.observeValue<PasswordChangeRequest, PasswordChangeResponse>(Messages.HistorySync.ChangePassword, async passwordChangeRequest => {
+            await this.waitForNetworkEnabled();
             return this.firebaseClient.changePassword(passwordChangeRequest.oldPassword, passwordChangeRequest.newPassword);
         });
 
@@ -95,6 +104,8 @@ export class HistorySyncService {
 
         this.currentUser$.subscribe(user => this.messageBus.sendCommand(Messages.HistorySync.CurrentUser, user));
         this.syncTask$.subscribe(syncTask => this.messageBus.sendCommand(Messages.HistorySync.IsSyncInProgress, syncTask !== null));
+
+        this.monitorPowerEvents();
     }
 
     private async startSync(isContinuous: boolean, isForcedPull: boolean): Promise<void> {
@@ -157,10 +168,6 @@ export class HistorySyncService {
     private async syncAllRecords(isForcedPull: boolean): Promise<void> {
         await this.waitForSyncToFinish();
 
-        if (!this.canSync()) {
-            return;
-        }
-
         try {
             this.syncTask$.next(this.syncAllRecordsUnsafe(isForcedPull));
             await this.syncTask$.value;
@@ -187,10 +194,6 @@ export class HistorySyncService {
     private async syncSingleRecord(historyRecord: HistoryRecord): Promise<void> {
         await this.waitForSyncToFinish();
 
-        if (!this.canSync()) {
-            return;
-        }
-
         if (!(await this.writeRecord(historyRecord))) {
             this.logger.info("Failed to sync individual record. Falling back to a full sync.");
             await this.syncAllRecords(false);
@@ -198,6 +201,8 @@ export class HistorySyncService {
     }
 
     private async pullRecords(isForcedPull: boolean): Promise<void> {
+        await this.waitForNetworkEnabled();
+
         const lastSyncTime = !isForcedPull ? await this.messageBus.sendCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime) : undefined;
         const documents = await this.firebaseClient.getDocuments<ServerHistoryRecord>(this.collectionId, lastSyncTime);
         const accountInfo = this.firebaseClient.getAccountInfo();
@@ -205,6 +210,7 @@ export class HistorySyncService {
         if (accountInfo === null) {
             throw new Error("Unable to sync when user is not signed in");
         }
+
         for (const document of documents) {
             const serverRecord = this.deserializeRecord(document.record);
             const historyRecord: HistoryRecord = {
@@ -232,10 +238,7 @@ export class HistorySyncService {
 
     private async writeRecord(record: HistoryRecord): Promise<boolean> {
         this.logger.info(`Write record with id ${record.id} to the server.`);
-
-        if (!this.canSync()) {
-            return false;
-        }
+        await this.waitForNetworkEnabled();
 
         const sanitizedRecord = {
             id: record.id,
@@ -316,12 +319,30 @@ export class HistorySyncService {
         return JSON.parse(decodeURIComponent(escape(atob(serializedRecord))));
     }
 
-    private canSync(): boolean {
-        if (!navigator.onLine) {
-            this.logger.warning("Unable to sync records when offline.");
-            return false;
-        }
+    private async monitorPowerEvents(): Promise<void> {
+        const historySyncSettings = await this.messageBus.sendCommand<void, HistorySyncSettings>(Messages.HistorySync.HistorySyncSettings);
+        powerMonitor.on("suspend", () => {
+            this.logger.info("System is suspending. Sync is stopped.");
+            this.isSyncBlocked = true;
+        });
+        powerMonitor.on("resume", () => {
+            this.logger.info(`System is resuming. Sync is will resume in ${historySyncSettings.powerResumeDelaySeconds} sec.`);
+            const MillisecondsInSecond = 1000;
+            setTimeout(
+                () => {
+                    this.isSyncBlocked = false;
+                    this.logger.info("Sync is resumed.");
+                },
+                historySyncSettings.powerResumeDelaySeconds * MillisecondsInSecond);
+        });
+    }
 
-        return true;
+    private async waitForNetworkEnabled(): Promise<void> {
+        while (!navigator.onLine || this.isSyncBlocked) {
+            this.logger.warning(`Unable to sync records. On-line status: ${navigator.onLine}. Is blocked: ${this.isSyncBlocked}.`);
+            const MillisecondsInSecond = 1000;
+            const DelaySeconds = 5;
+            await new Promise(resolve => setTimeout(resolve, DelaySeconds * MillisecondsInSecond));
+        }
     }
 }
