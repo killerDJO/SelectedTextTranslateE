@@ -1,13 +1,13 @@
 <template>
     <div class="content" :class="{'is-embedded': isEmbedded}">
         <div class="actions" :class="{'tags-visible': showTags}">
-            <link-button :text="'Translate from ' + languages.get(languageSuggestion)" @click="changeLanguage" class="action" v-if="hasLanguageSuggestion"/>
-            <link-button :text="toggleTagsButtonText"  class="action" @click="showTags = !showTags" />
-            <link-button :text="'Show Translations'" class="action" @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories" />
-            <link-button :text="'Show Definitions'"  class="action" @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions" />
+            <link-button :text="'From ' + languages.get(languageSuggestion)" @click="changeLanguage" class="action" v-if="hasLanguageSuggestion"/>
+            <link-button :text="toggleTagsButtonText" class="action" @click="showTags = !showTags" />
+            <link-button :text="'Translations'" class="action" @click="currentView = TranslateResultViews.Translation" v-if="currentView !== TranslateResultViews.Translation && hasCategories" />
+            <link-button :text="'Definitions'"  class="action" @click="currentView = TranslateResultViews.Definition" v-if="currentView !== TranslateResultViews.Definition && hasDefinitions" />
             <link-button :text="'Search'" @click="search" class="action"/>
             <link-button
-                :text="`Translated ${historyRecord.translationsNumber === 1 ? 'one time' : `${historyRecord.translationsNumber} times`}`"
+                :text="`${historyRecord.translationsNumber === 1 ? '1 time' : `${historyRecord.translationsNumber} times`}`"
                 class="action"
                 @click="currentView = TranslateResultViews.Statistic"
                 v-if="currentView !== TranslateResultViews.Statistic" />
@@ -16,18 +16,20 @@
         <div class="tags" v-if="showTags">
           <tags-editor :tags="historyRecord.tags" @update-tags="updateTags"/>
         </div>
-        <translation-result-content-category
-            v-if="currentView === TranslateResultViews.Translation"
-            v-for="category in historyRecord.translateResult.categories"
-            :key="category.baseForm + category.partOfSpeech"
-            :category="category"
-            :translation-result-view-settings="translationResultViewSettings"
-            @translate="translate"/>
-        <translation-result-definition-category
-            v-if="currentView === TranslateResultViews.Definition"
-            v-for="definitionCategory in historyRecord.translateResult.definitions"
-            :key="definitionCategory.baseForm + definitionCategory.partOfSpeech"
-            :definitionCategory="definitionCategory"/>
+        <div v-if="currentView === TranslateResultViews.Translation">
+            <translation-result-content-category
+                v-for="category in historyRecord.translateResult.categories"
+                :key="category.baseForm + category.partOfSpeech"
+                :category="category"
+                :translation-result-view-settings="translationResultViewSettings"
+                @translate="translate"/>
+        </div>
+        <div v-if="currentView === TranslateResultViews.Definition">
+            <translation-result-definition-category
+                v-for="definitionCategory in historyRecord.translateResult.definitions"
+                :key="definitionCategory.baseForm + definitionCategory.partOfSpeech"
+                :definitionCategory="definitionCategory"/>
+        </div>
         <translation-result-statistic
             v-if="currentView === TranslateResultViews.Statistic"
             :history-record="historyRecord"

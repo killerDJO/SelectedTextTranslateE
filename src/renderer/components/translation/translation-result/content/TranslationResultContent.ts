@@ -66,10 +66,10 @@ export default class TranslationResultContent extends Vue {
 
         const tagsNumber = (this.historyRecord.tags || []).length;
         if (tagsNumber === 0) {
-            return "Add Tags";
+            return "No Tags";
         }
 
-        return `Show ${tagsNumber} Tag${tagsNumber > 1 ? "s" : ""}`;
+        return `${tagsNumber} Tag${tagsNumber > 1 ? "s" : ""}`;
     }
 
     public mounted() {
