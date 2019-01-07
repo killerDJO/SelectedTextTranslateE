@@ -47,6 +47,14 @@ export default class HistoryMerger extends Vue {
         return this.mergeCandidates[this.currentCandidateIndex] || null;
     }
 
+    public get currentMergeRecords() {
+        if (this.currentCandidate === null) {
+            throw Error("Invalid action.");
+        }
+
+        return [this.currentCandidate.record].concat(this.currentCandidate.mergeRecords);
+    }
+
     public get isCandidateViewVisible(): boolean {
         return this.currentCandidate !== null;
     }
@@ -87,6 +95,14 @@ export default class HistoryMerger extends Vue {
         });
     }
 
+    public blacklistAll(): void {
+        this.executeBulkAction(this.blacklist.bind(this));
+    }
+
+    public mergeAll(): void {
+        this.executeBulkAction(this.merge.bind(this));
+    }
+
     public promote(mergeRecord: MergeHistoryRecord): void {
         if (this.currentCandidate === null) {
             throw Error("Unable to promote when candidate is not selected");
@@ -107,5 +123,13 @@ export default class HistoryMerger extends Vue {
         if (this.currentCandidate.mergeRecords.length === 0) {
             this.backToCandidates();
         }
+    }
+
+    private executeBulkAction(action: (record: MergeHistoryRecord) => void): void {
+        if (this.currentCandidate === null) {
+            throw Error("Unable to execute when candidate is not selected");
+        }
+
+        this.currentCandidate.mergeRecords.forEach(action);
     }
 }

@@ -80,6 +80,11 @@
         }
 
         .candidate {
+            .header {
+                color: #777;
+                font-weight: bold;
+            }
+
             .word-column,
             .translation-column {
                 width: 35%;

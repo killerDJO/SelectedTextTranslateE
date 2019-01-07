@@ -52,9 +52,7 @@
           <icon-button @click="backToCandidates" :title="'Back'">
             <i class="icon icon-left back-button"></i>
           </icon-button>
-          Merge candidates for
-          <span class="sentence">{{currentCandidate.record.sentence}} - {{currentCandidate.record.translation}}</span>
-          <span v-if="currentCandidate.record.suggestion !== null" class="suggestion">(suggested: {{currentCandidate.record.suggestion}})</span>
+          Back
         </div>
         <table class="table-striped candidate non-clickable">
           <thead>
@@ -66,7 +64,7 @@
             </tr>
           </thead>
           <tbody v-if="currentCandidate.mergeRecords.length > 0">
-            <tr v-for="mergeRecord of currentCandidate.mergeRecords" :key="mergeRecord.id">
+            <tr v-for="(mergeRecord, index) of currentMergeRecords" :key="mergeRecord.id" :class="{'header': index === 0}">
               <td class="word-column" v-overflow-tooltip>
                 <div class="word-holder">{{mergeRecord.sentence}} <span class="icon icon-flash" v-if="mergeRecord.isForcedTranslation" title="Forced Translation"></span></div>
               </td>
@@ -77,9 +75,15 @@
               </td>
               <td class="times-column">{{mergeRecord.translationsNumber}}</td>
               <td class="actions-column">
-                <link-button @click="merge(mergeRecord)" :text="'Merge'" />
-                <link-button @click="blacklist(mergeRecord)" :text="'Ignore'" />
-                <link-button @click="promote(mergeRecord)" :text="'Promote'" />
+                <div v-if="index > 0">
+                  <link-button @click="merge(mergeRecord)" :text="'Merge'" />
+                  <link-button @click="blacklist(mergeRecord)" :text="'Ignore'" />
+                  <link-button @click="promote(mergeRecord)" :text="'Promote'" />
+                </div>
+                <div v-else>
+                  <link-button @click="blacklistAll()" :text="'Ignore All'" />
+                  <link-button @click="mergeAll()" :text="'Merge All'" />
+                </div>
               </td>
             </tr>
           </tbody>
