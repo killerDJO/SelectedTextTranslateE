@@ -3,7 +3,7 @@ import { injectable } from "inversify";
 import * as _ from "lodash";
 
 import { TranslateResult, TranslateResultSentence, TranslateResultCategory, TranslateResultCategoryEntry, TranslateResultDefinitionCategory, TranslateResultDefinitionCategoryEntry } from "common/dto/translation/TranslateResult";
-
+// tslint:disable no-magic-numbers
 // Relevant response has the following format
 // [
 // 0:  [
@@ -59,6 +59,10 @@ import { TranslateResult, TranslateResultSentence, TranslateResultCategory, Tran
 //             "<base_form>"
 //         ],
 //         ....
+//     ],
+// 13: <irrelevant>,
+// 14: [
+//          [<similar_words>]
 //     ]
 // ]
 @injectable()
@@ -94,7 +98,12 @@ export class TranslationResponseParser {
             languageSuggestion = root[8][0][0] || null;
         }
 
-        return new TranslateResultSentence(input, translation, origin, suggestion, languageSuggestion);
+        let similarWords: string[] = [];
+        if (!!root[14]) {
+            similarWords = root[14][0] || [];
+        }
+
+        return new TranslateResultSentence(input, translation, origin, suggestion, languageSuggestion, similarWords);
     }
 
     private parseTranslateCategories(root: any): ReadonlyArray<TranslateResultCategory> {

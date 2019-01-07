@@ -12,7 +12,8 @@ export class TranslateResultSentence {
         public readonly translation: string | null,
         public readonly origin: string | null,
         public readonly suggestion: string | null,
-        public readonly languageSuggestion: string | null) {
+        public readonly languageSuggestion: string | null,
+        public readonly similarWords?: ReadonlyArray<string>) {
     }
 }
 

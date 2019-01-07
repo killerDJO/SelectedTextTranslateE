@@ -3,10 +3,18 @@
     width: 50vw;
     min-width: 600px;
     padding: 0 $padding-default $padding-default $padding-default;
+    max-height: 80vh;
+    overflow: auto;
 
     .no-records-available {
         text-align: center;
         font-style: italic;
+    }
+
+    .suggestion,
+    .no-translation {
+        font-style: italic;
+        color: $color-gray;
     }
 
     .candidates-view {
@@ -15,6 +23,12 @@
             height: 30px;
             align-items: center;
             display: flex;
+
+            .records-label {
+                font-size: $font-small;
+                color: $color-gray;
+                margin-left: auto;
+            }
         }
     
         .candidates {
@@ -29,11 +43,6 @@
 
             tbody tr:hover {
                 background-color: $color-active;
-            }
-    
-            .translation-column .no-translation {
-                font-style: italic;
-                color: $color-gray;
             }
     
             .word-column,

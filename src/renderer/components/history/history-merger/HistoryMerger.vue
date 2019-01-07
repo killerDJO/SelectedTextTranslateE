@@ -5,6 +5,7 @@
       <div v-if="!isCandidateViewVisible" class="candidates-view">
         <div class="candidates-view-header">
           <checkbox v-model="showLanguages" :label="'Show Languages'" />
+          <span v-if="filteredCandidates.length > 0" class="records-label">{{filteredCandidates.length}} record{{filteredCandidates.length > 1 ? "s" : ""}}</span>
         </div>
         <table class="table-striped candidates non-clickable">
           <thead>
@@ -19,12 +20,12 @@
           <tbody v-if="filteredCandidates.length !== 0 && !isActionInProgress">
             <tr v-for="candidate of filteredCandidates" :key="candidate.record.id" @click="showCandidate(candidate)">
               <td class="word-column" v-overflow-tooltip>
-                <div class="word-holder">{{candidate.record.sentence}}</div>
-                <span class="icon icon-flash" v-if="candidate.record.isForcedTranslation" title="Forced Translation"></span>
+                <div class="word-holder">{{candidate.record.sentence}} <span class="icon icon-flash" v-if="candidate.record.isForcedTranslation" title="Forced Translation"></span></div>
               </td>
               <td class="translation-column" v-overflow-tooltip>
                 <span v-if="!!candidate.record.translation">{{candidate.record.translation}}</span>
-                <span v-else class="no-translation">No Translation</span>
+                <span v-if="candidate.record.suggestion !== null" class="suggestion">(suggested: {{candidate.record.suggestion}})</span>
+                <span v-if="!candidate.record.translation" class="no-translation">No Translation</span>
               </td>
               <td class="source-language-column" v-overflow-tooltip v-if="showLanguages">{{languages.get(candidate.record.sourceLanguage) || candidate.record.sourceLanguage}}</td>
               <td class="target-language-column" v-overflow-tooltip v-if="showLanguages">{{languages.get(candidate.record.targetLanguage) || candidate.record.targetLanguage}}</td>
@@ -51,7 +52,9 @@
           <icon-button @click="backToCandidates" :title="'Back'">
             <i class="icon icon-left back-button"></i>
           </icon-button>
-          Merge candidates for <span class="sentence">{{currentCandidate.record.sentence}}</span>
+          Merge candidates for
+          <span class="sentence">{{currentCandidate.record.sentence}} - {{currentCandidate.record.translation}}</span>
+          <span v-if="currentCandidate.record.suggestion !== null" class="suggestion">(suggested: {{currentCandidate.record.suggestion}})</span>
         </div>
         <table class="table-striped candidate non-clickable">
           <thead>
@@ -65,12 +68,12 @@
           <tbody v-if="currentCandidate.mergeRecords.length > 0">
             <tr v-for="mergeRecord of currentCandidate.mergeRecords" :key="mergeRecord.id">
               <td class="word-column" v-overflow-tooltip>
-                <div class="word-holder">{{mergeRecord.sentence}}</div>
-                <span class="icon icon-flash" v-if="mergeRecord.isForcedTranslation" title="Forced Translation"></span>
+                <div class="word-holder">{{mergeRecord.sentence}} <span class="icon icon-flash" v-if="mergeRecord.isForcedTranslation" title="Forced Translation"></span></div>
               </td>
               <td class="translation-column" v-overflow-tooltip>
                 <span v-if="!!mergeRecord.translation">{{mergeRecord.translation}}</span>
-                <span v-else class="no-translation">No Translation</span>
+                <span v-if="mergeRecord.suggestion !== null" class="suggestion">(suggested: {{mergeRecord.suggestion}})</span>
+                <span v-if="!mergeRecord.translation" class="no-translation">No Translation</span>
               </td>
               <td class="times-column">{{mergeRecord.translationsNumber}}</td>
               <td class="actions-column">

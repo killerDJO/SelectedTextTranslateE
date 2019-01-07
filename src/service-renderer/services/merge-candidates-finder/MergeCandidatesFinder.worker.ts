@@ -18,10 +18,10 @@ export class MergeCandidatesFinder {
             const candidates = this.processRecord(i, mergeRecords);
 
             if (candidates.length > 0) {
-                result.push({
+                result.push(this.checkForPromotion({
                     record: mergeRecords[i] as MergeHistoryRecord,
                     mergeRecords: candidates
-                });
+                }));
             }
         }
 
@@ -43,18 +43,52 @@ export class MergeCandidatesFinder {
             }
 
             if (record.sourceLanguage !== candidateRecord.sourceLanguage
-                || record.targetLanguage !== candidateRecord.targetLanguage
-                || record.isForcedTranslation !== candidateRecord.isForcedTranslation) {
+                || record.targetLanguage !== candidateRecord.targetLanguage) {
                 continue;
             }
 
-            if (record.sentence.toLowerCase() === candidateRecord.sentence.toLowerCase()) {
+            if (this.isMergeCandidate(record, candidateRecord)) {
                 candidates.push(candidateRecord);
                 mergeRecords[i] = null;
             }
         }
 
         return candidates;
+    }
+
+    private isMergeCandidate(target: MergeHistoryRecord, source: MergeHistoryRecord): boolean {
+        if (this.equalsIgnoreCase(target.sentence, source.sentence)) {
+            return true;
+        }
+
+        if (this.equalsIgnoreCase(target.suggestion, source.suggestion) ||
+            this.equalsIgnoreCase(source.suggestion, target.sentence) ||
+            this.equalsIgnoreCase(target.suggestion, source.sentence)) {
+            return true;
+        }
+
+        if (this.containsIgnoreCase(target.sentence, source.baseForms) ||
+            this.containsIgnoreCase(source.sentence, target.baseForms)) {
+            return true;
+        }
+
+        if (this.containsIgnoreCase(target.sentence, source.similarWords) ||
+            this.containsIgnoreCase(source.sentence, target.similarWords)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private containsIgnoreCase(text: string, items: ReadonlyArray<string>) {
+        return items.some(item => this.equalsIgnoreCase(item, text));
+    }
+
+    private equalsIgnoreCase(first: string | null, second: string | null): boolean {
+        if (first === null || second === null) {
+            return false;
+        }
+        return first.toLowerCase() === second.toLowerCase();
     }
 
     private convertToMergeRecord(record: HistoryRecord): MergeHistoryRecord {
@@ -65,7 +99,38 @@ export class MergeCandidatesFinder {
             targetLanguage: record.targetLanguage,
             translationsNumber: record.translationsNumber,
             id: record.id,
-            translation: record.translateResult.sentence.translation
+            translation: record.translateResult.sentence.translation,
+            suggestion: record.translateResult.sentence.suggestion,
+            baseForms: record.translateResult.categories.map(category => category.baseForm),
+            similarWords: record.translateResult.sentence.similarWords || []
+        };
+    }
+
+    private checkForPromotion(candidate: MergeCandidate): MergeCandidate {
+        if (candidate.record.suggestion !== null) {
+            const suggestionInChildren = candidate.mergeRecords.find(record => this.equalsIgnoreCase(record.sentence, candidate.record.suggestion));
+            if (!!suggestionInChildren) {
+                return this.promoteRecord(candidate, suggestionInChildren);
+            }
+        }
+
+        const baseFormsInChildren = candidate.mergeRecords.find(record => this.containsIgnoreCase(record.sentence, candidate.record.baseForms));
+        if (!!baseFormsInChildren) {
+            return this.promoteRecord(candidate, baseFormsInChildren);
+        }
+
+        const similarWordsInChildren = candidate.mergeRecords.find(record => this.containsIgnoreCase(record.sentence, candidate.record.similarWords));
+        if (!!similarWordsInChildren) {
+            return this.promoteRecord(candidate, similarWordsInChildren);
+        }
+
+        return candidate;
+    }
+
+    private promoteRecord(candidate: MergeCandidate, recordToPromote: MergeHistoryRecord): MergeCandidate {
+        return {
+            record: recordToPromote,
+            mergeRecords: candidate.mergeRecords.filter(record => record !== recordToPromote).concat([candidate.record])
         };
     }
 }
