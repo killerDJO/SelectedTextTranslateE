@@ -27,6 +27,9 @@ export const historyMerger: Module<HistoryMergerState, RootState> = {
             state.mergeCandidates = candidates.slice();
             state.isActionInProgress = false;
         },
+        setInProgress(state: HistoryMergerState): void {
+            state.isActionInProgress = true;
+        },
         removeRecordFromCandidate(state: HistoryMergerState, { candidate, record }: { candidate: MergeCandidate, record: MergeHistoryRecord }): void {
             const currentCandidateIndex = state.mergeCandidates.indexOf(candidate);
 
@@ -47,6 +50,7 @@ export const historyMerger: Module<HistoryMergerState, RootState> = {
     actions: {
         fetchCandidates({ commit }): void {
             commit("setMergeCandidates", []);
+            commit("setInProgress");
             messageBus
                 .sendCommand<ReadonlyArray<MergeCandidate>>(Messages.History.Merging.MergeCandidates)
                 .then(candidates => commit("setMergeCandidates", candidates));

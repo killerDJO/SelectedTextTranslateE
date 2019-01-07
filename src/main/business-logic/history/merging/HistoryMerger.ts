@@ -11,17 +11,22 @@ import { MergeCandidate } from "common/dto/history/MergeCandidate";
 import { Logger } from "infrastructure/Logger";
 
 import { HistoryStore } from "business-logic/history/HistoryStore";
-import { MergeCandidatesFinder } from "business-logic/history/merging/MergeCandidatesFinder";
 import { MergeBlacklist } from "business-logic/history/merging/MergeBlacklist";
+import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
+import { MessageBus } from "infrastructure/MessageBus";
+import { Messages } from "common/messaging/Messages";
 
 @injectable()
 export class HistoryMerger {
 
+    private readonly messageBus: MessageBus;
+
     constructor(
         private readonly historyStore: HistoryStore,
-        private readonly mergeCandidatesFinder: MergeCandidatesFinder,
         private readonly mergeBlacklist: MergeBlacklist,
-        private readonly logger: Logger) {
+        private readonly logger: Logger,
+        serviceRendererProvider: ServiceRendererProvider) {
+        this.messageBus = new MessageBus(serviceRendererProvider.getServiceRenderer());
     }
 
     public mergeRecords(request: MergeRecordsRequest): Observable<void> {
@@ -37,9 +42,13 @@ export class HistoryMerger {
 
     public getMergeCandidates(): Observable<ReadonlyArray<MergeCandidate>> {
         return this.historyStore.getActiveRecords().pipe(
-            map(records => this.mergeCandidatesFinder.getMergeCandidates(records)),
+            concatMap(records => this.findMergeCandidates(records)),
             concatMap(records => this.filterBlacklistedRecords(records))
         );
+    }
+
+    private findMergeCandidates(records: HistoryRecord[]): Observable<ReadonlyArray<MergeCandidate>> {
+        return this.messageBus.sendValue<HistoryRecord[], ReadonlyArray<MergeCandidate>>(Messages.ServiceRenderer.MergeCandidates, records);
     }
 
     private mergeRecordsInternal(sourceRecord: HistoryRecord | null, targetRecord: HistoryRecord | null): Observable<void> {

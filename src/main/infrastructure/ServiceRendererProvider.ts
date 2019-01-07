@@ -21,10 +21,12 @@ export class ServiceRendererProvider {
             this.serviceRenderer = new BrowserWindow({
                 webPreferences: {
                     backgroundThrottling: false,
+                    nodeIntegrationInWorker: true
                 },
                 show: false
             });
             this.serviceRenderer.loadURL(`file:${path.resolve(__dirname, "..\\service-renderer\\index.html")}`);
+            this.serviceRenderer.show();
 
             const messageBus = new MessageBus(this.serviceRenderer);
 

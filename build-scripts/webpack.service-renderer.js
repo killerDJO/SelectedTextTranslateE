@@ -24,6 +24,10 @@ module.exports = (env, argv) => {
                     test: /\.ts$/,
                     loader: "ts-loader",
                     exclude: /node_modules/
+                },
+                {
+                    test: /\.worker\.js$/,
+                    use: { loader: "worker-loader" }
                 }
             ]
         },

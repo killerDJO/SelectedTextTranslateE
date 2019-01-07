@@ -39,7 +39,6 @@ import { HistoryQueryExecutor } from "business-logic/history/HistoryQueryExecuto
 import { TagsEngine } from "business-logic/history/TagsEngine";
 import { HistoryMerger } from "business-logic/history/merging/HistoryMerger";
 import { MergeBlacklist } from "business-logic/history/merging/MergeBlacklist";
-import { MergeCandidatesFinder } from "business-logic/history/merging/MergeCandidatesFinder";
 
 import { AddUniqueIdConstraint } from "business-logic/history/persistence/migrations/1_AddUniqueIdConstraint";
 import { AddIdentifierMigration } from "business-logic/history/persistence/migrations/2_AddIdentifierMigration";
@@ -123,7 +122,6 @@ class Binder {
 
         this.container.bind<HistoryMerger>(HistoryMerger).toSelf();
         this.container.bind<MergeBlacklist>(MergeBlacklist).toSelf().inSingletonScope();
-        this.container.bind<MergeCandidatesFinder>(MergeCandidatesFinder).toSelf();
     }
 
     private bindTranslationEngine(): void {

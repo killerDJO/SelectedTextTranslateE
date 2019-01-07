@@ -113,5 +113,6 @@ export class Messages {
         public static readonly LogWarning = "service-renderer-log-warning";
 
         public static readonly PlayFile = "service-renderer-play-file";
+        public static readonly MergeCandidates = "service-renderer-merge-candidates";
     };
 }
