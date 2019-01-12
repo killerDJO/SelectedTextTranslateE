@@ -110,6 +110,14 @@ export class HistoryStore {
             );
     }
 
+    public getRecordById(id: string): Observable<HistoryRecord | null> {
+        return this.datastoreProvider
+            .find<HistoryRecord>(this.datastore$, { id: id })
+            .pipe(
+                map(result => !!result.length ? result[0] : null)
+            );
+    }
+
     public getActiveRecords(): Observable<HistoryRecord[]> {
         return this.datastoreProvider.find<HistoryRecord>(this.datastore$, { isArchived: false });
     }

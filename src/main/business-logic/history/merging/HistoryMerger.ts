@@ -1,17 +1,16 @@
 import { injectable } from "inversify";
-import { Observable, concat, forkJoin } from "rxjs";
-import { map, concatMap } from "rxjs/operators";
+import { Observable, concat } from "rxjs";
+import { map, concatMap, tap } from "rxjs/operators";
 import * as _ from "lodash";
 
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { MergeRecordsRequest } from "common/dto/history/MergeRecordsRequest";
 import { BlacklistRecordsRequest } from "common/dto/history/BlacklistRecordsRequest";
-import { MergeCandidate } from "common/dto/history/MergeCandidate";
+import { MergeCandidate, MergeHistoryRecord } from "common/dto/history/MergeCandidate";
 
 import { Logger } from "infrastructure/Logger";
 
 import { HistoryStore } from "business-logic/history/HistoryStore";
-import { MergeBlacklist } from "business-logic/history/merging/MergeBlacklist";
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
 import { MessageBus } from "infrastructure/MessageBus";
 import { Messages } from "common/messaging/Messages";
@@ -23,7 +22,6 @@ export class HistoryMerger {
 
     constructor(
         private readonly historyStore: HistoryStore,
-        private readonly mergeBlacklist: MergeBlacklist,
         private readonly logger: Logger,
         serviceRendererProvider: ServiceRendererProvider) {
         this.messageBus = new MessageBus(serviceRendererProvider.getServiceRenderer());
@@ -37,13 +35,26 @@ export class HistoryMerger {
     }
 
     public blacklistRecords(request: BlacklistRecordsRequest): Observable<void> {
-        return this.mergeBlacklist.addToBlacklist(request.sourceRecordId, request.targetRecordId);
+        return this.historyStore.getRecordById(request.sourceRecordId).pipe(
+            concatMap(sourceRecord => {
+                if (sourceRecord === null) {
+                    throw new Error(`History record with id ${request.sourceRecordId} doesn't exist`);
+                }
+                const updatedRecord = {
+                    ...sourceRecord,
+                    blacklistedMergeRecords: (sourceRecord.blacklistedMergeRecords || []).concat(request.targetRecordId)
+                };
+                return this.historyStore.updateRecord(updatedRecord).pipe(
+                    tap(_ => this.logger.info(`Records has been added to the merge blacklist. Source: ${request.sourceRecordId}, Target: ${request.targetRecordId}`)),
+                    map(_ => void 0));
+            })
+        );
     }
 
     public getMergeCandidates(): Observable<ReadonlyArray<MergeCandidate>> {
         return this.historyStore.getActiveRecords().pipe(
             concatMap(records => this.findMergeCandidates(records)),
-            concatMap(records => this.filterBlacklistedRecords(records))
+            map(records => this.filterBlacklistedRecords(records))
         );
     }
 
@@ -73,19 +84,18 @@ export class HistoryMerger {
         return concat(this.historyStore.updateRecord(updatedTargetRecord), this.historyStore.updateRecord(updatedSourceRecord)).pipe(map(() => void 0));
     }
 
-    private filterBlacklistedRecords(candidates: ReadonlyArray<MergeCandidate>): Observable<ReadonlyArray<MergeCandidate>> {
-        const filteredCandidates = candidates.map(candidate => {
-            return forkJoin(candidate.mergeRecords
-                .map(record => this.mergeBlacklist.isBlacklistedMerge(record.id, candidate.record.id).pipe(map(isBlacklisted => ({ isBlacklisted, record: record })))))
-                .pipe(map(filteredMergeRecords => {
-                    const mergeCandidate: MergeCandidate = {
-                        record: candidate.record,
-                        mergeRecords: filteredMergeRecords.filter(mergeRecord => !mergeRecord.isBlacklisted).map(mergeRecord => mergeRecord.record)
-                    };
-                    return mergeCandidate;
-                }));
+    private filterBlacklistedRecords(candidates: ReadonlyArray<MergeCandidate>): ReadonlyArray<MergeCandidate> {
+        return candidates.map(candidate => {
+            const mergeCandidate: MergeCandidate = {
+                record: candidate.record,
+                mergeRecords: candidate.mergeRecords.filter(mergeRecord => !this.isBlacklistedCandidate(candidate.record, mergeRecord))
+            };
+            return mergeCandidate;
         });
+    }
 
-        return forkJoin(filteredCandidates).pipe(map(filteredCandidate => filteredCandidate.filter(candidate => candidate.mergeRecords.length > 0)));
+    private isBlacklistedCandidate(record: MergeHistoryRecord, candidate: MergeHistoryRecord): boolean {
+        const NotFoundIndex = -1;
+        return record.blacklistedMergeRecords.indexOf(candidate.id) !== NotFoundIndex || candidate.blacklistedMergeRecords.indexOf(record.id) !== NotFoundIndex;
     }
 }

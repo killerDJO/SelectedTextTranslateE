@@ -254,7 +254,8 @@ export class HistorySyncService {
             lastModifiedDate: record.lastModifiedDate,
             isStarred: record.isStarred,
             isArchived: record.isArchived,
-            tags: record.tags
+            tags: record.tags,
+            blacklistedMergeRecords: record.blacklistedMergeRecords
         };
         const serializedRecord = this.serializeRecord(sanitizedRecord);
 

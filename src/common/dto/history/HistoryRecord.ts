@@ -12,6 +12,7 @@ export interface HistoryRecord extends TranslationKey {
     readonly isStarred: boolean;
     readonly isArchived: boolean;
     readonly tags?: ReadonlyArray<string>;
+    readonly blacklistedMergeRecords?: ReadonlyArray<string>;
 
     readonly syncData?: SyncData[];
 }

@@ -102,7 +102,8 @@ export class MergeCandidatesFinder {
             translation: record.translateResult.sentence.translation,
             suggestion: record.translateResult.sentence.suggestion,
             baseForms: record.translateResult.categories.map(category => category.baseForm),
-            similarWords: record.translateResult.sentence.similarWords || []
+            similarWords: record.translateResult.sentence.similarWords || [],
+            blacklistedMergeRecords: record.blacklistedMergeRecords || []
         };
     }
 

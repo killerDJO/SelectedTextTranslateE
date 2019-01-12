@@ -2,6 +2,7 @@ import { injectable } from "inversify";
 import * as Datastore from "nedb";
 import { Observable, of, Subject, Subscription, empty } from "rxjs";
 import { tap, map, concatMap } from "rxjs/operators";
+import * as _ from "lodash";
 
 import { Messages } from "common/messaging/Messages";
 import { HistoryRecord, SyncData } from "common/dto/history/HistoryRecord";
@@ -247,6 +248,7 @@ export class HistorySyncService {
                     isArchived: newerRecord.isArchived,
                     isStarred: newerRecord.isStarred,
                     tags: this.mergeTags(existingRecord.tags || [], serverTags, serverRecord.tags || []),
+                    blacklistedMergeRecords: _.uniq((existingRecord.blacklistedMergeRecords || []).concat(serverRecord.blacklistedMergeRecords || [])),
                     syncData: [
                         ...filteredSyncData,
                         {
