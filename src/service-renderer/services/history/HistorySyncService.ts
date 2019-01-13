@@ -35,6 +35,7 @@ export class HistorySyncService {
     private isSyncBlocked: boolean = false;
     private observeRecordSubscription: Subscription | null = null;
     private continuousInterval: NodeJS.Timer | null = null;
+    private resumeSyncTimeout: NodeJS.Timeout | null = null;
 
     private readonly syncTask$: BehaviorSubject<Promise<void> | null> = new BehaviorSubject(null);
     private readonly currentUser$: BehaviorSubject<AccountInfo | null> = new BehaviorSubject(null);
@@ -325,13 +326,18 @@ export class HistorySyncService {
         powerMonitor.on("suspend", () => {
             this.logger.info("System is suspending. Sync is stopped.");
             this.isSyncBlocked = true;
+
+            if (this.resumeSyncTimeout !== null) {
+                clearTimeout(this.resumeSyncTimeout);
+            }
         });
         powerMonitor.on("resume", () => {
             this.logger.info(`System is resuming. Sync is will resume in ${historySyncSettings.powerResumeDelaySeconds} sec.`);
             const MillisecondsInSecond = 1000;
-            setTimeout(
+            this.resumeSyncTimeout = setTimeout(
                 () => {
                     this.isSyncBlocked = false;
+                    this.resumeSyncTimeout = null;
                     this.logger.info("Sync is resumed.");
                 },
                 historySyncSettings.powerResumeDelaySeconds * MillisecondsInSecond);
