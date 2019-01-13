@@ -1,11 +1,15 @@
 
 .history {
-    padding: $padding-small $padding-large 0 $padding-large;
+    $history-padding-top: $padding-small;
+
+    padding: $history-padding-top $padding-large 0 $padding-large;
 
     .grid-holder {
         display: grid;
         grid-column-gap: $padding-large;
         grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr $margin-default;
+        max-height: calc(100vh - #{$history-padding-top});
 
         &.sidebar-visible {
             grid-template-columns: 1fr 30%;
@@ -64,8 +68,11 @@
             }
         }
 
-        .results {
+        .results-holder {
             grid-row: 2;
+        }
+
+        .results {
             margin-top: $margin-small;
 
             tbody tr:hover {
@@ -169,16 +176,16 @@
         .sidebar{
             grid-row: 2;
             grid-row-start: 2;
-            grid-row-end: 5;
+            grid-row-end: 3;
             background-color: $color-white;
-            padding-top: $padding-small;
+            padding: $padding-small $padding-small 0 $border-width;
+            overflow: auto;
         }
 
         .results-footer {
-            grid-row: 3;
+            margin-top: $margin-default;
 
             .sync-control {
-                margin-top: $margin-default;
                 display: inline-block;
             }
 
@@ -196,8 +203,14 @@
 
                 .pagination {
                     margin-left: $margin-small;
+                    margin-bottom: 0;
+                    margin-top: 0;
                 }
             }
+        }
+
+        .history-trail {
+            grid-row: 3;
         }
     }
 }
