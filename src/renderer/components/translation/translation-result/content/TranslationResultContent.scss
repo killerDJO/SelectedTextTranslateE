@@ -28,4 +28,20 @@
     .tags {
         margin-bottom: $margin-small;
     }
+
+    .similar-words {
+        color: $color-font;
+        margin-bottom: $margin-small;
+        font-style: italic;
+
+        .similar-words-label {
+            color: $color-gray;
+            font-style: normal;
+        }
+
+        .similar-word:hover {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    }
 }

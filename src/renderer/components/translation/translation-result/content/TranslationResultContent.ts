@@ -48,7 +48,11 @@ export default class TranslationResultContent extends Vue {
     }
 
     public get hasDefinitions(): boolean {
-        return !!this.historyRecord.translateResult.definitions.length;
+        return !!this.historyRecord.translateResult.definitions.length || !!this.similarWords.length;
+    }
+
+    public get similarWords(): ReadonlyArray<string> {
+        return (this.historyRecord.translateResult.sentence.similarWords || []);
     }
 
     public get hasLanguageSuggestion(): boolean {

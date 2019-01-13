@@ -16,6 +16,12 @@
         <div class="tags" v-if="showTags">
           <tags-editor :tags="historyRecord.tags" @update-tags="updateTags"/>
         </div>
+        <div class="similar-words" v-if="currentView === TranslateResultViews.Definition && similarWords.length > 0">
+          <span class="similar-words-label">similar - </span>
+          <span v-for="(similarWord, index) in similarWords" :key="similarWord">
+            <span class="similar-word" @click="translate(similarWord)">{{similarWord}}</span>{{index !== similarWords.length - 1 ? ", " : ""}}
+        </span>
+        </div>
         <div v-if="currentView === TranslateResultViews.Translation">
             <translation-result-content-category
                 v-for="category in historyRecord.translateResult.categories"
