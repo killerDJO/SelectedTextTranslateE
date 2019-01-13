@@ -52,6 +52,8 @@ Current firebase project can be specified in the application settings in the `fi
 For development purposes `<component-name>-watch` tasks have been created. They will watch changes in components' source code and regenerate compiled output in the `dist\app` folder. The `dev: start` VS Code task starts all of the component watch tasks in a single command. To start/debug an application a VS Code launch task has been configured (available on `F5` hotkey). 
 Main component can be immediately debugged after start. To debug renderer and service components a Chrome debugger should be used, it can be toggled using `Ctrl + Shift + I` command on an open application window.
 
+To enable windows notifications for development build the Selected Text Translate - Dev.lnk file should be added to the explorer's start menu list: `C:\Users\<username>\AppData\Roaming\Microsoft\Windows\Start Menu\Programs`.
+
 ## Releasing
 In order to create a new release the following steps must be done:
 1. Increment application version in `package.json`.
