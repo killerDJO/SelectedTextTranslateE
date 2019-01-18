@@ -24,6 +24,7 @@ export interface RegistrationResult<TResult> {
 export class MessageBus {
     private readonly messageQueue: Map<string, Map<string, MessageRegistration<any>>> = new Map();
     private readonly ipcSubscriptions: IpcSubscription[] = [];
+    private readonly rxJsSubscriptions: RxJsSubscription[] = [];
 
     constructor(private readonly window: Electron.BrowserWindow) {
         this.createSubscription(Channels.Subscribe, (_, name: string) => this.handleSubscribe(name));
@@ -74,13 +75,17 @@ export class MessageBus {
                 return;
             }
 
-            handler(args).subscribe(result => this.window.webContents.send(Channels.Observe, message, result));
+            this.rxJsSubscriptions.push(handler(args).subscribe(result => this.window.webContents.send(Channels.Observe, message, result)));
         });
     }
 
     public destroy(): void {
         for (const subscription of this.ipcSubscriptions) {
             ipcMain.removeListener(subscription.channel, subscription.callback);
+        }
+
+        for (const subscription of this.rxJsSubscriptions) {
+            subscription.unsubscribe();
         }
     }
 
