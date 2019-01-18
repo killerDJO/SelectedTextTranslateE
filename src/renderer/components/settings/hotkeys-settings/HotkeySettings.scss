@@ -4,6 +4,7 @@
 
     .header {
         width: 100%;
+        margin-bottom: $margin-small;
     }
 
     .hotkeys {
@@ -49,7 +50,7 @@
 
         .global-hotkey-warning {
             font-size: $font-small;
-            margin: $margin-small 0;
+            margin-bottom: $margin-small;
 
             .icon::before {
                 color: $color-warning;

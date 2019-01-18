@@ -5,7 +5,7 @@
     <div slot="footer">
       <div class="confirm-modal-footer clearfix">
           <link-button @click="close" :text="'Cancel'" class="cancel" />
-          <app-button @click="confirm" :text="confirmText" />
+          <app-button @click="confirm" :text="confirmText" v-auto-focus />
       </div>
     </div>
   </modal>
