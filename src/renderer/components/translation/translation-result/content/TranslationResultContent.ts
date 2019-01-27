@@ -1,7 +1,7 @@
 import { Component, Prop, Watch } from "vue-property-decorator";
 import Vue from "vue";
 
-import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslateResultRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
@@ -9,6 +9,8 @@ import TranslationResultContentCategory from "components/translation/translation
 import TranslationResultDefinitionCategory from "components/translation/translation-result/content/definitions/TranslationResultDefinitionCategory.vue";
 import TranslationResultStatistic from "components/translation/translation-result/content/statistic/TranslationResultStatistic.vue";
 import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
+
+import { hotkeysRegistry } from "services/HotkeysRegistry";
 
 @Component({
     components: {
@@ -19,12 +21,13 @@ import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
     }
 })
 export default class TranslationResultContent extends Vue {
+    private static readonly TranslateResultHotkeysNamespace: string = "translate-result";
 
     @Prop(Object)
     public historyRecord!: HistoryRecord;
 
     @Prop(Object)
-    public translationResultViewSettings!: TranslationViewRendererSettings;
+    public translationResultViewSettings!: TranslateResultRendererSettings;
 
     @Prop(String)
     public defaultView!: TranslateResultViews;
@@ -96,6 +99,18 @@ export default class TranslationResultContent extends Vue {
         if (oldValue.id !== newValue.id) {
             this.initializeCurrentView();
         }
+    }
+
+    @Watch("translationResultViewSettings", { deep: true, immediate: true })
+    public watchTranslationResultViewSettings() {
+        hotkeysRegistry.unregisterHotkeys(TranslationResultContent.TranslateResultHotkeysNamespace);
+
+        hotkeysRegistry.registerHotkeys(
+            TranslationResultContent.TranslateResultHotkeysNamespace, this.translationResultViewSettings.toggleDefinitionHotkey, () => {
+                this.currentView = this.currentView !== TranslateResultViews.Definition
+                    ? TranslateResultViews.Definition
+                    : TranslateResultViews.Translation;
+            });
     }
 
     public translate(text: string): void {

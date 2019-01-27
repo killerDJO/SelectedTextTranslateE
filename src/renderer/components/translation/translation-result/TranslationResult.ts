@@ -1,7 +1,7 @@
 import Vue from "vue";
 import { Component, Prop, Watch } from "vue-property-decorator";
 
-import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslateResultRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
@@ -18,7 +18,7 @@ import TranslationResultHeader from "components/translation/translation-result/h
 export default class TranslationResult extends Vue {
     @Prop(Object) public historyRecord!: HistoryRecord | null;
     @Prop(Map) public languages!: Map<string, string>;
-    @Prop(Object) public translationResultViewSettings!: TranslationViewRendererSettings;
+    @Prop(Object) public translationResultViewSettings!: TranslateResultRendererSettings;
     @Prop(Boolean) public isInProgress!: boolean;
     @Prop(String) public defaultView!: TranslateResultViews;
 

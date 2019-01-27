@@ -17,4 +17,5 @@ export interface LocalHotkeySettings {
     readonly zoomIn: Hotkey[];
     readonly zoomOut: Hotkey[];
     readonly resetZoom: Hotkey[];
+    readonly toggleDefinition: Hotkey[];
 }

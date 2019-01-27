@@ -5,7 +5,7 @@ import * as _ from "lodash";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { SortColumn } from "common/dto/history/SortColumn";
 import { SortOrder } from "common/dto/history/SortOrder";
-import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslateResultRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
@@ -52,7 +52,7 @@ export default class History extends Vue {
     @ns.State public languages!: Map<string, string>;
 
     @ns.State public translationHistoryRecord!: HistoryRecord | null;
-    @ns.State public translationResultViewSettings!: TranslationViewRendererSettings | null;
+    @ns.State public translationResultViewSettings!: TranslateResultRendererSettings | null;
     @ns.State public isTranslationInProgress!: boolean;
     @ns.State public isOffline!: boolean;
     @ns.State public isTranslationVisible!: boolean;

@@ -2,7 +2,7 @@ import Vue from "vue";
 import { Component } from "vue-property-decorator";
 import { namespace } from "vuex-class";
 
-import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslateResultRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
@@ -23,7 +23,7 @@ const ns = namespace("app/translation");
 })
 export default class Translation extends Vue {
     @ns.State public translationHistoryRecord!: HistoryRecord | null;
-    @ns.State public translationResultViewSettings!: TranslationViewRendererSettings | null;
+    @ns.State public translationResultViewSettings!: TranslateResultRendererSettings | null;
     @ns.State public isTranslationInProgress!: boolean;
     @ns.State public languages!: Map<string, string>;
     @ns.State public languageSettings!: LanguageSettings;

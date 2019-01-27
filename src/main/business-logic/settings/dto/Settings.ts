@@ -2,7 +2,7 @@ import { RendererSettings } from "common/dto/settings/renderer-settings/Renderer
 import { Hotkey } from "common/dto/settings/Hotkey";
 import { FirebaseSettings } from "common/dto/settings/FirebaseSettings";
 import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
-import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslateResultRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { HistoryViewRendererSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
 import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 
@@ -69,7 +69,7 @@ export interface TranslationViewSettings extends ViewSize {
     readonly margin: number;
     readonly x?: number;
     readonly y?: number;
-    readonly renderer: TranslationViewRendererSettings;
+    readonly renderer: TranslateResultRendererSettings;
 }
 
 export interface HistoryViewSettings extends ViewSize {

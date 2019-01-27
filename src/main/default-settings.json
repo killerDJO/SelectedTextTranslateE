@@ -91,7 +91,16 @@
                     "lowScoreThreshold": 0.003,
                     "visibleByDefaultNumber": 7
                 },
-                "showLoaderDelay": 400
+                "showLoaderDelay": 400,
+                "toggleDefinitionHotkey": [
+                    {
+                        "keys": [
+                            "Control",
+                            "Shift",
+                            "D"
+                        ]
+                    }
+                ]
             }
         },
         "history": {

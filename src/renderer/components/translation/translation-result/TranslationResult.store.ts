@@ -5,7 +5,7 @@ import { RootState } from "root.store";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { TranslateResultResponse } from "common/dto/translation/TranslateResultResponse";
 import { TranslationRequest } from "common/dto/translation/TranslationRequest";
-import { TranslationViewRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
+import { TranslateResultRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { Messages } from "common/messaging/Messages";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { StarRequest } from "common/dto/translation/StarRequest";
@@ -20,7 +20,7 @@ const messageBus = new MessageBus();
 
 export interface TranslateResultState {
     translationHistoryRecord: HistoryRecord | null;
-    translationResultViewSettings: TranslationViewRendererSettings | null;
+    translationResultViewSettings: TranslateResultRendererSettings | null;
     isTranslationInProgress: boolean;
     defaultTranslateResultView: TranslateResultViews;
     languages: Map<string, string>;
@@ -49,7 +49,7 @@ export const translateResultMutations = {
 
         state.translationHistoryRecord = historyRecord;
     },
-    setTranslationResultViewSettings(state: TranslateResultState, translationResultViewSettings: TranslationViewRendererSettings): void {
+    setTranslationResultViewSettings(state: TranslateResultState, translationResultViewSettings: TranslateResultRendererSettings): void {
         state.translationResultViewSettings = translationResultViewSettings;
     },
     setTranslationInProgress(state: TranslateResultState): void {
@@ -70,7 +70,7 @@ export const translateResultActions = {
         messageBus.observeNotification(Messages.TranslateResult.InProgressCommand, () => commit("setTranslationInProgress"));
         messageBus.observeValue<TranslateResultResponse>(Messages.TranslateResult.TranslateResult, translateResult => commit("setTranslateResult", translateResult));
         messageBus.observeValue<HistoryRecord>(Messages.TranslateResult.UpdateTranslateResult, historyRecord => commit("updateTranslateResult", historyRecord));
-        messageBus.observeValue<TranslationViewRendererSettings>(Messages.TranslateResult.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
+        messageBus.observeValue<TranslateResultRendererSettings>(Messages.TranslateResult.TranslationResultViewSettings, translationResultViewSettings => commit("setTranslationResultViewSettings", translationResultViewSettings));
         messageBus.observeValue<Language[]>(Messages.TranslateResult.Languages, languages => commit("setLanguages", languages));
 
         commit("setOfflineStatus", !navigator.onLine);
