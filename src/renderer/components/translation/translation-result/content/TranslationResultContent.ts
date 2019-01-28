@@ -107,9 +107,11 @@ export default class TranslationResultContent extends Vue {
 
         hotkeysRegistry.registerHotkeys(
             TranslationResultContent.TranslateResultHotkeysNamespace, this.translationResultViewSettings.toggleDefinitionHotkey, () => {
-                this.currentView = this.currentView !== TranslateResultViews.Definition
-                    ? TranslateResultViews.Definition
-                    : TranslateResultViews.Translation;
+                if (this.currentView === TranslateResultViews.Definition && this.hasCategories) {
+                    this.currentView = TranslateResultViews.Translation;
+                } else if (this.hasDefinitions) {
+                    this.currentView = TranslateResultViews.Definition;
+                }
             });
     }
 
