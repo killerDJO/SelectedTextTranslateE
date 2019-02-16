@@ -36,6 +36,7 @@ export class HistorySyncService {
     private observeRecordSubscription: Subscription | null = null;
     private continuousInterval: NodeJS.Timer | null = null;
     private resumeSyncTimeout: NodeJS.Timeout | null = null;
+    private hasPendingSync: boolean = false;
 
     private readonly syncTask$: BehaviorSubject<Promise<void> | null> = new BehaviorSubject(null);
     private readonly currentUser$: BehaviorSubject<AccountInfo | null> = new BehaviorSubject(null);
@@ -117,8 +118,6 @@ export class HistorySyncService {
             return;
         }
 
-        await this.waitForSyncToFinish();
-
         if (isContinuous) {
             if (this.isContinuousSyncStarted) {
                 return;
@@ -167,7 +166,16 @@ export class HistorySyncService {
     }
 
     private async syncAllRecords(isForcedPull: boolean): Promise<void> {
-        await this.waitForSyncToFinish();
+        if (this.hasPendingSync) {
+            return;
+        }
+
+        this.hasPendingSync = true;
+        try {
+            await this.waitForSyncToFinish();
+        } finally {
+            this.hasPendingSync = false;
+        }
 
         try {
             this.syncTask$.next(this.syncAllRecordsUnsafe(isForcedPull));
