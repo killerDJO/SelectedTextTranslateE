@@ -1,7 +1,11 @@
-import { Menu, Tray, app, dialog, nativeImage, NativeImage } from "electron";
+import { Menu, Tray, app, dialog, nativeImage, NativeImage, MenuItemConstructorOptions, BrowserWindow } from "electron";
 import { Subject, BehaviorSubject, fromEventPattern } from "rxjs";
 import { distinctUntilChanged } from "rxjs/operators";
 import { injectable } from "inversify";
+
+import { Tag } from "common/dto/history/Tag";
+
+import { TagsEngine } from "business-logic/history/TagsEngine";
 
 import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 
@@ -16,11 +20,13 @@ export class Taskbar {
     public readonly translateSelectedText$: Subject<void> = new Subject();
 
     public constructor(
-        private readonly iconsProvider: IconsProvider) {
+        private readonly iconsProvider: IconsProvider,
+        private readonly tagsEngine: TagsEngine) {
         this.createTaskBar();
 
         fromEventPattern((handler: () => void) => this.tray.on("click", handler)).subscribe(() => this.translateSelectedText$.next());
-        this.isSuspended$.pipe(distinctUntilChanged()).subscribe(() => this.updateTraySuspendedState());
+        this.isSuspended$.pipe(distinctUntilChanged()).subscribe(() => this.updateTrayState());
+        this.tagsEngine.getCurrentTags().subscribe(() => this.updateTrayState());
     }
 
     public watchPlayingState(isPlaying$: BehaviorSubject<boolean>) {
@@ -51,7 +57,7 @@ export class Taskbar {
         return nativeImage.createFromPath(this.iconsProvider.getIconPath(iconType));
     }
 
-    private updateTraySuspendedState(): void {
+    private updateTrayState(): void {
         this.tray.setImage(this.getCurrentIcon());
         this.tray.setContextMenu(this.createContextMenu());
     }
@@ -65,14 +71,25 @@ export class Taskbar {
             ? { label: "Enable", click: () => this.isSuspended$.next(false) }
             : { label: "Suspend", click: () => this.isSuspended$.next(true) };
 
+        const tagsList = this.tagsEngine.getCurrentTags().value.map(tag => {
+            const options: MenuItemConstructorOptions = {
+                label: tag.tag,
+                type: "checkbox",
+                checked: tag.isEnabled,
+                click: () => this.toggleTag(tag)
+            };
+            return options;
+        });
+
         return Menu.buildFromTemplate([
             { label: "Translate from clipboard", click: () => this.translateSelectedText$.next() },
             { label: "History", click: () => this.showHistory$.next() },
             { label: "Settings", click: () => this.showSettings$.next() },
             { type: "separator" },
+            { label: "Tags", submenu: tagsList },
             suspendMenuItem,
-            { label: "Check for updates", click: () => this.checkForUpdates$.next() },
             { type: "separator" },
+            { label: "Check for updates", click: () => this.checkForUpdates$.next() },
             { label: "About", click: () => this.showAbout() },
             { label: "Quit", type: "normal", role: "quit" }
         ]);
@@ -85,5 +102,13 @@ export class Taskbar {
             message: `Current version is ${app.getVersion()}.`,
         };
         dialog.showMessageBox(dialogOpts);
+    }
+
+    private toggleTag(tag: Tag): void {
+        const filteredTags = this.tagsEngine.getCurrentTags().value.filter(currentTag => currentTag.tag !== tag.tag);
+        this.tagsEngine.updateCurrentTags(filteredTags.concat([{
+            tag: tag.tag,
+            isEnabled: !tag.isEnabled
+        }]));
     }
 }

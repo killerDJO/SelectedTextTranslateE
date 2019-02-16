@@ -156,7 +156,7 @@ export class Application {
     }
 
     private createTaskbar(): void {
-        this.taskbar = new Taskbar(this.iconsProvider);
+        this.taskbar = new Taskbar(this.iconsProvider, this.tagsEngine);
 
         this.taskbar.translateSelectedText$.subscribe(() => this.translateSelectedText());
         this.taskbar.showSettings$.subscribe(() => this.settingsView.show());
