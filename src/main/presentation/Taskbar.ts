@@ -15,7 +15,7 @@ export class Taskbar {
 
     public readonly showSettings$: Subject<void> = new Subject();
     public readonly showHistory$: Subject<void> = new Subject();
-    public readonly checkForUpdates$: Subject<void> = new Subject();
+    public readonly showAbout$: Subject<void> = new Subject();
     public readonly isSuspended$: BehaviorSubject<boolean> = new BehaviorSubject(false);
     public readonly translateSelectedText$: Subject<void> = new Subject();
 
@@ -89,19 +89,13 @@ export class Taskbar {
             { label: "Tags", submenu: tagsList },
             suspendMenuItem,
             { type: "separator" },
-            { label: "Check for updates", click: () => this.checkForUpdates$.next() },
             { label: "About", click: () => this.showAbout() },
             { label: "Quit", type: "normal", role: "quit" }
         ]);
     }
 
     private showAbout(): void {
-        const dialogOpts = {
-            type: "info",
-            title: "About",
-            message: `Current version is ${app.getVersion()}.`,
-        };
-        dialog.showMessageBox(dialogOpts);
+        this.showAbout$.next();
     }
 
     private toggleTag(tag: Tag): void {

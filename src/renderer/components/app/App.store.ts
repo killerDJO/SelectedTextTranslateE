@@ -7,6 +7,7 @@ import { Messages } from "common/messaging/Messages";
 import { translation } from "components/translation/Translation.store";
 import { history } from "components/history/History.store";
 import { settings } from "components/settings/Settings.store";
+import { about } from "components/about/About.store";
 
 import { HotkeySettings, RendererSettings } from "common/dto/settings/renderer-settings/RendererSettings";
 
@@ -61,6 +62,7 @@ export const app: Module<ApplicationState, RootState> = {
     modules: {
         translation,
         history,
-        settings
+        settings,
+        about
     }
 };

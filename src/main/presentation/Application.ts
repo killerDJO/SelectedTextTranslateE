@@ -35,6 +35,7 @@ import { HistoryView } from "presentation/views/HistoryView";
 import { SettingsView } from "presentation/views/SettingsView";
 import { Scaler } from "presentation/framework/scaling/Scaler";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
+import { AboutView } from "presentation/views/AboutView";
 
 @injectable()
 export class Application {
@@ -144,6 +145,10 @@ export class Application {
         settingsView.openSettingsFile$.subscribe(() => this.settingsProvider.openInEditor());
     }
 
+    private setupAboutView(aboutView: AboutView): void {
+        aboutView.checkForUpdates$.subscribe(() => this.updater.checkForUpdate());
+    }
+
     private setupHotkeys(): void {
         this.hotkeysRegistry.registerHotkeys();
         this.hotkeysRegistry.translate$.subscribe(() => this.translateSelectedText());
@@ -165,7 +170,7 @@ export class Application {
             .pipe(distinctUntilChanged())
             .subscribe(areSuspended => areSuspended ? this.hotkeysRegistry.suspendHotkeys() : this.hotkeysRegistry.enableHotkeys());
         this.taskbar.watchPlayingState(this.textPlayer.isPlayInProgress$);
-        this.taskbar.checkForUpdates$.subscribe(() => this.updater.checkForUpdate());
+        this.taskbar.showAbout$.subscribe(() => this.aboutView.show());
     }
 
     private translateSelectedText(defaultView: TranslateResultViews = TranslateResultViews.Translation): void {
@@ -217,5 +222,9 @@ export class Application {
 
     private get settingsView(): SettingsView {
         return this.createView(ViewNames.Settings, view => this.setupSettingsView(view));
+    }
+
+    private get aboutView(): AboutView {
+        return this.createView(ViewNames.About, view => this.setupAboutView(view));
     }
 }

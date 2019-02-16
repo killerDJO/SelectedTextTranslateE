@@ -44,6 +44,7 @@ export interface TranslationEngineSettings {
 export interface ViewsSettings {
     readonly translation: TranslationViewSettings;
     readonly settings: ViewSize;
+    readonly about: ViewSize;
     readonly history: HistoryViewSettings;
     readonly engine: ViewsEngineSettings;
 }

@@ -24,6 +24,11 @@ export class Messages {
         public static readonly LanguageSettings = "language-settings";
     };
 
+    public static About = class {
+        public static readonly ApplicationInfo = "about-application-info";
+        public static readonly CheckForUpdates = "about-check-for-updates";
+    };
+
     public static TranslateResult = class {
         public static readonly InProgressCommand = "set-in-progress";
         public static readonly TranslateResult = "translate-result";

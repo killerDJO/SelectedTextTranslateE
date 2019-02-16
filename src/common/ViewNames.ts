@@ -1,5 +1,6 @@
 export enum ViewNames {
     Settings = "settings",
     History = "history",
-    Translation = "translation"
+    Translation = "translation",
+    About = "about"
 }

@@ -148,6 +148,10 @@
             "width": 35,
             "height": 45
         },
+        "about": {
+            "width": 15,
+            "height": 10
+        },
         "engine": {
             "showDelayMilliseconds": 100
         }

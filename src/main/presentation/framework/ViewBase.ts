@@ -85,6 +85,12 @@ export abstract class ViewBase {
         const primaryDisplay = screen.getPrimaryDisplay();
         const width = Math.round(primaryDisplay.bounds.width * widthPercent / 100);
         const height = Math.round(primaryDisplay.bounds.height * heightPercent / 100);
+
+        return this.getCentralPositionAbsolute(width, height);
+    }
+
+    protected getCentralPositionAbsolute(width: number, height: number): Electron.Rectangle {
+        const primaryDisplay = screen.getPrimaryDisplay();
         const x = Math.round(primaryDisplay.bounds.width / 2 - width / 2);
         const y = Math.round(primaryDisplay.bounds.height / 2 - height / 2);
 
@@ -126,7 +132,8 @@ export abstract class ViewBase {
             show: false,
             webPreferences: {
                 backgroundThrottling: false,
-                affinity: "window"
+                affinity: "window",
+                nodeIntegration: true
             }
         };
     }
