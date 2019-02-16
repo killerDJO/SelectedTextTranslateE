@@ -1,14 +1,14 @@
 export interface HistoryFilter {
-    readonly starredOnly: boolean;
-    readonly includeArchived: boolean;
-    readonly word?: string;
-    readonly translation?: string;
-    readonly minTranslatedTime?: number;
-    readonly maxTranslatedTime?: number;
-    readonly tags: string[];
-    readonly sourceLanguage?: string;
-    readonly targetLanguage?: string;
-    readonly minLastTranslatedDate?: Date;
-    readonly maxLastTranslatedDate?: Date;
-    readonly unsyncedOnly: boolean;
+    starredOnly: boolean;
+    includeArchived: boolean;
+    word?: string;
+    translation?: string;
+    minTranslatedTime?: number;
+    maxTranslatedTime?: number;
+    tags: string[];
+    sourceLanguage?: string;
+    targetLanguage?: string;
+    minLastTranslatedDate?: Date;
+    maxLastTranslatedDate?: Date;
+    unsyncedOnly: boolean;
 }

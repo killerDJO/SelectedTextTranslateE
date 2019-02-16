@@ -4,11 +4,14 @@ import { Observable, BehaviorSubject } from "rxjs";
 import { map } from "rxjs/operators";
 import * as _ from "lodash";
 
-import { SettingsProvider } from "business-logic/settings/SettingsProvider";
+import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { Tag } from "common/dto/history/Tag";
+
 import { mapSubject } from "utils/map-subject";
+
+import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { HistoryDatabaseProvider } from "business-logic/history/persistence/HistoryDatabaseProvider";
 import { DatastoreProvider } from "data-access/DatastoreProvider";
-import { HistoryRecord } from "common/dto/history/HistoryRecord";
 
 @injectable()
 export class TagsEngine {
@@ -19,8 +22,10 @@ export class TagsEngine {
         this.database$ = historyDatabaseProvider.historyDatastore$;
     }
 
-    public getCurrentTags(): BehaviorSubject<ReadonlyArray<string>> {
-        return mapSubject(this.settingsProvider.getSettings(), settings => settings.tags.currentTags);
+    public getCurrentTags(): BehaviorSubject<ReadonlyArray<Tag>> {
+        return mapSubject(this.settingsProvider.getSettings(), settings => {
+            return settings.tags.currentTags.map(currentTag => _.isString(currentTag) ? { tag: currentTag, isEnabled: true } : currentTag);
+        });
     }
 
     public getSuggestions(input: string): Observable<ReadonlyArray<string>> {
@@ -30,7 +35,7 @@ export class TagsEngine {
         );
     }
 
-    public updateCurrentTags(tags: ReadonlyArray<string>): void {
+    public updateCurrentTags(tags: ReadonlyArray<Tag>): void {
         this.settingsProvider.updateSettings({
             tags: {
                 currentTags: tags
@@ -39,7 +44,7 @@ export class TagsEngine {
     }
 
     private getDistinctTags(records: HistoryRecord[]): string[] {
-        return _.uniq(_.flatMap(records, record => record.tags || []).concat(this.getCurrentTags().value));
+        return _.uniq(_.flatMap(records, record => record.tags || []).concat(this.getCurrentTags().value.map(tag => tag.tag)));
     }
 
     private filterTags(input: string, tags: string[]): string[] {

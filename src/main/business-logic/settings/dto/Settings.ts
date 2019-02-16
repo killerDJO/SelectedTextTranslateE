@@ -5,6 +5,7 @@ import { HistorySyncSettings } from "common/dto/settings/HistorySyncSettings";
 import { TranslateResultRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { HistoryViewRendererSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
 import { LanguageSettings } from "common/dto/settings/LanguageSettings";
+import { Tag } from "common/dto/history/Tag";
 
 export interface Settings {
     readonly renderer: RendererSettings;
@@ -90,5 +91,5 @@ export interface SearchSettings {
 }
 
 export interface TagSettings {
-    readonly currentTags: ReadonlyArray<string>;
+    readonly currentTags: ReadonlyArray<string | Tag>;
 }

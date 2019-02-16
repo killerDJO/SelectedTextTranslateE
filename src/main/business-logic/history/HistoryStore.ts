@@ -53,7 +53,7 @@ export class HistoryStore {
             isArchived: false,
             ...this.getModificationFields(currentTime),
             syncData: [],
-            tags: this.tagsEngine.getCurrentTags().value.slice()
+            tags: this.getActiveCurrentTags()
         });
 
         return insert$.pipe(
@@ -139,7 +139,11 @@ export class HistoryStore {
     }
 
     private getTags(record: HistoryRecord): ReadonlyArray<string> {
-        return _.uniq((record.tags || []).concat(this.tagsEngine.getCurrentTags().value)).sort().slice();
+        return _.uniq((record.tags || []).concat(this.getActiveCurrentTags())).sort().slice();
+    }
+
+    private getActiveCurrentTags(): ReadonlyArray<string> {
+        return this.tagsEngine.getCurrentTags().value.filter(tag => tag.isEnabled).map(tag => tag.tag);
     }
 
     private updateRecordInternal(key: TranslationKey, updateQuery: any, logMessage: string): Observable<HistoryRecord> {

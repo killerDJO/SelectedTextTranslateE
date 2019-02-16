@@ -21,6 +21,7 @@ import { HistoryViewRendererSettings, ColumnSettings } from "common/dto/settings
 import { MergeCandidate } from "common/dto/history/MergeCandidate";
 import { MergeRecordsRequest } from "common/dto/history/MergeRecordsRequest";
 import { BlacklistRecordsRequest } from "common/dto/history/BlacklistRecordsRequest";
+import { Tag } from "common/dto/history/Tag";
 
 import { mapSubject } from "utils/map-subject";
 
@@ -31,7 +32,7 @@ export class HistoryView extends TranslateResultView {
 
     public readonly historyRecordsRequest$!: Observable<HistoryRecordsRequest>;
     public readonly archiveRecord$: Observable<ArchiveRequest>;
-    public readonly updateCurrentTags$: Observable<ReadonlyArray<string>>;
+    public readonly updateCurrentTags$: Observable<ReadonlyArray<Tag>>;
     public readonly mergeRecords$: Observable<MergeRecordsRequest>;
     public readonly blacklistRecords$: Observable<BlacklistRecordsRequest>;
     public readonly updateColumnSettings$: Observable<ReadonlyArray<ColumnSettings>>;
@@ -60,7 +61,7 @@ export class HistoryView extends TranslateResultView {
         this.syncOneTime$ = this.messageBus.observeCommand<void>(Messages.History.SyncOneTime);
         this.syncOneTimeForced$ = this.messageBus.observeCommand<void>(Messages.History.SyncOneTimeForced);
 
-        this.updateCurrentTags$ = this.messageBus.observeCommand<ReadonlyArray<string>>(Messages.History.UpdateCurrentTags);
+        this.updateCurrentTags$ = this.messageBus.observeCommand<ReadonlyArray<Tag>>(Messages.History.UpdateCurrentTags);
         this.updateColumnSettings$ = this.messageBus.observeCommand<ReadonlyArray<ColumnSettings>>(Messages.History.UpdateColumnSettings);
 
         this.mergeRecords$ = this.messageBus.observeCommand<MergeRecordsRequest>(Messages.History.Merging.MergeRequest);
@@ -71,8 +72,8 @@ export class HistoryView extends TranslateResultView {
         this.messageBus.sendValue(Messages.History.HistoryRecords, historyRecords);
     }
 
-    public setCurrentTags(tags: Observable<ReadonlyArray<string>>): void {
-        this.registerSubscription(this.messageBus.registerObservable<ReadonlyArray<string>>(Messages.History.CurrentTags, tags).subscription);
+    public setCurrentTags(tags: Observable<ReadonlyArray<Tag>>): void {
+        this.registerSubscription(this.messageBus.registerObservable<ReadonlyArray<Tag>>(Messages.History.CurrentTags, tags).subscription);
     }
 
     public handleSignIn(handler: (signRequest: SignRequest) => Observable<SignInResponse>): void {

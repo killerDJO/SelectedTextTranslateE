@@ -4,6 +4,7 @@ import Vue from "vue";
 import { TranslateResultRendererSettings } from "common/dto/settings/views-settings/TranslationResultViewSettings";
 import { TranslateResultViews } from "common/dto/translation/TranslateResultViews";
 import { HistoryRecord } from "common/dto/history/HistoryRecord";
+import { Tag } from "common/dto/history/Tag";
 
 import TranslationResultContentCategory from "components/translation/translation-result/content/category/TranslationResultContentCategory.vue";
 import TranslationResultDefinitionCategory from "components/translation/translation-result/content/definitions/TranslationResultDefinitionCategory.vue";
@@ -131,7 +132,7 @@ export default class TranslationResultContent extends Vue {
         this.$emit("search");
     }
 
-    public updateTags(tags: ReadonlyArray<string>): void {
-        this.$emit("update-tags", tags);
+    public updateTags(tags: ReadonlyArray<Tag>): void {
+        this.$emit("update-tags", tags.map(tag => tag.tag));
     }
 }

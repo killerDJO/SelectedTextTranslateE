@@ -3,7 +3,7 @@
     <div class="grid-holder" :class="{'sidebar-visible': isTranslationVisible || isFilterVisible}">
       <div class="results-header clearfix">
         <div class="tags" v-if="!!currentTags">
-          <span class="tags-label">Active Tags:</span> <tags-editor :tags="currentTags" @update-tags="updateCurrentTags" @tag-clicked="tagClicked" :clickable="true"/>
+          <span class="tags-label">Active Tags:</span> <tags-editor :tags="currentTags" @update-tags="updateCurrentTags" @tag-clicked="toggleRecordTag" :clickable="true"/>
         </div>
         <div>
           <checkbox v-model="includeArchived$" :label="'Show Archived'" :left-to-right="true"/>

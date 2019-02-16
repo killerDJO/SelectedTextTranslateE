@@ -3,6 +3,7 @@ import * as _ from "lodash";
 
 import { HistoryFilter } from "common/dto/history/HistoryFilter";
 import { Language } from "common/dto/settings/Language";
+import { Tag } from "common/dto/history/Tag";
 
 import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
 import { SelectedLanguages } from "components/shared/language-selector/LanguageSelector";
@@ -42,6 +43,10 @@ export default class HistoryFilterComponent extends Vue {
             sourceLanguage: this.currentFilter.sourceLanguage,
             targetLanguage: this.currentFilter.targetLanguage
         };
+    }
+
+    public setTags(tags: ReadonlyArray<Tag>) {
+        this.currentFilter.tags = tags.map(tag => tag.tag);
     }
 
     public get allLanguages(): ReadonlyArray<Language> {

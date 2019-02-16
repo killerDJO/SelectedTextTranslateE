@@ -16,6 +16,7 @@ import { ArchiveRequest } from "common/dto/history/ArchiveRequest";
 import { AccountInfo } from "common/dto/history/account/AccountInfo";
 import { HistoryViewRendererSettings, ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSettings";
 import { HistoryFilter } from "common/dto/history/HistoryFilter";
+import { Tag } from "common/dto/history/Tag";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
 
 import { MessageBus } from "common/renderer/MessageBus";
@@ -23,14 +24,15 @@ import { MessageBus } from "common/renderer/MessageBus";
 import { TranslateResultState, translateResultMutations, translateResultActions } from "components/translation/translation-result/TranslationResult.store";
 
 const messageBus = new MessageBus();
-const throttledRefresh = _.throttle(requestHistoryRecords, 100, { trailing: true });
+const MaximumRefreshIntervalMilliseconds = 100;
+const throttledRefresh = _.throttle(requestHistoryRecords, MaximumRefreshIntervalMilliseconds, { trailing: true });
 
 interface HistoryState extends TranslateResultState {
     areSettingsInitialized: boolean;
     areRecordsFetched: boolean;
 
     historyRecords: ReadonlyArray<HistoryRecordViewModel>;
-    currentTags: ReadonlyArray<string>;
+    currentTags: ReadonlyArray<Tag>;
     currentUser: AccountInfo | null;
     columns: ReadonlyArray<ColumnSettings>;
     pageNumber: number;
@@ -138,7 +140,7 @@ export const history: Module<HistoryState, RootState> = {
         setCurrentUser(state: HistoryState, currentUser: AccountInfo | null): void {
             state.currentUser = currentUser;
         },
-        setCurrentTags(state: HistoryState, currentTags: ReadonlyArray<string>): void {
+        setCurrentTags(state: HistoryState, currentTags: ReadonlyArray<Tag>): void {
             state.currentTags = currentTags;
         }
     },
@@ -151,7 +153,7 @@ export const history: Module<HistoryState, RootState> = {
             messageBus.observeValue<HistoryViewRendererSettings>(Messages.History.HistorySettings, settings => commit("setSettings", settings));
             messageBus.observeValue<HistoryRecordsResponse>(Messages.History.HistoryRecords, historyRecords => commit("setRecords", historyRecords));
             messageBus.observeValue<AccountInfo | null>(Messages.History.CurrentUser, currentUser => commit("setCurrentUser", currentUser));
-            messageBus.observeValue<ReadonlyArray<string>>(Messages.History.CurrentTags, currentTags => commit("setCurrentTags", currentTags));
+            messageBus.observeValue<ReadonlyArray<Tag>>(Messages.History.CurrentTags, currentTags => commit("setCurrentTags", currentTags));
             messageBus.observeNotification(Messages.History.HistoryUpdated, () => dispatch("requestHistoryRecords"));
         },
         requestHistoryRecords({ state }): void {
@@ -176,8 +178,8 @@ export const history: Module<HistoryState, RootState> = {
                 language: record.sourceLanguage
             });
         },
-        updateCurrentTags(__, tags: ReadonlyArray<string>) {
-            messageBus.sendCommand<ReadonlyArray<string>>(Messages.History.UpdateCurrentTags, tags);
+        updateCurrentTags(__, tags: ReadonlyArray<Tag>) {
+            messageBus.sendCommand<ReadonlyArray<Tag>>(Messages.History.UpdateCurrentTags, tags);
         },
         updateColumns(__, columns: ReadonlyArray<ColumnSettings>) {
             messageBus.sendCommand<ReadonlyArray<ColumnSettings>>(Messages.History.UpdateColumnSettings, columns);

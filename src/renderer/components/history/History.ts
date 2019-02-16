@@ -13,6 +13,7 @@ import { ColumnSettings } from "common/dto/settings/views-settings/HistoryViewSe
 import { HistoryFilter } from "common/dto/history/HistoryFilter";
 import { TranslationKey } from "common/dto/translation/TranslationKey";
 import { HistoryRecordViewModel } from "common/dto/history/HistoryRecordsResponse";
+import { Tag } from "common/dto/history/Tag";
 
 import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
@@ -40,7 +41,7 @@ interface ColumnDisplaySettings extends DropCheckItem {
 })
 export default class History extends Vue {
     @ns.State public historyRecords!: HistoryRecordViewModel[];
-    @ns.State public currentTags!: ReadonlyArray<string>;
+    @ns.State public currentTags!: ReadonlyArray<Tag>;
     @ns.State public currentUser!: AccountInfo | null;
     @ns.State public pageNumber!: number;
     @ns.State public columns!: ReadonlyArray<ColumnSettings>;
@@ -72,7 +73,7 @@ export default class History extends Vue {
     @ns.Action private readonly requestHistoryRecords!: () => void;
     @ns.Action public readonly setArchivedStatus!: (request: { record: TranslationKey; isArchived: boolean }) => void;
     @ns.Action public readonly playRecord!: (record: TranslationKey) => void;
-    @ns.Action public readonly updateCurrentTags!: (tags: ReadonlyArray<string>) => void;
+    @ns.Action public readonly updateCurrentTags!: (tags: ReadonlyArray<Tag>) => void;
     @ns.Action public readonly updateColumns!: (tags: ReadonlyArray<ColumnSettings>) => void;
 
     @ns.Action public readonly playText!: () => void;
@@ -156,16 +157,27 @@ export default class History extends Vue {
         return this.columnSettings.filter(setting => setting.isChecked).length;
     }
 
-    public updateRecordTags(record: HistoryRecord, tags: ReadonlyArray<string>) {
-        this.updateTags({ record, tags });
+    public updateRecordTags(record: HistoryRecord, tags: ReadonlyArray<Tag>) {
+        this.updateTags({ record, tags: tags.map(tag => tag.tag) });
     }
 
-    public tagClicked(tag: string): void {
-        this.updateFilter({
-            tags: this.filter.tags.concat([tag])
-        });
+    public tagClicked(tag: Tag): void {
+        if (!this.filter.tags.some(filterTag => filterTag === tag.tag)) {
+            this.updateFilter({
+                tags: this.filter.tags.concat([tag.tag])
+            });
+        }
+
         this.isFilterVisible = true;
         this.hideTranslation();
+    }
+
+    public toggleRecordTag(tag: Tag): void {
+        const clonedTags = _.cloneDeep(this.currentTags).filter(currentTag => currentTag.tag !== tag.tag);
+        this.updateCurrentTags(clonedTags.concat([{
+            tag: tag.tag,
+            isEnabled: !tag.isEnabled
+        }]));
     }
 
     public translateHistoryRecord(record: HistoryRecord): void {

@@ -22,7 +22,7 @@
     </div>
     <div class="form-group history-filter-item">
       <label>Tags:</label>
-      <tags-editor :tags="currentFilter.tags" @update-tags="currentFilter.tags = $event"/>
+      <tags-editor :tags="currentFilter.tags" @update-tags="setTags"/>
     </div>
     <div class="form-group history-filter-item">
       <label>Languages:</label>
