@@ -24,7 +24,7 @@ export class AutoFocus extends DirectivesBase implements DirectiveOptions {
     private handleFocusOut(event: FocusEvent, callback: () => void): void {
         const element: Element | null = event.relatedTarget as Element;
         if (element === null) {
-            return;
+            callback();
         }
 
         const currentTarget = event.currentTarget;
