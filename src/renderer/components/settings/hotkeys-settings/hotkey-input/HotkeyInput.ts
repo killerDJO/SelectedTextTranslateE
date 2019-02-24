@@ -48,6 +48,10 @@ export default class HotkeyInput extends Vue {
                 this.keys = [];
                 this.notifyHotkeyUpdated();
                 return;
+            } else if (this.isStandaloneKey(event)) {
+                this.keys = [this.getNormalizeKey(event)];
+                this.notifyHotkeyUpdated();
+                return;
             } else {
                 return;
             }
@@ -102,6 +106,10 @@ export default class HotkeyInput extends Vue {
 
     private isModifierKey(event: KeyboardEvent): boolean {
         return event.key === "Shift" || event.key === "Control" || event.key === "Alt";
+    }
+
+    private isStandaloneKey(event: KeyboardEvent): boolean {
+        return event.key === "Delete";
     }
 
     private createHotkey(): Hotkey {

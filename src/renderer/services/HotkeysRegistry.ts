@@ -30,7 +30,8 @@ class HotkeysRegistry {
     private remapKey(key: string): string {
         const lowerCaseKey = key.toLowerCase();
         const keysMap: { [key: string]: string } = {
-            "control": "ctrl"
+            "control": "ctrl",
+            "delete": "del"
         };
         return keysMap[lowerCaseKey] || lowerCaseKey;
     }

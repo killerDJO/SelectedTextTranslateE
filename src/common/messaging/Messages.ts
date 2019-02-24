@@ -38,6 +38,7 @@ export class Messages {
         public static readonly TranslateCommand = "translate-command";
         public static readonly TranslationResultViewSettings = "translation-result-view-settings";
         public static readonly StarTranslateResult = "star-translate-result";
+        public static readonly ArchiveResult = "archive-result";
         public static readonly UpdateTags = "update-tags";
         public static readonly GetTagSuggestions = "get-tag-suggestions";
         public static readonly Search = "search";

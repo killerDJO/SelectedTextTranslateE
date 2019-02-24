@@ -5,6 +5,7 @@ export interface TranslateResultRendererSettings {
     readonly score: ScoreSettings;
     readonly showLoaderDelay: number;
     readonly toggleDefinitionHotkey: Hotkey[];
+    readonly archiveResultHotkey: Hotkey[];
 }
 
 export interface ScoreSettings {

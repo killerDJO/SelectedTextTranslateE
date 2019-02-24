@@ -162,6 +162,13 @@ export const translateResultActions = {
                 isStarred: request.isStarred
             });
     },
+    archive(_: ActionContext<TranslateResultState, RootState>, record: TranslationKey): void {
+        messageBus.sendCommand<TranslationKey>(
+            Messages.TranslateResult.ArchiveResult,
+            {
+                ...cloneTranslationKey(record),
+            });
+    },
     updateTags(_: ActionContext<TranslateResultState, RootState>, request: { record: TranslationKey; tags: ReadonlyArray<string> }): void {
         messageBus.sendCommand<UpdateTagsRequest>(
             Messages.TranslateResult.UpdateTags,

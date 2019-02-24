@@ -9,6 +9,8 @@ import { TranslationRequest } from "common/dto/translation/TranslationRequest";
 import TranslationResultContent from "components/translation/translation-result/content/TranslationResultContent.vue";
 import TranslationResultHeader from "components/translation/translation-result/header/TranslationResultHeader.vue";
 
+import { hotkeysRegistry } from "services/HotkeysRegistry";
+
 @Component({
     components: {
         TranslationResultContent,
@@ -16,6 +18,8 @@ import TranslationResultHeader from "components/translation/translation-result/h
     }
 })
 export default class TranslationResult extends Vue {
+    private static readonly TranslateResultHotkeysNamespace: string = "translate-result";
+
     @Prop(Object) public historyRecord!: HistoryRecord | null;
     @Prop(Map) public languages!: Map<string, string>;
     @Prop(Object) public translationResultViewSettings!: TranslateResultRendererSettings;
@@ -76,6 +80,10 @@ export default class TranslationResult extends Vue {
         this.$emit("set-starred-status", { record: this.historyRecord, isStarred });
     }
 
+    public archive(): void {
+        this.$emit("archive", this.historyRecord);
+    }
+
     public updateTags(tags: ReadonlyArray<string>): void {
         this.$emit("update-tags", { record: this.historyRecord, tags });
     }
@@ -96,6 +104,13 @@ export default class TranslationResult extends Vue {
         } else {
             this.showProgressIndicator = false;
         }
+    }
+
+    @Watch("translationResultViewSettings", { deep: true, immediate: true })
+    public watchTranslationResultViewSettings() {
+        hotkeysRegistry.unregisterHotkeys(TranslationResult.TranslateResultHotkeysNamespace);
+
+        hotkeysRegistry.registerHotkeys(TranslationResult.TranslateResultHotkeysNamespace, this.translationResultViewSettings.archiveResultHotkey, () => this.archive());
     }
 
     private get hasTranslateResult(): boolean {

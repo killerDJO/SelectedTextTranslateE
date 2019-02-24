@@ -15,10 +15,12 @@ import { ViewBase } from "presentation/framework/ViewBase";
 import { ViewContext } from "presentation/framework/ViewContext";
 import { ViewOptions } from "presentation/framework/ViewOptions";
 import { map } from "rxjs/operators";
+import { TranslationKey } from "common/dto/translation/TranslationKey";
 
 export abstract class TranslateResultView extends ViewBase {
     public readonly playText$: Observable<PlayTextRequest>;
     public readonly search$: Observable<string>;
+    public readonly archive$: Observable<TranslationKey>;
     public readonly translateText$: Observable<TranslationRequest>;
     public readonly starTranslateResult$: Observable<StarRequest>;
     public readonly updateTags$: Observable<UpdateTagsRequest>;
@@ -36,6 +38,7 @@ export abstract class TranslateResultView extends ViewBase {
         this.starTranslateResult$ = this.messageBus.observeCommand<StarRequest>(Messages.TranslateResult.StarTranslateResult);
         this.updateTags$ = this.messageBus.observeCommand<UpdateTagsRequest>(Messages.TranslateResult.UpdateTags);
         this.search$ = this.messageBus.observeCommand<string>(Messages.TranslateResult.Search);
+        this.archive$ = this.messageBus.observeCommand<TranslationKey>(Messages.TranslateResult.ArchiveResult);
     }
 
     public showProgressIndicator(): void {

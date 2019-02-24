@@ -72,6 +72,7 @@ export class Application {
                 historyView.updateTranslateResult(historyRecord);
             }
         });
+        translationView.archive$.subscribe(() => translationView.hide());
     }
 
     private setupHistoryView(historyView: HistoryView): void {
@@ -114,6 +115,9 @@ export class Application {
         translateResultView.playText$.subscribe(request => this.playText(request));
         translateResultView.translateText$.subscribe(request => this.translateText(request, skipStatistic, translateResultView));
         translateResultView.search$.subscribe(text => this.searchExecutor.search(text));
+        translateResultView.archive$
+            .pipe(concatMap(key => this.historyStore.setArchivedStatus(key, true)))
+            .subscribe(record => this.historyView.updateTranslateResult(record));
         translateResultView.starTranslateResult$
             .pipe(concatMap(starRequest => this.historyStore.setStarredStatus(starRequest, starRequest.isStarred)))
             .subscribe(historyRecord => this.updateRecordAfterChange(translateResultView, historyRecord, updateRecordCallback));

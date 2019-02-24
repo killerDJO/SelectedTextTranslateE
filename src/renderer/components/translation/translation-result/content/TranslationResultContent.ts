@@ -22,7 +22,7 @@ import { hotkeysRegistry } from "services/HotkeysRegistry";
     }
 })
 export default class TranslationResultContent extends Vue {
-    private static readonly TranslateResultHotkeysNamespace: string = "translate-result";
+    private static readonly TranslateResultContentHotkeysNamespace: string = "translate-result-content";
 
     @Prop(Object)
     public historyRecord!: HistoryRecord;
@@ -104,10 +104,10 @@ export default class TranslationResultContent extends Vue {
 
     @Watch("translationResultViewSettings", { deep: true, immediate: true })
     public watchTranslationResultViewSettings() {
-        hotkeysRegistry.unregisterHotkeys(TranslationResultContent.TranslateResultHotkeysNamespace);
+        hotkeysRegistry.unregisterHotkeys(TranslationResultContent.TranslateResultContentHotkeysNamespace);
 
         hotkeysRegistry.registerHotkeys(
-            TranslationResultContent.TranslateResultHotkeysNamespace, this.translationResultViewSettings.toggleDefinitionHotkey, () => {
+            TranslationResultContent.TranslateResultContentHotkeysNamespace, this.translationResultViewSettings.toggleDefinitionHotkey, () => {
                 if (this.currentView === TranslateResultViews.Definition && this.hasCategories) {
                     this.currentView = TranslateResultViews.Translation;
                 } else if (this.hasDefinitions) {

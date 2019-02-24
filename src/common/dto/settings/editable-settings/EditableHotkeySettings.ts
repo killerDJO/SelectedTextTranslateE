@@ -18,4 +18,5 @@ export interface LocalHotkeySettings {
     readonly zoomOut: Hotkey[];
     readonly resetZoom: Hotkey[];
     readonly toggleDefinition: Hotkey[];
+    readonly archiveResult: Hotkey[];
 }

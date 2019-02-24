@@ -15,6 +15,7 @@
             @change-language="changeLanguage"
             @play-text="playText"
             @search="search"
+            @archive="archive"
             @set-starred-status="setStarredStatus"
             @update-tags="updateTags"/>
         <div v-else>
