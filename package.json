@@ -3,7 +3,7 @@
   "private": true,
   "productName": "Selected Text Translate",
   "homepage": "https://github.com/killerDJO/SelectedTextTranslateE",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Util to translate selected text.",
   "main": "dist/app/main/main.build.js",
   "author": "killerDJO",
