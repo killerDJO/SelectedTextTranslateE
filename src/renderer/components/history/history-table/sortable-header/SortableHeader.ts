@@ -8,7 +8,7 @@ import { ColumnNameResolver } from "components/history/ColumnNameResolver";
 @Component
 export default class SortableHeader extends Vue {
 
-    private readonly columnNameResolver: ColumnNameResolver = new ColumnNameResolver();
+    public readonly columnNameResolver: ColumnNameResolver = new ColumnNameResolver();
 
     @Prop()
     public sortColumn!: SortColumn;

@@ -1,21 +1,19 @@
 .results {
     margin-top: $margin-small;
 
-    tbody tr:hover {
-        background-color: $color-active;
+    /deep/ tbody {
+        tr:hover {
+            .word-column .play-icon-holder {
+                display: inline-block;
+            }
+        }
 
-        .word-column .play-icon-holder {
-            display: inline-block;
+        td {
+            padding-left: $padding-default;
         }
     }
 
-    .word-column,
-    .translation-column {
-        width: 27%;
-    }
-
     .tags-column {
-        width: 16%;
         overflow: visible;
 
         .tags-editor {
@@ -26,16 +24,9 @@
     .source-language-column,
     .target-language-column {
         display: table-cell;
-        width: 10%;
-    }
-
-    .times-column {
-        width: 10%;
     }
 
     .last-translated-column {
-        width: 16%;
-
         .synced-icon {
             font-size: $font-small;
             color: $color-light-gray;
@@ -80,7 +71,6 @@
     }
 
     .archived-column {
-        width: 70px;
         text-align: center;
 
         .archive:hover,

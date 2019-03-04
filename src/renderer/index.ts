@@ -29,6 +29,7 @@ import Password from "components/shared/password/Password.vue";
 import Typeahead from "components/shared/typeahead/Typeahead.vue";
 import Datepicker from "components/shared/datepicker/Datepicker.vue";
 import LanguageSelector from "components/shared/language-selector/LanguageSelector.vue";
+import DataTable from "components/shared/data-table/DataTable.vue";
 
 class Bootstrapper {
 
@@ -75,8 +76,8 @@ class Bootstrapper {
         Vue.component("password", Password);
         Vue.component("typeahead", Typeahead);
         Vue.component("language-selector", LanguageSelector);
-
         Vue.component("datepicker", Datepicker);
+        Vue.component("data-table", DataTable);
     }
 
     private static registerPlugins(): void {

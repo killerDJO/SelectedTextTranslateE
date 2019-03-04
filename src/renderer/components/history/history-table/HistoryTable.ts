@@ -1,4 +1,4 @@
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 
 import { SortColumn } from "common/dto/history/SortColumn";
 import { SortOrder } from "common/dto/history/SortOrder";
@@ -9,6 +9,7 @@ import { Tag } from "common/dto/history/Tag";
 
 import SortableHeader from "components/history/history-table/sortable-header/SortableHeader.vue";
 import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
+import { DataTableColumnConfiguration, DataTableConfiguration } from "components/shared/data-table/DataTableConfiguration";
 
 @Component({
     components: {
@@ -25,13 +26,18 @@ export default class HistoryTable extends Vue {
 
     public SortColumn: typeof SortColumn = SortColumn;
 
-    public isColumnVisible(column: SortColumn): boolean {
-        const columnSetting = this.columns.find(setting => setting.column === column);
-        return !!columnSetting && columnSetting.isVisible;
-    }
+    public tableConfiguration!: DataTableConfiguration<HistoryRecord>;
 
-    public get numberOfVisibleColumns(): number {
-        return this.columns.filter(setting => setting.isVisible).length;
+    @Watch("columns", { deep: true, immediate: true })
+    public onColumnsChanged(): void {
+        this.tableConfiguration = {
+            columns: this.columns.map<DataTableColumnConfiguration>(column => ({
+                id: column.column,
+                isVisible: column.isVisible,
+                weight: 1
+            })),
+            onRecordClick: this.translateHistoryRecord.bind(this)
+        };
     }
 
     public set sortColumn$(value: SortColumn) {
@@ -70,5 +76,13 @@ export default class HistoryTable extends Vue {
 
     public setArchivedStatus(request: { record: TranslationKey; isArchived: boolean }): void {
         this.$emit("set-archived-status", request);
+    }
+
+    public getHeaderSlotId(sortColumn: SortColumn): string {
+        return `header.${sortColumn}`;
+    }
+
+    public getBodySlotId(sortColumn: SortColumn): string {
+        return `body.${sortColumn}`;
     }
 }
