@@ -15,28 +15,25 @@ import { TranslationKey } from "common/dto/translation/TranslationKey";
 import { HistoryRecordViewModel } from "common/dto/history/HistoryRecordsResponse";
 import { Tag } from "common/dto/history/Tag";
 
-import SortableHeader from "components/history/sortable-header/SortableHeader.vue";
+import HistoryTable from "components/history/history-table/HistoryTable.vue";
 import TranslationResult from "components/translation/translation-result/TranslationResult.vue";
 import HistoryFilterComponent from "components/history/history-filter/HistoryFilter.vue";
 import HistorySync from "components/history/history-sync/HistorySync.vue";
 import TagsEditor from "components/history/tags-editor/TagsEditor.vue";
 import HistoryMerger from "components/history/history-merger/HistoryMerger.vue";
-import { DropCheckItem } from "components/shared/drop-check-button/DropCheckButton";
+import ColumnsEditor from "components/history/columns-editor/ColumnsEditor.vue";
 
 const ns = namespace("app/history");
 
-interface ColumnDisplaySettings extends DropCheckItem {
-    readonly column: SortColumn;
-}
-
 @Component({
     components: {
-        SortableHeader,
+        HistoryTable,
         TranslationResult,
         HistorySync,
         TagsEditor,
         HistoryFilter: HistoryFilterComponent,
-        HistoryMerger
+        HistoryMerger,
+        ColumnsEditor
     }
 })
 export default class History extends Vue {
@@ -87,18 +84,6 @@ export default class History extends Vue {
     @ns.Action public readonly archive!: (record: TranslationKey) => void;
     @ns.Action public readonly changeLanguage!: () => void;
 
-    public SortColumn: typeof SortColumn = SortColumn;
-    public columnToNameMap: Map<SortColumn, string> = new Map<SortColumn, string>([
-        [SortColumn.Input, "Word"],
-        [SortColumn.Translation, "Translation"],
-        [SortColumn.Tags, "Tags"],
-        [SortColumn.TimesTranslated, "Times"],
-        [SortColumn.SourceLanguage, "Source"],
-        [SortColumn.TargetLanguage, "Target"],
-        [SortColumn.LastTranslatedDate, "Last Translated"],
-        [SortColumn.IsArchived, "Status"]
-    ]);
-    public columnSettings: ReadonlyArray<ColumnDisplaySettings> = [];
     public isFilterVisible: boolean = false;
     public isMergerVisible: boolean = false;
 
@@ -149,20 +134,7 @@ export default class History extends Vue {
         return this.totalRecords !== 0;
     }
 
-    public isColumnVisible(column: SortColumn): boolean {
-        const columnSetting = this.columnSettings.find(setting => setting.column === column);
-        return !!columnSetting && columnSetting.isChecked;
-    }
-
-    public get numberOfVisibleColumns(): number {
-        return this.columnSettings.filter(setting => setting.isChecked).length;
-    }
-
-    public updateRecordTags(record: HistoryRecord, tags: ReadonlyArray<Tag>) {
-        this.updateTags({ record, tags: tags.map(tag => tag.tag) });
-    }
-
-    public tagClicked(tag: Tag): void {
+    public onTagClicked(tag: Tag): void {
         if (!this.filter.tags.some(filterTag => filterTag === tag.tag)) {
             this.updateFilter({
                 tags: this.filter.tags.concat([tag.tag])
@@ -173,7 +145,7 @@ export default class History extends Vue {
         this.hideTranslation();
     }
 
-    public toggleRecordTag(tag: Tag): void {
+    public toggleActiveTag(tag: Tag): void {
         const clonedTags = _.cloneDeep(this.currentTags).filter(currentTag => currentTag.tag !== tag.tag);
         this.updateCurrentTags(clonedTags.concat([{
             tag: tag.tag,
@@ -190,6 +162,7 @@ export default class History extends Vue {
             targetLanguage: record.targetLanguage
         });
     }
+
     public hideFilter(): void {
         this.isFilterVisible = false;
     }
@@ -210,35 +183,5 @@ export default class History extends Vue {
         if (!this.isFilterVisible) {
             this.clearFilter();
         }
-    }
-
-    @Watch("columns", { deep: true, immediate: true })
-    public buildColumnDisplaySettings(): void {
-        this.columnSettings = this.columns.map(columnSetting => ({
-            column: columnSetting.column,
-            text: this.columnToNameMap.has(columnSetting.column) ? this.columnToNameMap.get(columnSetting.column) as string : columnSetting.column.toString(),
-            isChecked: columnSetting.isVisible,
-            isDisabled: false
-        }));
-    }
-
-    @Watch("columnSettings", { deep: true })
-    public onColumnSettingsChanged() {
-        this.setColumnSettingsDisabledState();
-
-        const updatedColumns: ColumnSettings[] = this.columnSettings.map(setting => ({
-            column: setting.column,
-            isVisible: setting.isChecked
-        }));
-
-        if (!_.isEqual(this.columns, updatedColumns)) {
-            this.updateColumns(updatedColumns);
-        }
-    }
-
-    private setColumnSettingsDisabledState(): void {
-        const numberOfHiddenColumns = this.columnSettings.filter(setting => !setting.isChecked).length;
-        const shouldDisableColumnsHide = numberOfHiddenColumns >= (this.columnSettings.length - 1);
-        this.columnSettings.forEach(setting => setting.isDisabled = setting.isChecked && shouldDisableColumnsHide);
     }
 }

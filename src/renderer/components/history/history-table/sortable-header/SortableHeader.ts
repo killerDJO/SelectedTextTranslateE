@@ -3,8 +3,12 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { SortOrder } from "common/dto/history/SortOrder";
 import { SortColumn } from "common/dto/history/SortColumn";
 
+import { ColumnNameResolver } from "components/history/ColumnNameResolver";
+
 @Component
 export default class SortableHeader extends Vue {
+
+    private readonly columnNameResolver: ColumnNameResolver = new ColumnNameResolver();
 
     @Prop()
     public sortColumn!: SortColumn;
@@ -14,9 +18,6 @@ export default class SortableHeader extends Vue {
 
     @Prop()
     public currentSortColumn!: SortColumn;
-
-    @Prop(Map)
-    public columnToNameMap!: Map<SortColumn, string>;
 
     public SortOrder: typeof SortOrder = SortOrder;
 
