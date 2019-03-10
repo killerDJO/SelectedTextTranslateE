@@ -24,7 +24,6 @@ import LinkButton from "components/shared/link-button/LinkButton.vue";
 import AppButton from "components/shared/app-button/AppButton.vue";
 import ToggleButton from "components/shared/toggle-button/ToggleButton.vue";
 import DropListButton from "components/shared/drop-list-button/DropListButton.vue";
-import DropCheckButton from "components/shared/drop-check-button/DropCheckButton.vue";
 import Password from "components/shared/password/Password.vue";
 import Typeahead from "components/shared/typeahead/Typeahead.vue";
 import Datepicker from "components/shared/datepicker/Datepicker.vue";
@@ -72,7 +71,6 @@ class Bootstrapper {
         Vue.component("app-button", AppButton);
         Vue.component("toggle-button", ToggleButton);
         Vue.component("drop-list-button", DropListButton);
-        Vue.component("drop-check-button", DropCheckButton);
         Vue.component("password", Password);
         Vue.component("typeahead", Typeahead);
         Vue.component("language-selector", LanguageSelector);

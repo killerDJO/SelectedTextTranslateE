@@ -1,3 +1,10 @@
+.drop-item-value{
+    padding: $padding-default 25px $padding-default $padding-default;
+    outline: none;
+    display: flex;
+    position: relative;
+}
+
 .order-icons {
     position: absolute;
     right: $margin-large;

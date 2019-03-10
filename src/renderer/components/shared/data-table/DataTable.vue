@@ -3,7 +3,7 @@
     <thead>
       <th v-for="(column, index) in visibleColumns" :key="column.id" :style="{'width': getColumnWidth(column.id) + '%'}">
         <slot :name="'header.' + column.id" />
-        <div class="grip" 
+        <div class="grip"
           v-if="index < visibleColumns.length - 1"
           @mousedown="onResizeStarted($event, column)"/>
       </th>
