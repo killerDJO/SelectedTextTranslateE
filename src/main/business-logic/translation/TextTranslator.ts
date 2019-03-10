@@ -60,15 +60,16 @@ export class TextTranslator {
             .pipe(tap(() => this.logger.info(`Serving translation ${this.getLogKey(key)} from service.`)));
 
         const incrementTranslationsNumber = !(skipStatistic || refreshCache);
+        const addTags = !(skipStatistic || refreshCache);
 
         if (historyRecord === null) {
             return translateResult$
-                .pipe(concatMap(translateResult => this.historyStore.addTranslateResult(translateResult, key, incrementTranslationsNumber)));
+                .pipe(concatMap(translateResult => this.historyStore.addTranslateResult(translateResult, key, incrementTranslationsNumber, addTags)));
         }
 
         if (refreshCache || this.isHistoryRecordExpired(historyRecord)) {
             return translateResult$
-                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, historyRecord, incrementTranslationsNumber)));
+                .pipe(concatMap(translateResult => this.historyStore.updateTranslateResult(translateResult, historyRecord, incrementTranslationsNumber, addTags)));
         }
 
         this.logger.info(`Serving translation ${this.getLogKey(key)} from dictionary.`);

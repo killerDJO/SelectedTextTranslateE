@@ -36,7 +36,7 @@ export class HistoryStore {
         return this.historyUpdatedSubject$;
     }
 
-    public addTranslateResult(translateResult: TranslateResult, key: TranslationKey, incrementTranslationsNumber: boolean): Observable<HistoryRecord> {
+    public addTranslateResult(translateResult: TranslateResult, key: TranslationKey, incrementTranslationsNumber: boolean, addTags: boolean): Observable<HistoryRecord> {
         const currentTime = new Date().getTime();
         const insert$ = this.datastoreProvider.insert<HistoryRecord>(this.datastore$, {
             id: this.recordIdGenerator.generateId(key),
@@ -53,7 +53,7 @@ export class HistoryStore {
             isArchived: false,
             ...this.getModificationFields(currentTime),
             syncData: [],
-            tags: this.getActiveCurrentTags()
+            tags: addTags ? this.getActiveCurrentTags() : []
         });
 
         return insert$.pipe(
@@ -62,14 +62,17 @@ export class HistoryStore {
         );
     }
 
-    public updateTranslateResult(translateResult: TranslateResult, record: HistoryRecord, incrementTranslationsNumber: boolean): Observable<HistoryRecord> {
+    public updateTranslateResult(translateResult: TranslateResult, record: HistoryRecord, incrementTranslationsNumber: boolean, addTags: boolean): Observable<HistoryRecord> {
         const currentTime = new Date().getTime();
         const setQuery: any = {
             updatedDate: currentTime,
             translateResult: translateResult,
-            tags: this.getTags(record),
             ...this.getModificationFields(currentTime)
         };
+
+        if (addTags) {
+            setQuery.tags = this.getTags(record);
+        }
 
         if (incrementTranslationsNumber) {
             setQuery.lastTranslatedDate = currentTime;
