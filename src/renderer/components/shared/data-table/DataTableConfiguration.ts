@@ -5,6 +5,6 @@ export interface DataTableConfiguration<TRecord> {
 
 export interface DataTableColumnConfiguration {
     readonly id: string;
-    readonly weight: number;
-    readonly isVisible: boolean;
+    weight: number;
+    isVisible: boolean;
 }

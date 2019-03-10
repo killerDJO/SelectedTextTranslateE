@@ -36,7 +36,8 @@
           @play-record="playRecord"
           @update-tags="updateTags"
           @tag-clicked="onTagClicked"
-          @set-archived-status="setArchivedStatus" />
+          @set-archived-status="setArchivedStatus"
+          @update-columns="updateColumns" />
         <div class="results-footer">
           <history-sync class="sync-control" :current-user="currentUser"/>
           <div class="pagination-holder" v-if="hasRecords">

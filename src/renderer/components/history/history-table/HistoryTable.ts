@@ -85,4 +85,13 @@ export default class HistoryTable extends Vue {
     public getBodySlotId(sortColumn: SortColumn): string {
         return `body.${sortColumn}`;
     }
+
+    public updateColumnsConfiguration(columnsConfiguration: ReadonlyArray<DataTableColumnConfiguration>): void {
+        const updatedColumns: ReadonlyArray<ColumnSettings> = columnsConfiguration.map(column => ({
+            column: column.id as SortColumn,
+            isVisible: column.isVisible,
+            weight: column.weight
+        }));
+        this.$emit("update-columns", updatedColumns);
+    }
 }
