@@ -2,6 +2,17 @@ th {
     padding: 0;
 }
 
-tbody tr:hover {
-    background-color: $color-active;
+tbody {
+    tr:hover {
+        background-color: $color-active;
+    }
+
+    td {
+        padding-left: $padding-default;
+        overflow: visible;
+        
+        & > * {
+            @include ellipsis();
+        }
+    }
 }

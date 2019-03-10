@@ -26,7 +26,7 @@ export default class HistoryTable extends Vue {
 
     public SortColumn: typeof SortColumn = SortColumn;
 
-    public tableConfiguration!: DataTableConfiguration<HistoryRecord>;
+    public tableConfiguration: DataTableConfiguration<HistoryRecord> | null = null;
 
     @Watch("columns", { deep: true, immediate: true })
     public onColumnsChanged(): void {
@@ -34,7 +34,7 @@ export default class HistoryTable extends Vue {
             columns: this.columns.map<DataTableColumnConfiguration>(column => ({
                 id: column.column,
                 isVisible: column.isVisible,
-                weight: 1
+                weight: column.weight
             })),
             onRecordClick: this.translateHistoryRecord.bind(this)
         };

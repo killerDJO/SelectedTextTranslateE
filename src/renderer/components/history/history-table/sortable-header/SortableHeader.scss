@@ -2,8 +2,11 @@
     position: relative;
     cursor: pointer;
     padding-left: $padding-default;
+    padding-right: $padding-default;
     padding-top: 2px;
     padding-bottom: 2px;
+
+    @include ellipsis();
 
     .icon {
         position: absolute;

@@ -1,44 +1,15 @@
 .results {
     margin-top: $margin-small;
 
-    /deep/ tbody {
-        tr:hover {
-            .word-column .play-icon-holder {
-                display: inline-block;
-            }
+    /deep/ tr:hover {
+        .word-column .play-icon-holder {
+            display: inline-block;
         }
-
-        td {
-            padding-left: $padding-default;
-        }
-    }
-
-    .tags-column {
-        overflow: visible;
-
-        .tags-editor {
-            vertical-align: middle;
-        }
-    }
-
-    .source-language-column,
-    .target-language-column {
-        display: table-cell;
-    }
-
-    .last-translated-column {
-        .synced-icon {
-            font-size: $font-small;
-            color: $color-light-gray;
-        }
-    }
-
-    .translation-column .no-translation {
-        font-style: italic;
-        color: $color-gray;
     }
 
     .word-column {
+        padding-left: $padding-small;
+
         .word-holder {
             display: inline-block;
         }
@@ -67,6 +38,34 @@
                     background-image: url("~icons/play-hovered.svg");
                 }
             }
+        }
+    }
+
+    .translation-column .no-translation {
+        font-style: italic;
+        color: $color-gray;
+    }
+
+    .tags-column {
+        overflow: visible;
+        .tags-editor {
+            vertical-align: middle;
+        }
+    }
+
+    .last-translated-column {
+        display: flex;
+        align-items: center;
+
+        .date {
+            @include ellipsis();
+            display: inline-block;
+        }
+
+        .synced-icon {
+            font-size: $font-small;
+            color: $color-light-gray;
+            margin-left: 3px;
         }
     }
 

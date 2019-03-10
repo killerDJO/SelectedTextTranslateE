@@ -29,13 +29,34 @@ export class SettingsStore {
         return readJsonFile("default-settings.json");
     }
 
-    private getOrSetDefault<TValue>(name: string, defaultValue: TValue): TValue {
+    private getOrSetDefault<TValue>(name: string, defaultValue: TValue, key: string, settings: any): TValue {
         if (!this.store.has(name)) {
             this.set(name, defaultValue);
             return defaultValue;
         }
 
-        return this.store.get(name);
+        const value = this.store.get(name);
+        if (_.isArray(value)) {
+            const arrayKey = settings[`$${key}.key`];
+            if (!!arrayKey) {
+                this.mergeArrayValues(value, defaultValue, arrayKey);
+                this.set(name, value);
+            }
+        }
+
+        return value;
+    }
+
+    private mergeArrayValues(value: any, defaultValue: any, keyName: string): void {
+        for (const item of value) {
+            const key = item[keyName];
+            const defaultItem = defaultValue.find((x: any) => x[keyName] === key);
+            for (const property of Object.keys(defaultItem)) {
+                if (!_.has(item, property)) {
+                    item[property] = defaultItem[property];
+                }
+            }
+        }
     }
 
     private set<TValue>(name: string, value: TValue) {
@@ -44,11 +65,11 @@ export class SettingsStore {
 
     private getSettingsByDefaultSettings(currentDefaultSettings: any, parentPath: string): any {
         const currentSettings: any = {};
-        for (const key of Object.keys(currentDefaultSettings)) {
+        for (const key of Object.keys(currentDefaultSettings).filter(settingKey => !settingKey.startsWith("$"))) {
             const currentPath = this.getCurrentPath(parentPath, key);
             currentSettings[key] = _.isPlainObject(currentDefaultSettings[key])
                 ? this.getSettingsByDefaultSettings(currentDefaultSettings[key], currentPath)
-                : this.getOrSetDefault(currentPath, currentDefaultSettings[key]);
+                : this.getOrSetDefault(currentPath, currentDefaultSettings[key], key, currentDefaultSettings);
         }
 
         return currentSettings;

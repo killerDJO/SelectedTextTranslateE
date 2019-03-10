@@ -26,9 +26,15 @@ export default class DataTable<TRecord> extends Vue {
         this.configuration.onRecordClick(record);
     }
 
-    @Watch("configuration")
-    public onConfigurationChanged(): void {
-        this.$forceUpdate();
+    public getColumnWidth(id: string) {
+        const totalWeight = this.visibleColumns.reduce((previousValue, currentValue) => previousValue + currentValue.weight, 0);
+        const currentColumn = this.visibleColumns.find(column => column.id === id);
+        if (!currentColumn) {
+            throw new Error(`Unable to find column with id ${id}`);
+        }
+        const currentWeight = currentColumn.weight;
+        const percentageWidth = currentColumn.weight / totalWeight * 100;
+        return percentageWidth;
     }
 
     private checkIfSlotRegistered(type: string, column: DataTableColumnConfiguration): void {

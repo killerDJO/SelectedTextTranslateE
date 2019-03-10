@@ -41,4 +41,10 @@ $outline-width: 2px;
     box-shadow: 0 0 0 $outline-width $color-outline;
     border-radius: $border-radius;
     outline: none;
-  }
+}
+
+@mixin ellipsis() {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

@@ -1,7 +1,7 @@
 <template>
   <div class="tags-editor" :class="{'compact': compactView}">
     <span class="no-tags" v-if="currentTags.length === 0 && !isTagInputVisible">No Tags</span>
-    <span class="tag" v-else v-for="tag in currentTags" :key="tag.tag" :class="{ 'clickable': clickable, 'disabled': !tag.isEnabled }" @click="onTagClicked(tag)">
+    <span class="tag" v-else v-for="tag in currentTags" :key="tag.tag" :class="{ 'clickable': clickable, 'disabled': !tag.isEnabled }" @click.stop.prevent="onTagClicked(tag)">
       {{tag.tag}}
       <icon-button @click="removeTag(tag)" :title="'Remove Tag'" class="remove-tag-holder">
         <span class="icon icon-cancel" />

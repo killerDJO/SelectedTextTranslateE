@@ -1,5 +1,5 @@
 <template>
-  <div class="drop-wrapper" :class="{'compact': compactView}" ref="dropTarget" v-focus-lost="closeDrop">
+  <div class="drop-wrapper" :class="{'compact': compactView}" ref="dropTarget" v-focus-lost="closeDrop" @click.stop.prevent>
     <input type="text"
       ref="input"
       v-model="input$"
@@ -16,6 +16,7 @@
           class="drop-item"
           :class="{'selected': isSuggestionSelected(suggestion)}"
           v-for="suggestion in suggestions"
+          tabindex="0"
           :key="suggestion"
           @click.stop.prevent="suggestionClick(suggestion)">
           {{suggestion}}

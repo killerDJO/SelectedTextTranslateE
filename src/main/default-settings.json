@@ -115,38 +115,47 @@
             "height": 55,
             "renderer": {
                 "pageSize": 20,
+                "columns.key": "column",
                 "columns": [
                     {
                         "column": "Input",
-                        "isVisible": true
+                        "isVisible": true,
+                        "weight": 1
                     },
                     {
                         "column": "Translation",
-                        "isVisible": true
+                        "isVisible": true,
+                        "weight": 1
                     },
                     {
                         "column": "Tags",
-                        "isVisible": false
+                        "isVisible": false,
+                        "weight": 1
                     },
                     {
                         "column": "TimesTranslated",
-                        "isVisible": true
+                        "isVisible": true,
+                        "weight": 0.5
                     },
                     {
                         "column": "SourceLanguage",
-                        "isVisible": false
+                        "isVisible": false,
+                        "weight": 0.5
                     },
                     {
                         "column": "TargetLanguage",
-                        "isVisible": false
+                        "isVisible": false,
+                        "weight": 0.5
                     },
                     {
                         "column": "LastTranslatedDate",
-                        "isVisible": true
+                        "isVisible": true,
+                        "weight": 0.5
                     },
                     {
                         "column": "IsArchived",
-                        "isVisible": true
+                        "isVisible": true,
+                        "weight": 0.5
                     }
                 ]
             }

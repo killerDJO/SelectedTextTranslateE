@@ -1,7 +1,7 @@
 <template>
   <table class="table-striped results non-clickable">
     <thead>
-      <th v-for="column in visibleColumns" :key="column.id">
+      <th v-for="column in visibleColumns" :key="column.id" :style="{'width': getColumnWidth(column.id) + '%'}">
         <slot :name="'header.' + column.id" />
       </th>
     </thead>

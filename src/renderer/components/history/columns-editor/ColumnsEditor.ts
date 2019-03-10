@@ -9,6 +9,7 @@ import { ColumnNameResolver } from "components/history/ColumnNameResolver";
 
 interface ColumnDisplaySettings extends DropCheckItem {
     readonly column: SortColumn;
+    readonly weight: number;
 }
 
 @Component
@@ -25,6 +26,7 @@ export default class ColumnsEditor extends Vue {
             column: columnSetting.column,
             text: this.columnNameResolver.getColumnName(columnSetting.column),
             isChecked: columnSetting.isVisible,
+            weight: columnSetting.weight,
             isDisabled: false
         }));
     }
@@ -35,7 +37,8 @@ export default class ColumnsEditor extends Vue {
 
         const updatedColumns: ColumnSettings[] = this.columnDisplaySettings.map(setting => ({
             column: setting.column,
-            isVisible: setting.isChecked
+            isVisible: setting.isChecked,
+            weight: setting.weight
         }));
 
         if (!_.isEqual(this.columns, updatedColumns)) {

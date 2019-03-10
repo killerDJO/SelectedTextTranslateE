@@ -8,4 +8,5 @@ export interface HistoryViewRendererSettings {
 export interface ColumnSettings {
     column: SortColumn;
     isVisible: boolean;
+    weight: number;
 }
