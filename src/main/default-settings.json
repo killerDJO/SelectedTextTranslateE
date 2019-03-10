@@ -115,7 +115,7 @@
             "height": 55,
             "renderer": {
                 "pageSize": 20,
-                "columns.key": "column",
+                "$columns.key": "column",
                 "columns": [
                     {
                         "column": "Input",
