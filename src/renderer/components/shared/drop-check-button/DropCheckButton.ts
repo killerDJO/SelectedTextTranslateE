@@ -38,6 +38,12 @@ export default class DropCheckButton extends Vue {
     })
     public preferredPosition!: PositionModifier;
 
+    @Prop({
+        type: Boolean,
+        default: false
+    })
+    public closeBlocked!: boolean;
+
     public click(): void {
         this.toggleDrop();
         this.$emit("click");

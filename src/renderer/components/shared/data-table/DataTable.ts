@@ -68,8 +68,8 @@ export default class DataTable<TRecord> extends Vue {
         const newWeight = this.getColumnWeightAfterResize(event, this.resizeInfo);
         const weightDelta = newWeight - columnConfiguration.weight;
 
-        const siblingColumnIndex = this.currentConfiguration.columns.findIndex(column => column.id === columnConfiguration.id) + 1;
-        const siblingColumn = this.currentConfiguration.columns[siblingColumnIndex];
+        const siblingColumnIndex = this.visibleColumns.findIndex(column => column.id === columnConfiguration.id) + 1;
+        const siblingColumn = this.visibleColumns[siblingColumnIndex];
 
         if (siblingColumn.weight - weightDelta >= this.getMinWeight()) {
             siblingColumn.weight -= weightDelta;

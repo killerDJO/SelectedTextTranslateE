@@ -1,0 +1,25 @@
+.order-icons {
+    position: absolute;
+    right: $margin-large;
+
+    .move-up {
+        position: absolute;
+        top: -$margin-small;
+    }
+
+    .move-down {
+        position: absolute;
+        top: $margin-small + 1;
+    }
+
+    .move-up,
+    .move-down {
+        .icon:not(:hover) {
+            color: $color-gray;
+        }
+
+        .icon.disabled {
+            color: $color-light-gray;
+        }
+    }
+}

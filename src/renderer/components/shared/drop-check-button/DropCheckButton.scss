@@ -1,5 +1,6 @@
 .drop-item-value{
-    padding: $padding-default $padding-default;
+    padding: $padding-default 25px $padding-default $padding-default;
     outline: none;
     display: flex;
+    position: relative;
 }

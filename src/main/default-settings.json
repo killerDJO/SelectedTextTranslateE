@@ -118,44 +118,44 @@
                 "$columns.key": "column",
                 "columns": [
                     {
-                        "column": "Input",
-                        "isVisible": true,
-                        "weight": 1
-                    },
-                    {
                         "column": "Translation",
                         "isVisible": true,
                         "weight": 1
                     },
                     {
-                        "column": "Tags",
-                        "isVisible": false,
+                        "column": "Input",
+                        "isVisible": true,
                         "weight": 1
+                    },
+                    {
+                        "column": "Tags",
+                        "isVisible": true,
+                        "weight": 0.65
                     },
                     {
                         "column": "TimesTranslated",
                         "isVisible": true,
-                        "weight": 0.5
-                    },
-                    {
-                        "column": "SourceLanguage",
-                        "isVisible": false,
-                        "weight": 0.5
-                    },
-                    {
-                        "column": "TargetLanguage",
-                        "isVisible": false,
-                        "weight": 0.5
+                        "weight": 0.25
                     },
                     {
                         "column": "LastTranslatedDate",
                         "isVisible": true,
-                        "weight": 0.5
+                        "weight": 0.45
+                    },
+                    {
+                        "column": "SourceLanguage",
+                        "isVisible": false,
+                        "weight": 0.4
+                    },
+                    {
+                        "column": "TargetLanguage",
+                        "isVisible": false,
+                        "weight": 0.4
                     },
                     {
                         "column": "IsArchived",
                         "isVisible": true,
-                        "weight": 0.5
+                        "weight": 0.2
                     }
                 ]
             }

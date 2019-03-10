@@ -40,12 +40,24 @@ export default class DropButton extends DropBase {
     })
     public preferredPosition!: PositionModifier;
 
+    @Prop({
+        type: Boolean,
+        default: false
+    })
+    public closeBlocked!: boolean;
+
     public click(): void {
         this.$emit("click");
     }
 
     public itemClick(item: DropItem) {
         this.$emit("item-click", item);
+    }
+
+    public closeDrop(): void {
+        if (!this.closeBlocked) {
+            super.closeDrop();
+        }
     }
 
     public openDrop(): void {

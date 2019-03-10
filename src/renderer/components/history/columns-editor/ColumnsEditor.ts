@@ -19,6 +19,7 @@ export default class ColumnsEditor extends Vue {
     @Prop(Array) public columns!: ReadonlyArray<ColumnSettings>;
 
     public columnDisplaySettings: ReadonlyArray<ColumnDisplaySettings> = [];
+    public closeBlocked: boolean = false;
 
     @Watch("columns", { deep: true, immediate: true })
     public buildColumnDisplaySettings(): void {
@@ -35,15 +36,59 @@ export default class ColumnsEditor extends Vue {
     public onColumnSettingsChanged() {
         this.setColumnSettingsDisabledState();
 
-        const updatedColumns: ColumnSettings[] = this.columnDisplaySettings.map(setting => ({
-            column: setting.column,
-            isVisible: setting.isChecked,
-            weight: setting.weight
-        }));
+        const updatedColumns: ColumnSettings[] = this.mapDisplaySettings(this.columnDisplaySettings);
 
         if (!_.isEqual(this.columns, updatedColumns)) {
             this.$emit("update-columns", updatedColumns);
         }
+    }
+
+    public moveUp(item: ColumnDisplaySettings): void {
+        if (!this.isMoveUpEnabled(item)) {
+            return;
+        }
+
+        this.moveItem(item, itemIndex => itemIndex - 1);
+    }
+
+    public moveDown(item: ColumnDisplaySettings): void {
+        if (!this.isMoveDownEnabled(item)) {
+            return;
+        }
+
+        this.moveItem(item, itemIndex => itemIndex + 1);
+    }
+
+    public isMoveUpEnabled(item: ColumnDisplaySettings): boolean {
+        return this.columnDisplaySettings.indexOf(item) > 0;
+    }
+
+    public isMoveDownEnabled(item: ColumnDisplaySettings): boolean {
+        return this.columnDisplaySettings.indexOf(item) < this.columnDisplaySettings.length - 1;
+    }
+
+    private moveItem(item: ColumnDisplaySettings, nextIndexGenerator: (index: number) => number): void {
+        this.closeBlocked = true;
+
+        const itemIndex = this.columnDisplaySettings.indexOf(item);
+        const clonedDisplaySettings = this.columnDisplaySettings.slice();
+        const swap = clonedDisplaySettings[itemIndex];
+
+        const nextIndex = nextIndexGenerator(itemIndex);
+        clonedDisplaySettings[itemIndex] = clonedDisplaySettings[nextIndex];
+        clonedDisplaySettings[nextIndex] = swap;
+        this.$emit("update-columns", this.mapDisplaySettings(clonedDisplaySettings));
+
+        // Hack: drop loses focus after re-render, prevent close until this
+        setTimeout(() => this.closeBlocked = false, 100);
+    }
+
+    private mapDisplaySettings(displaySettings: ReadonlyArray<ColumnDisplaySettings>): ColumnSettings[] {
+        return displaySettings.map(setting => ({
+            column: setting.column,
+            isVisible: setting.isChecked,
+            weight: setting.weight
+        }));
     }
 
     private setColumnSettingsDisabledState(): void {
