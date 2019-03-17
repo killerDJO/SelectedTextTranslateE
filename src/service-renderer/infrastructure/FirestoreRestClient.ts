@@ -6,12 +6,11 @@ import { OutOfSyncError } from "infrastructure/OutOfSyncError";
 
 export class FirestoreRestClient {
     private readonly firestoreDocuments: string;
-    private readonly firestoreBaseUrl: string;
+    private readonly firestoreBaseUrl: string = "https://firestore.googleapis.com/v1";
 
     private static readonly TimestampFieldPath: string = "timestamp";
 
-    constructor(firestoreBaseUrl: string, projectId: string) {
-        this.firestoreBaseUrl = firestoreBaseUrl;
+    constructor(projectId: string) {
         this.firestoreDocuments = `projects/${projectId}/databases/(default)/documents`;
     }
 

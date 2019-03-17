@@ -20,7 +20,7 @@ export class FirebaseClient {
     private firestoreRestClient: FirestoreRestClient | null = null;
 
     public initializeApp(firebaseSettings: FirebaseSettings): void {
-        this.firestoreRestClient = new FirestoreRestClient(firebaseSettings.firestoreBaseUrl, firebaseSettings.projectId);
+        this.firestoreRestClient = new FirestoreRestClient(firebaseSettings.projectId);
 
         firebase.initializeApp({
             apiKey: firebaseSettings.apiKey,
@@ -29,7 +29,6 @@ export class FirebaseClient {
         });
 
         firebase.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
-        this.setupFirestore();
     }
 
     public signIn(email: string, password: string): Promise<SignInResponse> {
@@ -166,11 +165,6 @@ export class FirebaseClient {
         };
 
         return responsesMap[code];
-    }
-
-    private setupFirestore() {
-        const settings = { timestampsInSnapshots: true };
-        firebase.firestore().settings(settings);
     }
 
     private getCurrentUser(): firebase.User {
