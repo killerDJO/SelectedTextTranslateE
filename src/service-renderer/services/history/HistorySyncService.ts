@@ -213,7 +213,7 @@ export class HistorySyncService {
         await this.waitForNetworkEnabled();
 
         const lastSyncTime = !isForcedPull ? await this.messageBus.sendCommand<void, string | undefined>(Messages.HistorySync.LastSyncTime) : undefined;
-        const documents = await this.firebaseClient.getDocuments<ServerHistoryRecord>(this.collectionId, lastSyncTime);
+        const documents = await this.executeCommandWithRetry(() => this.firebaseClient.getDocuments<ServerHistoryRecord>(this.collectionId, lastSyncTime));
         const accountInfo = this.firebaseClient.getAccountInfo();
 
         if (accountInfo === null) {
@@ -282,12 +282,13 @@ export class HistorySyncService {
             }
         }
 
-        const firebasePromise = !existingServerTimestamp
-            ? this.firebaseClient.addDocument(this.collectionId, record.id, { record: serializedRecord })
-            : this.firebaseClient.updateDocument(this.collectionId, record.id, { record: serializedRecord }, existingServerTimestamp);
-
         try {
-            const updatedTimestamp = await firebasePromise;
+            const updatedTimestamp = await this.executeCommandWithRetry(() => {
+                return !existingServerTimestamp
+                    ? this.firebaseClient.addDocument(this.collectionId, record.id, { record: serializedRecord })
+                    : this.firebaseClient.updateDocument(this.collectionId, record.id, { record: serializedRecord }, existingServerTimestamp);
+            });
+
             const filteredSyncData = (record.syncData || []).filter(syncData => syncData.userEmail !== accountInfo.email);
             await this.messageBus.sendCommand<HistoryRecord>(Messages.HistorySync.UpdateRecord, {
                 ...sanitizedRecord,
@@ -359,5 +360,39 @@ export class HistorySyncService {
             const DelaySeconds = 5;
             await new Promise(resolve => setTimeout(resolve, DelaySeconds * MillisecondsInSecond));
         }
+    }
+
+    private async executeCommandWithRetry<TResult>(command: () => Promise<TResult>): Promise<TResult> {
+        let attempt = 1;
+        const MaxRetriesCount = 5;
+        let lastError: Error = new Error("Failed to execute firestore command.");
+
+        while (true) {
+            try {
+                return await command();
+            } catch (error) {
+                if (error instanceof OutOfSyncError) {
+                    throw error;
+                }
+
+                this.logger.warning(`Failed to execute firestore command. Error: ${error.message}. Attempt #${attempt}.`);
+                attempt += 1;
+                lastError = error;
+
+                if (attempt > MaxRetriesCount) {
+                    break;
+                }
+
+                await this.timeout(attempt);
+                await this.waitForNetworkEnabled();
+            }
+        }
+
+        throw lastError;
+    }
+
+    private timeout(seconds: number): Promise<void> {
+        const MillisecondsInSecond = 1000;
+        return new Promise(resolve => setTimeout(resolve, seconds * MillisecondsInSecond));
     }
 }
