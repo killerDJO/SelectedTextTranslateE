@@ -17,8 +17,13 @@
         color: $color-gray;
     }
 
-    .candidates-view {
+    .table-header {
+        @include ellipsis();
+        padding-left: $padding-default;
+        padding-right: $padding-default;
+    }
 
+    .candidates-view {
         .candidates-view-header {
             height: 30px;
             align-items: center;
@@ -32,12 +37,6 @@
         }
     
         .candidates {
-            .header {
-                @include ellipsis();
-                padding-left: $padding-default;
-                padding-right: $padding-default;
-            }
-
             .candidates-column {
                 text-align: center;
             }
@@ -62,24 +61,11 @@
         }
 
         .candidate {
-            .header {
+            /deep/ tr:first-child {
                 color: #777;
                 font-weight: bold;
             }
 
-            .word-column,
-            .translation-column {
-                width: 35%;
-            }
-    
-            .times-column {
-                width: 10%;
-            }
-    
-            .actions-column {
-                width: 20%;
-            }
-    
             .times-column,
             .actions-column {
                 text-align: center;

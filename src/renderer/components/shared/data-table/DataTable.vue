@@ -1,5 +1,5 @@
 <template>
-  <table class="table-striped results non-clickable" ref="table">
+  <table class="table-striped results non-clickable" ref="table" :class="{ 'data-clickable': clickable }">
     <thead>
       <th v-for="(column, index) in visibleColumns" :key="column.id" :style="{'width': getColumnWidth(column.id) + '%'}">
         <slot :name="'header.' + column.id" />
@@ -9,9 +9,9 @@
       </th>
     </thead>
     <tbody v-if="records.length !== 0">
-      <tr v-for="record in records" :key="record.id" @click="onRecordClick(record)">
+      <tr v-for="(record, index) in records" :key="record.id" @click="onRecordClick(record)">
         <td v-for="column in visibleColumns" :key="column.id">
-          <slot :name="'body.' + column.id" :record="record"/>
+          <slot :name="'body.' + column.id" :record="record" :index="index"/>
         </td>
       </tr>
     </tbody>

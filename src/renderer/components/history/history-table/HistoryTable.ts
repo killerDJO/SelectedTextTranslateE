@@ -26,7 +26,7 @@ export default class HistoryTable extends Vue {
 
     public SortColumn: typeof SortColumn = SortColumn;
 
-    public tableConfiguration: DataTableConfiguration<HistoryRecord> | null = null;
+    public tableConfiguration: DataTableConfiguration | null = null;
 
     @Watch("columns", { deep: true, immediate: true })
     public onColumnsChanged(): void {

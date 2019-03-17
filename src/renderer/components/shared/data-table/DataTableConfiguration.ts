@@ -1,6 +1,7 @@
-export interface DataTableConfiguration<TRecord> {
+export interface DataTableConfiguration {
     readonly columns: ReadonlyArray<DataTableColumnConfiguration>;
     isLoading: boolean;
+    clickable?: boolean;
 }
 
 export interface DataTableColumnConfiguration {

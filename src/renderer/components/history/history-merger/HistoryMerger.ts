@@ -17,6 +17,13 @@ enum CandidatesTableColumns {
     Candidates = "candidates"
 }
 
+enum CandidateTableColumns {
+    Word = "word",
+    Translation = "translation",
+    Times = "times",
+    Actions = "actions"
+}
+
 @Component
 export default class HistoryMerger extends Vue {
     @Prop(Boolean)
@@ -36,7 +43,10 @@ export default class HistoryMerger extends Vue {
     @ns.Action public readonly blacklistRecords!: (request: BlacklistRecordsRequest) => void;
 
     public CandidatesTableColumns: typeof CandidatesTableColumns = CandidatesTableColumns;
-    public candidatesTableConfiguration: DataTableConfiguration<MergeCandidate> = this.getCandidatesTableConfiguration();
+    public candidatesTableConfiguration: DataTableConfiguration = this.getCandidatesTableConfiguration();
+
+    public CandidateTableColumns: typeof CandidateTableColumns = CandidateTableColumns;
+    public candidateTableConfiguration: DataTableConfiguration = this.getCandidateTableConfiguration();
 
     public showLanguages: boolean = false;
     public currentCandidateIndex: number = -1;
@@ -87,7 +97,7 @@ export default class HistoryMerger extends Vue {
         return this.mergeCandidates.filter(candidate => candidate.mergeRecords.length > 0);
     }
 
-    public getCandidatesTableConfiguration(): DataTableConfiguration<MergeCandidate> {
+    public getCandidatesTableConfiguration(): DataTableConfiguration {
         return {
             columns: [
                 { id: CandidatesTableColumns.Word, isVisible: true, weight: 1 },
@@ -97,6 +107,19 @@ export default class HistoryMerger extends Vue {
                 { id: CandidatesTableColumns.Candidates, isVisible: true, weight: 0.5 }
             ],
             isLoading: true
+        };
+    }
+
+    public getCandidateTableConfiguration(): DataTableConfiguration {
+        return {
+            columns: [
+                { id: CandidateTableColumns.Word, isVisible: true, weight: 1 },
+                { id: CandidateTableColumns.Translation, isVisible: true, weight: 1 },
+                { id: CandidateTableColumns.Times, isVisible: true, weight: 0.5 },
+                { id: CandidateTableColumns.Actions, isVisible: true, weight: 0.5 }
+            ],
+            isLoading: false,
+            clickable: false
         };
     }
 
@@ -148,11 +171,11 @@ export default class HistoryMerger extends Vue {
         this.promoteRecordToCandidate({ candidate: this.currentCandidate, record: mergeRecord });
     }
 
-    public getHeaderSlotId(sortColumn: CandidatesTableColumns): string {
+    public getHeaderSlotId(sortColumn: CandidatesTableColumns | CandidateTableColumns): string {
         return `header.${sortColumn}`;
     }
 
-    public getBodySlotId(sortColumn: CandidatesTableColumns): string {
+    public getBodySlotId(sortColumn: CandidatesTableColumns | CandidateTableColumns): string {
         return `body.${sortColumn}`;
     }
 

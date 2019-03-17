@@ -5,11 +5,11 @@ import { DataTableConfiguration, DataTableColumnConfiguration } from "components
 
 @Component
 export default class DataTable<TRecord> extends Vue {
-    @Prop(Object) public configuration!: DataTableConfiguration<TRecord>;
+    @Prop(Object) public configuration!: DataTableConfiguration;
     @Prop(Array) public records!: ReadonlyArray<TRecord>;
 
     private resizeInfo: ResizeInfo | null = null;
-    private currentConfiguration: DataTableConfiguration<TRecord> = _.cloneDeep(this.configuration);
+    private currentConfiguration: DataTableConfiguration = _.cloneDeep(this.configuration);
 
     @Watch("configuration", { deep: true, immediate: true })
     public onConfigurationChanged(): void {
@@ -24,6 +24,10 @@ export default class DataTable<TRecord> extends Vue {
         return this.visibleColumns.length;
     }
 
+    public get clickable(): boolean {
+        return this.configuration.clickable === undefined || this.configuration.clickable;
+    }
+
     public mounted() {
         this.currentConfiguration.columns.forEach(column => {
             this.checkIfSlotRegistered("header", column);
@@ -35,7 +39,9 @@ export default class DataTable<TRecord> extends Vue {
     }
 
     public onRecordClick(record: TRecord) {
-        this.$emit("record-click", record);
+        if (this.clickable) {
+            this.$emit("record-click", record);
+        }
     }
 
     public getColumnWidth(id: string) {

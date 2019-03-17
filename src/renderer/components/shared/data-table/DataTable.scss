@@ -16,11 +16,11 @@ th {
     }
 }
 
-tbody {
-    tr:hover {
-        background-color: $color-active;
-    }
+table.data-clickable tr:hover {
+    background-color: $color-active;
+}
 
+tbody {
     td {
         padding-left: $padding-default;
         overflow: visible;
