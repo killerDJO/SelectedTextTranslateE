@@ -5,6 +5,9 @@ import { Channels } from "common/messaging/Messages";
 import { Message } from "common/messaging/Message";
 import { createMessage } from "common/messaging/create-message";
 
+import { Environment } from "infrastructure/Environment";
+import { Logger } from "infrastructure/Logger";
+
 interface IpcSubscription {
     readonly channel: string;
     // tslint:disable-next-line:ban-types
@@ -35,7 +38,11 @@ export class MessageBus {
         const received$ = new Subject<TResult>();
         const subscription = observable$.subscribe(value => {
             if (this.window.isDestroyed()) {
-                throw Error("Window has been destroyed. Make sure subscription is disposed properly.");
+                if (Environment.isDevelopment()) {
+                    throw Error("Window has been destroyed. Make sure subscription is disposed properly.");
+                } else {
+                    return;
+                }
             }
 
             const message = createMessage(name);
