@@ -15,10 +15,16 @@
         </td>
       </tr>
     </tbody>
-    <tbody v-else>
+    <tbody v-else-if="!configuration.isLoading">
       <tr>
         <td :colspan="numberOfVisibleColumns">
           <slot name="empty"></slot>
+        </td>
+      </tr>
+    </tbody>
+    <tbody v-else>
+      <tr>
+        <td :colspan="numberOfVisibleColumns" class="loading-records-indicator">
         </td>
       </tr>
     </tbody>

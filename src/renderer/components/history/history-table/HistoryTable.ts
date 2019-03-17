@@ -36,7 +36,7 @@ export default class HistoryTable extends Vue {
                 isVisible: column.isVisible,
                 weight: column.weight
             })),
-            onRecordClick: this.translateHistoryRecord.bind(this)
+            isLoading: false
         };
     }
 

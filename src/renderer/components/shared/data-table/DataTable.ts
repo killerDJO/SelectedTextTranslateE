@@ -35,7 +35,7 @@ export default class DataTable<TRecord> extends Vue {
     }
 
     public onRecordClick(record: TRecord) {
-        this.currentConfiguration.onRecordClick(record);
+        this.$emit("record-click", record);
     }
 
     public getColumnWidth(id: string) {

@@ -7,45 +7,48 @@
           <checkbox v-model="showLanguages" :label="'Show Languages'" />
           <span v-if="filteredCandidates.length > 0" class="records-label">{{filteredCandidates.length}} record{{filteredCandidates.length > 1 ? "s" : ""}}</span>
         </div>
-        <table class="table-striped candidates non-clickable">
-          <thead>
-            <tr>
-              <th class="word-column">Word</th>
-              <th class="translation-column">Translation</th>
-              <th class="source-language-column" v-if="showLanguages">Source</th>
-              <th class="target-language-column" v-if="showLanguages">Target</th>
-              <th class="candidates-column">Candidates</th>
-            </tr>
-          </thead>
-          <tbody v-if="filteredCandidates.length !== 0 && !isActionInProgress">
-            <tr v-for="candidate of filteredCandidates" :key="candidate.record.id" @click="showCandidate(candidate)">
-              <td class="word-column" v-overflow-tooltip>
-                <div class="word-holder">{{candidate.record.sentence}} <span class="icon icon-flash" v-if="candidate.record.isForcedTranslation" title="Forced Translation"></span></div>
-              </td>
-              <td class="translation-column" v-overflow-tooltip>
-                <span v-if="!!candidate.record.translation">{{candidate.record.translation}}</span>
-                <span v-if="candidate.record.suggestion !== null" class="suggestion">(suggested: {{candidate.record.suggestion}})</span>
-                <span v-if="!candidate.record.translation" class="no-translation">No Translation</span>
-              </td>
-              <td class="source-language-column" v-overflow-tooltip v-if="showLanguages">{{languages.get(candidate.record.sourceLanguage) || candidate.record.sourceLanguage}}</td>
-              <td class="target-language-column" v-overflow-tooltip v-if="showLanguages">{{languages.get(candidate.record.targetLanguage) || candidate.record.targetLanguage}}</td>
-              <td class="candidates-column">{{candidate.mergeRecords.length}}</td>
-            </tr>
-          </tbody>
-          <tbody v-else-if="!isActionInProgress">
-            <tr>
-              <td :colspan="columnsNumber" class="no-records-available">
-                No Records to Merge Avialable
-              </td>
-            </tr>
-          </tbody>
-          <tbody v-else>
-            <tr>
-              <td :colspan="columnsNumber" class="loading-records-indicator">
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <data-table :configuration="candidatesTableConfiguration" :records="filteredCandidates" class="candidates" @update-columns-configuration="candidatesTableConfiguration.columns = $event" @record-click="showCandidate">
+          <div :slot="getHeaderSlotId(CandidatesTableColumns.Word)">
+            <div v-overflow-tooltip class="header">Word</div>
+          </div>
+          <div :slot="getBodySlotId(CandidatesTableColumns.Word)" slot-scope="{ record: candidate }" v-overflow-tooltip>
+            {{candidate.record.sentence}} <span class="icon icon-flash" v-if="candidate.record.isForcedTranslation" title="Forced Translation"></span>
+          </div>
+
+          <div :slot="getHeaderSlotId(CandidatesTableColumns.Translation)">
+            <div v-overflow-tooltip class="header">Translation</div>
+          </div>
+          <div :slot="getBodySlotId(CandidatesTableColumns.Translation)" slot-scope="{ record: candidate }" v-overflow-tooltip>
+            <span v-if="!!candidate.record.translation">{{candidate.record.translation}}</span>
+            <span v-if="candidate.record.suggestion !== null" class="suggestion">(suggested: {{candidate.record.suggestion}})</span>
+            <span v-if="!candidate.record.translation" class="no-translation">No Translation</span>
+          </div>
+
+          <div :slot="getHeaderSlotId(CandidatesTableColumns.SourceLanguage)">
+            <div v-overflow-tooltip class="header">Source</div>
+          </div>
+          <div :slot="getBodySlotId(CandidatesTableColumns.SourceLanguage)" slot-scope="{ record: candidate }" v-overflow-tooltip>
+            {{languages.get(candidate.record.sourceLanguage) || candidate.record.sourceLanguage}}
+          </div>
+
+          <div :slot="getHeaderSlotId(CandidatesTableColumns.TargetLanguage)">
+            <div v-overflow-tooltip class="header">Source</div>
+          </div>
+          <div :slot="getBodySlotId(CandidatesTableColumns.TargetLanguage)" slot-scope="{ record: candidate }" v-overflow-tooltip>
+            {{languages.get(candidate.record.targetLanguage) || candidate.record.targetLanguage}}
+          </div>
+
+          <div :slot="getHeaderSlotId(CandidatesTableColumns.Candidates)" class="candidates-column">
+            <div v-overflow-tooltip class="header">Target</div>
+          </div>
+          <div :slot="getBodySlotId(CandidatesTableColumns.Candidates)" slot-scope="{ record: candidate }" class="candidates-column">
+            {{candidate.mergeRecords.length}}
+          </div>
+
+          <div slot="empty" class="no-records-available">
+            No Records to Merge Avialable
+          </div>
+        </data-table>
       </div>
       <div class="candidate-view" v-if="isCandidateViewVisible">
         <div class="candidate-view-header">

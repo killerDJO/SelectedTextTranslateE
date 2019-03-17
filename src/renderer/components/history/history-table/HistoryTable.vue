@@ -1,5 +1,5 @@
 <template>
-  <data-table :configuration="tableConfiguration" :records="historyRecords" class="results" @update-columns-configuration="updateColumnsConfiguration">
+  <data-table :configuration="tableConfiguration" :records="historyRecords" class="results" @update-columns-configuration="updateColumnsConfiguration" @record-click="translateHistoryRecord">
 
     <div :slot="getHeaderSlotId(SortColumn.Input)">
       <sortable-header :sort-column="SortColumn.Input" :current-sort-column.sync="sortColumn$" :current-sort-order.sync="sortOrder$" />

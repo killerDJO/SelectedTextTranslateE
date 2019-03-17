@@ -29,4 +29,13 @@ tbody {
             @include ellipsis();
         }
     }
+
+    .loading-records-indicator {
+        height: 50px;
+        background-image: url("../../../icons/loader.svg" );
+        background-repeat: no-repeat;
+        background-size: 30px;
+        background-color: $color-white;
+        background-position: center;
+    }
 }

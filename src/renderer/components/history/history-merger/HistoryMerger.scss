@@ -32,32 +32,14 @@
         }
     
         .candidates {
-            .loading-records-indicator {
-                height: 50px;
-                background-image: url("../../../icons/loader.svg" );
-                background-repeat: no-repeat;
-                background-size: 30px;
-                background-color: $color-white;
-                background-position: center;
+            .header {
+                @include ellipsis();
+                padding-left: $padding-default;
+                padding-right: $padding-default;
             }
 
-            tbody tr:hover {
-                background-color: $color-active;
-            }
-    
-            .word-column,
-            .translation-column {
-                width: 30%;
-            }
-    
             .candidates-column {
                 text-align: center;
-                width: 10%;
-            }
-    
-            .source-language-column,
-            .target-language-column {
-                width: 10%;
             }
         }
     }

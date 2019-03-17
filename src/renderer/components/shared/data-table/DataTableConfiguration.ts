@@ -1,6 +1,6 @@
 export interface DataTableConfiguration<TRecord> {
     readonly columns: ReadonlyArray<DataTableColumnConfiguration>;
-    readonly onRecordClick: (record: TRecord) => void;
+    isLoading: boolean;
 }
 
 export interface DataTableColumnConfiguration {

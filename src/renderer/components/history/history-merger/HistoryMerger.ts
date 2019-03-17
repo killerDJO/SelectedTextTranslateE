@@ -5,8 +5,17 @@ import { namespace } from "vuex-class";
 import { MergeCandidate, MergeHistoryRecord } from "common/dto/history/MergeCandidate";
 import { MergeRecordsRequest } from "common/dto/history/MergeRecordsRequest";
 import { BlacklistRecordsRequest } from "common/dto/history/BlacklistRecordsRequest";
+import { DataTableConfiguration } from "components/shared/data-table/DataTableConfiguration";
 
 const ns = namespace("app/history/merger");
+
+enum CandidatesTableColumns {
+    Word = "word",
+    Translation = "translation",
+    SourceLanguage = "source-language",
+    TargetLanguage = "target-language",
+    Candidates = "candidates"
+}
 
 @Component
 export default class HistoryMerger extends Vue {
@@ -26,6 +35,9 @@ export default class HistoryMerger extends Vue {
     @ns.Action public readonly mergeRecords!: (request: MergeRecordsRequest) => void;
     @ns.Action public readonly blacklistRecords!: (request: BlacklistRecordsRequest) => void;
 
+    public CandidatesTableColumns: typeof CandidatesTableColumns = CandidatesTableColumns;
+    public candidatesTableConfiguration: DataTableConfiguration<MergeCandidate> = this.getCandidatesTableConfiguration();
+
     public showLanguages: boolean = false;
     public currentCandidateIndex: number = -1;
 
@@ -33,6 +45,18 @@ export default class HistoryMerger extends Vue {
     public onShow() {
         this.currentCandidateIndex = -1;
         this.fetchCandidates();
+    }
+
+    @Watch("showLanguages", { immediate: true })
+    public onShowLanguagesChanged() {
+        this.candidatesTableConfiguration.columns
+            .filter(column => column.id === CandidatesTableColumns.SourceLanguage || column.id === CandidatesTableColumns.TargetLanguage)
+            .forEach(column => column.isVisible = this.showLanguages);
+    }
+
+    @Watch("isActionInProgress")
+    public onActionProgressChanged() {
+        this.candidatesTableConfiguration.isLoading = this.isActionInProgress;
     }
 
     public get show$(): boolean {
@@ -61,6 +85,19 @@ export default class HistoryMerger extends Vue {
 
     public get filteredCandidates(): ReadonlyArray<MergeCandidate> {
         return this.mergeCandidates.filter(candidate => candidate.mergeRecords.length > 0);
+    }
+
+    public getCandidatesTableConfiguration(): DataTableConfiguration<MergeCandidate> {
+        return {
+            columns: [
+                { id: CandidatesTableColumns.Word, isVisible: true, weight: 1 },
+                { id: CandidatesTableColumns.Translation, isVisible: true, weight: 1 },
+                { id: CandidatesTableColumns.SourceLanguage, isVisible: this.showLanguages, weight: 0.5 },
+                { id: CandidatesTableColumns.TargetLanguage, isVisible: this.showLanguages, weight: 0.5 },
+                { id: CandidatesTableColumns.Candidates, isVisible: true, weight: 0.5 }
+            ],
+            isLoading: true
+        };
     }
 
     public showCandidate(candidate: MergeCandidate): void {
@@ -109,6 +146,14 @@ export default class HistoryMerger extends Vue {
         }
 
         this.promoteRecordToCandidate({ candidate: this.currentCandidate, record: mergeRecord });
+    }
+
+    public getHeaderSlotId(sortColumn: CandidatesTableColumns): string {
+        return `header.${sortColumn}`;
+    }
+
+    public getBodySlotId(sortColumn: CandidatesTableColumns): string {
+        return `body.${sortColumn}`;
     }
 
     private executeAction(mergeRecord: MergeHistoryRecord, action: (candidate: MergeCandidate) => void): void {
