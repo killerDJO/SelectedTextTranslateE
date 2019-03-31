@@ -32,14 +32,14 @@
           </div>
 
           <div :slot="getHeaderSlotId(CandidatesTableColumns.TargetLanguage)">
-            <div v-overflow-tooltip class="table-header">Source</div>
+            <div v-overflow-tooltip class="table-header">Target</div>
           </div>
           <div :slot="getBodySlotId(CandidatesTableColumns.TargetLanguage)" slot-scope="{ record: candidate }" v-overflow-tooltip>
             {{languages.get(candidate.record.targetLanguage) || candidate.record.targetLanguage}}
           </div>
 
           <div :slot="getHeaderSlotId(CandidatesTableColumns.Candidates)" class="candidates-column">
-            <div v-overflow-tooltip class="table-header">Target</div>
+            <div v-overflow-tooltip class="table-header">Candidates</div>
           </div>
           <div :slot="getBodySlotId(CandidatesTableColumns.Candidates)" slot-scope="{ record: candidate }" class="candidates-column">
             {{candidate.mergeRecords.length}}
@@ -82,7 +82,7 @@
           </div>
 
           <div :slot="getHeaderSlotId(CandidateTableColumns.Actions)" class="actions-column">
-            <div v-overflow-tooltip class="table-header">Times</div>
+            <div v-overflow-tooltip class="table-header">Actions</div>
           </div>
           <div :slot="getBodySlotId(CandidateTableColumns.Actions)" slot-scope="{ record: mergeRecord, index }" v-overflow-tooltip class="actions-column">
             <div v-if="index > 0">
