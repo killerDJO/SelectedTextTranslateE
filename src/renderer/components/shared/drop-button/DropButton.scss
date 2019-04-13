@@ -35,6 +35,7 @@
     .drop-content{
         position: fixed;
         left: -10000px;
+        @extend %box-shadow;
 
         border: $border-width solid $color-border;
         background-color: $color-white;
