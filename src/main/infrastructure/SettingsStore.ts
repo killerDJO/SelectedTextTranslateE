@@ -35,7 +35,7 @@ export class SettingsStore {
             return defaultValue;
         }
 
-        const value = this.store.get(name);
+        const value = this.store.get(name) as TValue;
         if (_.isArray(value)) {
             const arrayKey = settings[`$${key}.key`];
             if (!!arrayKey) {

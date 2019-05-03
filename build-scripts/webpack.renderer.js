@@ -80,13 +80,9 @@ module.exports = (env, argv) => {
             new HtmlWebpackPlugin({
                 template: path.resolve(__dirname, rendererPath, "index.html")
             }),
-            new CleanWebpackPlugin(
-                [
-                    path.resolve(__dirname, destinationPath)
-                ],
-                {
-                    allowExternal: true
-                }),
+            new CleanWebpackPlugin({
+                cleanStaleWebpackAssets: false
+            }),
             new webpack.NoEmitOnErrorsPlugin()
         ],
         optimization: {

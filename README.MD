@@ -32,9 +32,9 @@ Service component also runs inside a browser and provides background functionall
 - create-release - complex task which creates a read-to-use installer from a source code. Executes the following build tasks in order: `native-rebuild` -> `full-build-prod` -> `pack` -> `create-installer`.
 
 ### Firebase setup
-In order to provide history synchronization functionallity firebase is used as a backend. It must be configured before starting the appliation, otherwise history sync won't work. Most of the setup can be executed by navigating to the `src\firebase` folder and deploying an application from there. See [deploy guide](https://firebase.google.com/docs/hosting/deploying) for details. 
+In order to provide history synchronization functionality firebase is used as a backend. It must be configured before starting the application, otherwise history sync won't work. Most of the setup can be executed by navigating to the `src\firebase` folder and deploying an application from there. See [deploy guide](https://firebase.google.com/docs/hosting/deploying) for details. 
 
-The password restore functionality should be configured additionaly by providing a custom email template. To do this, navigate to `Firebase Console -> Authentication -> Templates -> Change Password` and provide the following items:
+The password restore functionality should be configured additionally by providing a custom email template. To do this, navigate to `Firebase Console -> Authentication -> Templates -> Change Password` and provide the following items:
 ```
 <p>Hello,</p>
 <p>Follow this link to get your %APP_NAME% password reset code for your %EMAIL% account.</p>

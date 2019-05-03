@@ -39,13 +39,9 @@ module.exports = (env, argv) => {
         },
         externals: [...Object.keys(package.devDependencies)],
         plugins: [
-            new CleanWebpackPlugin(
-                [
-                    destinationPath
-                ],
-                {
-                    allowExternal: true
-                }),
+            new CleanWebpackPlugin({
+                cleanStaleWebpackAssets: false
+            }),
             new CopyWebpackPlugin([
                 {
                     from: path.resolve(__dirname, "../src/main/presentation/icons"),

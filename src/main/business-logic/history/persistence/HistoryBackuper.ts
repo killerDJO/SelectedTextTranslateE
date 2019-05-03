@@ -247,7 +247,7 @@ export class HistoryBackuper {
         return null;
     }
 
-    private handleFsError(error: NodeJS.ErrnoException): void {
+    private handleFsError(error: NodeJS.ErrnoException | null): void {
         if (!!error) {
             throw new Error(error.message);
         }
