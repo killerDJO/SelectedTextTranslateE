@@ -1,4 +1,4 @@
-.table-striped {
+table.table-striped {
     border: $border-width solid $color-border;
     width: 100%;
     table-layout: fixed;
@@ -37,19 +37,20 @@
         }
     }
 
-    &.non-clickable {
+    &.non-clickable tbody {
+        $table-row-color: #f5f5f4;
         tr:active {
             color: $color-font;
             background-color: $color-white;
 
             &:nth-child(even) {
-                background-color: $color-background;
+                background-color:  $table-row-color;
             }
         }
 
         thead tr:active {
             color: $color-font;
-            background-color: $color-background;
+            background-color: $table-row-color;
         }
     }
 }
