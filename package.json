@@ -52,7 +52,8 @@
     "vuex": "3.1.0",
     "vuex-class": "0.3.2",
     "winston": "3.2.1",
-    "xmldom": "0.1.27"
+    "xmldom": "0.1.27",
+    "ajv": "6.10.0"
   },
   "devDependencies": {
     "@types/electron-devtools-installer": "2.2.0",
@@ -65,7 +66,6 @@
     "@types/nedb": "1.8.7",
     "@types/node": "11.13.9",
     "@types/xmldom": "0.1.29",
-    "ajv": "6.10.0",
     "clean-webpack-plugin": "2.0.1",
     "copy-webpack-plugin": "5.0.3",
     "css-loader": "2.1.1",
