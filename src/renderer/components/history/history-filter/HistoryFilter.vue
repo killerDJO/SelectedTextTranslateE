@@ -45,7 +45,8 @@
       </div>
     </div>
     <div class="form-group history-filter-item">
-      <checkbox v-model="currentFilter.unsyncedOnly" :label="'Unsynced only'" />
+      <checkbox v-model="currentFilter.unsyncedOnly" :label="'Unsynced Only'" />
+      <checkbox v-model="currentFilter.includeArchived" :label="'Show Archived'" />
     </div>
   </div>
 </template>

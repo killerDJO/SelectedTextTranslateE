@@ -119,13 +119,6 @@ export default class History extends Vue {
         return this.filter.starredOnly;
     }
 
-    public set includeArchived$(value: boolean) {
-        this.updateFilter({ includeArchived: value });
-    }
-    public get includeArchived$(): boolean {
-        return this.filter.includeArchived;
-    }
-
     public get pageCount(): number {
         return Math.ceil(this.totalRecords / this.pageSize);
     }

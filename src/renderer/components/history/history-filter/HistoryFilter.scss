@@ -42,4 +42,12 @@ $range-spacing: 25px;
         align-items: center;
         justify-items: center;
     }
+
+    .checkbox {
+        display: block;
+
+        &:not(:last-child) {
+            margin-bottom: $margin-default;
+        }
+    }
 }
