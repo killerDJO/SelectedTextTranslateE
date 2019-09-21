@@ -13,8 +13,8 @@ export class ErrorHandler {
             await this.handleError("Unhandled Error", err);
         });
 
-        process.on("unhandledRejection", async err => {
-            await this.handleError("Unhandled Promise Rejection", err);
+        process.on("unhandledRejection", async reason => {
+            await this.handleError("Unhandled Promise Rejection", (reason as Error) || new Error("<no_error_available>"));
         });
     }
 
@@ -34,7 +34,7 @@ export class ErrorHandler {
             message: "Unexpected error has occurred. See error log for more details.",
             buttons: ["Open logs directory", "Close"]
         };
-        const clickedButtonIndex = dialog.showMessageBox(messageBoxOptions);
+        const clickedButtonIndex = dialog.showMessageBoxSync(messageBoxOptions);
         if (clickedButtonIndex === 0) {
             this.logger.openLogFolder();
         }

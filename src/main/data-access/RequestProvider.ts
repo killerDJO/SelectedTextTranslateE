@@ -29,7 +29,7 @@ export class RequestProvider {
         return this.executeRequest(url).pipe(map(content => content.data));
     }
 
-    private executeRequest(url: string, responseType?: string): Observable<any> {
+    private executeRequest(url: string, responseType?: "arraybuffer"): Observable<any> {
         return defer(() => {
             return from<any>(axios.get(url, {
                 responseType: responseType,

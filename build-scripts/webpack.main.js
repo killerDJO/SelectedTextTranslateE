@@ -1,6 +1,6 @@
 const path = require("path");
 const webpack = require("webpack");
-const CleanWebpackPlugin = require("clean-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const package = require("../package.json");
 const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");

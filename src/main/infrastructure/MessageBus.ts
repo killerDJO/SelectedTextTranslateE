@@ -6,7 +6,6 @@ import { Message } from "common/messaging/Message";
 import { createMessage } from "common/messaging/create-message";
 
 import { Environment } from "infrastructure/Environment";
-import { Logger } from "infrastructure/Logger";
 
 interface IpcSubscription {
     readonly channel: string;
@@ -40,8 +39,6 @@ export class MessageBus {
             if (this.window.isDestroyed()) {
                 if (Environment.isDevelopment()) {
                     throw Error("Window has been destroyed. Make sure subscription is disposed properly.");
-                } else {
-                    return;
                 }
             }
 
@@ -77,7 +74,7 @@ export class MessageBus {
     }
 
     public handleCommand<TArgs, TResult = void>(name: string, handler: (args: TArgs) => Observable<TResult>): void {
-        this.createSubscription(Channels.Observe, async (event: Electron.Event, message: Message, args: TArgs) => {
+        this.createSubscription(Channels.Observe, async (_, message: Message, args: TArgs) => {
             if (message.name !== name) {
                 return;
             }
@@ -122,7 +119,7 @@ export class MessageBus {
     }
 
     private createSubscription(channel: string, callback: (event: Electron.Event, ...args: any[]) => void): void {
-        const subscriptionCallback = (event: Electron.Event, ...args: any[]) => {
+        const subscriptionCallback = (event: Electron.IpcMainEvent, ...args: any[]) => {
             if (!this.isCurrentWindowEvent(event)) {
                 return;
             }
@@ -133,7 +130,7 @@ export class MessageBus {
         this.ipcSubscriptions.push({ channel: channel, callback: subscriptionCallback });
     }
 
-    private isCurrentWindowEvent(event: Electron.Event): boolean {
+    private isCurrentWindowEvent(event: Electron.IpcMainEvent): boolean {
         return event.sender.id === this.window.webContents.id;
     }
 }

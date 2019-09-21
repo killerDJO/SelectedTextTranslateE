@@ -29,8 +29,9 @@ void BroadcastCopyCommand(const v8::FunctionCallbackInfo<v8::Value> &args)
 
     if (!SendInput(key_count, LPINPUT(input), sizeof(INPUT)))
     {
-        isolate->ThrowException(v8::Exception::Error(
-            v8::String::NewFromUtf8(isolate, "SendInput command failed.")));
+        v8::Local<v8::String> errorMessage;
+        v8::String::NewFromUtf8(isolate, "SendInput command failed.").ToLocal(&errorMessage);
+        isolate->ThrowException(v8::Exception::Error(errorMessage));
     }
 }
 

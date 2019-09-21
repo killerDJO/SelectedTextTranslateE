@@ -6,7 +6,7 @@
         "<!(node -e \"require('nan')\")"
       ],
       "sources": [ "native-extensions.cpp" ],
-      "libraries": [ "Winmm.lib" ]
+      "libraries": [ ]
     }
   ]
 }

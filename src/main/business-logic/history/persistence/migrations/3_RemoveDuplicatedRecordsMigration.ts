@@ -22,7 +22,7 @@ export class RemoveDuplicatedRecordsMigration extends HistoryMigration {
     public migrate(datastore: Datastore): Observable<void> {
         return this.datastoreProvider.find<HistoryRecord>(of(datastore), {}).pipe(
             concatMap((historyRecords: HistoryRecord[]) => {
-                const duplicatedIds = _<HistoryRecord[]>(historyRecords)
+                const duplicatedIds = _(historyRecords)
                     .map(record => record.id)
                     .groupBy()
                     .pickBy(x => x.length > 1)

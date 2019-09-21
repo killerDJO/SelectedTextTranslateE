@@ -28,7 +28,7 @@ export class Updater {
         autoUpdater.checkForUpdates();
     }
 
-    private promptForUpdate(releaseNotes: string, releaseName: string) {
+    private async promptForUpdate(releaseNotes: string, releaseName: string) {
         const dialogOpts = {
             type: "info",
             buttons: ["Restart", "Later"],
@@ -37,11 +37,11 @@ export class Updater {
             detail: "A new version has been downloaded. Restart the application to apply the updates."
         };
 
-        dialog.showMessageBox(dialogOpts, (response) => {
-            if (response === 0) {
-                autoUpdater.quitAndInstall();
-            }
-        });
+        const returnValue = await dialog.showMessageBox(dialogOpts);
+
+        if (returnValue.response === 0) {
+            autoUpdater.quitAndInstall();
+        }
     }
 
     private handleError(error: Error): void {
