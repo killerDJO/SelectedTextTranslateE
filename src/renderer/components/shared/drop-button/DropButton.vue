@@ -13,14 +13,14 @@
       </icon-button>
     </div>
 
-    <div ref="dropContent" class="drop-content">
+    <div ref="dropContent" class="drop-content" v-show="isDropContentVisible">
       <ul class="drop-items">
         <li
           class="drop-item"
           v-for="item in items"
           :key="item.text"
           v-tab-index="tabIndex"
-          @click.stop.prevent="itemClick(item)">
+          @click="itemClick(item)">
           <slot :item="item">
             {{ item.text }}
           </slot>

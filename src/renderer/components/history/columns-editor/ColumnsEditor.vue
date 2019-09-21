@@ -9,7 +9,7 @@
         @click="toggleDrop"
         @item-click="itemClick"
         ref="dropButton">
-    <div class="drop-item-value" slot-scope="{ item }" @click.prevent>
+    <div class="drop-item-value" slot-scope="{ item }">
       <checkbox v-model="item.isChecked" :label="item.text" :tab-index="-1" :disabled="item.isDisabled"/>
       <span class="order-icons">
           <icon-button :title="'Move Up'" class="move-up" @click="moveUp(item)">
