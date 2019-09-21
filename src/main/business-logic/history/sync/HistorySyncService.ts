@@ -255,7 +255,8 @@ export class HistorySyncService {
                             userEmail: currentUser.email,
                             serverTimestamp: serverSyncData.serverTimestamp,
                             serverTranslationsNumber: serverRecord.translationsNumber,
-                            serverTags: serverRecord.tags
+                            serverTags: serverRecord.tags,
+                            lastModifiedDate: serverRecord.lastModifiedDate
                         }
                     ]
                 };
