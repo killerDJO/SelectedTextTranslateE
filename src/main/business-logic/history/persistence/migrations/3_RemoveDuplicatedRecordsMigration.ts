@@ -16,6 +16,7 @@ import { HistoryMigration } from "business-logic/history/persistence/migrations/
 export class RemoveDuplicatedRecordsMigration extends HistoryMigration {
 
     constructor(private readonly datastoreProvider: DatastoreProvider, private readonly logger: Logger) {
+        // tslint:disable-next-line no-magic-numbers
         super(3, "RemoveDuplicatedRecordsMigration");
     }
 

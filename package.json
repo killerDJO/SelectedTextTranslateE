@@ -23,7 +23,8 @@
     "create-release": "npm run native-rebuild && npm run full-build-prod && npm run pack && npm run create-installer",
     "pack": "node build-scripts/package.js",
     "create-installer": "node build-scripts/create-installer.js",
-    "native-rebuild": "node build-scripts/build-native.js && npx electron-rebuild"
+    "native-rebuild": "node build-scripts/build-native.js && npx electron-rebuild",
+    "lint-all": "npx tslint --project src/main && npx tslint --project src/renderer && npx tslint --project src/service-renderer"
   },
   "dependencies": {
     "axios": "0.19.0",

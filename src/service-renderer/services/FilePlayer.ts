@@ -13,7 +13,8 @@ export class FilePlayer {
     }
 
     private playFile(request: PlayFileRequest): Promise<void> {
-        const audio = new Audio(`${request.filePath}?noCache=${Math.floor(Math.random() * 1000000)}`);
+        const RANDOM_MULTIPLIER = 1000000;
+        const audio = new Audio(`${request.filePath}?noCache=${Math.floor(Math.random() * RANDOM_MULTIPLIER)}`);
         audio.volume = request.volume / 100;
         return audio.play().catch(error => this.logger.error("Unable to play audio file.", error));
     }

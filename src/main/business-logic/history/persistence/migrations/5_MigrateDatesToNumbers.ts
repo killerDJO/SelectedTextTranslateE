@@ -10,6 +10,7 @@ import { HistoryRecordsMigration } from "business-logic/history/persistence/migr
 export class MigrateDatesToNumbers extends HistoryRecordsMigration {
 
     constructor(datastoreProvider: DatastoreProvider) {
+        // tslint:disable-next-line no-magic-numbers
         super(5, "MigrateDatesToNumbers.v2", datastoreProvider);
     }
 

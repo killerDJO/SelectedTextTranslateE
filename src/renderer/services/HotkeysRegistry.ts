@@ -30,8 +30,10 @@ class HotkeysRegistry {
     private remapKey(key: string): string {
         const lowerCaseKey = key.toLowerCase();
         const keysMap: { [key: string]: string } = {
+            // tslint:disable: object-literal-key-quotes
             "control": "ctrl",
             "delete": "del"
+            // tslint:enable: object-literal-key-quotes
         };
         return keysMap[lowerCaseKey] || lowerCaseKey;
     }

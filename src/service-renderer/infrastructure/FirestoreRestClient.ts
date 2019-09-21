@@ -130,7 +130,8 @@ export class FirestoreRestClient {
             body: JSON.stringify(payload)
         });
 
-        if (response.status !== 200) {
+        const STATUS_CODE_OK = 200;
+        if (response.status !== STATUS_CODE_OK) {
             const responsePayload = await response.json();
             const status = responsePayload.error.status;
             if (status === "FAILED_PRECONDITION" || status === "ALREADY_EXISTS") {

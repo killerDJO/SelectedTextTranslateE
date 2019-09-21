@@ -36,6 +36,7 @@ export default class App extends Vue {
     }
 
     public repaintLayout(): void {
+        const RepaintTimeout = 10;
         setTimeout(
             () => {
                 const scrollHolder = this.$el.getElementsByClassName("scroll-holder")[0] as HTMLElement;
@@ -47,7 +48,7 @@ export default class App extends Vue {
                 const hight = scrollHolder.offsetHeight;
                 scrollHolder.style.width = originalWidth;
             },
-            10);
+            RepaintTimeout);
     }
 
     @Watch("hotkeySettings", { deep: true })

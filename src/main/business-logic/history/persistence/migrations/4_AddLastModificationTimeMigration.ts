@@ -10,6 +10,7 @@ import { HistoryRecordsMigration } from "business-logic/history/persistence/migr
 export class AddLastModificationTimeMigration extends HistoryRecordsMigration {
 
     constructor(datastoreProvider: DatastoreProvider) {
+        // tslint:disable-next-line no-magic-numbers
         super(4, "AddLastModificationTimeMigration", datastoreProvider);
     }
 

@@ -157,7 +157,18 @@ export class HistoryQueryExecutor {
 
         if (!!filter.maxLastTranslatedDate) {
             const maxLastTranslatedDate = new Date(filter.maxLastTranslatedDate);
-            const maxDate = new Date(maxLastTranslatedDate.getFullYear(), maxLastTranslatedDate.getMonth(), maxLastTranslatedDate.getDate(), 24, 60, 60, 1000);
+            const HoursInDay = 24;
+            const MinutesInHour = 60;
+            const SecondsInMinute = 60;
+            const MillisecondsInSecond = 1000;
+            const maxDate = new Date(
+                maxLastTranslatedDate.getFullYear(),
+                maxLastTranslatedDate.getMonth(),
+                maxLastTranslatedDate.getDate(),
+                HoursInDay,
+                MinutesInHour,
+                SecondsInMinute,
+                MillisecondsInSecond);
             query.$and.push(
                 { lastTranslatedDate: { $lte: maxDate.getTime() } },
             );

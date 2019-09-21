@@ -10,6 +10,7 @@ import { RecordIdGenerator } from "business-logic/history/RecordIdGenerator";
 export class AddIdentifierMigration extends HistoryRecordsMigration {
 
     constructor(private readonly recordIdGenerator: RecordIdGenerator, datastoreProvider: DatastoreProvider) {
+        // tslint:disable-next-line no-magic-numbers
         super(2, "AddIdentifierMigration", datastoreProvider);
     }
 

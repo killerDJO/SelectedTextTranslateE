@@ -77,9 +77,7 @@ export class TranslatePageParser {
         }
 
         if (!!node.childNodes) {
-            for (let i = 0; i < node.childNodes.length; ++i) {
-                const childNode = node.childNodes[i];
-
+            for (const childNode of node.childNodes) {
                 const scriptTag = this.findScriptContent(childNode);
                 if (scriptTag !== null) {
                     return scriptTag;

@@ -38,9 +38,9 @@ export default class TranslationResultContentCategory extends Vue {
 
         if (this.numberOfInitiallyHiddenEntries === 1) {
             return "show 1 more result";
-        } else {
-            return `show ${this.numberOfInitiallyHiddenEntries} more results`;
         }
+
+        return `show ${this.numberOfInitiallyHiddenEntries} more results`;
     }
 
     public toggleExpansionState(): void {

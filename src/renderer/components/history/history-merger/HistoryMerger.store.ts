@@ -30,7 +30,7 @@ export const historyMerger: Module<HistoryMergerState, RootState> = {
         setInProgress(state: HistoryMergerState): void {
             state.isActionInProgress = true;
         },
-        removeRecordFromCandidate(state: HistoryMergerState, { candidate, record }: { candidate: MergeCandidate, record: MergeHistoryRecord }): void {
+        removeRecordFromCandidate(state: HistoryMergerState, { candidate, record }: { candidate: MergeCandidate; record: MergeHistoryRecord }): void {
             const currentCandidateIndex = state.mergeCandidates.indexOf(candidate);
 
             Vue.set(state.mergeCandidates, currentCandidateIndex, {
@@ -38,7 +38,7 @@ export const historyMerger: Module<HistoryMergerState, RootState> = {
                 mergeRecords: candidate.mergeRecords.filter(mergeRecord => mergeRecord !== record)
             });
         },
-        promoteRecordToCandidate(state: HistoryMergerState, { candidate, record }: { candidate: MergeCandidate, record: MergeHistoryRecord }): void {
+        promoteRecordToCandidate(state: HistoryMergerState, { candidate, record }: { candidate: MergeCandidate; record: MergeHistoryRecord }): void {
             const currentCandidateIndex = state.mergeCandidates.indexOf(candidate);
 
             Vue.set(state.mergeCandidates, currentCandidateIndex, {

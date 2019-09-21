@@ -2,8 +2,9 @@ import { isArray } from "util";
 import { injectable } from "inversify";
 import * as _ from "lodash";
 
+// tslint:disable no-magic-numbers no-unsafe-any
+
 import { TranslateResult, TranslateResultSentence, TranslateResultCategory, TranslateResultCategoryEntry, TranslateResultDefinitionCategory, TranslateResultDefinitionCategoryEntry } from "common/dto/translation/TranslateResult";
-// tslint:disable no-magic-numbers
 // Relevant response has the following format
 // [
 // 0:  [

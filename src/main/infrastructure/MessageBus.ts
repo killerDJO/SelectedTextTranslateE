@@ -66,7 +66,7 @@ export class MessageBus {
 
     public observeCommand<TValue>(name: string): Observable<TValue> {
         const subject$ = new ReplaySubject<TValue>(1);
-        this.handleCommand<TValue, void>(name, args => {
+        this.handleCommand<TValue>(name, args => {
             subject$.next(args);
             return of(void 0);
         });

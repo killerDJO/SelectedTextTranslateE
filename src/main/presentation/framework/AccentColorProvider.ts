@@ -27,6 +27,7 @@ export class AccentColorProvider {
     }
 
     private convertFromRgbaToRgb(color: string): string {
-        return color.substr(0, 6);
+        const RgbPartLength = "FFAABB".length;
+        return color.substr(0, RgbPartLength);
     }
 }

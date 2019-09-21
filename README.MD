@@ -1,3 +1,6 @@
+# Selected Text Translate
+<img src="https://travis-ci.com/killerDJO/SelectedTextTranslateE.svg?branch=master"/>
+
 # Development Setup
 
 ## Prerequisites

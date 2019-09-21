@@ -4,6 +4,7 @@ import { map, take } from "rxjs/operators";
 
 import { TranslatePageParser } from "business-logic/translation/TranslatePageParser";
 import { TranslationConfig } from "business-logic/translation/dto/TranslationConfig";
+// tslint:disable no-magic-numbers
 
 @injectable()
 export class HashProvider {
@@ -24,8 +25,8 @@ export class HashProvider {
         const pow32minus1: number = 4294967295;
         const pow31minus1: number = (pow32minus1 - 1) / 2;
 
-        for (let i = 0; i < bytes.length; ++i) {
-            a = a + bytes[i];
+        for (const byte of bytes) {
+            a = a + byte;
 
             /* ------ */
             a = a + ((a << 10) & pow32minus1);

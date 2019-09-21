@@ -59,6 +59,7 @@ export class MessageBus {
 export class Subscription {
     constructor(
         private readonly channel: string,
+        // tslint:disable-next-line: ban-types
         private readonly callback: Function) {
     }
 

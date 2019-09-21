@@ -46,8 +46,8 @@ class Bootstrapper {
     }
 
     private static bootstrapVue(): void {
-        this.registerPlugins();
-        this.registerSharedComponents();
+        Bootstrapper.registerPlugins();
+        Bootstrapper.registerSharedComponents();
 
         new Vue({
             store: new Vuex.Store<RootState>(root),

@@ -35,8 +35,8 @@ export default class HistoryMerger extends Vue {
     @ns.State public isActionInProgress!: boolean;
     @ns.State public mergeCandidates!: ReadonlyArray<MergeCandidate>;
 
-    @ns.Mutation public removeRecordFromCandidate!: (request: { candidate: MergeCandidate, record: MergeHistoryRecord }) => void;
-    @ns.Mutation public promoteRecordToCandidate!: (request: { candidate: MergeCandidate, record: MergeHistoryRecord }) => void;
+    @ns.Mutation public removeRecordFromCandidate!: (request: { candidate: MergeCandidate; record: MergeHistoryRecord }) => void;
+    @ns.Mutation public promoteRecordToCandidate!: (request: { candidate: MergeCandidate; record: MergeHistoryRecord }) => void;
 
     @ns.Action public readonly fetchCandidates!: () => void;
     @ns.Action public readonly mergeRecords!: (request: MergeRecordsRequest) => void;

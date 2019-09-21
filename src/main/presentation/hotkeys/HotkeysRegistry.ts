@@ -115,7 +115,7 @@ export class HotkeysRegistry {
             try {
                 globalShortcut.register(this.createAccelerator(hotkey), action);
             } catch {
-                this.notificationSender.send("Unsupported hotkey", `This hotkeys combination is unsupported for global hotkeys: ${this.createAccelerator(hotkey)}.`);
+                this.notificationSender.send("Unsupported hotkey", `This hotkeys combination is unsupported for global hotkeys: ${this.createAccelerator(hotkey).toString()}.`);
             }
         });
     }
@@ -125,7 +125,7 @@ export class HotkeysRegistry {
             try {
                 globalShortcut.unregister(this.createAccelerator(hotkey));
             } catch {
-                this.logger.warning(`Attempting to unbind unsupported hotkeys sequence: ${this.createAccelerator(hotkey)}`);
+                this.logger.warning(`Attempting to unbind unsupported hotkeys sequence: ${this.createAccelerator(hotkey).toString()}`);
             }
         });
     }
