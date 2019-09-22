@@ -17,17 +17,20 @@ export class HistoryDatabaseProvider {
         private readonly historyMigrator: HistoryMigrator,
         private readonly historyBackuper: HistoryBackuper) {
 
-        const datastore = this.datastoreProvider.openDatabase(HistoryDatabaseProvider.DatabaseFileName);
-        this.historyDatastore$.next(datastore);
+        const datastore$ = this.datastoreProvider
+            .openDatabase(HistoryDatabaseProvider.DatabaseFileName);
 
-        this.historyBackuper.createBackups(HistoryDatabaseProvider.DatabaseFileName).subscribe({
-            complete: () => {
-                this.historyMigrator.runMigrations(datastore).subscribe({
-                    complete: () => {
-                        this.historyDatastore$.complete();
-                    }
-                });
-            }
+        datastore$.subscribe(datastore => {
+            this.historyDatastore$.next(datastore);
+            this.historyBackuper.createBackups(HistoryDatabaseProvider.DatabaseFileName).subscribe({
+                complete: () => {
+                    this.historyMigrator.runMigrations(datastore).subscribe({
+                        complete: () => {
+                            this.historyDatastore$.complete();
+                        }
+                    });
+                }
+            });
         });
     }
 }

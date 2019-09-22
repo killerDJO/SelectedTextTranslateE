@@ -1,27 +1,32 @@
 
-import { Observable } from "rxjs";
+import { Observable, AsyncSubject } from "rxjs";
 import { concatMap } from "rxjs/operators";
 import { injectable } from "inversify";
 import * as Datastore from "nedb";
 import * as path from "path";
 
 import { StorageFolderProvider } from "infrastructure/StorageFolderProvider";
+import { Logger } from "infrastructure/Logger";
 
 @injectable()
 export class DatastoreProvider {
 
-    constructor(private readonly storageFolderProvider: StorageFolderProvider) {
+    constructor(private readonly storageFolderProvider: StorageFolderProvider, private readonly logger: Logger) {
     }
 
     public getDatabaseFilename(name: string): string {
         return path.join(this.storageFolderProvider.getPath(), name);
     }
 
-    public openDatabase(name: string): Datastore {
-        return new Datastore({
-            filename: this.getDatabaseFilename(name),
-            autoload: true
+    public openDatabase(name: string): AsyncSubject<Datastore> {
+        const datastore$: AsyncSubject<Datastore> = new AsyncSubject();
+
+        this.loadDatastore(name).then(datastore => {
+            datastore$.next(datastore);
+            datastore$.complete();
         });
+
+        return datastore$;
     }
 
     public ensureUniqueIndex<TDocument>(datastore: Datastore, fieldName: keyof TDocument): Observable<void> {
@@ -113,5 +118,26 @@ export class DatastoreProvider {
         if (!!error) {
             throw error;
         }
+    }
+
+    private async loadDatastore(name: string): Promise<Datastore> {
+        const MAX_LOAD_ATTEMPTS = 3;
+        const loadAttempt = 1;
+        while (loadAttempt <= MAX_LOAD_ATTEMPTS) {
+            try {
+                this.logger.info(`Opening database ${name}. Attempt #${loadAttempt}.`);
+                return new Datastore({
+                    filename: this.getDatabaseFilename(name),
+                    autoload: true
+                });
+            } catch (error) {
+                this.logger.error(`Failed to open database ${name}.`, error);
+            }
+
+            const MILLISECONDS_IN_SECOND = 1000;
+            await new Promise(done => setTimeout(done, loadAttempt * MILLISECONDS_IN_SECOND));
+        }
+
+        throw new Error(`Error opening ${name} database.`);
     }
 }

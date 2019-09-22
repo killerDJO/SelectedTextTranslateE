@@ -77,7 +77,9 @@ export class TranslatePageParser {
         }
 
         if (!!node.childNodes) {
-            for (const childNode of node.childNodes) {
+            // tslint:disable-next-line prefer-for-of
+            for (let i = 0; i < node.childNodes.length; ++i) {
+                const childNode = node.childNodes[i];
                 const scriptTag = this.findScriptContent(childNode);
                 if (scriptTag !== null) {
                     return scriptTag;

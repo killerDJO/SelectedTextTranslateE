@@ -1,6 +1,6 @@
 import { injectable, multiInject } from "inversify";
 import * as Datastore from "nedb";
-import { concat, Observable, of } from "rxjs";
+import { concat, Observable, of, AsyncSubject } from "rxjs";
 import { tap, concatMap } from "rxjs/operators";
 
 import { Logger } from "infrastructure/Logger";
@@ -12,14 +12,14 @@ import { HistoryMigration } from "business-logic/history/persistence/migrations/
 export class HistoryMigrator {
     private static readonly HistoryDatabaseKey: string = "history";
 
-    private readonly migrationsStore: Datastore;
+    private readonly migrationsStore$: AsyncSubject<Datastore>;
 
     constructor(
         private readonly logger: Logger,
         private readonly datastoreProvider: DatastoreProvider,
         @multiInject(HistoryMigration) private readonly migrations: HistoryMigration[]) {
 
-        this.migrationsStore = this.datastoreProvider.openDatabase("migrations.db");
+        this.migrationsStore$ = this.datastoreProvider.openDatabase("migrations.db");
     }
 
     public runMigrations(datastore: Datastore): Observable<void> {
@@ -56,11 +56,11 @@ export class HistoryMigrator {
     }
 
     private getAppliedMigrations(): Observable<Migration[]> {
-        return this.datastoreProvider.find<Migration>(of(this.migrationsStore), { database: HistoryMigrator.HistoryDatabaseKey });
+        return this.datastoreProvider.find<Migration>(this.migrationsStore$, { database: HistoryMigrator.HistoryDatabaseKey });
     }
 
     private addAppliedMigrations(name: string): Observable<Migration> {
-        return this.datastoreProvider.insert(of(this.migrationsStore), { database: HistoryMigrator.HistoryDatabaseKey, name: name });
+        return this.datastoreProvider.insert(this.migrationsStore$, { database: HistoryMigrator.HistoryDatabaseKey, name: name });
     }
 }
 
