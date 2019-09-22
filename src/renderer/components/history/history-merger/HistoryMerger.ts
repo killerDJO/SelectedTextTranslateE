@@ -78,7 +78,7 @@ export default class HistoryMerger extends Vue {
     }
 
     public get currentCandidate(): MergeCandidate | null {
-        return this.mergeCandidates[this.currentCandidateIndex] || null;
+        return this.filteredCandidates[this.currentCandidateIndex] || null;
     }
 
     public get currentMergeRecords() {
@@ -124,11 +124,31 @@ export default class HistoryMerger extends Vue {
     }
 
     public showCandidate(candidate: MergeCandidate): void {
-        this.currentCandidateIndex = this.mergeCandidates.indexOf(candidate);
+        this.currentCandidateIndex = this.filteredCandidates.indexOf(candidate);
     }
 
     public backToCandidates(): void {
         this.currentCandidateIndex = -1;
+    }
+
+    public nextCandidate(): void {
+        if (this.isNextCandidateEnabled) {
+            this.currentCandidateIndex++;
+        }
+    }
+
+    public previousCandidate(): void {
+        if (this.isPreviousCandidateEnabled) {
+            this.currentCandidateIndex--;
+        }
+    }
+
+    public get isNextCandidateEnabled(): boolean {
+        return this.currentCandidateIndex !== -1 && this.currentCandidateIndex < this.filteredCandidates.length - 1;
+    }
+
+    public get isPreviousCandidateEnabled(): boolean {
+        return this.currentCandidateIndex !== -1 && this.currentCandidateIndex !== 0;
     }
 
     public get columnsNumber(): number {
@@ -188,8 +208,14 @@ export default class HistoryMerger extends Vue {
 
         this.removeRecordFromCandidate({ candidate: this.currentCandidate, record: mergeRecord });
 
-        if (this.currentCandidate.mergeRecords.length === 0) {
-            this.backToCandidates();
+        if (this.currentCandidate === null) {
+            if (this.isNextCandidateEnabled) {
+                this.nextCandidate();
+            } else if (this.isPreviousCandidateEnabled) {
+                this.previousCandidate();
+            } else {
+                this.backToCandidates();
+            }
         }
     }
 

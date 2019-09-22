@@ -52,10 +52,15 @@
       </div>
       <div class="candidate-view" v-if="isCandidateViewVisible">
         <div class="candidate-view-header">
-          <icon-button @click="backToCandidates" :title="'Back'">
-            <i class="icon icon-left back-button"></i>
+          <link-button @click="backToCandidates" :text="'Back To List'" />
+        </div>
+        <div class="candidate-view-controls">
+          <icon-button @click="previousCandidate" :title="'Previous'" :disabled="!isPreviousCandidateEnabled" class="navigation-button">
+            <i class="icon icon-left"></i>
           </icon-button>
-          Back
+          <icon-button @click="nextCandidate" :title="'Next'" :disabled="!isNextCandidateEnabled" class="navigation-button">
+            <i class="icon icon-right"></i>
+          </icon-button>
         </div>
         <data-table :configuration="candidateTableConfiguration" :records="currentMergeRecords" class="candidate" @update-columns-configuration="candidateTableConfiguration.columns = $event">
           <div :slot="getHeaderSlotId(CandidateTableColumns.Word)">

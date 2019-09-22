@@ -9,12 +9,20 @@ export default class IconButton extends Vue {
     public title!: string;
 
     @Prop({
+        type: Boolean,
+        default: false
+    })
+    public disabled!: boolean;
+
+    @Prop({
         type: Number,
         default: 0
     })
     public tabIndex!: number;
 
     public click(): void {
-        this.$emit("click");
+        if (!this.disabled) {
+            this.$emit("click");
+        }
     }
 }

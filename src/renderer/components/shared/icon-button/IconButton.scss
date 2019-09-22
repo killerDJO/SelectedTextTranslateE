@@ -4,9 +4,13 @@
     .icon-holder {
         outline: none;
         line-height: 0;
+    }
 
-        :first-child {
-            cursor: pointer;
-        }
+    &:not(.disabled) .icon-holder :first-child {
+        cursor: pointer;
+    }
+
+    &.disabled {
+        opacity: 0.5;
     }
 }

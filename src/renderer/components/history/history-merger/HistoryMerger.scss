@@ -46,17 +46,26 @@
     .candidate-view {
         .candidate-view-header {
             padding: $padding-small 0;
+            display: inline-block;
+        }
 
-            .back-button {
-                color: $color-gray;
+        .navigation-button {
+            color: $color-gray;
 
-                &:hover {
-                    color: $color-black;
-                }
+            &:hover:not(.disabled) {
+                color: $color-black;
             }
+        }
 
-            .sentence {
-                font-weight: bold;
+        .candidate-view-controls {
+            display: inline-flex;
+            float: right;
+            padding: $padding-small 0;
+            height: 30px;
+            align-items: center;
+
+            .navigation-button {
+                padding-left: $padding-small;
             }
         }
 
