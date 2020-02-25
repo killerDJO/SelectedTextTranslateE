@@ -1,5 +1,5 @@
 # Selected Text Translate
-[![Build Status](https://travis-ci.com/killerDJO/SelectedTextTranslateE.svg?branch=master)](https://travis-ci.com/killerDJO/SelectedTextTranslateE)
+[![Build Status](https://travis-ci.org/killerDJO/SelectedTextTranslateE.svg?branch=master)](https://travis-ci.com/killerDJO/SelectedTextTranslateE)
 
 # Development Setup
 
