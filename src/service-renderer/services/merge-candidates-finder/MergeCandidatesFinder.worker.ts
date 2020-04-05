@@ -84,7 +84,7 @@ export class MergeCandidatesFinder {
         return items.some(item => this.equalsIgnoreCase(item, text));
     }
 
-    private equalsIgnoreCase(first: string | null, second: string | null): boolean {
+    private equalsIgnoreCase(first: string | null | undefined, second: string | null | undefined): boolean {
         if (!first || !second) {
             return false;
         }
