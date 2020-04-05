@@ -18,7 +18,7 @@ export class HistoryDatabaseProvider {
         private readonly historyBackuper: HistoryBackuper) {
 
         const datastore$ = this.datastoreProvider
-            .openDatabase(HistoryDatabaseProvider.DatabaseFileName)
+            .openDatabase(HistoryDatabaseProvider.DatabaseFileName);
 
         datastore$.subscribe(datastore => {
             this.historyDatastore$.next(datastore);

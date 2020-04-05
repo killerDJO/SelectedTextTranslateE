@@ -9,8 +9,7 @@ import { Environment } from "infrastructure/Environment";
 
 interface IpcSubscription {
     readonly channel: string;
-    // tslint:disable-next-line:ban-types
-    readonly callback: Function;
+    callback(...args: any[]): void;
 }
 
 interface MessageRegistration<TResult> {

@@ -1,15 +1,16 @@
-import { ipcRenderer } from "electron";
-import { Channels, Messages } from "common/messaging/Messages";
+import { ipcRenderer, IpcRendererEvent } from "electron";
+import { Channels } from "common/messaging/Messages";
 import { Message } from "common/messaging/Message";
 import { createMessage } from "common/messaging/create-message";
 
 export class MessageBus {
 
     public observeValue<TValue, TResult = void>(name: string, callback: (value: TValue) => TResult | Promise<TResult>): Subscription {
-        const subscription = new Subscription(Channels.Observe, (sender: Electron.EventEmitter, message: Message, value: TValue) => {
+        const subscription = new Subscription(Channels.Observe, (_: IpcRendererEvent, message: Message, value: TValue) => {
             if (message.name !== name) {
                 return;
             }
+            console.log(`message recived: ${name}`)
             const result = callback(value);
             if (result instanceof Promise) {
                 result.then(resultValue => ipcRenderer.send(Channels.Received, message, resultValue));
@@ -38,7 +39,7 @@ export class MessageBus {
 
             ipcRenderer.send(Channels.Observe, message, args);
 
-            const subscription = new Subscription(Channels.Observe, (sender: Electron.EventEmitter, receivedMessage: Message, value: TResult) => {
+            const subscription = new Subscription(Channels.Observe, (_: IpcRendererEvent, receivedMessage: Message, value: TResult) => {
                 if (message.name !== receivedMessage.name || message.id !== receivedMessage.id) {
                     return;
                 }
@@ -59,8 +60,7 @@ export class MessageBus {
 export class Subscription {
     constructor(
         private readonly channel: string,
-        // tslint:disable-next-line: ban-types
-        private readonly callback: Function) {
+        private readonly callback: (event: IpcRendererEvent, ...args: any[]) => void) {
     }
 
     public subscribe() {

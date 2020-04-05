@@ -173,10 +173,11 @@ export class HistoryBackuper {
     private ensureBackupsFolderExists(backupType: BackupType): Observable<void> {
         const backupsFolder = this.getBackupsFolderPath(backupType);
         return new Observable(observer => {
-            mkdirp(backupsFolder, (error: NodeJS.ErrnoException) => {
-                this.handleFsError(error);
+            mkdirp(backupsFolder).then(() => {
                 observer.next();
                 observer.complete();
+            }).catch(error => {
+                this.handleFsError(error);
             });
         });
     }

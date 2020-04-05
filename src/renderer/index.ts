@@ -42,7 +42,6 @@ class Bootstrapper {
     private static preventNativeZoom(): void {
         webFrame.setZoomFactor(1);
         webFrame.setVisualZoomLevelLimits(1, 1);
-        webFrame.setLayoutZoomLevelLimits(0, 0);
     }
 
     private static bootstrapVue(): void {
