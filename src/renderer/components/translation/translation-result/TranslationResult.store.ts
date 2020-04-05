@@ -89,7 +89,7 @@ export const translateResultActions = {
             commit,
             Messages.TranslateResult.TranslateCommand,
             historyRecord => ({
-                text: historyRecord.translateResult.sentence.suggestion,
+                text: historyRecord.translateResult.sentence.suggestion || null,
                 isForcedTranslation: false,
                 refreshCache: false,
                 sourceLanguage: historyRecord.sourceLanguage,

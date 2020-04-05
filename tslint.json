@@ -43,6 +43,7 @@
         "no-unnecessary-qualifier": false,
         "no-unnecessary-class": false,
         "no-use-before-declare": false,
+        "no-null-undefined-union": false,
         "no-void-expression": false,
         "prefer-function-over-method": false,
         "prefer-conditional-expression": false,

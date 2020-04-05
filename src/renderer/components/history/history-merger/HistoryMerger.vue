@@ -20,7 +20,7 @@
           </div>
           <div :slot="getBodySlotId(CandidatesTableColumns.Translation)" slot-scope="{ record: candidate }" v-overflow-tooltip>
             <span v-if="!!candidate.record.translation">{{candidate.record.translation}}</span>
-            <span v-if="candidate.record.suggestion !== null" class="suggestion">(suggested: {{candidate.record.suggestion}})</span>
+            <span v-if="!!candidate.record.suggestion" class="suggestion">(suggested: {{candidate.record.suggestion}})</span>
             <span v-if="!candidate.record.translation" class="no-translation">No Translation</span>
           </div>
 
@@ -75,7 +75,7 @@
           </div>
           <div :slot="getBodySlotId(CandidateTableColumns.Translation)" slot-scope="{ record: mergeRecord }" v-overflow-tooltip>
             <span v-if="!!mergeRecord.translation">{{mergeRecord.translation}}</span>
-            <span v-if="mergeRecord.suggestion !== null" class="suggestion">(suggested: {{mergeRecord.suggestion}})</span>
+            <span v-if="!!mergeRecord.suggestion" class="suggestion">(suggested: {{mergeRecord.suggestion}})</span>
             <span v-if="!mergeRecord.translation" class="no-translation">No Translation</span>
           </div>
 

@@ -10,7 +10,6 @@ export class MessageBus {
             if (message.name !== name) {
                 return;
             }
-            console.log(`message recived: ${name}`)
             const result = callback(value);
             if (result instanceof Promise) {
                 result.then(resultValue => ipcRenderer.send(Channels.Received, message, resultValue));

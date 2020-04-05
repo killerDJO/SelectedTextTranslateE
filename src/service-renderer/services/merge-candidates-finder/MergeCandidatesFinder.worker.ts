@@ -85,7 +85,7 @@ export class MergeCandidatesFinder {
     }
 
     private equalsIgnoreCase(first: string | null, second: string | null): boolean {
-        if (first === null || second === null) {
+        if (!first || !second) {
             return false;
         }
         return first.toLowerCase() === second.toLowerCase();
@@ -108,7 +108,7 @@ export class MergeCandidatesFinder {
     }
 
     private checkForPromotion(candidate: MergeCandidate): MergeCandidate {
-        if (candidate.record.suggestion !== null) {
+        if (!!candidate.record.suggestion) {
             const suggestionInChildren = candidate.mergeRecords.find(record => this.equalsIgnoreCase(record.sentence, candidate.record.suggestion));
             if (!!suggestionInChildren) {
                 return this.promoteRecord(candidate, suggestionInChildren);
