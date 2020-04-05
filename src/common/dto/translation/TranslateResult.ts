@@ -2,7 +2,8 @@ export class TranslateResult {
     constructor(
         public readonly sentence: TranslateResultSentence,
         public readonly categories: ReadonlyArray<TranslateResultCategory>,
-        public readonly definitions: ReadonlyArray<TranslateResultDefinitionCategory>) {
+        public readonly definitions: ReadonlyArray<TranslateResultDefinitionCategory>,
+        public readonly version: string) {
     }
 }
 
@@ -10,6 +11,7 @@ export class TranslateResultSentence {
     constructor(
         public readonly input: string,
         public readonly translation: string | null,
+        public readonly transcription: string | null,
         public readonly origin: string | null,
         public readonly suggestion: string | null | undefined,
         public readonly languageSuggestion: string | null,

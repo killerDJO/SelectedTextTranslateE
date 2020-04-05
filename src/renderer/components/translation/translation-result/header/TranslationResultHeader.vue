@@ -22,6 +22,7 @@
             <div class="origin-actions">
                 <span v-if="isInputCorrected">(corrected from <link-button @click="forceTranslation" :text="sentence.input" />)</span>
                 <span v-if="hasSuggestion">(maybe you meant <link-button @click="translateSuggestion" :text="sentence.suggestion" />)</span>
+                <span v-if="!!sentence.transcription">[{{sentence.transcription}}]</span>
             </div>
         </div>
     </div>

@@ -9,7 +9,7 @@ import { TranslateResult, TranslateResultSentence, TranslateResultCategory, Tran
 // [
 // 0:  [
 //         ["<translation>", "<original text>"],
-//         [null, null, "<transliteration>"]
+//         [null, null, "<transliteration>", "<transcription>]
 //     ],
 // 1:  [
 //         [
@@ -69,6 +69,8 @@ import { TranslateResult, TranslateResultSentence, TranslateResultCategory, Tran
 @injectable()
 export class TranslationResponseParser {
 
+    public static readonly Version: string = "v2";
+
     public parse(root: any, input: string): TranslateResult {
         if (!_.isArray(root)) {
             throw Error("root is not an array");
@@ -77,7 +79,7 @@ export class TranslationResponseParser {
         const sentence = this.parseSentence(root, input);
         const categories = this.parseTranslateCategories(root);
         const definitions = this.parseDefinitions(root);
-        return new TranslateResult(sentence, categories, definitions);
+        return new TranslateResult(sentence, categories, definitions, TranslationResponseParser.Version);
     }
 
     private parseSentence(root: any, input: string): TranslateResultSentence {
@@ -94,6 +96,11 @@ export class TranslationResponseParser {
             suggestion = root[7][1];
         }
 
+        let transcription: string | null = null;
+        if (!!root[0] && !!root[0][1]) {
+            transcription = root[0][1][3] || null;
+        }
+
         let languageSuggestion: string | null = null;
         if (!!root[8] && !!root[8][0]) {
             languageSuggestion = root[8][0][0] || null;
@@ -104,7 +111,7 @@ export class TranslationResponseParser {
             similarWords = root[14][0] || [];
         }
 
-        return new TranslateResultSentence(input, translation, origin, suggestion, languageSuggestion, similarWords);
+        return new TranslateResultSentence(input, translation, transcription, origin, suggestion, languageSuggestion, similarWords);
     }
 
     private parseTranslateCategories(root: any): ReadonlyArray<TranslateResultCategory> {

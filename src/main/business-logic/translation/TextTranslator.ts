@@ -93,7 +93,8 @@ export class TextTranslator {
         const MinutesInHour = 60;
         const HoursInDay = 24;
         const elapsedDays = elapsedMilliseconds / MillisecondsInSecond / SecondsInMinute / MinutesInHour / HoursInDay;
-        return elapsedDays > this.settingsProvider.getSettings().value.engine.historyRefreshInterval;
+        const isVersionExpired = historyRecord.translateResult.version !== TranslationResponseParser.Version;
+        return elapsedDays > this.settingsProvider.getSettings().value.engine.historyRefreshInterval || isVersionExpired;
     }
 
     private getResponseFromService(key: TranslationKey): Observable<TranslateResult> {
