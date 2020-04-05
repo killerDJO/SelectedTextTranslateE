@@ -1,4 +1,5 @@
 import { screen } from "electron";
+import { isNumber } from "util";
 import { BehaviorSubject, Subject } from "rxjs";
 import { map } from "rxjs/operators";
 import * as _ from "lodash";
@@ -13,6 +14,8 @@ import { LanguageSettings } from "common/dto/settings/LanguageSettings";
 
 import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
+import { TranslationViewSettings } from "business-logic/settings/dto/Settings";
+
 
 export class TranslationView extends TranslateResultView {
 
@@ -77,24 +80,44 @@ export class TranslationView extends TranslateResultView {
         const width = this.scaler.scaleValue(translationSettings.width);
         const height = this.scaler.scaleValue(translationSettings.height);
 
-        const x = translationSettings.x || primaryDisplay.workArea.width - width - translationSettings.margin;
-        const y = translationSettings.y || primaryDisplay.workArea.height - height - translationSettings.margin;
+        let x: number;
+        let y: number;
+        if (!!translationSettings.x && !!translationSettings.y && this.isSavedPositionValid(translationSettings)) {
+            x = translationSettings.x;
+            y = translationSettings.y;
+        } else {
+            x = primaryDisplay.workArea.width - width - translationSettings.margin;
+            y = primaryDisplay.workArea.height - height - translationSettings.margin;
+        }
 
         this.setCurrentScaleFactor();
-
-        let maxX = 0;
-        let maxY = 0;
-        for (const display of screen.getAllDisplays()) {
-            maxX = Math.max(maxX, display.workArea.x + display.workArea.width);
-            maxY = Math.max(maxY, display.workArea.y + display.workArea.height);
-        }
 
         return {
             width: width,
             height: height,
-            x: Math.min(Math.max(0, x), maxX),
-            y: Math.min(Math.max(0, y), maxY)
+            x: x,
+            y: y
         };
+    }
+
+    private isSavedPositionValid({ x, y, width, height }: TranslationViewSettings): boolean {
+        if (!isNumber(x) || !isNumber(y)) {
+            return false;
+        }
+
+        for (const { workArea } of screen.getAllDisplays()) {
+            const isWindowFitsOnDisplay =
+                x > workArea.x
+                && x + width < workArea.x + workArea.width
+                && y > workArea.y
+                && y + height < workArea.y + workArea.height;
+
+            if (isWindowFitsOnDisplay) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private setupSaveDimensions(): void {
