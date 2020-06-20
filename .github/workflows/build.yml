@@ -2,27 +2,34 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: [ master, github-actions-build ]
 
 jobs:
   build:
     runs-on: [windows-latest]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
-        with:
-          node-version: '13.x'
-      - name: Setup node-gyp
-        run: npm install --global --production windows-build-tools@4.0.0
-      - name: Install NPM
-        run: npm ci
-      - name: Lint
-        run: npm run lint-all
-      - name: Build
-        run: |
-          npm run native-rebuild
-          npm run full-build-prod
-          npm run pack
-          npm run create-installer
+      # - uses: actions/checkout@v2
+      # - uses: actions/setup-node@v1
+      #   with:
+      #     node-version: '13.x'
+      # - name: Setup node-gyp
+      #   run: npm install --global --production windows-build-tools@4.0.0
+      # - name: Install NPM
+      #   run: npm ci
+      # - name: Lint
+      #   run: npm run lint-all
+      # - name: Build
+      #   run: |
+      #     npm run native-rebuild
+      #     npm run full-build-prod
+      #     npm run pack
+      #     npm run create-installer
+      # - uses: ncipollo/release-action@v1
+      #   if: ${{ github.event_name == 'push' && github.event.action == 'unassigned' }}
+      #   with:
+      #     artifacts: "release.tar.gz,foo/*.txt"
+      #     bodyFile: "body.md"
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Test
+        if: ${{ github.event_name == 'push'}}
+        run: echo Worked!
