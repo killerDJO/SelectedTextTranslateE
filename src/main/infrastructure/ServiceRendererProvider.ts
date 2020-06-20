@@ -22,7 +22,8 @@ export class ServiceRendererProvider {
                 webPreferences: {
                     backgroundThrottling: false,
                     nodeIntegrationInWorker: true,
-                    nodeIntegration: true
+                    nodeIntegration: true,
+                    enableRemoteModule: true
                 },
                 show: false
             });

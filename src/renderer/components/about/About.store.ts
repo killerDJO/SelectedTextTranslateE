@@ -1,5 +1,4 @@
 import { Module } from "vuex";
-import { remote } from "electron";
 
 import { RootState } from "root.store";
 

@@ -133,7 +133,8 @@ export abstract class ViewBase {
             webPreferences: {
                 backgroundThrottling: false,
                 affinity: "window",
-                nodeIntegration: true
+                nodeIntegration: true,
+                enableRemoteModule: true
             }
         };
     }
