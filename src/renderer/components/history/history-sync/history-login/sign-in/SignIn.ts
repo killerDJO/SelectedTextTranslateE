@@ -46,6 +46,10 @@ export default class SignIn extends SignedOutViewBase<SignInData, ValidationResu
             if (this.signInResponse.validationCode === SignInResponseValidationCode.InvalidPassword) {
                 validationResult.password = "Password is invalid.";
             }
+
+            if (!this.signInResponse.validationCode) {
+                validationResult.email = "Unknown error. Please try again.";
+            }
         }
     }
 

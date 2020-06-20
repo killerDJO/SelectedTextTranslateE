@@ -52,9 +52,19 @@ export class HistorySyncService {
     private setupSubscriptions(): void {
         this.messageBus.observeValue<SignRequest, SignInResponse>(Messages.HistorySync.SignIn, async signInRequest => {
             await this.waitForNetworkEnabled();
-            const signInResponse = await this.firebaseClient.signIn(signInRequest.email, signInRequest.password);
+            let signInResponse: SignInResponse | null = null;
+            try {
+                await this.executeCommandWithRetry(async () => {
+                    signInResponse = await this.firebaseClient.signIn(signInRequest.email, signInRequest.password);
+                    if (!signInResponse.isSuccessful && !signInResponse.validationCode) {
+                        throw new Error("Unsuccessful auth response");
+                    }
+                });
+            } catch {
+                this.logger.warning("Unable to sign-in into account after multiple retries.");
+            }
             this.updateCurrentUser();
-            return signInResponse;
+            return signInResponse ?? { isSuccessful: false };
         });
 
         this.messageBus.observeValue<SignRequest, SignUpResponse>(Messages.HistorySync.SignUp, async signInRequest => {

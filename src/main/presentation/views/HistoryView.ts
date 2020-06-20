@@ -104,16 +104,32 @@ export class HistoryView extends TranslateResultView {
         this.messageBus.handleCommand<void, ReadonlyArray<MergeCandidate>>(Messages.History.Merging.MergeCandidates, handler);
     }
 
+    public handleClearStoredUser(handler: () => Observable<void>): void {
+        this.messageBus.handleCommand<void>(Messages.History.ClearStoredUser, handler);
+    }
+
+    public handleSignInStoredUser(handler: () => Observable<void>): void {
+        this.messageBus.handleCommand<void>(Messages.History.SignInStoredUser, handler);
+    }
+
     public subscribeToHistoryUpdate(historyUpdate$: Observable<HistoryRecord>): void {
         this.registerSubscription(historyUpdate$.subscribe(() => this.messageBus.sendNotification(Messages.History.HistoryUpdated)));
     }
 
     public subscribeToHistorySyncState(isSyncInProgress$: Observable<boolean>): void {
-        this.registerSubscription(this.messageBus.registerObservable(Messages.History.SyncState, isSyncInProgress$).subscription);
+        this.registerSubscription(this.messageBus.registerObservable(Messages.History.AutoSignInState, isSyncInProgress$).subscription);
+    }
+
+    public subscribeToHistoryAutoSignInState(isAutoSignInInProgress$: Observable<boolean>): void {
+        this.registerSubscription(this.messageBus.registerObservable(Messages.History.SyncState, isAutoSignInInProgress$).subscription);
     }
 
     public subscribeToHistoryUser(historyUser$: Observable<AccountInfo | null>): void {
         this.registerSubscription(this.messageBus.registerObservable(Messages.History.CurrentUser, historyUser$).subscription);
+    }
+
+    public subscribeToStoredUser(historyUser$: Observable<AccountInfo | null>): void {
+        this.registerSubscription(this.messageBus.registerObservable(Messages.History.StoredUser, historyUser$).subscription);
     }
 
     protected getInitialBounds(): Electron.Rectangle {

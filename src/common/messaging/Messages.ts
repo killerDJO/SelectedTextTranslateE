@@ -61,7 +61,11 @@ export class Messages {
         public static readonly SyncOneTimeForced = "history-one-time-forced";
         public static readonly ShowHistorySettings = "show-history-settings";
         public static readonly CurrentUser = "history-current-user";
+        public static readonly StoredUser = "history-stored-user";
         public static readonly SyncState = "history-sync-state";
+        public static readonly AutoSignInState = "history-sync-state";
+        public static readonly ClearStoredUser = "history-clear-stored-user";
+        public static readonly SignInStoredUser = "history-sign-in-stored-user";
 
         public static readonly CurrentTags = "history-current-tags";
         public static readonly UpdateCurrentTags = "history-update-current-tags";

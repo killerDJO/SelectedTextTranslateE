@@ -87,13 +87,17 @@ export class Application {
         historyView.subscribeToHistoryUpdate(this.historySyncService.syncStateUpdated$);
 
         historyView.subscribeToHistorySyncState(this.historySyncService.isSyncInProgress$);
+        historyView.subscribeToHistoryAutoSignInState(this.accountHandler.isAutoSignInInProgress$);
         historyView.subscribeToHistoryUser(this.accountHandler.currentUser$);
+        historyView.subscribeToStoredUser(this.accountHandler.storedUser$);
         historyView.handleSignIn(request => this.accountHandler.signInUser(request));
         historyView.handleSignUp(request => this.accountHandler.signUpUser(request));
         historyView.handleSendPasswordResetToken(request => this.accountHandler.sendPasswordResetToken(request));
         historyView.handlePasswordReset(request => this.accountHandler.resetPassword(request));
         historyView.handlePasswordChange(request => this.accountHandler.changePassword(request));
         historyView.handleVerifyPasswordResetToken(request => this.accountHandler.verifyPasswordResetToken(request));
+        historyView.handleSignInStoredUser(() => this.accountHandler.signInStoredUser());
+        historyView.handleClearStoredUser(() => this.accountHandler.clearStoredUser());
 
         historyView.mergeRecords$.subscribe(request => this.historyMerger.mergeRecords(request).subscribe());
         historyView.blacklistRecords$.subscribe(request => this.historyMerger.blacklistRecords(request).subscribe());

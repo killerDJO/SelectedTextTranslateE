@@ -4,7 +4,7 @@ import DropButtonView, { DropItem, PositionModifier } from "../drop-button/DropB
 import DropButton from "components/shared/drop-button/DropButton.vue";
 
 export interface DropListItem extends DropItem {
-    isChecked: boolean;
+    text: string;
     callback(): void;
 }
 

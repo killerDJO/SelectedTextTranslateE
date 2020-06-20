@@ -20,6 +20,8 @@ const messageBus = new MessageBus();
 interface HistorySyncState {
 
     isSyncInProgress: boolean;
+    isAutoSignInInProgress: boolean;
+    storedUser: AccountInfo | null;
 
     signInResponse: SignInResponse | null;
     signUpResponse: SignUpResponse | null;
@@ -33,6 +35,8 @@ export const historySync: Module<HistorySyncState, RootState> = {
     namespaced: true,
     state: {
         isSyncInProgress: false,
+        isAutoSignInInProgress: false,
+        storedUser: null,
         signInResponse: null,
         signUpResponse: null,
         sendResetTokenResponse: null,
@@ -43,6 +47,12 @@ export const historySync: Module<HistorySyncState, RootState> = {
     mutations: {
         setSyncStatus(state: HistorySyncState, isSyncInProgress: boolean): void {
             state.isSyncInProgress = isSyncInProgress;
+        },
+        setStoredUser(state: HistorySyncState, storedUser: AccountInfo | null): void {
+            state.storedUser = storedUser;
+        },
+        setAutoSignInStatus(state: HistorySyncState, isAutoSignInInProgress: boolean): void {
+            state.isAutoSignInInProgress = isAutoSignInInProgress;
         },
         setSignInResponse(state: HistorySyncState, signInResponse: SignInResponse | null): void {
             state.signInResponse = signInResponse;
@@ -65,8 +75,9 @@ export const historySync: Module<HistorySyncState, RootState> = {
     },
     actions: {
         setup({ commit }): void {
-            messageBus.observeValue<AccountInfo | null>(Messages.History.SyncState, isSyncInProgress => commit("setSyncStatus", isSyncInProgress));
-
+            messageBus.observeValue<boolean>(Messages.History.SyncState, isSyncInProgress => commit("setSyncStatus", isSyncInProgress));
+            messageBus.observeValue<boolean>(Messages.History.AutoSignInState, isAutoSignInInProgress => commit("setAutoSignInStatus", isAutoSignInInProgress));
+            messageBus.observeValue<AccountInfo | null>(Messages.History.StoredUser, storedUser => commit("setStoredUser", storedUser));
         },
         resetResponses({ commit }): void {
             commit("setSignInResponse", null);
@@ -108,6 +119,12 @@ export const historySync: Module<HistorySyncState, RootState> = {
         },
         signOut(): void {
             messageBus.sendCommand<void>(Messages.History.SignOut);
+        },
+        signInStoredUser(): Promise<void> {
+            return messageBus.sendCommand<void>(Messages.History.SignInStoredUser);
+        },
+        clearStoredUser(): Promise<void> {
+            return messageBus.sendCommand<void>(Messages.History.ClearStoredUser);
         },
         syncOneTime(): void {
             messageBus.sendCommand<void>(Messages.History.SyncOneTime);

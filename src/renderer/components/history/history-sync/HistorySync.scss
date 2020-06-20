@@ -17,10 +17,14 @@
         }
     }
 
-    .current-user-label {
-        display: inline;
+    .user-label {
+        display: inline-flex;
         font-style: italic;
         font-size: $font-small;
         color: $color-gray;
+    }
+
+    .sign-in-stored-user {
+        margin-left: 4px;
     }
 }

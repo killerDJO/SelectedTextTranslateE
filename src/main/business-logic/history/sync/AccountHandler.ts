@@ -24,7 +24,9 @@ import { MessageBus } from "infrastructure/MessageBus";
 @injectable()
 export class AccountHandler {
     private readonly messageBus: MessageBus;
-    public currentUser$!: BehaviorSubject<AccountInfo | null>;
+    public currentUser$: BehaviorSubject<AccountInfo | null> = new BehaviorSubject<AccountInfo | null>(null);
+    public storedUser$: BehaviorSubject<AccountInfo | null> = new BehaviorSubject<AccountInfo | null>(null);;
+    public isAutoSignInInProgress$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
         private readonly serviceRendererProvider: ServiceRendererProvider,
@@ -33,7 +35,6 @@ export class AccountHandler {
         private readonly userStore: UserStore) {
 
         this.messageBus = new MessageBus(this.serviceRendererProvider.getServiceRenderer());
-        this.currentUser$ = new BehaviorSubject<AccountInfo | null>(null);
 
         this.setupMessageBus();
         this.signInIfHasSavedData();
@@ -43,6 +44,22 @@ export class AccountHandler {
         return this.executeAuthAction(signRequest, Messages.HistorySync.SignIn, `Sign in to account ${signRequest.email}.`).pipe(
             tap(response => this.trySaveUserCredentials(signRequest, response))
         );
+    }
+
+    public signInStoredUser(): Observable<void> {
+        return this.userStore.getCurrentUser().pipe(concatMap(user => {
+            if (!user) {
+                this.notificationSender.send("Unable to sign in stored user", "User does not exist");
+                return of(undefined);
+            }
+            return this.signInUser(user).pipe(
+                tap(response => {
+                    if (!response.isSuccessful) {
+                        this.notificationSender.send("Unable to sign in stored user", "Please try again later");
+                    }
+                }),
+                map(() => undefined));
+        }));
     }
 
     public signUpUser(signRequest: SignRequest): Observable<SignUpResponse> {
@@ -70,8 +87,15 @@ export class AccountHandler {
     public signOutUser(): Observable<void> {
         this.logger.info("Sign out from account.");
         return this.messageBus.sendNotification(Messages.HistorySync.SignOut).pipe(
-            concatMap(() => this.userStore.clearCurrentUser().pipe(map(() => undefined)))
+            concatMap(() => this.clearStoredUser())
         );
+    }
+
+    public clearStoredUser(): Observable<void> {
+        this.logger.info("Clearing stored user.");
+        return this.userStore.clearCurrentUser().pipe(
+            tap(() => this.storedUser$.next(null)),
+            map(() => undefined));
     }
 
     private executeAuthAction<TRequest, TResponse extends AuthResponse<any>>(request: TRequest, message: string, logMessage: string): Observable<TResponse> {
@@ -98,12 +122,15 @@ export class AccountHandler {
             if (!userInfo) {
                 return of();
             }
+
+            this.isAutoSignInInProgress$.next(true);
             return this.signInUser({ email: userInfo.email, password: userInfo.password })
                 .pipe(tap<SignInResponse>(response => {
                     if (!response.isSuccessful) {
-                        this.userStore.clearCurrentUser().subscribe();
                         this.notificationSender.showNonCriticalError("Error signing in into a history account.", new Error(response.validationCode));
                     }
+                    this.isAutoSignInInProgress$.next(false);
+                    this.storedUser$.next(userInfo);
                 }));
         })).subscribe();
     }

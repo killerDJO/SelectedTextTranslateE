@@ -6,16 +6,19 @@
             :text="'Sign In'"
             :overflow-position="'start'"
             @click="showSignIn"
-            :items="[{text: 'Sign Up', callback: showSignUp}, {text: 'Settings', callback: openSettings}]"/>
+            :items="signedOutDropOptions"/>
       <drop-list-button
         v-else
         :text="'Sync Now'"
         :overflow-position="'start'"
         @click="syncOneTime"
         :items="[{text: 'Sign Out', callback: signOut}, {text: 'Settings', callback: openSettings}, {text: 'Change Password', callback: showChangePassword}, {text: 'Forced Sync', callback: syncOneTimeForced}]"/>
-      <div v-if="isSyncInProgress" class="sync-indicator" />
+      <div v-if="isSyncInProgress || isLoginActionInProgress || isAutoSignInInProgress" class="sync-indicator" />
     </div>
-    <span v-if="currentUser !== null" class="current-user-label">Signed in as {{currentUser.email}}</span>
+    <span v-if="currentUser !== null" class="user-label">Signed in as {{currentUser.email}}</span>
+    <span v-if="storedUser !== null && currentUser === null && !isLoginActionInProgress && !isAutoSignInInProgress" class="user-label">
+      Sign in as <link-button @click="signInStoredUser$" :text="storedUser.email" class="sign-in-stored-user"/>
+    </span>
 
     <history-login
       :show.sync="showLoginDialog"

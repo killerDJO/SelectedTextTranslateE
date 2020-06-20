@@ -15,6 +15,7 @@ import { PasswordChangeResponse } from "common/dto/history/account/PasswordChang
 
 import HistoryLogin from "components/history/history-sync/history-login/HistoryLogin.vue";
 import { States, Tabs } from "components/history/history-sync/history-login/HistoryLogin";
+import { DropListItem } from "components/shared/drop-list-button/DropListButton";
 
 const ns = namespace("app/history/sync");
 
@@ -25,6 +26,8 @@ const ns = namespace("app/history/sync");
 })
 export default class HistorySync extends Vue {
     @ns.State public isSyncInProgress!: boolean;
+    @ns.State public isAutoSignInInProgress!: boolean;
+    @ns.State public storedUser!: AccountInfo | null;
     @ns.State public signInResponse!: SignInResponse | null;
     @ns.State public signUpResponse!: SignUpResponse | null;
     @ns.State public sendResetTokenResponse!: PasswordResetResponse | null;
@@ -41,6 +44,8 @@ export default class HistorySync extends Vue {
     @ns.Action public readonly resetPassword!: (request: PasswordResetRequest) => void;
     @ns.Action public readonly changePassword!: (request: PasswordChangeRequest) => void;
     @ns.Action public readonly signOut!: () => void;
+    @ns.Action public readonly signInStoredUser!: () => Promise<void>;
+    @ns.Action public readonly clearStoredUser!: () => Promise<void>;
     @ns.Action public readonly showHistorySettings!: () => void;
     @ns.Action public readonly syncOneTime!: () => void;
     @ns.Action public readonly syncOneTimeForced!: () => void;
@@ -62,8 +67,35 @@ export default class HistorySync extends Vue {
         return this.currentUser !== null ? States.SignedIn : States.SignedOut;
     }
 
+    public get signedOutDropOptions(): DropListItem[] {
+        const dropOptions: DropListItem[] = [
+            { text: "Sign Up", callback: this.showSignUp.bind(this) },
+            { text: "Settings", callback: this.openSettings.bind(this) }
+        ];
+
+        if (!!this.storedUser) {
+            dropOptions.push({ text: "Clear User", callback: this.clearStoredUser$.bind(this) });
+        }
+
+        return dropOptions;
+    }
+
     public signIn$(signRequest: SignRequest): void {
         this.runHistoryAction(() => this.signIn(signRequest));
+    }
+
+    public signInStoredUser$(): void {
+        this.runHistoryAction(async () => {
+            await this.signInStoredUser();
+            this.isLoginActionInProgress = false;
+        });
+    }
+
+    public clearStoredUser$(): void {
+        this.runHistoryAction(async () => {
+            await this.clearStoredUser();
+            this.isLoginActionInProgress = false;
+        });
     }
 
     public signUp$(signRequest: SignRequest): void {
@@ -118,6 +150,7 @@ export default class HistorySync extends Vue {
     }
 
     private showLoginTab(tab: Tabs): void {
+        this.resetResponses();
         this.showLoginDialog = true;
         this.currentDialogTab = tab;
     }
