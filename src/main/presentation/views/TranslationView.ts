@@ -16,7 +16,6 @@ import { ViewContext } from "presentation/framework/ViewContext";
 import { TranslateResultView } from "presentation/views/TranslateResultView";
 import { TranslationViewSettings } from "business-logic/settings/dto/Settings";
 
-
 export class TranslationView extends TranslateResultView {
 
     private currentScaleFactor: number | null = null;
