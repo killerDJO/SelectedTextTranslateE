@@ -13,6 +13,9 @@ import { IconsProvider } from "presentation/infrastructure/IconsProvider";
 export class Taskbar {
     private tray!: Tray;
 
+    // Icon should be stored as field to avoid being garbage collected
+    private currentIcon: NativeImage | null = null;
+
     public readonly showSettings$: Subject<void> = new Subject();
     public readonly showHistory$: Subject<void> = new Subject();
     public readonly showAbout$: Subject<void> = new Subject();
@@ -48,7 +51,7 @@ export class Taskbar {
     }
 
     private createTaskBar(): void {
-        this.tray = new Tray(this.getIcon("tray"));
+        this.tray = new Tray(this.getCurrentIcon());
         this.tray.setToolTip("Selected text translate..");
         this.tray.setContextMenu(this.createContextMenu());
     }
@@ -63,7 +66,8 @@ export class Taskbar {
     }
 
     private getCurrentIcon(): NativeImage {
-        return this.getIcon(this.isSuspended$.value ? "tray-suspended" : "tray");
+        this.currentIcon = this.getIcon(this.isSuspended$.value ? "tray-suspended" : "tray");
+        return this.currentIcon;
     }
 
     private createContextMenu(): Electron.Menu {

@@ -42,22 +42,26 @@ module.exports = (env, argv) => {
             new CleanWebpackPlugin({
                 cleanStaleWebpackAssets: false
             }),
-            new CopyWebpackPlugin([
-                {
-                    from: path.resolve(__dirname, "../src/main/presentation/icons"),
-                    to: "./icons"
-                },
-            ]),
-            new CopyWebpackPlugin([
-                {
-                    from: path.resolve(__dirname, "../src/main/default-settings.json"),
-                    to: "./"
-                },
-                {
-                    from: path.resolve(__dirname, "../src/main/languages.json"),
-                    to: "./"
-                },
-            ]),
+            new CopyWebpackPlugin({
+                patterns: [
+                    {
+                        from: path.resolve(__dirname, "../src/main/presentation/icons"),
+                        to: "./icons"
+                    },
+                ]
+            }),
+            new CopyWebpackPlugin({
+                patterns: [
+                    {
+                        from: path.resolve(__dirname, "../src/main/default-settings.json"),
+                        to: "./"
+                    },
+                    {
+                        from: path.resolve(__dirname, "../src/main/languages.json"),
+                        to: "./"
+                    },
+                ]
+            }),
             new webpack.NoEmitOnErrorsPlugin()
         ]
     };

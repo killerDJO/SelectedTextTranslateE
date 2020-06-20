@@ -28,7 +28,7 @@ export class Logger {
 
     public openLogFolder(): void {
         try {
-            shell.openItem(this.logsDirectory);
+            shell.openPath(this.logsDirectory);
         } catch (e) {
             this.error("Unable to open error log folder.", e);
         }
