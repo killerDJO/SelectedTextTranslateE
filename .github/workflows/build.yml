@@ -3,6 +3,8 @@ name: Node.js CI
 on:
   push:
     branches: [ master, github-actions-build ]
+    tags:
+      - v*
 
 jobs:
   build:
@@ -31,5 +33,5 @@ jobs:
       #     bodyFile: "body.md"
       #     token: ${{ secrets.GITHUB_TOKEN }}
       - name: Test
-        if: ${{ github.event_name == 'push'}}
-        run: echo Worked!
+        # if: ${{ github.event_name == 'push'}}
+        run: echo  ${{ github.ref }}
