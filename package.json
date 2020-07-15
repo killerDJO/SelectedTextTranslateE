@@ -33,7 +33,7 @@
     "firebase": "7.15.3",
     "inversify": "5.0.1",
     "keytar": "6.0.1",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "md5": "2.2.1",
     "memory-cache": "0.2.0",
     "mkdirp": "^1.0.4",
