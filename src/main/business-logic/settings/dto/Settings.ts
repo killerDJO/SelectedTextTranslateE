@@ -38,6 +38,7 @@ export interface TranslationEngineSettings {
     readonly userAgent: string;
     readonly requestTimeout: number;
     readonly translationConfigRefreshInterval: number;
+    readonly isTextTkkMatch: boolean;
     readonly playVolume: number;
 }
 

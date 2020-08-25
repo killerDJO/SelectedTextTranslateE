@@ -13,6 +13,7 @@ import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 @injectable()
 export class TranslatePageParser {
     private readonly cacheKey: string = "TranslationConfig";
+    private readonly isTextTkkMatch: boolean = false;
     private readonly cache: CacheClass<string, TranslationConfig> = new Cache();
     private readonly refreshIntervalMilliseconds: number;
 
@@ -22,7 +23,10 @@ export class TranslatePageParser {
         private readonly settingsProvider: SettingsProvider) {
         const SecondsInMinute = 60;
         const MillisecondsInSecond = 1000;
-        this.refreshIntervalMilliseconds = this.settingsProvider.getSettings().value.engine.translationConfigRefreshInterval * SecondsInMinute * MillisecondsInSecond;
+
+        const settings = this.settingsProvider.getSettings().value;
+        this.refreshIntervalMilliseconds = settings.engine.translationConfigRefreshInterval * SecondsInMinute * MillisecondsInSecond;
+        this.isTextTkkMatch = settings.engine.isTextTkkMatch;
     }
 
     public getTranslationConfig(): Observable<TranslationConfig> {
@@ -58,7 +62,11 @@ export class TranslatePageParser {
     }
 
     private extractConfig(script: string): TranslationConfig {
-        const tkk = safeEval(`(function(){${script}; return TKK;})();`) as string;
+        const tkk = this.isTextTkkMatch ? script.match(/tkk:'(\d+\.\d+)'/)?.[1] : safeEval(`(function(){${script}; return TKK;})();`) as string | undefined;
+
+        if (!tkk) {
+            throw new Error("Unable to find tkk in script.");
+        }
 
         const tkkItems = tkk.split(".");
         const ExpectedNumberOfTkkItems = 2;
