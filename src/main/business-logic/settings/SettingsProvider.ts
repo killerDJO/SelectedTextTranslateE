@@ -40,6 +40,10 @@ export class SettingsProvider {
         this.settingsStore.openInEditor();
     }
 
+    public resetSettings(): void {
+        this.updateSettings(this.settingsStore.getDefaultSettings());
+    }
+
     public getLanguages(): ReadonlyArray<Language> {
         return readJsonFile("languages.json") as Language[];
     }

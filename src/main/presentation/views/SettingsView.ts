@@ -22,6 +22,7 @@ export class SettingsView extends ViewBase {
     public readonly setScaleFactor$: Observable<number>;
     public readonly setStartupState$: Observable<boolean>;
     public readonly openSettingsFile$: Observable<void>;
+    public readonly resetSettings$: Observable<void>;
 
     constructor(viewContext: ViewContext) {
         super(ViewNames.Settings, viewContext, {
@@ -37,6 +38,7 @@ export class SettingsView extends ViewBase {
         this.setScaleFactor$ = this.messageBus.observeCommand<number>(Messages.Settings.SetScaleFactorCommand);
         this.setStartupState$ = this.messageBus.observeCommand<boolean>(Messages.Settings.SetStartupStateCommand);
         this.openSettingsFile$ = this.messageBus.observeCommand<void>(Messages.Settings.OpenSettingsFile);
+        this.resetSettings$ = this.messageBus.observeCommand<void>(Messages.Settings.ResetSettings);
     }
 
     public setSettings(settings$: Observable<Settings>): void {

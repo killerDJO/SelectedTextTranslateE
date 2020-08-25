@@ -115,6 +115,7 @@ export class Messages {
         public static readonly SetScaleFactorCommand = "set-scale-factor";
         public static readonly SetStartupStateCommand = "set-startup-state";
         public static readonly OpenSettingsFile = "open-settings-file";
+        public static readonly ResetSettings = "reset-all-settings";
     };
 
     public static ServiceRenderer = class {

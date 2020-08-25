@@ -2,7 +2,14 @@
     padding: $padding-default;
     background-color: $color-background;
 
-    .open-file{
+    .control-button {
         float: right;
+        margin-left: $margin-default;
+    }
+
+    .loading-settings {
+        display: flex;
+        justify-content: center;
+        font-size: $font-big;
     }
 }

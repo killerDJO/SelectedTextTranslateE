@@ -4,8 +4,8 @@
     <span slot="body"><div class="confirm-modal-body"><slot name="body" /></div></span>
     <div slot="footer">
       <div class="confirm-modal-footer clearfix">
-          <link-button @click="close" :text="'Cancel'" class="cancel" />
-          <app-button @click="confirm" :text="confirmText" v-auto-focus />
+          <link-button @click="close" :text="'Cancel'" class="cancel" v-auto-focus />
+          <app-button @click="confirm" :text="confirmText" />
       </div>
     </div>
   </modal>

@@ -72,6 +72,10 @@ export const settings: Module<SettingsState, RootState> = {
         openSettingsFile(): void {
             messageBus.sendCommand<void>(Messages.Settings.OpenSettingsFile);
         },
+        resetSettings({ commit }): void {
+            commit("setSettings", null);
+            messageBus.sendCommand<void>(Messages.Settings.ResetSettings);
+        },
         setStartupState(__, isStartupEnabled: boolean): void {
             messageBus.sendCommand<boolean>(Messages.Settings.SetStartupStateCommand, isStartupEnabled);
         }

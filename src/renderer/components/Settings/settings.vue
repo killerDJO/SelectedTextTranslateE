@@ -42,7 +42,15 @@
           :is-startup-enabled="isStartupEnabled"
           @set-startup-state="setStartupState"/>
        </settings-holder>
-      <link-button @click="openSettingsFile" :text="'Open Settings File'" class="open-file"/>
+      <link-button @click="showResetSettingsModal = true" :text="'Reset to Default'" class="control-button"/>
+      <link-button @click="openSettingsFile" :text="'Open Settings File'" class="control-button"/>
+      <confirm-modal :show.sync="showResetSettingsModal" @confirm="resetSettings">
+        <span slot="header">Are you sure you want to reset all settings?</span>
+        <span slot="body">You'll loose all settings (inlcluding manual settings file changes) permanently.</span>
+      </confirm-modal>
+    </div>
+    <div v-else class="loading-settings">
+      Loading settings...
     </div>
   </div>
 </template>

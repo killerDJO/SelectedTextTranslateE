@@ -151,6 +151,7 @@ export class Application {
             .subscribe(arePaused => arePaused ? this.hotkeysRegistry.pauseHotkeys() : this.hotkeysRegistry.resumeHotkeys());
         settingsView.updatedSettings$.subscribe(updatedSettings => this.settingsProvider.updateSettings(updatedSettings));
         settingsView.openSettingsFile$.subscribe(() => this.settingsProvider.openInEditor());
+        settingsView.resetSettings$.subscribe(() => this.settingsProvider.resetSettings());
     }
 
     private setupAboutView(aboutView: AboutView): void {

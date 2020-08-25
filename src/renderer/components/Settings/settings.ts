@@ -44,12 +44,14 @@ export default class Settings extends Vue {
     @ns.Action public readonly pauseHotkeys!: () => void;
     @ns.Action public readonly enableHotkeys!: () => void;
     @ns.Action public readonly openSettingsFile!: () => void;
+    @ns.Action public readonly resetSettings!: () => void;
     @ns.Action public readonly setStartupState!: (isStartupEnabled: boolean) => void;
 
     @ns.Action public readonly changeScaling!: (scaleFactor: number) => void;
 
     public readonly settingsGroupToElementMap: { [key: string]: HTMLElement } = {};
     public readonly SettingsGroup: typeof SettingsGroup = SettingsGroup;
+    public showResetSettingsModal: boolean = false;
 
     public mounted(): void {
         this.setup();
