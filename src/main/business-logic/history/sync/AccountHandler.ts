@@ -25,7 +25,7 @@ import { MessageBus } from "infrastructure/MessageBus";
 export class AccountHandler {
     private readonly messageBus: MessageBus;
     public currentUser$: BehaviorSubject<AccountInfo | null> = new BehaviorSubject<AccountInfo | null>(null);
-    public storedUser$: BehaviorSubject<AccountInfo | null> = new BehaviorSubject<AccountInfo | null>(null);;
+    public storedUser$: BehaviorSubject<AccountInfo | null> = new BehaviorSubject<AccountInfo | null>(null);
     public isAutoSignInInProgress$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
     constructor(
