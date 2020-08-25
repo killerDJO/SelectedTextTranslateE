@@ -67,7 +67,7 @@ export default class Typeahead extends DropBase {
 
     public onSelected() {
         if (this.selectedSuggestionsIndex !== -1) {
-            this.input = this.suggestions[this.selectedSuggestionsIndex];
+            this.$emit("input-selected", this.suggestions[this.selectedSuggestionsIndex]);
             this.selectedSuggestionsIndex = -1;
         } else {
             this.$emit("input-selected", this.input);
@@ -77,8 +77,7 @@ export default class Typeahead extends DropBase {
     }
 
     public suggestionClick(suggestion: string): void {
-        (this.$refs.input as HTMLElement).focus();
-        this.input = suggestion;
+        this.$emit("input-selected", suggestion);
         this.closeDrop();
     }
 
