@@ -87,7 +87,9 @@ export class SettingsView extends ViewBase {
                     zoomOut: settings.renderer.hotkeys.zoomOut,
                     resetZoom: settings.renderer.hotkeys.resetZoom,
                     toggleDefinition: settings.views.translation.renderer.toggleDefinitionHotkey,
-                    archiveResult: settings.views.translation.renderer.archiveResultHotkey
+                    archiveResult: settings.views.translation.renderer.archiveResultHotkey,
+                    toggleTags: settings.views.translation.renderer.toggleTagsHotkey,
+                    addTag: settings.views.translation.renderer.addTagHotkey,
                 }
             },
             scaling: {
@@ -160,7 +162,9 @@ export class SettingsView extends ViewBase {
                 translation: {
                     renderer: {
                         toggleDefinitionHotkey: settings.hotkeys.local.toggleDefinition,
-                        archiveResultHotkey: settings.hotkeys.local.archiveResult
+                        archiveResultHotkey: settings.hotkeys.local.archiveResult,
+                        toggleTagsHotkey: settings.hotkeys.local.toggleTags,
+                        addTagHotkey: settings.hotkeys.local.addTag
                     }
                 }
             }

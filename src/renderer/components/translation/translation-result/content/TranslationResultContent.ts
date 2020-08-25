@@ -46,6 +46,7 @@ export default class TranslationResultContent extends Vue {
 
     public currentView: TranslateResultViews = TranslateResultViews.Translation;
     public showTags: boolean = false;
+    public showTagInput?: () => void;
 
     public get hasCategories(): boolean {
         return !!this.historyRecord.translateResult.categories.length;
@@ -114,6 +115,20 @@ export default class TranslationResultContent extends Vue {
                     this.currentView = TranslateResultViews.Definition;
                 }
             });
+        hotkeysRegistry.registerHotkeys(
+            TranslationResultContent.TranslateResultContentHotkeysNamespace, this.translationResultViewSettings.toggleTagsHotkey, () => {
+                this.showTags = !this.showTags;
+            });
+        hotkeysRegistry.registerHotkeys(
+            TranslationResultContent.TranslateResultContentHotkeysNamespace, this.translationResultViewSettings.addTagHotkey, async () => {
+                this.showTags = true;
+                await this.$nextTick();
+                this.showTagInput?.();
+            });
+    }
+
+    public setShowTagInput(showTagInput: () => void) {
+        this.showTagInput = showTagInput;
     }
 
     public translate(text: string): void {

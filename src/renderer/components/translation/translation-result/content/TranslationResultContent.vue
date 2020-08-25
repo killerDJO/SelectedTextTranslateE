@@ -14,7 +14,7 @@
             <span class="action offline-status" v-if="isOffline">Offline</span>
         </div>
         <div class="tags" v-if="showTags">
-          <tags-editor :tags="historyRecord.tags" :compact-view="true" @update-tags="updateTags"/>
+          <tags-editor :tags="historyRecord.tags" :compact-view="true" @update-tags="updateTags" @set-show-tag-input="setShowTagInput"/>
         </div>
         <div class="similar-words" v-if="currentView === TranslateResultViews.Definition && similarWords.length > 0">
           <span class="similar-words-label">similar - </span>

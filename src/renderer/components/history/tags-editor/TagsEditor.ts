@@ -29,6 +29,10 @@ export default class TagsEditor extends Vue {
     private currentTag: Tag | null = null;
     private readonly messageBus: MessageBus = new MessageBus();
 
+    public mounted() {
+        this.$emit("set-show-tag-input", this.showTagInput);
+    }
+
     @Watch("tags", { immediate: true })
     public onTagsSettingsChanged(): void {
         this.currentTags = this.mapTags(this.tags);

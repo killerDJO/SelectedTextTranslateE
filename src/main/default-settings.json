@@ -108,6 +108,22 @@
                             "Delete"
                         ]
                     }
+                ],
+                "addTagHotkey": [
+                    {
+                        "keys": [
+                            "Shift",
+                            "T"
+                        ]
+                    }
+                ],
+                "toggleTagsHotkey": [
+                    {
+                        "keys": [
+                            "Alt",
+                            "T"
+                        ]
+                    }
                 ]
             }
         },

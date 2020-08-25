@@ -35,6 +35,8 @@ export default class HotkeySettings extends Vue {
         ["playText", "Play Text"],
         ["showDefinition", "Show Definition"],
         ["toggleDefinition", "Toggle Definition View"],
+        ["toggleTags", "Toggle Tags Visibility"],
+        ["addTag", "Add Tag"],
         ["archiveResult", "Archive Translate Result"],
         ["inputText", "Input Text"],
         ["toggleSuspend", "Toggle Suspended State"],

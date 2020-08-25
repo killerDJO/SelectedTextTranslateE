@@ -7,7 +7,10 @@ class HotkeysRegistry {
     private readonly hotkeysByNamespace: Map<string, ReadonlyArray<Hotkey>> = new Map();
 
     public registerHotkeys(namespace: string, hotkeys: ReadonlyArray<Hotkey>, callback: () => void): void {
-        Mousetrap.bind(this.mapHotkeysToStrings(hotkeys), callback);
+        Mousetrap.bind(this.mapHotkeysToStrings(hotkeys), () => {
+            callback();
+            return false;
+        });
 
         const currentNamespaceHotkeys = (this.hotkeysByNamespace.get(namespace) || []).concat(hotkeys);
         this.hotkeysByNamespace.set(namespace, currentNamespaceHotkeys);
