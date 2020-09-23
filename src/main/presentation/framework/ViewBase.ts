@@ -55,8 +55,9 @@ export abstract class ViewBase {
         // Show offscreen to pre-render and prevent flickering
         this.isReadyToShow$.pipe(first(isReady => isReady)).subscribe(() => {
             this.isShowInProgress$.next(true);
-            const { x, y, width, height } = this.window.getBounds();
-            this.window.setPosition(-width, -height);
+            const { x, y } = this.window.getBounds();
+            const OFFSCREEN_OFFSET = -999999;
+            this.window.setPosition(OFFSCREEN_OFFSET, OFFSCREEN_OFFSET);
             this.window.show();
             setTimeout(
                 () => {
