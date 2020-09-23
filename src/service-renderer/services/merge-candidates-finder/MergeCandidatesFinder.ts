@@ -2,7 +2,7 @@ import { HistoryRecord } from "common/dto/history/HistoryRecord";
 import { MergeCandidate } from "common/dto/history/MergeCandidate";
 import { MessageBus } from "common/renderer/MessageBus";
 import { Messages } from "common/messaging/Messages";
-import Worker = require("worker-loader!./MergeCandidatesFinder.worker");
+import Worker from "worker-loader!./MergeCandidatesFinder.worker";
 
 export class MergeCandidatesFinder {
     private readonly messageBus: MessageBus = new MessageBus();
