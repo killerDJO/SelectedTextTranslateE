@@ -12,7 +12,6 @@ import { replaceAllPattern } from "utils/replace-pattern";
 
 import { RequestProvider } from "data-access/RequestProvider";
 
-import { HashProvider } from "business-logic/translation/HashProvider";
 import { TranslationResponseParser } from "business-logic/translation/TranslationResponseParser";
 import { HistoryStore } from "business-logic/history/HistoryStore";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
@@ -21,7 +20,6 @@ import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 export class TextTranslator {
     constructor(
         private readonly requestProvider: RequestProvider,
-        private readonly hashProvider: HashProvider,
         private readonly historyStore: HistoryStore,
         private readonly responseParser: TranslationResponseParser,
         private readonly logger: Logger,
@@ -98,8 +96,7 @@ export class TextTranslator {
     }
 
     private getResponseFromService(key: TranslationKey): Observable<TranslateResult> {
-        return this.hashProvider.computeHash(key.sentence).pipe(
-            concatMap(hash => this.getTranslationResponse(key, hash)),
+        return this.getTranslationResponse(key).pipe(
             map(response => this.responseParser.parse(response, key.sentence))
         );
     }
@@ -108,16 +105,9 @@ export class TextTranslator {
         return (sentence || "").trim();
     }
 
-    private getTranslationResponse(key: TranslationKey, hash: string): Observable<any> {
-        const encodedText = encodeURIComponent(key.sentence);
-        const urlPattern = this.settingsProvider.getSettings().value.engine.translatePattern;
-        const url = replaceAllPattern(urlPattern, {
-            "source-language": key.sourceLanguage,
-            "target-language": key.targetLanguage,
-            "forced": key.isForcedTranslation ? "qc" : "qca",
-            "hash": hash,
-            "query": encodedText
-        });
-        return this.requestProvider.getJsonContent(url);
+    private getTranslationResponse(key: TranslationKey): Observable<any> {
+        const url = "https://translate.google.com/_/TranslateWebserverUi/data/batchexecute?rpcids=MkEWBc&hl=ru&soc-app=1&soc-platform=1&soc-device=1&rt=c";
+        const requestData = encodeURIComponent(`[[["MkEWBc","[[\\"${key.sentence}\\",\\"${key.sourceLanguage}\\",\\"${key.targetLanguage}\\",${key.isForcedTranslation ? "null" : "true"}],[null]]",null,"generic"]]]`);
+        return this.requestProvider.executeGoogleTranslateRequest(url, `f.req=${requestData}`);
     }
 }

@@ -35,15 +35,16 @@
     },
     "engine": {
         "copyDelayMilliseconds": 100,
-        "translatePattern": "https://translate.google.com/translate_a/single?client=t&sl={{source-language}}&tl={{target-language}}&hl={{target-language}}&dt=at&dt=bd&dt=ex&dt=ld&dt=md&dt={{forced}}&dt=rw&dt=rm&dt=ss&dt=t&ie=UTF-8&oe=UTF-8&otf=1&ssel=0&tsel=0&kc=4&tk={{hash}}&q={{query}}",
-        "playTextPattern": "https://translate.google.com/translate_tts?tl={{language}}&client=t&q={{query}}&tk={{hash}}",
-        "baseUrl": "https://translate.google.com",
         "historyRefreshInterval": 30,
         "translationConfigRefreshInterval": 60,
         "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.135 Safari/537.36",
         "requestTimeout": 10000,
         "playVolume": 100,
-        "isTextTkkMatch": true
+        "enableRequestsLogging": false,
+        "proxy": {
+            "isEnabled": false,
+            "url": "http://localhost:8888"
+        }
     },
     "logging": {
         "maxLogSize": 1048576,
@@ -84,12 +85,7 @@
             "x": null,
             "y": null,
             "renderer": {
-                "score": {
-                    "highThreshold": 0.05,
-                    "mediumThreshold": 0.0025
-                },
                 "visibility": {
-                    "lowScoreThreshold": 0.003,
                     "visibleByDefaultNumber": 7
                 },
                 "showLoaderDelay": 400,

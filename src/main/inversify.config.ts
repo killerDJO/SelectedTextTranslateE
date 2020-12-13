@@ -16,10 +16,8 @@ import { StartupItemsProvider } from "install/StartupItemsProvider";
 import { RequestProvider } from "data-access/RequestProvider";
 import { DatastoreProvider } from "data-access/DatastoreProvider";
 
-import { HashProvider } from "business-logic/translation/HashProvider";
 import { TextExtractor } from "business-logic/translation/TextExtractor";
 import { TextTranslator } from "business-logic/translation/TextTranslator";
-import { TranslatePageParser } from "business-logic/translation/TranslatePageParser";
 import { TranslationResponseParser } from "business-logic/translation/TranslationResponseParser";
 import { TextPlayer } from "business-logic/translation/TextPlayer";
 
@@ -123,10 +121,8 @@ class Binder {
     }
 
     private bindTranslationEngine(): void {
-        this.container.bind<HashProvider>(HashProvider).toSelf();
         this.container.bind<TextExtractor>(TextExtractor).toSelf();
         this.container.bind<TextTranslator>(TextTranslator).toSelf();
-        this.container.bind<TranslatePageParser>(TranslatePageParser).toSelf().inSingletonScope();
         this.container.bind<TranslationResponseParser>(TranslationResponseParser).toSelf();
         this.container.bind<TextPlayer>(TextPlayer).toSelf();
     }

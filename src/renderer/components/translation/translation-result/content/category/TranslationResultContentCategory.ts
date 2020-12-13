@@ -48,13 +48,8 @@ export default class TranslationResultContentCategory extends Vue {
     }
 
     public getScoreClass(entry: TranslateResultCategoryEntry): string {
-        if (entry.score >= this.translationResultViewSettings.score.highThreshold) {
-            return "high";
-        }
-        if (entry.score >= this.translationResultViewSettings.score.mediumThreshold) {
-            return "medium";
-        }
-        return "low";
+        const scoreClasses = ["high", "medium", "low"];
+        return scoreClasses[entry.score - 1];
     }
 
     public translate(text: string): void {
@@ -66,6 +61,6 @@ export default class TranslationResultContentCategory extends Vue {
     }
 
     private isVisibleEntry(entry: TranslateResultCategoryEntry, index: number): boolean {
-        return entry.score > this.translationResultViewSettings.visibility.lowScoreThreshold || index < this.translationResultViewSettings.visibility.visibleByDefaultNumber;
+        return entry.score < 3 || index < this.translationResultViewSettings.visibility.visibleByDefaultNumber;
     }
 }

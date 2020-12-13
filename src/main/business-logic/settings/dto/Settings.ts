@@ -31,15 +31,18 @@ export interface HotkeySettings {
 
 export interface TranslationEngineSettings {
     readonly copyDelayMilliseconds: number;
-    readonly translatePattern: string;
-    readonly playTextPattern: string;
-    readonly baseUrl: string;
     readonly historyRefreshInterval: number;
     readonly userAgent: string;
     readonly requestTimeout: number;
     readonly translationConfigRefreshInterval: number;
-    readonly isTextTkkMatch: boolean;
+    readonly proxy: ProxySettings;
     readonly playVolume: number;
+    readonly enableRequestsLogging: boolean;
+}
+
+export interface ProxySettings {
+    readonly isEnabled: string;
+    readonly url: string;
 }
 
 export interface ViewsSettings {

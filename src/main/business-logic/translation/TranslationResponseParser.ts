@@ -1,78 +1,77 @@
-import { isArray } from "util";
 import { injectable } from "inversify";
-import * as _ from "lodash";
+import stripHtml = require("string-strip-html");
+import { TranslateResult, TranslateResultSentence, TranslateResultCategory, TranslateResultCategoryEntry, TranslateResultDefinitionCategory, TranslateResultDefinitionCategoryEntry } from "common/dto/translation/TranslateResult";
 
 // tslint:disable no-magic-numbers no-unsafe-any
 
-import { TranslateResult, TranslateResultSentence, TranslateResultCategory, TranslateResultCategoryEntry, TranslateResultDefinitionCategory, TranslateResultDefinitionCategoryEntry } from "common/dto/translation/TranslateResult";
-// Relevant response has the following format
+// Response structure:
 // [
-// 0:  [
-//         ["<translation>", "<original text>"],
-//         [null, null, "<transliteration>", "<transcription>]
-//     ],
-// 1:  [
-//         [
-//             "<part_of_speech>",
-//             [<irrelevant>],
-//             [
-//                 ["<variant_1>", ["<reverse_translation_1>", "<reverse_translation_2>", ..], null, <score>],
-//                 ....
-//             ],
-//             "<base_form>",
-//             <irrelevant>
-//         ],
-//         ...
-//     ],
-// 2:  <irrelevant>,
-// 3:  <irrelevant>,
-// 4:  <irrelevant>,
-// 5:  <irrelevant>,
-// 6:  <irrelevant>,
-// 7:  [<irrelevant>, <suggestion>, <irrelevant>, null, null, <irrelevant>],
-// 8:  [[<suggested_language>], <irrelevant>, ...],
-// 9:  <irrelevant>,
-// 10: <irrelevant>,
-// 11: [
-//         [
-//             "<part_of_speech>",
-//             [
-//                 [
-//                     "<definition_id>",
-//                     "<definition_synonyms>"
-//                 ],
-//                 ....
-//             ]
+// 0: [
+//      0: "<transcription>",
+//      1: [
+//           0: [
+//                0: [<..>, <suggested_input>, ..],
+//                1: "<original_input>"
+//              ],
+//           1: ["<suggested_language>"]
 //         ],
 //         ....
-//     ]
-// 12: [
-//         [
-//             "<part_of_speech>",
-//             [
-//                 [
-//                     "<definition>",
-//                     "<definition_id>",
-//                     "<sample>"
-//                 ],
-//                 ....
-//             ],
-//             "<base_form>"
+//    ],
+// 1: [
+//   0: [
+//      0: [
+//           0: <..>,   
+//           1: "<transliteration>",
+//           2: <..>,   
+//           3: <..>,
+//           4: <..>,       
+//           5: [
+//               0: [          
+//                    0: "<translation">,
+//                       ...
+//                  ] 
+//              ]
+//         ]
+//      ]
+//    ],
+// 2: <..>,
+// 3: [
+//      0: "<base_form>",
+//      1: [
+//         0: [
+//             0: [
+//                  0: "<part_of_speech>",
+//                  1: [
+//                       0: [<definition>", "<sample>", <..>, ["<synonym>", ...]],
+//                          ....
+//                     ]
+//                ]
+//            ],
+//            ....
 //         ],
-//         ....
-//     ],
-// 13: <irrelevant>,
-// 14: [
-//          [<similar_words>]
-//     ]
-// ]
+//      2: <..>,    
+//      3: <..>,  
+//      4: <..>,
+//      5: [
+//           0: [
+//                 0: [
+//                      0: "<part_of_speech">
+//                      1: [
+//                           0: ["<variant_1>", <...>, ["<reverse_translation_1>", "<reverse_translation_2>", ..], <score>, null]
+//                              .....
+//                         ]                      
+//                    ],
+//                    ...
+//               ]
+//         ]
+//   ]
 @injectable()
 export class TranslationResponseParser {
 
-    public static readonly Version: string = "v2";
+    public static readonly Version: string = "v3.1";
 
     public parse(root: any, input: string): TranslateResult {
-        if (!_.isArray(root)) {
+        if (!Array.isArray(root)) {
             throw Error("root is not an array");
         }
 
@@ -83,57 +82,57 @@ export class TranslationResponseParser {
     }
 
     private parseSentence(root: any, input: string): TranslateResultSentence {
-        let translation: string | null = null;
-        let origin: string | null = null;
-        const sentenceResponse = root[0][0];
-        if (sentenceResponse.length > 0) {
-            translation = sentenceResponse[0];
-            origin = sentenceResponse[1];
-        }
-
+        const inputResponseSection = root[0];
+        const translationResponseSection = root[1];
+        
         let suggestion: string | null = null;
-        if (!!root[7]) {
-            suggestion = root[7][1];
-        }
-
-        let transcription: string | null = null;
-        if (!!root[0] && !!root[0][1]) {
-            transcription = root[0][1][3] || null;
-        }
-
+        let origin: string | null = null;
         let languageSuggestion: string | null = null;
-        if (!!root[8] && !!root[8][0]) {
-            languageSuggestion = root[8][0][0] || null;
+        let transcription: string | null = null;
+        if (inputResponseSection.length > 0) {
+            origin = inputResponseSection[1]?.[0]?.[1] ?? input;
+            
+            const rawSuggestion = inputResponseSection[1]?.[0]?.[0]?.[1];
+            suggestion = !!rawSuggestion ? (stripHtml as any).default(rawSuggestion).result : null;
+            
+            languageSuggestion = inputResponseSection[1]?.[1]?.[0] ?? null;
+            transcription = inputResponseSection[0] ?? null; 
+        }
+
+        let translation: string | null = null;
+        if(translationResponseSection.length > 0) {
+            translation = translationResponseSection[0]?.[0]?.[5]?.[0]?.[0];  
         }
 
         let similarWords: string[] = [];
-        if (!!root[14]) {
-            similarWords = root[14][0] || [];
-        }
+        // if (!!root[14]) {
+        //     similarWords = root[14][0] || [];
+        // }
 
         return new TranslateResultSentence(input, translation, transcription, origin, suggestion, languageSuggestion, similarWords);
     }
 
     private parseTranslateCategories(root: any): ReadonlyArray<TranslateResultCategory> {
-        if (!isArray(root[1])) {
+        const categoriesSection = root[3]?.[5]?.[0];
+        if (!Array.isArray(categoriesSection)) {
             return [];
         }
 
         const categoriesResponse: TranslateResultCategory[] = [];
 
-        for (const categoryResponse of root[1]) {
+        for (const categoryResponse of categoriesSection) {
             const partOfSpeech: string = categoryResponse[0];
-            const baseForm: string = categoryResponse[3];
+            const baseForm: string = this.getBaseForm(root);
             const categoryEntries: TranslateResultCategoryEntry[] = [];
 
-            if (isArray(categoryResponse[2])) {
-                for (const categoryEntryResponse of categoryResponse[2]) {
+            if (Array.isArray(categoryResponse[1])) {
+                for (const categoryEntryResponse of categoryResponse[1]) {
                     const word: string = categoryEntryResponse[0];
                     const score: number = isFinite(categoryEntryResponse[3]) ? categoryEntryResponse[3] : 0;
                     const reverseTranslations: string[] = [];
 
-                    if (isArray(categoryEntryResponse[1])) {
-                        reverseTranslations.push(...categoryEntryResponse[1]);
+                    if (Array.isArray(categoryEntryResponse[2])) {
+                        reverseTranslations.push(...categoryEntryResponse[2]);
                     }
 
                     categoryEntries.push(new TranslateResultCategoryEntry(word, reverseTranslations, score));
@@ -147,24 +146,24 @@ export class TranslationResponseParser {
     }
 
     private parseDefinitions(root: any): ReadonlyArray<TranslateResultDefinitionCategory> {
-        if (!isArray(root[12])) {
+        const definitionsSection = root[3]?.[1]?.[0];
+        if (!Array.isArray(definitionsSection)) {
             return [];
         }
 
-        const synonyms = this.parseDefinitionSynonyms(root);
+        //const synonyms = this.parseDefinitionSynonyms(root);
 
         const definitionCategories: TranslateResultDefinitionCategory[] = [];
-        for (const definitionCategory of root[12]) {
+        for (const definitionCategory of definitionsSection) {
             const partOfSpeech: string = definitionCategory[0];
-            const baseForm: string = definitionCategory[2];
+            const baseForm: string = this.getBaseForm(root);
 
             const definitionCategoryEntries: TranslateResultDefinitionCategoryEntry[] = [];
-            if (isArray(definitionCategory[1])) {
+            if (Array.isArray(definitionCategory[1])) {
                 for (const definitionCategoryEntry of definitionCategory[1]) {
                     const definition = definitionCategoryEntry[0];
-                    const id = definitionCategoryEntry[1];
-                    const sample = definitionCategoryEntry[2];
-                    const categoryEntrySynonyms = synonyms.get(id) || [];
+                    const sample = definitionCategoryEntry[1];
+                    const categoryEntrySynonyms = definitionCategoryEntry[3] || [];
                     definitionCategoryEntries.push(new TranslateResultDefinitionCategoryEntry(definition, sample, categoryEntrySynonyms));
                 }
             }
@@ -175,22 +174,7 @@ export class TranslationResponseParser {
         return definitionCategories;
     }
 
-    private parseDefinitionSynonyms(root: any): Map<string, string[]> {
-        const synonyms = new Map<string, string[]>();
-        if (!isArray(root[11])) {
-            return synonyms;
-        }
-
-        for (const definitionCategory of root[11]) {
-            if (isArray(definitionCategory[1])) {
-                for (const definitionCategoryEntry of definitionCategory[1]) {
-                    const categoryEntrySynonyms = definitionCategoryEntry[0];
-                    const id = definitionCategoryEntry[1];
-                    synonyms.set(id, categoryEntrySynonyms);
-                }
-            }
-        }
-
-        return synonyms;
+    private getBaseForm(root: any): string {
+        return root[3]?.[0] ?? 'N/A';
     }
 }

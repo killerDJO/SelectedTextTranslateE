@@ -17,13 +17,19 @@ export class Logger {
         const loggingSettings = settingsStore.getSettings().logging;
         this.logsDirectory = path.join(storageFolderProvider.getPath(), "logs");
         const logFilePath = path.join(this.logsDirectory, loggingSettings.logFileName);
-        this.transport = new winston.transports.File({ filename: logFilePath, maxsize: loggingSettings.maxLogSize });
+        this.transport = new winston.transports.File({ filename: logFilePath, maxsize: loggingSettings.maxLogSize  });
         this.logger = winston.createLogger({
             format: this.getLogFormat(),
             transports: [
                 this.transport
             ]
         });
+
+        if (process.env.NODE_ENV !== 'production') {
+            this.logger.add(new winston.transports.Console({
+              format: this.getLogFormat(),
+            }));
+          }
     }
 
     public openLogFolder(): void {
@@ -35,13 +41,13 @@ export class Logger {
     }
 
     public async flush(): Promise<void> {
-        if (!!this.transport.close) {
-            this.transport.close();
-        }
-
-        return new Promise<void>((resolve) => {
-            this.transport.on("flush", resolve);
+        const result = new Promise<void>((resolve) => {
+            this.logger.on("finish", () => {
+                setImmediate(resolve);
+            });
         });
+        this.logger.end();
+        return result;
     }
 
     public info(message: string): void {

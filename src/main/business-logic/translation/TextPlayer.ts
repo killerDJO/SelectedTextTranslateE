@@ -14,7 +14,6 @@ import { replaceAllPattern } from "utils/replace-pattern";
 import { RequestProvider } from "data-access/RequestProvider";
 import { PlayFileRequest } from "common/dto/translation/PlayFileRequest";
 
-import { HashProvider } from "business-logic/translation/HashProvider";
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { ServiceRendererProvider } from "infrastructure/ServiceRendererProvider";
 import { Messages } from "common/messaging/Messages";
@@ -28,7 +27,6 @@ export class TextPlayer {
 
     constructor(
         private readonly requestProvider: RequestProvider,
-        private readonly hashProvider: HashProvider,
         private readonly settingsProvider: SettingsProvider,
         private readonly logger: Logger,
         private readonly serviceRendererProvider: ServiceRendererProvider) {
@@ -42,16 +40,18 @@ export class TextPlayer {
             return of(undefined);
         }
 
-        this.isPlayInProgress$.next(true);
-        const language = request.language || this.settingsProvider.getSettings().value.language.sourceLanguage;
-        this.logger.info(`Playing ${this.getLogKey(request.text, language)}`);
+        return of(undefined);
 
-        return this.getAudioContent(request.text, language)
-            .pipe(
-                concatMap(content => this.saveContentToTempFile(content)),
-                concatMap(() => this.playFile()),
-                tap(() => this.logger.info(`End playing ${this.getLogKey(request.text, language)}`)),
-            );
+        // this.isPlayInProgress$.next(true);
+        // const language = request.language || this.settingsProvider.getSettings().value.language.sourceLanguage;
+        // this.logger.info(`Playing ${this.getLogKey(request.text, language)}`);
+
+        // return this.getAudioContent(request.text, language)
+        //     .pipe(
+        //         concatMap(content => this.saveContentToTempFile(content)),
+        //         concatMap(() => this.playFile()),
+        //         tap(() => this.logger.info(`End playing ${this.getLogKey(request.text, language)}`)),
+        //     );
     }
 
     private saveContentToTempFile(content: Buffer): Observable<void> {
@@ -70,19 +70,19 @@ export class TextPlayer {
         return `text '${text}' with language ${language}`;
     }
 
-    private getAudioContent(text: string, language: string): Observable<Buffer> {
-        return this.hashProvider.computeHash(text).pipe(
-            map(hash => this.buildUrl(text, language, hash)),
-            concatMap(url => this.requestProvider.getBinaryContent(url))
-        );
-    }
+    // private getAudioContent(text: string, language: string): Observable<Buffer> {
+    //     return this.hashProvider.computeHash(text).pipe(
+    //         map(hash => this.buildUrl(text, language, hash)),
+    //         concatMap(url => this.requestProvider.getBinaryContent(url))
+    //     );
+    // }
 
-    private buildUrl(text: string, language: string, hash: string) {
-        const urlPattern = this.settingsProvider.getSettings().value.engine.playTextPattern;
-        return replaceAllPattern(urlPattern, {
-            language: language,
-            query: encodeURIComponent(text),
-            hash: hash
-        });
-    }
+    // private buildUrl(text: string, language: string, hash: string) {
+    //     const urlPattern = this.settingsProvider.getSettings().value.engine.playTextPattern;
+    //     return replaceAllPattern(urlPattern, {
+    //         language: language,
+    //         query: encodeURIComponent(text),
+    //         hash: hash
+    //     });
+    // }
 }
