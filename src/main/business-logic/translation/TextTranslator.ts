@@ -106,8 +106,7 @@ export class TextTranslator {
     }
 
     private getTranslationResponse(key: TranslationKey): Observable<any> {
-        const url = "https://translate.google.com/_/TranslateWebserverUi/data/batchexecute?rpcids=MkEWBc&hl=ru&soc-app=1&soc-platform=1&soc-device=1&rt=c";
-        const requestData = encodeURIComponent(`[[["MkEWBc","[[\\"${key.sentence}\\",\\"${key.sourceLanguage}\\",\\"${key.targetLanguage}\\",${key.isForcedTranslation ? "null" : "true"}],[null]]",null,"generic"]]]`);
-        return this.requestProvider.executeGoogleTranslateRequest(url, `f.req=${requestData}`);
+        const data = `[[\\"${key.sentence}\\",\\"${key.sourceLanguage}\\",\\"${key.targetLanguage}\\",${key.isForcedTranslation ? "null" : "true"}],[null]]`;
+        return this.requestProvider.executeGoogleTranslateRequest("MkEWBc", data);
     }
 }

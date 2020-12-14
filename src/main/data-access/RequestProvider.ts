@@ -28,13 +28,15 @@ export class RequestProvider {
         }
     }
 
-    public executeGoogleTranslateRequest<TContent>(url: string, formData: string): Observable<TContent> {
-        return this.executePostRequest(url, formData).pipe(map(response => this.parseGoogleResponse(response)));
+    public executeGoogleTranslateRequest<TContent>(rpcId: string, data: string): Observable<TContent> {
+        const url = `https://translate.google.com/_/TranslateWebserverUi/data/batchexecute?rpcids=${rpcId}&hl=ru&soc-app=1&soc-platform=1&soc-device=1&rt=c`;
+        const formData = encodeURIComponent(`[[["${rpcId}","${data}",null,"generic"]]]`);
+        return this.executePostRequest(url, `f.req=${formData}`).pipe(map(response => this.parseGoogleResponse(response, rpcId)));
     }
 
-    private parseGoogleResponse<TContent>(response: string): TContent {
+    private parseGoogleResponse<TContent>(response: string, rpcId: string): TContent {
         const lines = response.split('\n');
-        const responseLine = lines.find(line => line.indexOf("MkEWBc") !== -1);
+        const responseLine = lines.find(line => line.indexOf(rpcId) !== -1);
         if(!responseLine) {
             throw new Error("Unable to find google response");
         }

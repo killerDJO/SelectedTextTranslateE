@@ -1,13 +1,13 @@
 import { Logger } from "infrastructure/Logger";
 
 import { HistorySyncService } from "services/history/HistorySyncService";
-import { FilePlayer } from "services/FilePlayer";
+import { AudioPlayer } from "services/AudioPlayer";
 import { MergeCandidatesFinder } from "services/merge-candidates-finder/MergeCandidatesFinder";
 
 // tslint:disable-next-line:no-unused-expression
 new HistorySyncService();
 // tslint:disable-next-line:no-unused-expression
-new FilePlayer();
+new AudioPlayer();
 // tslint:disable-next-line:no-unused-expression
 new MergeCandidatesFinder();
 

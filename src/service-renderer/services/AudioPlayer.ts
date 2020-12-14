@@ -1,20 +1,19 @@
 import { MessageBus } from "common/renderer/MessageBus";
 import { Messages } from "common/messaging/Messages";
-import { PlayFileRequest } from "common/dto/translation/PlayFileRequest";
+import { PlayAudioRequest } from "common/dto/translation/PlayAudioRequest";
 
 import { Logger } from "infrastructure/Logger";
 
-export class FilePlayer {
+export class AudioPlayer {
     private readonly messageBus: MessageBus = new MessageBus();
     private readonly logger: Logger = new Logger();
 
     constructor() {
-        this.messageBus.observeValue<PlayFileRequest>(Messages.ServiceRenderer.PlayFile, filePath => this.playFile(filePath));
+        this.messageBus.observeValue<PlayAudioRequest>(Messages.ServiceRenderer.PlayAudio, filePath => this.playFile(filePath));
     }
 
-    private playFile(request: PlayFileRequest): Promise<void> {
-        const RANDOM_MULTIPLIER = 1000000;
-        const audio = new Audio(`${request.filePath}?noCache=${Math.floor(Math.random() * RANDOM_MULTIPLIER)}`);
+    private playFile(request: PlayAudioRequest): Promise<void> {
+        const audio = new Audio(`data:audio/mpeg;base64,${request.audio}`);
         audio.volume = request.volume / 100;
         return audio.play().catch(error => this.logger.error("Unable to play audio file.", error));
     }
