@@ -27,7 +27,6 @@ app.commandLine.appendSwitch("autoplay-policy", "no-user-gesture-required");
 
 let application: Application;
 app.on("ready", async () => {
-   
     container.get<ErrorHandler>(ErrorHandler).initialize();
     logger.info("Application startup.");
     if (container.get<Installer>(Installer).handleSquirrelEvent()) {

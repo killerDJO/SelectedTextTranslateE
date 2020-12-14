@@ -46,7 +46,6 @@ export class TextPlayer {
             );
     }
 
-
     private playFile(audio: string): Observable<void> {
         const volume = this.settingsProvider.getSettings().value.engine.playVolume;
         return this.messageBus.sendValue<PlayAudioRequest>(Messages.ServiceRenderer.PlayAudio, { audio: audio, volume: volume });

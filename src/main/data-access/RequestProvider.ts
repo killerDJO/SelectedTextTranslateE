@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { Observable, defer, from } from "rxjs";
 import { injectable } from "inversify";
 import { map } from "rxjs/operators";
-const HttpsProxyAgent  = require('https-proxy-agent');
+const HttpsProxyAgent  = require("https-proxy-agent");
 
 import { SettingsProvider } from "business-logic/settings/SettingsProvider";
 import { ProxySettings } from "business-logic/settings/dto/Settings";
@@ -23,7 +23,7 @@ export class RequestProvider {
         this.requestTimeout = settings.engine.requestTimeout;
         this.proxySettings = settings.engine.proxy;
 
-        if(settings.engine.enableRequestsLogging) {
+        if (settings.engine.enableRequestsLogging) {
             this.addRequestsLogging();
         }
     }
@@ -35,24 +35,24 @@ export class RequestProvider {
     }
 
     private parseGoogleResponse<TContent>(response: string, rpcId: string): TContent {
-        const lines = response.split('\n');
+        const lines = response.split("\n");
         const responseLine = lines.find(line => line.indexOf(rpcId) !== -1);
-        if(!responseLine) {
+        if (!responseLine) {
             throw new Error("Unable to find google response");
         }
 
-        const responseLineJson = JSON.parse(responseLine + ']');
+        const responseLineJson = JSON.parse(`${responseLine}]`);
         const responseContent = responseLineJson[0][2];
         return JSON.parse(responseContent);
     }
 
     private executePostRequest(url: string, data?: string): Observable<any> {
-        if(this.proxySettings.isEnabled) {
-            process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+        if (this.proxySettings.isEnabled) {
+            process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
         }
-        
+
         return defer(() => {
-            return from<Promise<AxiosResponse<any>>>(axios.post(url, data, {
+            return from<Promise<AxiosResponse>>(axios.post(url, data, {
                 headers: {
                     "User-Agent": this.userAgent,
                     "X-Same-Domain": 1,
@@ -80,15 +80,15 @@ export class RequestProvider {
                 headers: request.headers,
                 method: request.method,
                 timeout: request.timeout
-            }
+            };
             this.logger.info(`Starting Request: ${JSON.stringify(loggable)}`);
-            return request
-          })
-          
+            return request;
+        });
+
         axios.interceptors.response.use(response => {
             const loggable = { data: response.data, headers: response.headers, status: response.status };
             this.logger.info(`Response: ${JSON.stringify(loggable)}`);
-            return response
-        })
+            return response;
+        });
     }
 }

@@ -20,16 +20,16 @@ import { TranslateResult, TranslateResultSentence, TranslateResultCategory, Tran
 // 1: [
 //   0: [
 //      0: [
-//           0: <..>,   
+//           0: <..>,
 //           1: "<transliteration>",
-//           2: <..>,   
+//           2: <..>,
 //           3: <..>,
-//           4: <..>,       
+//           4: <..>,
 //           5: [
-//               0: [          
+//               0: [
 //                    0: "<translation">,
 //                       ...
-//                  ] 
+//                  ]
 //              ]
 //         ]
 //      ]
@@ -49,12 +49,12 @@ import { TranslateResult, TranslateResultSentence, TranslateResultCategory, Tran
 //            ],
 //            ....
 //         ],
-//      2: <..>,    
-//      3: <..>,  
+//      2: <..>,
+//      3: <..>,
 //      4: [
 //           0: [
 //                0: [
-//                      0: "<part_of_speech>"   
+//                      0: "<part_of_speech>"
 //                      1: [
 //                            0: [
 //                                  0: ["<similar_word>", ...]
@@ -71,7 +71,7 @@ import { TranslateResult, TranslateResultSentence, TranslateResultCategory, Tran
 //                      1: [
 //                           0: ["<variant_1>", <...>, ["<reverse_translation_1>", "<reverse_translation_2>", ..], <score>, null]
 //                              .....
-//                         ]                      
+//                         ]
 //                    ],
 //                    ...
 //               ]
@@ -96,33 +96,33 @@ export class TranslationResponseParser {
     private parseSentence(root: any, input: string): TranslateResultSentence {
         const inputResponseSection = root[0];
         const translationResponseSection = root[1];
-        
+
         let suggestion: string | null = null;
         let origin: string | null = null;
         let languageSuggestion: string | null = null;
         let transcription: string | null = null;
         if (inputResponseSection?.length > 0) {
             origin = inputResponseSection[1]?.[0]?.[1] ?? input;
-            
+
             const rawSuggestion = inputResponseSection[1]?.[0]?.[0]?.[1];
             suggestion = !!rawSuggestion ? (stripHtml as any).default(rawSuggestion).result : null;
-            
+
             languageSuggestion = inputResponseSection[1]?.[1]?.[0] ?? null;
-            transcription = inputResponseSection[0] ?? null; 
+            transcription = inputResponseSection[0] ?? null;
         }
 
         let translation: string | null = null;
-        if(translationResponseSection?.length > 0) {
-            translation = translationResponseSection[0]?.[0]?.[5]?.[0]?.[0];  
+        if (translationResponseSection?.length > 0) {
+            translation = translationResponseSection[0]?.[0]?.[5]?.[0]?.[0];
         }
 
         const similarWordsSection = root?.[3]?.[4]?.[0];
         let allSimilarWords: string[] = [];
         if (!!similarWordsSection?.length) {
-            for(const similarWordCategory of similarWordsSection) {
+            for (const similarWordCategory of similarWordsSection) {
                 const similarWordSubCategories = similarWordCategory[1];
-                if(!!similarWordSubCategories?.length) {
-                    for(const similarWordSubCategory of similarWordSubCategories){
+                if (!!similarWordSubCategories?.length) {
+                    for (const similarWordSubCategory of similarWordSubCategories) {
                         const similarWords = similarWordSubCategory?.[0];
                         allSimilarWords = allSimilarWords.concat(similarWords.slice(0, Math.min(similarWords.length, 5)));
                     }
@@ -172,8 +172,6 @@ export class TranslationResponseParser {
             return [];
         }
 
-        //const synonyms = this.parseDefinitionSynonyms(root);
-
         const definitionCategories: TranslateResultDefinitionCategory[] = [];
         for (const definitionCategory of definitionsSection) {
             const partOfSpeech: string = definitionCategory[0];
@@ -196,6 +194,6 @@ export class TranslationResponseParser {
     }
 
     private getBaseForm(root: any): string {
-        return root[3]?.[0] ?? 'N/A';
+        return root[3]?.[0] ?? "N/A";
     }
 }

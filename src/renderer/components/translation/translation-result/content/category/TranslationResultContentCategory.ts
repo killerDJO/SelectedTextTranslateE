@@ -61,6 +61,7 @@ export default class TranslationResultContentCategory extends Vue {
     }
 
     private isVisibleEntry(entry: TranslateResultCategoryEntry, index: number): boolean {
-        return entry.score < 3 || index < this.translationResultViewSettings.visibility.visibleByDefaultNumber;
+        const LowScoreValue = 3;
+        return entry.score < LowScoreValue || index < this.translationResultViewSettings.visibility.visibleByDefaultNumber;
     }
 }
