@@ -51,7 +51,19 @@ import { TranslateResult, TranslateResultSentence, TranslateResultCategory, Tran
 //         ],
 //      2: <..>,    
 //      3: <..>,  
-//      4: <..>,
+//      4: [
+//           0: [
+//                0: [
+//                      0: "<part_of_speech>"   
+//                      1: [
+//                            0: [
+//                                  0: ["<similar_word>", ...]
+//                               ]
+//                          ]
+//                   ],
+//                   ....
+//              ]
+//         ],
 //      5: [
 //           0: [
 //                 0: [
@@ -89,7 +101,7 @@ export class TranslationResponseParser {
         let origin: string | null = null;
         let languageSuggestion: string | null = null;
         let transcription: string | null = null;
-        if (inputResponseSection.length > 0) {
+        if (inputResponseSection?.length > 0) {
             origin = inputResponseSection[1]?.[0]?.[1] ?? input;
             
             const rawSuggestion = inputResponseSection[1]?.[0]?.[0]?.[1];
@@ -100,16 +112,25 @@ export class TranslationResponseParser {
         }
 
         let translation: string | null = null;
-        if(translationResponseSection.length > 0) {
+        if(translationResponseSection?.length > 0) {
             translation = translationResponseSection[0]?.[0]?.[5]?.[0]?.[0];  
         }
 
-        let similarWords: string[] = [];
-        // if (!!root[14]) {
-        //     similarWords = root[14][0] || [];
-        // }
+        const similarWordsSection = root?.[3]?.[4]?.[0];
+        let allSimilarWords: string[] = [];
+        if (!!similarWordsSection?.length) {
+            for(const similarWordCategory of similarWordsSection) {
+                const similarWordSubCategories = similarWordCategory[1];
+                if(!!similarWordSubCategories?.length) {
+                    for(const similarWordSubCategory of similarWordSubCategories){
+                        const similarWords = similarWordSubCategory?.[0];
+                        allSimilarWords = allSimilarWords.concat(similarWords.slice(0, Math.min(similarWords.length, 5)));
+                    }
+                }
+            }
+        }
 
-        return new TranslateResultSentence(input, translation, transcription, origin, suggestion, languageSuggestion, similarWords);
+        return new TranslateResultSentence(input, translation, transcription, origin, suggestion, languageSuggestion, allSimilarWords);
     }
 
     private parseTranslateCategories(root: any): ReadonlyArray<TranslateResultCategory> {
