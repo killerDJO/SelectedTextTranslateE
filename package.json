@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "ajv": "6.12.4",
-    "axios": "0.20.0",
+    "axios": "0.21.1",
     "electron-store": "6.0.0",
     "firebase": "7.19.0",
     "inversify": "5.0.1",
