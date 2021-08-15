@@ -41,7 +41,7 @@ export class RequestProvider {
             throw new Error("Unable to find google response");
         }
 
-        const responseLineJson = JSON.parse(`${responseLine}]`);
+        const responseLineJson = JSON.parse(`${responseLine}`);
         const responseContent = responseLineJson[0][2];
         return JSON.parse(responseContent);
     }
