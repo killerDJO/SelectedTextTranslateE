@@ -6,7 +6,6 @@ interface Props {
   disabled?: boolean;
   tabIndex?: number;
 }
-
 withDefaults(defineProps<Props>(), {
   disabled: false,
   leftToRight: false,
@@ -20,7 +19,7 @@ defineEmits<{
 
 <template>
   <div class="checkbox" :class="{ disabled: disabled }">
-    <label tabindex="-1">
+    <label>
       <span v-if="leftToRight">{{ label }}</span>
       <span class="input-wrapper"
         ><input

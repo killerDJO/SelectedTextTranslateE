@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
-import { useDrop } from '../use-drop';
+import { useDrop } from '~/components/shared/use-drop';
 
 interface Props {
   suggestions: string[];
@@ -10,7 +10,6 @@ interface Props {
   autoFocus?: boolean;
   compactView?: boolean;
 }
-
 const props = withDefaults(defineProps<Props>(), {
   tabIndex: 0,
   minLength: 3,
@@ -25,9 +24,9 @@ const $emit = defineEmits<{
 }>();
 
 const drop = useDrop();
+
 const dropTarget = ref<HTMLElement>();
 const dropContent = ref<HTMLElement>();
-
 const input = ref('');
 const selectedSuggestionsIndex = ref(-1);
 
@@ -35,6 +34,7 @@ watch(input, () => {
   $emit('input-changed', input.value);
   requestSuggestions();
 });
+
 watch(
   () => props.suggestions,
   suggestions => {

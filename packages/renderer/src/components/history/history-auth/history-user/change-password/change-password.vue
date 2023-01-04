@@ -5,10 +5,15 @@ import { computed, reactive, ref } from 'vue';
 
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
 import { executeIfValid } from '~/utils/execute-if-valid';
-import { commonErrorMessages } from '../../error-codes';
-import { useHistoryAuthStore } from '../../history-auth.store';
-import type { AuthResponse } from '../../models/auth-response';
-import { passwordValidators, PASSWORD_TOO_WEAK_MESSAGE } from '../../password-validators';
+import { commonErrorMessages } from '~/components/history/history-auth/error-codes';
+import { useHistoryAuthStore } from '~/components/history/history-auth/history-auth.store';
+import type { AuthResponse } from '~/components/history/history-auth/models/auth-response';
+import {
+  passwordValidators,
+  PASSWORD_TOO_WEAK_MESSAGE
+} from '~/components/history/history-auth/password-validators';
+
+const historyAuth = useHistoryAuthStore();
 
 const isVisible = ref(false);
 const isInProgress = ref(false);
@@ -19,17 +24,13 @@ const state = reactive({
   password: '',
   passwordConfirmation: ''
 });
-
 const rules = computed(() => ({
   oldPassword: {
     required: helpers.withMessage('Old password must not be empty.', required)
   },
   ...passwordValidators()
 }));
-
 const v$ = useVuelidate(rules, state, { $autoDirty: true });
-
-const historyAuth = useHistoryAuthStore();
 
 async function changePasswordIfValid() {
   await executeIfValid(v$, () => executeChangePassword(state.oldPassword, state.password));

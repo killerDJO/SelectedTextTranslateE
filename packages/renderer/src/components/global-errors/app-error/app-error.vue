@@ -6,7 +6,6 @@ interface Props {
   error?: any;
   dismissible?: boolean;
 }
-
 withDefaults(defineProps<Props>(), { dismissible: true, error: undefined });
 
 defineEmits<{

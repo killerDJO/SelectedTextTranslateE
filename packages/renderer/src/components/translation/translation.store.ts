@@ -23,12 +23,12 @@ export const useTranslationStore = defineStore('translation', {
   getters: {},
   actions: {
     setup() {
-      const translateResultStore = useTranslateResultStore();
-      const appStore = useAppStore();
+      const translateResult = useTranslateResultStore();
+      const app = useAppStore();
 
       window.mainAPI.translation.onTranslateText((text, showDefinitions) => {
         if (!text) {
-          translateResultStore.clearCurrentTranslation();
+          translateResult.clearCurrentTranslation();
           this.nonTextTranslation = true;
           return;
         }
@@ -36,13 +36,13 @@ export const useTranslationStore = defineStore('translation', {
         this.nonTextTranslation = false;
         this.showInput = false;
 
-        translateResultStore.translateText(
+        translateResult.translateText(
           {
             sentence: text,
             isForcedTranslation: false,
             refreshCache: false,
-            sourceLanguage: appStore.settings.language.sourceLanguage,
-            targetLanguage: appStore.settings.language.targetLanguage
+            sourceLanguage: app.settings.language.sourceLanguage,
+            targetLanguage: app.settings.language.targetLanguage
           },
           showDefinitions
         );
@@ -57,7 +57,7 @@ export const useTranslationStore = defineStore('translation', {
       });
 
       window.mainAPI.translation.onShowTextInput(() => {
-        translateResultStore.clearCurrentTranslation();
+        translateResult.clearCurrentTranslation();
 
         this.nonTextTranslation = false;
         this.showInput = true;
@@ -67,8 +67,8 @@ export const useTranslationStore = defineStore('translation', {
       this.nonTextTranslation = false;
       this.showInput = false;
 
-      const translateResultStore = useTranslateResultStore();
-      translateResultStore.translateText(request);
+      const translateResult = useTranslateResultStore();
+      translateResult.translateText(request);
     }
   }
 });

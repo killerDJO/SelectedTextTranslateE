@@ -12,14 +12,13 @@ interface Props {
   category: TranslateResultCategory;
   settings: TranslateResultRendererSettings;
 }
-
 const props = defineProps<Props>();
-
-const isExpanded = ref(false);
 
 defineEmits<{
   (e: 'translate', text: string): void;
 }>();
+
+const isExpanded = ref(false);
 
 const visibleEntries = computed(() => {
   if (isExpanded.value) {
@@ -28,7 +27,6 @@ const visibleEntries = computed(() => {
 
   return getInitiallyVisibleEntries();
 });
-
 const numberOfInitiallyHiddenEntries = computed(
   () => props.category.entries.length - getInitiallyVisibleEntries().length
 );

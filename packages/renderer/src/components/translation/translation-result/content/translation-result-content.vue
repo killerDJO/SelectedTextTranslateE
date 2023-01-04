@@ -28,7 +28,6 @@ interface Props {
   languages: Map<string, string>;
   isEmbedded: boolean;
 }
-
 const props = defineProps<Props>();
 
 defineEmits<{

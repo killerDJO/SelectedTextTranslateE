@@ -2,9 +2,9 @@ import { cloneDeep, uniq } from 'lodash-es';
 
 import type { HistorySortColumn, Tag } from '@selected-text-translate/common/settings/settings';
 
-import type { HistoryRecord } from '../models/history-record';
-import type { HistoryFilter } from '../models/history-filter';
-import type { SortOrder } from '../models/sort-order';
+import type { HistoryRecord } from '~/components/history/models/history-record';
+import type { HistoryFilter } from '~/components/history/models/history-filter';
+import type { SortOrder } from '~/components/history/models/sort-order';
 import type {
   TranslateDescriptor,
   TranslateResult
@@ -13,7 +13,10 @@ import { settingsProvider, type SettingsProvider } from '~/services/settings-pro
 import { normalizeTag } from '~/utils/normalize-tag';
 import { logger, type Logger } from '~/services/logger';
 import { getLogKey } from '~/utils/logging';
-import { authService, type AuthService } from '../history-auth/services/auth-service';
+import {
+  authService,
+  type AuthService
+} from '~/components/history/history-auth/services/auth-service';
 
 import { historyDatabase, type HistoryDatabase } from './history-database';
 import { historyCache, type HistoryCache } from './history-cache';

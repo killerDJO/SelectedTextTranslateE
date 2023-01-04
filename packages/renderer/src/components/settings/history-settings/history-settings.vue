@@ -4,11 +4,21 @@ import { helpers, minValue } from '@vuelidate/validators';
 import { computed, reactive, watch } from 'vue';
 
 import { executeIfValid } from '~/utils/execute-if-valid';
-import { useSettingsStore } from '../settings.store';
+import { useSettingsStore } from '~/components/settings/settings.store';
 
 const settingsStore = useSettingsStore();
 
 const pageSize = computed(() => settingsStore.settings.views.history.renderer.pageSize);
+
+const state = reactive({
+  pageSize: pageSize.value ?? 0
+});
+const rules = computed(() => ({
+  pageSize: {
+    min: helpers.withMessage('Page size must be bigger than 0', minValue(1))
+  }
+}));
+const v$ = useVuelidate(rules, state);
 
 watch(
   () => pageSize.value,
@@ -17,18 +27,6 @@ watch(
     v$.value.$reset();
   }
 );
-
-const state = reactive({
-  pageSize: pageSize.value ?? 0
-});
-
-const rules = computed(() => ({
-  pageSize: {
-    min: helpers.withMessage('Page size must be bigger than 0', minValue(1))
-  }
-}));
-
-const v$ = useVuelidate(rules, state);
 
 async function updateIfValid() {
   v$.value.pageSize.$touch();

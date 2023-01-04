@@ -7,11 +7,11 @@ import { Messages } from '@selected-text-translate/common/messaging/messages';
 import { Settings } from '@selected-text-translate/common/settings/settings';
 import { DeepPartial } from '@selected-text-translate/common/typings/deep-partial';
 
-import { RendererLocationProvider } from '../framework/RendererLocationProvider';
-import { ViewContext } from '../framework/ViewContext';
-import { ViewOptions } from '../framework/ViewOptions';
-import { IScaler } from '../framework/scaling/IScaler';
-import { MessageBus } from '../framework/MessageBus';
+import { RendererLocationProvider } from '~/presentation/framework/RendererLocationProvider';
+import { ViewContext } from '~/presentation/framework/ViewContext';
+import { ViewOptions } from '~/presentation/framework/ViewOptions';
+import { IScaler } from '~/presentation/framework/scaling/IScaler';
+import { MessageBus } from '~/presentation/framework/MessageBus';
 
 export abstract class ViewBase {
   private readonly subscriptions: Subscription[] = [];

@@ -14,8 +14,8 @@ export interface Settings {
 }
 
 export interface LoggingSettings {
-  maxLogSize: number;
-  logFileName: string;
+  readonly maxLogSize: number;
+  readonly logFileName: string;
 }
 
 export interface HotkeySettings {
@@ -87,20 +87,21 @@ export interface TagSettings {
 }
 
 export interface FirebaseSettings {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
+  readonly apiKey: string;
+  readonly authDomain: string;
+  readonly projectId: string;
 }
 
 export interface HistoryViewRendererSettings {
   readonly pageSize: number;
+  readonly lastRecordsToScanForMerge: number;
   readonly columns: ReadonlyArray<ColumnSettings>;
 }
 
 export interface ColumnSettings {
-  column: HistorySortColumn;
-  isVisible: boolean;
-  weight: number;
+  readonly column: HistorySortColumn;
+  readonly isVisible: boolean;
+  readonly weight: number;
 }
 
 export enum HistorySortColumn {

@@ -9,14 +9,14 @@ import { useAppStore } from './app.store';
 import { useHistoryAuthStore } from './components/history/history-auth/history-auth.store';
 import { hotkeysRegistry } from './services/hotkeys-registry';
 
-const appStore = useAppStore();
-const historyAuthStore = useHistoryAuthStore();
+const app = useAppStore();
+const historyAuth = useHistoryAuthStore();
 const isSetupCompleted = ref(false);
 
 onMounted(async () => {
-  await appStore.setup();
+  await app.setup();
 
-  historyAuthStore.setup();
+  historyAuth.setup();
   registerDevToolsHotkey();
 
   isSetupCompleted.value = true;
@@ -25,9 +25,9 @@ onMounted(async () => {
 });
 
 watch(
-  () => appStore._settings,
+  isSetupCompleted,
   () => {
-    if (appStore.hasSettings) {
+    if (isSetupCompleted.value) {
       registerHotkeys();
     }
   },
@@ -38,40 +38,36 @@ function registerHotkeys(): void {
   const GLOBAL_HOTKEYS_NAMESPACE = 'global';
   hotkeysRegistry.unregisterHotkeys(GLOBAL_HOTKEYS_NAMESPACE);
 
-  const hotkeySettings = appStore.settings.renderer.hotkeys;
-  hotkeysRegistry.registerHotkeys(GLOBAL_HOTKEYS_NAMESPACE, hotkeySettings.zoomIn, appStore.zoomIn);
-  hotkeysRegistry.registerHotkeys(
-    GLOBAL_HOTKEYS_NAMESPACE,
-    hotkeySettings.zoomOut,
-    appStore.zoomOut
-  );
+  const hotkeySettings = app.settings.renderer.hotkeys;
+  hotkeysRegistry.registerHotkeys(GLOBAL_HOTKEYS_NAMESPACE, hotkeySettings.zoomIn, app.zoomIn);
+  hotkeysRegistry.registerHotkeys(GLOBAL_HOTKEYS_NAMESPACE, hotkeySettings.zoomOut, app.zoomOut);
   hotkeysRegistry.registerHotkeys(
     GLOBAL_HOTKEYS_NAMESPACE,
     hotkeySettings.resetZoom,
-    appStore.resetZoom
+    app.resetZoom
   );
 }
 
 function registerDevToolsHotkey(): void {
   const devToolsHotkey: Hotkey = { keys: ['ctrl', 'shift', 'i'] };
-  hotkeysRegistry.registerHotkeys('devtools', [devToolsHotkey], () => appStore.openDevTools());
+  hotkeysRegistry.registerHotkeys('devtools', [devToolsHotkey], () => app.openDevTools());
 }
 </script>
 
 <template>
   <div
     class="main"
-    :style="{ 'border-color': '#' + appStore.accentColor }"
-    :class="{ frameless: appStore.isFrameless }"
+    :style="{ 'border-color': '#' + app.accentColor }"
+    :class="{ frameless: app.isFrameless }"
   >
     <div
-      v-if="appStore.isFrameless"
+      v-if="app.isFrameless"
       class="frameless-header"
-      :style="{ 'background-color': '#' + appStore.accentColor }"
+      :style="{ 'background-color': '#' + app.accentColor }"
     />
     <global-errors></global-errors>
     <div v-if="isSetupCompleted" class="scroll-holder">
-      <div class="view" :style="{ zoom: appStore.scaleFactor * 100 + '%' }">
+      <div class="view" :style="{ zoom: app.scaleFactor * 100 + '%' }">
         <RouterView></RouterView>
       </div>
     </div>

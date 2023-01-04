@@ -4,7 +4,6 @@ interface Props {
   disabled?: boolean;
   tabIndex?: number;
 }
-
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   tabIndex: 0

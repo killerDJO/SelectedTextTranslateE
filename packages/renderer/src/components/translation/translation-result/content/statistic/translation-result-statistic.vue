@@ -5,7 +5,6 @@ interface Props {
   historyRecord: HistoryRecord;
   languages: Map<string, string>;
 }
-
 defineProps<Props>();
 
 defineEmits<{

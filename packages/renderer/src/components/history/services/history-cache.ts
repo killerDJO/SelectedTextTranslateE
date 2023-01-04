@@ -4,10 +4,13 @@ import { add } from 'date-fns';
 
 import { HistorySortColumn } from '@selected-text-translate/common/settings/settings';
 
-import type { HistoryRecord } from '../models/history-record';
-import type { SortOrder } from '../models/sort-order';
-import type { HistoryFilter } from '../models/history-filter';
-import { authService, type AuthService } from '../history-auth/services/auth-service';
+import type { HistoryRecord } from '~/components/history/models/history-record';
+import type { SortOrder } from '~/components/history/models/sort-order';
+import type { HistoryFilter } from '~/components/history/models/history-filter';
+import {
+  authService,
+  type AuthService
+} from '~/components/history/history-auth/services/auth-service';
 
 import { historyDatabase, type HistoryDatabase } from './history-database';
 

@@ -2,7 +2,7 @@
 import { computed } from 'vue';
 
 import type { SelectedLanguages } from '~/components/shared/language-selector/language-selector.vue';
-import { useSettingsStore } from '../settings.store';
+import { useSettingsStore } from '~/components/settings/settings.store';
 
 const settingsStore = useSettingsStore();
 

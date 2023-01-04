@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 
 import { useAppStore } from '~/app.store';
 import type { DataTableConfig } from '~/components/shared/data-table/data-table.vue';
-import ForcedTranslationIcon from '../icons/forced-translation-icon.vue';
+import ForcedTranslationIcon from '~/components/history/icons/forced-translation-icon.vue';
 
 import { useHistoryMergerStore } from './history-merger.store';
 import type { MergeCandidate, MergeHistoryRecord } from './models/merge-candidate';
@@ -15,7 +15,6 @@ enum CandidatesTableColumns {
   TargetLanguage = 'target-language',
   Candidates = 'candidates'
 }
-
 enum CandidateTableColumns {
   Word = 'word',
   Translation = 'translation',

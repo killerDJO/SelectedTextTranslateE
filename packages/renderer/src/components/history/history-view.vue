@@ -21,55 +21,53 @@ import HistoryPaginator from './history-paginator/history-paginator.vue';
 import HistoryFilter from './history-filter/history-filter.vue';
 import HistoryMerger from './history-merger/history-merger.vue';
 
-const appStore = useAppStore();
-const historyStore = useHistoryStore();
+const app = useAppStore();
+const history = useHistoryStore();
 const historyAuth = useHistoryAuthStore();
-const translationResultStore = useTranslateResultStore();
+const translateResult = useTranslateResultStore();
 
 const isFilterVisible = ref(false);
 const isTranslationVisible = ref(false);
 
 const historyMergerInstance = ref<InstanceType<typeof HistoryMerger> | null>(null);
 
-const columns = computed(() => appStore.settings.views.history.renderer.columns);
+const columns = computed(() => app.settings.views.history.renderer.columns);
 
+watch([() => historyAuth.isSignedIn, () => history.sortOrder, () => history.sortColumn], loadData, {
+  immediate: true
+});
+watch(() => history.filter, loadData, { deep: true });
 watch(
-  [() => historyAuth.isSignedIn, () => historyStore.sortOrder, () => historyStore.sortColumn],
-  loadData,
-  { immediate: true }
-);
-watch(() => historyStore.filter, loadData, { deep: true });
-watch(
-  () => appStore.settings.views.history.renderer.pageSize,
+  () => app.settings.views.history.renderer.pageSize,
   () => {
-    historyStore.refreshRecords();
+    history.refreshRecords();
   }
 );
 
-onMounted(() => historyStore.setup());
+onMounted(() => history.setup());
 
 async function loadData() {
   if (historyAuth.isSignedIn) {
-    historyStore.pageNumber = 1;
-    await historyStore.queryRecords();
+    history.pageNumber = 1;
+    await history.queryRecords();
   }
 }
 
 async function changePage(pageNumber: number) {
-  historyStore.pageNumber = pageNumber;
-  await historyStore.queryRecords();
+  history.pageNumber = pageNumber;
+  await history.queryRecords();
 }
 
 function updateColumns(columns: ReadonlyArray<ColumnSettings>) {
-  appStore.updateSettings({ views: { history: { renderer: { columns } } } });
+  app.updateSettings({ views: { history: { renderer: { columns } } } });
 }
 
 function updateCurrentTags(tags: Tag[]) {
-  appStore.updateSettings({ tags: { currentTags: cloneDeep(tags) } });
+  app.updateSettings({ tags: { currentTags: cloneDeep(tags) } });
 }
 
 function toggleActiveTag(tag: Tag) {
-  const clonedTags = cloneDeep(appStore.settings.tags.currentTags)
+  const clonedTags = cloneDeep(app.settings.tags.currentTags)
     .map(normalizeTag)
     .filter(currentTag => currentTag.tag !== tag.tag);
 
@@ -84,19 +82,19 @@ function toggleActiveTag(tag: Tag) {
 }
 
 function translateHistoryRecord(record: HistoryRecord) {
-  translationResultStore.showHistoryRecord(record);
+  translateResult.showHistoryRecord(record);
   isFilterVisible.value = false;
   isTranslationVisible.value = true;
 }
 
 function onTagClicked(tag: Tag) {
-  historyStore.filter.tags = uniq((historyStore.filter.tags ?? []).concat([tag.tag]));
+  history.filter.tags = uniq((history.filter.tags ?? []).concat([tag.tag]));
   isFilterVisible.value = true;
   isTranslationVisible.value = false;
 }
 
 function isFilterActive(): boolean {
-  const filter = historyStore.filter;
+  const filter = history.filter;
   return (
     !!filter.word ||
     !!filter.translation ||
@@ -137,7 +135,7 @@ function toggleFilter() {
         <div class="tags">
           <span class="tags-label">Tags:</span>
           <tags-editor
-            :tags="appStore.settings.tags.currentTags"
+            :tags="app.settings.tags.currentTags"
             :clickable="true"
             @update-tags="updateCurrentTags"
             @tag-clicked="toggleActiveTag"
@@ -145,10 +143,10 @@ function toggleFilter() {
         </div>
         <div class="header-controls">
           <app-checkbox
-            :value="historyStore.filter.starredOnly"
+            :value="history.filter.starredOnly"
             :label="'Starred Only'"
             :left-to-right="true"
-            @update:value="starredOnly => (historyStore.filter.starredOnly = starredOnly)"
+            @update:value="starredOnly => (history.filter.starredOnly = starredOnly)"
           />
           <toggle-button
             text="Filter"
@@ -176,68 +174,64 @@ function toggleFilter() {
           />
         </div>
       </div>
-      <div class="results-holder" :class="{ 'full-height': !historyStore.records?.length }">
+      <div class="results-holder" :class="{ 'full-height': !history.records?.length }">
         <history-table
-          v-model:sortColumn="historyStore.sortColumn"
-          v-model:sortOrder="historyStore.sortOrder"
+          v-model:sortColumn="history.sortColumn"
+          v-model:sortOrder="history.sortOrder"
           :columns="columns"
-          :history-records="historyStore.records ?? []"
-          :is-loading="historyStore.isLoading"
-          :languages="appStore.settings.supportedLanguages"
+          :history-records="history.records ?? []"
+          :is-loading="history.isLoading"
+          :languages="app.settings.supportedLanguages"
           @translate-record="translateHistoryRecord"
-          @set-starred-status="
-            (record, isStarred) => historyStore.setStarredStatus(record, isStarred)
-          "
-          @play-record="record => historyStore.playRecord(record)"
-          @update-tags="(record, tags) => historyStore.updateTags(record, tags)"
+          @set-starred-status="(record, isStarred) => history.setStarredStatus(record, isStarred)"
+          @play-record="record => history.playRecord(record)"
+          @update-tags="(record, tags) => history.updateTags(record, tags)"
           @tag-clicked="onTagClicked"
           @set-archived-status="
-            (record, isArchived) => historyStore.setArchivedStatus(record, isArchived)
+            (record, isArchived) => history.setArchivedStatus(record, isArchived)
           "
           @update-columns="updateColumns"
         />
         <div class="results-footer">
           <history-user class="history-user" />
           <history-paginator
-            v-if="historyStore.records?.length"
-            :page-number="historyStore.pageNumber"
-            :total-pages="historyStore.totalPages"
-            :total-records="historyStore.totalRecords"
+            v-if="history.records?.length"
+            :page-number="history.pageNumber"
+            :total-pages="history.totalPages"
+            :total-records="history.totalRecords"
             @update:page-number="pageNumber => changePage(pageNumber)"
           />
         </div>
       </div>
       <div
-        v-if="
-          isTranslationVisible && !isFilterVisible && translationResultStore.translateDescriptor
-        "
+        v-if="isTranslationVisible && !isFilterVisible && translateResult.translateDescriptor"
         class="sidebar"
       >
         <translation-result
           class="history-translate-result"
-          :default-view="translationResultStore.defaultTranslateResultView"
-          :translate-result="translationResultStore.translateResult"
-          :translate-descriptor="translationResultStore.translateDescriptor"
-          :history-record="translationResultStore.historyRecord"
-          :is-in-progress="translationResultStore.isTranslationInProgress"
-          :settings="appStore.settings.views.translation.renderer"
-          :languages="appStore.settings.supportedLanguages"
-          @translate-suggestion="translationResultStore.translateSuggestion()"
-          @force-translation="translationResultStore.forceTranslation()"
-          @refresh-translation="translationResultStore.refreshTranslation()"
-          @translate-text="request => translationResultStore.translateText(request)"
-          @change-language="translationResultStore.changeLanguage()"
-          @play-text="translationResultStore.playCurrentSentence()"
-          @search="translationResultStore.search()"
-          @archive="translationResultStore.archive()"
-          @set-starred-status="isStarred => translationResultStore.setStarredStatus(isStarred)"
-          @update-tags="tags => translationResultStore.updateTags(tags)"
+          :default-view="translateResult.defaultTranslateResultView"
+          :translate-result="translateResult.translateResult"
+          :translate-descriptor="translateResult.translateDescriptor"
+          :history-record="translateResult.historyRecord"
+          :is-in-progress="translateResult.isTranslationInProgress"
+          :settings="app.settings.views.translation.renderer"
+          :languages="app.settings.supportedLanguages"
+          @translate-suggestion="translateResult.translateSuggestion()"
+          @force-translation="translateResult.forceTranslation()"
+          @refresh-translation="translateResult.refreshTranslation()"
+          @translate-text="request => translateResult.translateText(request)"
+          @change-language="translateResult.changeLanguage()"
+          @play-text="translateResult.playCurrentSentence()"
+          @search="translateResult.search()"
+          @archive="translateResult.archive()"
+          @set-starred-status="isStarred => translateResult.setStarredStatus(isStarred)"
+          @update-tags="tags => translateResult.updateTags(tags)"
         />
       </div>
       <div v-else-if="isFilterVisible" class="sidebar">
         <history-filter
-          :filter="historyStore.filter"
-          @filter-updated="filter => (historyStore.filter = filter)"
+          :filter="history.filter"
+          @filter-updated="filter => (history.filter = filter)"
           @close="isFilterVisible = false"
         />
       </div>

@@ -86,6 +86,7 @@
       "height": 55,
       "renderer": {
         "pageSize": 20,
+        "lastRecordsToScanForMerge": 10000,
         "$columns.key": "column",
         "columns": [
           {

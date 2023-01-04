@@ -23,8 +23,8 @@ import {
   SignUpErrorCodes,
   VerifyResetTokenErrorCodes,
   type AuthResponse
-} from '../models/auth-response';
-import type { AccountInfo } from '../models/account-info';
+} from '~/components/history/history-auth/models/auth-response';
+import type { AccountInfo } from '~/components/history/history-auth/models/account-info';
 import { settingsProvider, SettingsProvider } from '~/services/settings-provider';
 
 export class AuthService {

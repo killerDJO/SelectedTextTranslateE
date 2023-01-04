@@ -3,7 +3,6 @@ interface Props {
   text: string;
   isActive: boolean;
 }
-
 defineProps<Props>();
 
 defineEmits<{

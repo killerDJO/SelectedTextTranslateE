@@ -2,8 +2,8 @@ import { clipboard } from 'electron';
 import { Subject, Observable } from 'rxjs';
 import { injectable } from 'inversify';
 
-import * as nativeExtensions from '../native-extensions/native-extensions.node';
-import { SettingsProvider } from '../infrastructure/SettingsProvider';
+import * as nativeExtensions from '~/native-extensions/native-extensions.node';
+import { SettingsProvider } from '~/infrastructure/SettingsProvider';
 
 @injectable()
 export class TextExtractor {

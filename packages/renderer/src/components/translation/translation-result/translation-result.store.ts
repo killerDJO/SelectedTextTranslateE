@@ -81,7 +81,6 @@ export const useTranslateResultStore = defineStore('translate-result', {
       this.historyRecord = record;
       this.translateResult = record.translateResult;
     },
-
     async playText(request: PlayTextRequest) {
       try {
         await textPlayer.playText(request);
@@ -182,6 +181,7 @@ async function updateRecord(
     if (!store.historyRecord) {
       throw new Error('History record is not available.');
     }
+
     const actionPromise = action(store.historyRecord);
     window.mainAPI.translation.historyRecordChange(store.historyRecord!.id);
     store.historyRecord = await historyService.getRecord(store.historyRecord.id, true);

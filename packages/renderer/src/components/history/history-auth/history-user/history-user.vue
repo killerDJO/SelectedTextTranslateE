@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { useHistoryStore } from '../../history.store';
-import { useHistoryAuthStore } from '../history-auth.store';
+import { useHistoryStore } from '~/components/history/history.store';
+import { useHistoryAuthStore } from '~/components/history/history-auth/history-auth.store';
 
 import ChangePassword from './change-password/change-password.vue';
 

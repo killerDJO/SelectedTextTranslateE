@@ -21,8 +21,6 @@
   &:invalid {
     border-color: $color-error;
 
-    &:focus-outline {
-      outline: $outline-width solid $color-error;
-    }
+    @include focus-outline($color-error);
   }
 }

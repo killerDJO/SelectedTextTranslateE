@@ -8,8 +8,11 @@ import type {
 
 import type { TranslateResultViews } from '~/components/translation/models/translate-result-views';
 import type { HistoryRecord } from '~/components/history/models/history-record';
-import type { TranslateRequest } from '../models/requests';
-import type { TranslateResult, TranslateDescriptor } from '../models/translation';
+import type { TranslateRequest } from '~/components/translation/models/requests';
+import type {
+  TranslateResult,
+  TranslateDescriptor
+} from '~/components/translation/models/translation';
 import { hotkeysRegistry } from '~/services/hotkeys-registry';
 
 import TranslationResultHeader from './header/translation-result-header.vue';
@@ -25,7 +28,6 @@ interface Props {
   languages: Map<string, string>;
   isEmbedded: boolean;
 }
-
 const props = withDefaults(defineProps<Props>(), {
   isEmbedded: false,
   translateResult: undefined,

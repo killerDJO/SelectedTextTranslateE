@@ -16,7 +16,6 @@ interface Props {
   text: string;
   placement?: Placement;
 }
-
 withDefaults(defineProps<Props>(), {
   tabIndex: 0,
   placement: 'bottom-end'
@@ -44,7 +43,7 @@ function itemClick(item: DropListItem) {
     @click="$emit('click')"
     @item-click="item => itemClick((item as DropListItem))"
   >
-    <div class="drop-item-value" tabindex="-1">
+    <div class="drop-item-value">
       {{ item.text }}
     </div>
   </drop-button>

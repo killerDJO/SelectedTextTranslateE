@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { Logger } from '~/services/logger';
+import { logger } from '~/services/logger';
 
 interface AppErrorState {
   errors: ErrorDetails[];
@@ -13,8 +13,6 @@ interface ErrorDetails {
   error?: unknown;
   message: string;
 }
-
-const logger = new Logger();
 
 export const useGlobalErrorsStore = defineStore('global-errors', {
   state: () => {

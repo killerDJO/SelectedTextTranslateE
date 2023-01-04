@@ -4,8 +4,8 @@ import { useAppStore } from '~/app.store';
 
 export class SettingsProvider {
   public getSettings(): Settings {
-    const appStore = useAppStore();
-    return appStore.settings;
+    const app = useAppStore();
+    return app.settings;
   }
 }
 

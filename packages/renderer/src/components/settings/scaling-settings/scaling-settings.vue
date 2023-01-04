@@ -3,17 +3,14 @@ import { computed } from 'vue';
 
 import type { ScalingSettings } from '@selected-text-translate/common/settings/settings';
 
-import { useSettingsStore } from '../settings.store';
+import { useSettingsStore } from '~/components/settings/settings.store';
 
 const settingsStore = useSettingsStore();
-
 const scalingSettings = computed(() => settingsStore.settings.scaling);
-
 const scaleFactor = computed({
   get: () => scalingSettings.value.scaleFactor * 100,
   set: scaleFactor => updateScalingSettings({ scaleFactor: scaleFactor / 100 })
 });
-
 const scaleTranslationViewOnly = computed({
   get: () => scalingSettings.value.scaleTranslationViewOnly,
   set: scaleTranslationViewOnly => updateScalingSettings({ scaleTranslationViewOnly })

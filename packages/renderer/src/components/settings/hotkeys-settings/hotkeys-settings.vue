@@ -4,12 +4,12 @@ import { cloneDeep, isEqual } from 'lodash-es';
 
 import type { Hotkey } from '@selected-text-translate/common/settings/settings';
 
-import { useSettingsStore } from '../settings.store';
+import { useSettingsStore } from '~/components/settings/settings.store';
 import type {
   EditableHotkeySettings,
   GlobalHotkeySettings,
   LocalHotkeySettings
-} from '../models/editable-hotkey-settings';
+} from '~/components/settings/models/editable-hotkey-settings';
 import type ConfirmModal from '~/components/shared/confirm-modal/confirm-modal.vue';
 
 import HotkeyInput from './hotkey-input/hotkey-input.vue';
@@ -20,6 +20,8 @@ interface Command {
   readonly isGlobal: boolean;
   hotkeys: Hotkey[];
 }
+
+const settingsStore = useSettingsStore();
 
 const hotkeysDisplayName = new Map<keyof LocalHotkeySettings | keyof GlobalHotkeySettings, string>([
   ['translate', 'Translate Text'],
@@ -35,8 +37,6 @@ const hotkeysDisplayName = new Map<keyof LocalHotkeySettings | keyof GlobalHotke
   ['zoomOut', 'Zoom Out'],
   ['resetZoom', 'Reset Zoom']
 ]);
-
-const settingsStore = useSettingsStore();
 
 const commands = ref<Command[]>([]);
 const currentCommandIndex = ref<number>(0);
@@ -55,7 +55,6 @@ const currentCommandKey = computed({
     currentCommandIndex.value = commands.value.indexOf(currentCommand);
   }
 });
-
 const isAddHotkeyEnabled = computed(
   () => !currentHotkeyValidationMessage.value && !!currentHotkey.value
 );

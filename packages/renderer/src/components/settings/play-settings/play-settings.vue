@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { useSettingsStore } from '../settings.store';
+import { useSettingsStore } from '~/components/settings/settings.store';
 
 const settingsStore = useSettingsStore();
 
 const engineSettings = computed(() => settingsStore.settings.engine);
-
 const playVolume = computed({
   get: () => engineSettings.value.playVolume,
   set: playVolume => settingsStore.updateSettings({ engine: { playVolume: playVolume } })

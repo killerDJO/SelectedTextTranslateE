@@ -7,7 +7,6 @@ interface Props {
   totalRecords: number;
   totalPages: number;
 }
-
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{

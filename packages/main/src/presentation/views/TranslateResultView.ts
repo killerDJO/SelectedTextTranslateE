@@ -4,7 +4,7 @@ import { Messages } from '@selected-text-translate/common/messaging/messages';
 import { ViewNames } from '@selected-text-translate/common/views/view-names';
 
 import { ViewContext } from '~/presentation/framework/ViewContext';
-import { ViewOptions } from '../framework/ViewOptions';
+import { ViewOptions } from '~/presentation/framework/ViewOptions';
 
 import { ViewBase } from './ViewBase';
 

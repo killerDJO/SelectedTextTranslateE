@@ -27,17 +27,7 @@ module.exports = {
       {
         groups: [['external', 'builtin'], 'internal', 'parent', 'sibling', 'index'],
         'newlines-between': 'always',
-        pathGroupsExcludedImportTypes: [],
-        pathGroups: [
-          {
-            pattern: '@common/**',
-            group: 'builtin'
-          },
-          {
-            pattern: '~/**',
-            group: 'internal'
-          }
-        ]
+        pathGroupsExcludedImportTypes: []
       }
     ],
     'import/no-unresolved': 'off',

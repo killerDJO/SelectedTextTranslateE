@@ -36,7 +36,7 @@
     &.active {
       .page-link,
       .page-link:hover,
-      .page-link:focus-outline {
+      .page-link:focus-visible {
         color: $color-black;
         cursor: default;
         background-color: $color-list-item-hovered;
@@ -56,7 +56,7 @@
     }
 
     > .page-link:hover,
-    > .page-link:focus-outline {
+    > .page-link:focus-visible {
       cursor: pointer;
       color: $pagination-color;
       background-color: $color-background;
@@ -68,7 +68,7 @@
       z-index: 101;
     }
 
-    > .page-link:focus-outline {
+    > .page-link:focus-visible {
       z-index: 100;
     }
   }
@@ -82,7 +82,7 @@
   > .page-item.disabled {
     > .page-link,
     > .page-link:hover,
-    > .page-link:focus-outline {
+    > .page-link:focus-visible {
       color: $color-gray;
       cursor: default;
       background-color: $color-white;

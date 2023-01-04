@@ -17,7 +17,7 @@
     cursor: pointer;
     outline: none;
 
-    &:focus-outline {
+    &:focus-visible {
       outline: $outline-width solid $color-active;
       outline-offset: -1px;
       border-top-right-radius: 0;
@@ -35,7 +35,7 @@
         height: 12px;
       }
 
-      &:focus-outline {
+      &:focus-visible {
         border-radius: $border-radius;
       }
     }
@@ -56,7 +56,7 @@
       align-items: center;
       justify-content: center;
 
-      &:focus-outline {
+      &:focus-visible {
         outline: $outline-width solid $color-active;
         outline-offset: 0px;
         border-top-right-radius: $border-radius;

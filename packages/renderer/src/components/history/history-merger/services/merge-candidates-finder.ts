@@ -1,5 +1,8 @@
-import type { HistoryRecord } from '../../models/history-record';
-import type { MergeCandidate, MergeHistoryRecord } from '../models/merge-candidate';
+import type { HistoryRecord } from '~/components/history/models/history-record';
+import type {
+  MergeCandidate,
+  MergeHistoryRecord
+} from '~/components/history/history-merger/models/merge-candidate';
 
 export class MergeCandidatesFinder {
   public getMergeCandidates(records: HistoryRecord[]): ReadonlyArray<MergeCandidate> {

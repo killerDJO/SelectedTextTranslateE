@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
-import { useHistoryStore } from '../history.store';
+import { useHistoryStore } from '~/components/history/history.store';
 
 import type { MergeCandidate } from './models/merge-candidate';
 import { historyMerger } from './services/history-merger';

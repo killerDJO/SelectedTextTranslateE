@@ -11,6 +11,10 @@ import type { DropItem } from '~/components/shared/drop-button/drop-button.vue';
 import { ColumnNameResolver } from '~/components/history/column-name-resolver';
 import DropButton from '~/components/shared/drop-button/drop-button.vue';
 
+type Mutable<T> = {
+  -readonly [P in keyof T]: T[P];
+};
+
 interface ColumnDropItem extends DropItem {
   readonly column: HistorySortColumn;
   weight: number;
@@ -20,7 +24,6 @@ interface ColumnDropItem extends DropItem {
 interface Props {
   columns: ReadonlyArray<ColumnSettings>;
 }
-
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
@@ -29,7 +32,6 @@ const $emit = defineEmits<{
 
 const dropInstance = ref<InstanceType<typeof DropButton> | null>(null);
 const columnNameResolver = new ColumnNameResolver();
-
 const dropItems = computed<ColumnDropItem[]>(() =>
   props.columns.map(columnSetting => ({
     column: columnSetting.column,
@@ -44,7 +46,7 @@ function itemClick(item: ColumnDropItem) {
     return;
   }
 
-  const updatedColumns: ColumnSettings[] = mapItems(dropItems.value);
+  const updatedColumns = mapItems(dropItems.value);
   const column = updatedColumns.find(column => column.column === item.column)!;
   column.isVisible = !column.isVisible;
 
@@ -104,7 +106,7 @@ function moveItem(item: ColumnDropItem, nextIndexGenerator: (index: number) => n
   $emit('update-columns', mapItems(clonedItems));
 }
 
-function mapItems(items: ReadonlyArray<ColumnDropItem>): ColumnSettings[] {
+function mapItems(items: ReadonlyArray<ColumnDropItem>): Mutable<ColumnSettings>[] {
   return items.map(setting => ({
     column: setting.column,
     isVisible: setting.isChecked,

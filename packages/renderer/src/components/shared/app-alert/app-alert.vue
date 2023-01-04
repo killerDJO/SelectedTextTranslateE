@@ -4,7 +4,6 @@ interface Props {
   type: 'success' | 'error';
   dismissible?: boolean;
 }
-
 withDefaults(defineProps<Props>(), {
   dismissible: true
 });

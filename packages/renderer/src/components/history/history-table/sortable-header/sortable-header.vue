@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import type { HistorySortColumn } from '@selected-text-translate/common/settings/settings';
 
-import { ColumnNameResolver } from '../../column-name-resolver';
-import { SortOrder } from '../../models/sort-order';
+import { ColumnNameResolver } from '~/components/history/column-name-resolver';
+import { SortOrder } from '~/components/history/models/sort-order';
 
 interface Props {
   sortColumn: HistorySortColumn;
   currentSortOrder?: SortOrder;
   currentSortColumn?: HistorySortColumn;
 }
-
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{

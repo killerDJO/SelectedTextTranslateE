@@ -7,6 +7,13 @@ import type { Hotkey } from '@selected-text-translate/common/settings/settings';
 interface Props {
   hotkey: Hotkey | null;
 }
+const props = defineProps<Props>();
+
+const $emit = defineEmits<{
+  (e: 'input-started'): void;
+  (e: 'input-completed'): void;
+  (e: 'update:hotkey', hotkey: Hotkey | null): void;
+}>();
 
 const keys = ref<string[]>([]);
 const isInputInProgress = ref(false);
@@ -21,14 +28,6 @@ watch(
     keys.value = props.hotkey ? props.hotkey.keys : [];
   }
 );
-
-const props = defineProps<Props>();
-
-const $emit = defineEmits<{
-  (e: 'input-started'): void;
-  (e: 'input-completed'): void;
-  (e: 'update:hotkey', hotkey: Hotkey | null): void;
-}>();
 
 function onKeyDown(event: KeyboardEvent): void {
   if (event.repeat) {

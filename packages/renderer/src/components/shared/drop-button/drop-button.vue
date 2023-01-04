@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import type { Placement } from '@popperjs/core';
 
-import { useDrop } from '../use-drop';
+import { useDrop } from '~/components/shared/use-drop';
 
 export interface DropItem {
   readonly text: string;
@@ -15,7 +15,6 @@ interface Props {
   placement?: Placement;
   splitButton?: boolean;
 }
-
 const props = withDefaults(defineProps<Props>(), {
   tabIndex: 0,
   placement: 'bottom-end',

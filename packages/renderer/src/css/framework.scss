@@ -36,9 +36,9 @@ $outline-width: 2px;
 }
 
 @mixin focus-outline($outline-color: $color-active) {
-  &:focus-outline {
+  &:focus-visible {
     outline: $outline-width solid $outline-color;
-    outline-offset: -2px;
+    outline-offset: -$outline-width;
     box-shadow: none;
   }
 }

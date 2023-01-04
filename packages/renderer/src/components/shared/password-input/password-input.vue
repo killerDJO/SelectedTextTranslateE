@@ -5,15 +5,14 @@ interface Props {
   value: string;
   placeholder?: string;
 }
-
 const props = defineProps<Props>();
-
-const isPasswordVisible = ref(false);
 
 const $emit = defineEmits<{
   (e: 'update:value', value: string): void;
   (e: 'blur'): void;
 }>();
+
+const isPasswordVisible = ref(false);
 
 const value$ = computed({
   get: () => props.value,

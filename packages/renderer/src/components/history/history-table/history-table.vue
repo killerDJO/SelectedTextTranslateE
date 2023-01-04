@@ -12,9 +12,9 @@ import type {
   DataTableConfig
 } from '~/components/shared/data-table/data-table.vue';
 import TagsEditor from '~/components/history/tags-editor/tags-editor.vue';
-import type { HistoryRecord } from '../models/history-record';
-import type { SortOrder } from '../models/sort-order';
-import ForcedTranslationIcon from '../icons/forced-translation-icon.vue';
+import type { HistoryRecord } from '~/components/history/models/history-record';
+import type { SortOrder } from '~/components/history/models/sort-order';
+import ForcedTranslationIcon from '~/components/history/icons/forced-translation-icon.vue';
 
 import SortableHeader from './sortable-header/sortable-header.vue';
 
@@ -26,7 +26,6 @@ interface Props {
   languages: Map<string, string>;
   isLoading: boolean;
 }
-
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
@@ -47,7 +46,6 @@ const sortColumn$ = computed({
   get: () => props.sortColumn,
   set: column => $emit('update:sortColumn', column)
 });
-
 const sortOrder$ = computed({
   get: () => props.sortOrder,
   set: order => $emit('update:sortOrder', order)

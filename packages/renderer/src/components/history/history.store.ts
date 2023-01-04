@@ -3,9 +3,9 @@ import { defineStore } from 'pinia';
 import { HistorySortColumn, type Tag } from '@selected-text-translate/common/settings/settings';
 
 import { useAppStore } from '~/app.store';
-import { textPlayer } from '../translation/services/text-player';
-import { useGlobalErrorsStore } from '../global-errors/global-errors.store';
-import { useTranslateResultStore } from '../translation/translation-result/translation-result.store';
+import { textPlayer } from '~/components/translation/services/text-player';
+import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
+import { useTranslateResultStore } from '~/components/translation/translation-result/translation-result.store';
 
 import type { HistoryFilter } from './models/history-filter';
 import type { HistoryRecord } from './models/history-record';

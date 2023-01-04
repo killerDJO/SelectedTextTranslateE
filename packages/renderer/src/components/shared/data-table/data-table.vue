@@ -6,13 +6,11 @@ export interface DataTableConfig {
   readonly columns: ReadonlyArray<DataTableColumnConfig>;
   clickable?: boolean;
 }
-
 export interface DataTableColumnConfig {
   readonly id: string;
   weight: number;
   isVisible: boolean;
 }
-
 interface ResizeInfo {
   readonly element: HTMLElement;
   readonly columnConfiguration: DataTableColumnConfig;
@@ -23,7 +21,6 @@ interface Props {
   isLoading?: boolean;
   records: { id: string }[];
 }
-
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
@@ -37,19 +34,19 @@ const table = ref<HTMLElement | null>(null);
 const currentConfiguration = ref(cloneDeep(props.configuration));
 const resizeInfo = ref<ResizeInfo | null>(null);
 
-watch(
-  () => props.configuration,
-  () => {
-    currentConfiguration.value = cloneDeep(props.configuration);
-  }
-);
-
 const visibleColumns = computed(() =>
   currentConfiguration.value.columns.filter(column => column.isVisible)
 );
 
 const clickable = computed(
   () => props.configuration.clickable === undefined || props.configuration.clickable
+);
+
+watch(
+  () => props.configuration,
+  () => {
+    currentConfiguration.value = cloneDeep(props.configuration);
+  }
 );
 
 onMounted(() => {

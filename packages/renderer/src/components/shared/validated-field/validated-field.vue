@@ -6,7 +6,6 @@ interface Props {
   errors: (ErrorObject | string)[];
   hideMessage?: boolean;
 }
-
 const props = defineProps<Props>();
 
 const errorMessage = computed(() => {

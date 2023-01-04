@@ -2,7 +2,7 @@
   display: inline-block;
   width: 100%;
   position: relative;
-  margin-bottom: 15px;
+  margin-bottom: $spacing-large;
 
   .content {
     width: 100%;
@@ -11,7 +11,7 @@
   &.error {
     :deep(.form-control) {
       border-color: $color-error;
-      &:focus-outline {
+      &:focus-visible {
         outline-color: $color-error;
       }
     }

@@ -9,7 +9,6 @@ interface Props {
   historyRecord?: HistoryRecord;
   isEmbedded: boolean;
 }
-
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
@@ -21,7 +20,6 @@ const $emit = defineEmits<{
 }>();
 
 const sentence = computed(() => props.translateResult.sentence);
-
 const isInputCorrected = computed(() => {
   if (sentence.value.origin === null) {
     return false;
@@ -29,7 +27,6 @@ const isInputCorrected = computed(() => {
 
   return sentence.value.input.trim() !== sentence.value.origin.trim();
 });
-
 const hasSuggestion = computed(() => !isInputCorrected.value && !!sentence.value.suggestion);
 
 function translateText(text: string): void {

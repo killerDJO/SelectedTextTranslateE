@@ -18,7 +18,6 @@ interface Props {
   allLanguages: Map<string, string>;
   allowUnselect?: boolean;
 }
-
 const props = withDefaults(defineProps<Props>(), {
   allowUnselect: false
 });

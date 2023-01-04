@@ -8,53 +8,53 @@ import TranslationInput from './translation-input/translation-input.vue';
 import { useTranslateResultStore } from './translation-result/translation-result.store';
 import { useTranslationStore } from './translation.store';
 
-const appStore = useAppStore();
-const translationResultStore = useTranslateResultStore();
-const translationStore = useTranslationStore();
+const app = useAppStore();
+const translateResult = useTranslateResultStore();
+const translation = useTranslationStore();
 
 onMounted(async () => {
-  await translationStore.setup();
+  await translation.setup();
 });
 </script>
 
 <template>
-  <div v-if="appStore.hasSettings" class="translation">
+  <div class="translation">
     <translation-result
       v-if="
-        translationResultStore.translateDescriptor &&
-        (translationResultStore.translateResult || translationResultStore.isTranslationInProgress)
+        translateResult.translateDescriptor &&
+        (translateResult.translateResult || translateResult.isTranslationInProgress)
       "
-      :default-view="translationResultStore.defaultTranslateResultView"
-      :translate-result="translationResultStore.translateResult"
-      :translate-descriptor="translationResultStore.translateDescriptor"
-      :history-record="translationResultStore.historyRecord"
-      :is-in-progress="translationResultStore.isTranslationInProgress"
-      :settings="appStore.settings.views.translation.renderer"
-      :languages="appStore.settings.supportedLanguages"
-      @translate-suggestion="translationResultStore.translateSuggestion()"
-      @force-translation="translationResultStore.forceTranslation()"
-      @refresh-translation="translationResultStore.refreshTranslation()"
-      @translate-text="request => translationResultStore.translateText(request)"
-      @change-language="translationResultStore.changeLanguage()"
-      @play-text="translationResultStore.playCurrentSentence()"
-      @search="translationResultStore.search()"
-      @archive="translationResultStore.archive()"
-      @set-starred-status="isStarred => translationResultStore.setStarredStatus(isStarred)"
-      @update-tags="tags => translationResultStore.updateTags(tags)"
+      :default-view="translateResult.defaultTranslateResultView"
+      :translate-result="translateResult.translateResult"
+      :translate-descriptor="translateResult.translateDescriptor"
+      :history-record="translateResult.historyRecord"
+      :is-in-progress="translateResult.isTranslationInProgress"
+      :settings="app.settings.views.translation.renderer"
+      :languages="app.settings.supportedLanguages"
+      @translate-suggestion="translateResult.translateSuggestion()"
+      @force-translation="translateResult.forceTranslation()"
+      @refresh-translation="translateResult.refreshTranslation()"
+      @translate-text="request => translateResult.translateText(request)"
+      @change-language="translateResult.changeLanguage()"
+      @play-text="translateResult.playCurrentSentence()"
+      @search="translateResult.search()"
+      @archive="translateResult.archive()"
+      @set-starred-status="isStarred => translateResult.setStarredStatus(isStarred)"
+      @update-tags="tags => translateResult.updateTags(tags)"
     />
-    <template v-if="translationStore.showInput || translationStore.nonTextTranslation">
+    <template v-if="translation.showInput || translation.nonTextTranslation">
       <app-alert
-        v-if="translationStore.nonTextTranslation"
+        v-if="translation.nonTextTranslation"
         :dismissible="false"
         type="error"
         text="No text data selected"
         class="non-text-translation"
       ></app-alert>
       <translation-input
-        :languages="appStore.settings.supportedLanguages"
-        :language-settings="appStore.settings.language"
-        @translate-text="request => translationStore.translateText(request)"
-        @play-text="request => translationResultStore.playText(request)"
+        :languages="app.settings.supportedLanguages"
+        :language-settings="app.settings.language"
+        @translate-text="request => translation.translateText(request)"
+        @play-text="request => translateResult.playText(request)"
       />
     </template>
   </div>

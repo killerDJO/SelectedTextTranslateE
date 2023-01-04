@@ -8,7 +8,6 @@ interface Props {
   minDate?: Date;
   disableFutureDates?: boolean;
 }
-
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{

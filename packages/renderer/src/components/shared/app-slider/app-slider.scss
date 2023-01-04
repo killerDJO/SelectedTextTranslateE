@@ -31,7 +31,7 @@
       opacity: 1;
     }
 
-    &:focus-outline {
+    &:focus-visible {
       outline: none;
     }
 
@@ -44,7 +44,7 @@
       border-radius: 50%;
     }
 
-    &:focus-outline::-webkit-slider-thumb {
+    &:focus-visible::-webkit-slider-thumb {
       box-shadow: 0 0 0 $outline-width $color-active;
     }
   }

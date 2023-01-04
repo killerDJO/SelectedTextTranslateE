@@ -3,7 +3,6 @@ interface Props {
   text: string;
   tabIndex?: number;
 }
-
 withDefaults(defineProps<Props>(), {
   tabIndex: 0
 });

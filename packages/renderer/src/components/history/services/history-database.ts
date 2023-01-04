@@ -16,8 +16,11 @@ import {
   initializeFirestore
 } from '@firebase/firestore';
 
-import { authService, type AuthService } from '../history-auth/services/auth-service';
-import type { HistoryRecord } from '../models/history-record';
+import {
+  authService,
+  type AuthService
+} from '~/components/history/history-auth/services/auth-service';
+import type { HistoryRecord } from '~/components/history/models/history-record';
 import { settingsProvider, SettingsProvider } from '~/services/settings-provider';
 import { logger, type Logger } from '~/services/logger';
 

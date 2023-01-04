@@ -4,7 +4,6 @@ import type { TranslateResultDefinitionCategory } from '~/components/translation
 interface Props {
   definitionCategory: TranslateResultDefinitionCategory;
 }
-
 defineProps<Props>();
 </script>
 

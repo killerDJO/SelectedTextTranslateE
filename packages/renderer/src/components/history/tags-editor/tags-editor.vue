@@ -4,14 +4,13 @@ import { computed, ref } from 'vue';
 import type { Tag } from '@selected-text-translate/common/settings/settings';
 
 import { normalizeTag } from '~/utils/normalize-tag';
-import { historyCache } from '../services/history-cache';
+import { historyCache } from '~/components/history/services/history-cache';
 
 interface Props {
   tags: ReadonlyArray<string | Tag>;
   compactView?: boolean;
   clickable?: boolean;
 }
-
 const props = withDefaults(defineProps<Props>(), {
   compactView: false,
   clickable: false

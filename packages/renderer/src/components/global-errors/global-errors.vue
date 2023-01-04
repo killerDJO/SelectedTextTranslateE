@@ -2,18 +2,18 @@
 import AppError from './app-error/app-error.vue';
 import { useGlobalErrorsStore } from './global-errors.store';
 
-const errorsStore = useGlobalErrorsStore();
+const globalErrors = useGlobalErrorsStore();
 </script>
 
 <template>
-  <div v-if="errorsStore.errors.length" class="errors-holder">
+  <div v-if="globalErrors.errors.length" class="errors-holder">
     <app-error
-      v-for="error in errorsStore.errors"
+      v-for="error in globalErrors.errors"
       :key="error.id"
       :message="error.message"
       :error="error.error"
       :dismissible="true"
-      @dismiss="errorsStore.dismissError(error.id)"
+      @dismiss="globalErrors.dismissError(error.id)"
     >
     </app-error>
   </div>

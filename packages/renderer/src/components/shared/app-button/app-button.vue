@@ -5,7 +5,6 @@ interface Props {
   disabled?: boolean;
   primary?: boolean;
 }
-
 withDefaults(defineProps<Props>(), {
   disabled: false,
   text: '',

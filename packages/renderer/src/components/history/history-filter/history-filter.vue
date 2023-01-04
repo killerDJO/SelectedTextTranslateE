@@ -8,7 +8,7 @@ import type { Tag } from '@selected-text-translate/common/settings/settings';
 
 import TagsEditor from '~/components/history/tags-editor/tags-editor.vue';
 import { executeIfValid } from '~/utils/execute-if-valid';
-import type { HistoryFilter } from '../models/history-filter';
+import type { HistoryFilter } from '~/components/history/models/history-filter';
 import { useAppStore } from '~/app.store';
 import type { SelectedLanguages } from '~/components/shared/language-selector/language-selector.vue';
 
@@ -16,15 +16,15 @@ interface Props {
   filter: HistoryFilter;
 }
 const props = defineProps<Props>();
+
 const $emit = defineEmits<{
   (e: 'filter-updated', filter: HistoryFilter): void;
   (e: 'close'): void;
 }>();
 
-const appStore = useAppStore();
+const app = useAppStore();
 
 const state = reactive<HistoryFilter>(cloneDeep(props.filter));
-
 const rules = computed(() => ({
   minTranslatedTime: {
     minValue: helpers.withMessage('Should be a positive number', minValue(0)),
@@ -37,7 +37,6 @@ const rules = computed(() => ({
     minValue: helpers.withMessage('Should be bigger than 1', minValue(1))
   }
 }));
-
 const v$ = useVuelidate(rules as any, state, { $autoDirty: true });
 
 watch(state, async () => await executeIfValid(v$, () => $emit('filter-updated', cloneDeep(state))));
@@ -106,7 +105,7 @@ function clearFilter() {
       <label>Languages:</label>
       <language-selector
         :languages="state"
-        :all-languages="appStore.settings.supportedLanguages"
+        :all-languages="app.settings.supportedLanguages"
         :allow-unselect="true"
         @languages-updated="onLanguagesUpdated"
       />

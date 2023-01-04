@@ -3,10 +3,14 @@ import { uniq } from 'lodash-es';
 import { HistorySortColumn } from '@selected-text-translate/common/settings/settings';
 
 import { logger, type Logger } from '~/services/logger';
-import type { HistoryRecord } from '../../models/history-record';
-import { SortOrder } from '../../models/sort-order';
-import { historyService, type HistoryService } from '../../services/history-service';
-import type { MergeCandidate, MergeHistoryRecord } from '../models/merge-candidate';
+import type { HistoryRecord } from '~/components/history/models/history-record';
+import { SortOrder } from '~/components/history/models/sort-order';
+import { historyService, type HistoryService } from '~/components/history/services/history-service';
+import type {
+  MergeCandidate,
+  MergeHistoryRecord
+} from '~/components/history/history-merger/models/merge-candidate';
+import { settingsProvider, type SettingsProvider } from '~/services/settings-provider';
 
 import { mergeCandidatesFinder, type MergeCandidatesFinder } from './merge-candidates-finder';
 
@@ -14,15 +18,18 @@ export class HistoryMerger {
   constructor(
     private readonly historyService: HistoryService,
     private readonly mergeCandidatesFinder: MergeCandidatesFinder,
+    private readonly settingsProvider: SettingsProvider,
     private readonly logger: Logger
   ) {}
 
   public async getMergeCandidates(): Promise<ReadonlyArray<MergeCandidate>> {
+    const lastRecordsToScan =
+      this.settingsProvider.getSettings().views.history.renderer.lastRecordsToScanForMerge;
     const recentRecords = await this.historyService.queryRecords(
       HistorySortColumn.LastTranslatedDate,
       SortOrder.Desc,
       0,
-      10000,
+      lastRecordsToScan,
       {
         starredOnly: false,
         includeArchived: false
@@ -105,4 +112,9 @@ export class HistoryMerger {
   }
 }
 
-export const historyMerger = new HistoryMerger(historyService, mergeCandidatesFinder, logger);
+export const historyMerger = new HistoryMerger(
+  historyService,
+  mergeCandidatesFinder,
+  settingsProvider,
+  logger
+);

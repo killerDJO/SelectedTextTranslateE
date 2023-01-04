@@ -5,14 +5,6 @@ interface Props {
   show: boolean;
   isActionInProgress?: boolean;
 }
-
-onMounted(() => {
-  document.body.addEventListener('keyup', handleEscape);
-});
-onBeforeUnmount(() => {
-  document.body.removeEventListener('keyup', handleEscape);
-});
-
 const props = withDefaults(defineProps<Props>(), {
   isActionInProgress: false
 });
@@ -25,6 +17,17 @@ const slots = useSlots();
 
 const container = ref<HTMLElement | null>(null);
 
+const showFooter = computed(() => {
+  return !!slots.footer?.length;
+});
+
+onMounted(() => {
+  document.body.addEventListener('keyup', handleEscape);
+});
+onBeforeUnmount(() => {
+  document.body.removeEventListener('keyup', handleEscape);
+});
+
 watch(container, () => {
   // Steal focus inside modal window.
   if (container.value) {
@@ -33,10 +36,6 @@ watch(container, () => {
     container.value.tabIndex = -1;
     container.value.blur();
   }
-});
-
-const showFooter = computed(() => {
-  return !!slots.footer?.length;
 });
 
 function handleEscape(event: KeyboardEvent) {

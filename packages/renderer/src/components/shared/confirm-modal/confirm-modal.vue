@@ -4,7 +4,6 @@ import { ref } from 'vue';
 interface Props {
   confirmText?: string;
 }
-
 withDefaults(defineProps<Props>(), {
   confirmText: 'Confirm'
 });

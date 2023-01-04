@@ -4,9 +4,12 @@ import { required, email, helpers } from '@vuelidate/validators';
 import { computed, reactive } from 'vue';
 
 import { executeIfValid } from '~/utils/execute-if-valid';
-import { useHistoryAuthStore } from '../../history-auth.store';
-import type { AuthResponse } from '../../models/auth-response';
-import { passwordValidators, PASSWORD_TOO_WEAK_MESSAGE } from '../../password-validators';
+import { useHistoryAuthStore } from '~/components/history/history-auth/history-auth.store';
+import type { AuthResponse } from '~/components/history/history-auth/models/auth-response';
+import {
+  passwordValidators,
+  PASSWORD_TOO_WEAK_MESSAGE
+} from '~/components/history/history-auth/password-validators';
 
 interface Props {
   actionExecutor: <TErrorCodes extends string>(
@@ -14,7 +17,6 @@ interface Props {
     errorCodes: { [key in TErrorCodes]: string }
   ) => Promise<boolean>;
 }
-
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
@@ -28,7 +30,6 @@ const state = reactive({
   password: '',
   passwordConfirmation: ''
 });
-
 const rules = computed(() => ({
   email: {
     required: helpers.withMessage('Email must not be empty.', required),
@@ -36,7 +37,6 @@ const rules = computed(() => ({
   },
   ...passwordValidators()
 }));
-
 const v$ = useVuelidate(rules, state);
 
 async function signUpIfValid() {

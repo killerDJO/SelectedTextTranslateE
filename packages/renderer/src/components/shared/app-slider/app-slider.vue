@@ -5,7 +5,6 @@ interface Props {
   step: number;
   value: number;
 }
-
 defineProps<Props>();
 
 defineEmits<{
@@ -17,7 +16,6 @@ defineEmits<{
   <div class="slider-holder">
     <span class="range-value min-value">{{ $filters.percent(minValue) }}</span>
     <input
-      v-tab-index
       type="range"
       :min="minValue"
       :max="maxValue"

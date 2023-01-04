@@ -4,9 +4,12 @@ import { required, email, helpers } from '@vuelidate/validators';
 import { computed, reactive, ref, watch } from 'vue';
 
 import { executeIfValid } from '~/utils/execute-if-valid';
-import { useHistoryAuthStore } from '../../history-auth.store';
-import type { AuthResponse } from '../../models/auth-response';
-import { passwordValidators, PASSWORD_TOO_WEAK_MESSAGE } from '../../password-validators';
+import { useHistoryAuthStore } from '~/components/history/history-auth/history-auth.store';
+import type { AuthResponse } from '~/components/history/history-auth/models/auth-response';
+import {
+  passwordValidators,
+  PASSWORD_TOO_WEAK_MESSAGE
+} from '~/components/history/history-auth/password-validators';
 
 enum ResetPasswordStep {
   Email = 'email',
@@ -20,7 +23,6 @@ interface Props {
     errorCodes: { [key in TErrorCodes]: string }
   ) => Promise<boolean>;
 }
-
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
@@ -31,16 +33,6 @@ const $emit = defineEmits<{
 const historyAuth = useHistoryAuthStore();
 
 const step = ref<ResetPasswordStep>(ResetPasswordStep.Email);
-
-const confirmText = computed(() => {
-  const confirmTextMap: { [key in ResetPasswordStep]: string } = {
-    email: 'Send Email',
-    token: 'Verify Token',
-    password: 'Change Password'
-  };
-
-  return confirmTextMap[step.value];
-});
 
 const emailStepState = reactive({
   email: ''
@@ -71,6 +63,16 @@ const passwordStepRules = computed(() => ({
   ...passwordValidators()
 }));
 const passwordValidator$ = useVuelidate(passwordStepRules, passwordStepState);
+
+const confirmText = computed(() => {
+  const confirmTextMap: { [key in ResetPasswordStep]: string } = {
+    email: 'Send Email',
+    token: 'Verify Token',
+    password: 'Change Password'
+  };
+
+  return confirmTextMap[step.value];
+});
 
 watch(step, () => {
   if (step.value === 'email') {

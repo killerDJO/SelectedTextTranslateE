@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import type { AuthResponse } from '../models/auth-response';
+import type { AuthResponse } from '~/components/history/history-auth/models/auth-response';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
-import { commonErrorMessages } from '../error-codes';
+import { commonErrorMessages } from '~/components/history/history-auth/error-codes';
 
 import SignIn from './sign-in/sign-in.vue';
 import SignUp from './sign-up/sign-up.vue';

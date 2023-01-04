@@ -3,22 +3,22 @@ import { onMounted } from 'vue';
 
 import { useAboutStore } from './about.store';
 
-const aboutStore = useAboutStore();
+const about = useAboutStore();
 
-onMounted(() => aboutStore.setup());
+onMounted(() => about.setup());
 </script>
 <template>
-  <div v-if="aboutStore.info" class="about">
+  <div v-if="about.info" class="about">
     <p class="about-title">
-      {{ aboutStore.info.name }} v<span class="version">{{ aboutStore.info.version }}</span>
+      {{ about.info.name }} v<span class="version">{{ about.info.version }}</span>
     </p>
     <div class="actions">
       <app-button
         text="Check for Updates"
         :primary="false"
-        @click="aboutStore.checkForUpdates()"
+        @click="about.checkForUpdates()"
       ></app-button>
-      <link-button :text="'Home Page'" @click="aboutStore.openHomePage()" />
+      <link-button :text="'Home Page'" @click="about.openHomePage()" />
     </div>
   </div>
 </template>
