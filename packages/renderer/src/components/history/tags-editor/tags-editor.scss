@@ -11,15 +11,15 @@ $compact-icon-height: 9px;
   align-items: center;
   flex-wrap: wrap;
   max-width: 100%;
-  padding-right: $padding-small;
+  padding-right: $spacing-small;
   margin-bottom: -$margin;
   min-height: $line-height;
 
   .tag {
-    margin-right: $margin-small;
+    margin-right: $spacing-small;
     border-radius: $border-radius-small;
     border: $border-width solid $color-border;
-    padding: 0 $padding-small;
+    padding: 0 $spacing-small;
     display: inline-flex;
     align-items: center;
     margin-bottom: $margin;
@@ -51,7 +51,7 @@ $compact-icon-height: 9px;
       }
     }
 
-    @include focus-visible();
+    @include focus-outline();
   }
 
   .add-tag-button {

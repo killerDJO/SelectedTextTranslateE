@@ -1,6 +1,6 @@
 .scaling-input {
   .slider-holder {
-    margin-top: $margin-small;
+    margin-top: $spacing-small;
   }
 
   .current-scale-factor {
@@ -10,7 +10,7 @@
 
 .reset-controls {
   display: flex;
-  column-gap: $padding-small;
+  column-gap: $spacing-small;
 
   .reset-label {
     font-size: $font-small;

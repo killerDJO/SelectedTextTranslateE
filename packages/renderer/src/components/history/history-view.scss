@@ -1,7 +1,7 @@
 .history {
   $header-height: 40px;
 
-  padding: 0 $padding-large 0 $padding-large;
+  padding: 0 $spacing-large 0 $spacing-large;
 
   .grid-holder {
     display: grid;
@@ -10,14 +10,14 @@
       'content';
     grid-template-rows: $header-height max-content;
     min-height: 100vh;
-    row-gap: $margin-small;
+    row-gap: $spacing-small;
 
     &.sidebar-visible {
       grid-template:
         'header sidebar'
         'content sidebar';
       grid-template-columns: 1fr 30%;
-      grid-column-gap: $padding-large;
+      grid-column-gap: $spacing-large;
       grid-template-rows: $header-height max-content;
     }
 
@@ -28,7 +28,7 @@
       display: grid;
       align-items: center;
       grid-template-columns: 1fr auto;
-      padding-top: $padding-small;
+      padding-top: $spacing-small;
 
       .tags {
         grid-column: 1;
@@ -37,14 +37,14 @@
 
         .tags-label {
           font-weight: bold;
-          margin-right: $margin-small;
+          margin-right: $spacing-small;
         }
       }
 
       .header-controls {
         display: flex;
         align-items: center;
-        column-gap: $padding-small;
+        column-gap: $spacing-small;
       }
     }
 
@@ -54,7 +54,7 @@
       .results-footer {
         justify-content: space-between;
         display: flex;
-        margin: $margin-small 0;
+        margin: $spacing-small 0;
 
         .history-user {
           display: inline-block;
@@ -69,10 +69,10 @@
     .sidebar {
       grid-area: sidebar;
       background-color: $color-white;
-      padding: $padding-small $padding-small $padding-small 0;
+      padding: $spacing-small $spacing-small $spacing-small 0;
       overflow: auto;
       position: relative;
-      min-height: calc(100vh - $padding-small);
+      min-height: calc(100vh - $spacing-small);
 
       .history-translate-result {
         border: $border-width solid $color-border;

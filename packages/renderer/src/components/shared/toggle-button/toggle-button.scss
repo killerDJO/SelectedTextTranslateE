@@ -6,7 +6,7 @@
   background-color: $color-background;
   border-radius: $border-radius;
   cursor: pointer;
-  padding: math.div($padding-default, 2) $padding-default;
+  padding: math.div($spacing-default, 2) $spacing-default;
   justify-content: center;
 
   &:hover {
@@ -18,10 +18,10 @@
     border-color: $color-active;
     color: $color-white;
 
-    &:focus-visible {
-      @include focus-visible($color-button-primary);
+    &:focus-outline {
+      @include focus-outline($color-button-primary);
     }
   }
 
-  @include focus-visible();
+  @include focus-outline();
 }

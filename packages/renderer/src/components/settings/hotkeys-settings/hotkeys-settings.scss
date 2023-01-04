@@ -4,7 +4,7 @@
 
   .header {
     width: 100%;
-    margin-bottom: $margin-small;
+    margin-bottom: $spacing-small;
   }
 
   .hotkeys {
@@ -22,7 +22,7 @@
       .hotkeys-list-header,
       .hotkeys-list-hotkey,
       .hotkeys-list-action {
-        padding: $padding-small $padding-default;
+        padding: $spacing-small $spacing-default;
         display: flex;
         align-items: center;
 
@@ -61,13 +61,13 @@
         grid-column: 1/3;
         text-align: center;
         color: $color-gray;
-        padding: $padding-small 0;
+        padding: $spacing-small 0;
       }
     }
 
     .hotkey-edit {
       display: inline-block;
-      margin-top: $margin-small;
+      margin-top: $spacing-small;
       width: 100%;
 
       .hotkey-input-control {
@@ -82,7 +82,7 @@
 
     .global-hotkey-warning {
       font-size: $font-small;
-      margin-bottom: $margin-small;
+      margin-bottom: $spacing-small;
       color: $color-warning;
 
       .icon-attention {
@@ -92,7 +92,7 @@
     }
 
     .reset-hotkeys {
-      margin-top: $margin-default;
+      margin-top: $spacing-default;
     }
   }
 }

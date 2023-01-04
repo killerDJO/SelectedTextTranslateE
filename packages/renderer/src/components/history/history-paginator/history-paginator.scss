@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  column-gap: $margin-default;
+  column-gap: $spacing-default;
 }
 
 .records-count {
@@ -25,7 +25,7 @@
     > .page-link {
       position: relative;
       float: left;
-      padding: $padding-small $padding-default;
+      padding: $spacing-small $spacing-default;
       margin-left: -1px;
       color: $pagination-color;
       text-decoration: none;
@@ -36,7 +36,7 @@
     &.active {
       .page-link,
       .page-link:hover,
-      .page-link:focus-visible {
+      .page-link:focus-outline {
         color: $color-black;
         cursor: default;
         background-color: $color-list-item-hovered;
@@ -56,7 +56,7 @@
     }
 
     > .page-link:hover,
-    > .page-link:focus-visible {
+    > .page-link:focus-outline {
       cursor: pointer;
       color: $pagination-color;
       background-color: $color-background;
@@ -68,21 +68,21 @@
       z-index: 101;
     }
 
-    > .page-link:focus-visible {
+    > .page-link:focus-outline {
       z-index: 100;
     }
   }
 
   > .page-item:not(.active):not(.disabled) {
     > .page-link {
-      @include focus-visible();
+      @include focus-outline();
     }
   }
 
   > .page-item.disabled {
     > .page-link,
     > .page-link:hover,
-    > .page-link:focus-visible {
+    > .page-link:focus-outline {
       color: $color-gray;
       cursor: default;
       background-color: $color-white;

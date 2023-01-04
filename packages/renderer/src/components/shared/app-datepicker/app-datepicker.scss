@@ -1,5 +1,5 @@
 .datepicker {
-  padding-right: $padding-small;
+  padding-right: $spacing-small;
 
   &::-webkit-calendar-picker-indicator {
     padding: 0;
@@ -21,7 +21,7 @@
   &:invalid {
     border-color: $color-error;
 
-    &:focus-visible {
+    &:focus-outline {
       outline: $outline-width solid $color-error;
     }
   }

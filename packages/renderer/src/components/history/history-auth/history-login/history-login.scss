@@ -9,19 +9,19 @@
     font-size: 24px;
     display: flex;
     justify-content: center;
-    margin-bottom: $margin-large;
+    margin-bottom: $spacing-large;
   }
 
   $login-width: 400px;
 
   .alert {
     width: $login-width;
-    margin-bottom: $margin-small;
+    margin-bottom: $spacing-small;
   }
 
   .login-content {
     position: relative;
-    padding: $padding-xl;
+    padding: $spacing-xl;
     width: $login-width;
     border: $border-width solid $color-border;
     background-color: $color-background;

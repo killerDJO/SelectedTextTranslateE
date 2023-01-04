@@ -19,7 +19,7 @@
     white-space: nowrap;
 
     > :first-child {
-      margin-right: $margin-small;
+      margin-right: $spacing-small;
     }
 
     .input-wrapper {
@@ -39,7 +39,7 @@
         cursor: pointer;
         outline: none;
 
-        @include focus-visible();
+        @include focus-outline();
 
         &:checked::before {
           position: absolute;

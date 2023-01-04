@@ -4,28 +4,28 @@ $items-size: 400px;
   border-radius: $border-radius;
   border: $border-width solid $color-border;
   width: 100%;
-  margin-bottom: $margin-large;
+  margin-bottom: $spacing-large;
   overflow: hidden;
 
   > .settings-title {
     font-size: $font-big;
-    margin-bottom: $margin-small;
+    margin-bottom: $spacing-small;
     background-color: $color-background;
     border-bottom: $border-width solid $color-border;
-    padding: $padding-default;
+    padding: $spacing-default;
   }
 
   > .holder {
     background-color: $color-white;
-    min-width: $items-size + $margin-large;
-    padding: $padding-default;
+    min-width: $items-size + $spacing-large;
+    padding: $spacing-default;
     display: grid;
   }
 
   :deep(.settings-separator) {
     border-top: $border-width solid $color-border;
-    width: calc(100% + #{2 * $margin-default});
-    margin: $margin-default #{-$margin-default};
+    width: calc(100% + #{2 * $spacing-default});
+    margin: $spacing-default #{-$spacing-default};
   }
 
   :deep(.settings-item) {

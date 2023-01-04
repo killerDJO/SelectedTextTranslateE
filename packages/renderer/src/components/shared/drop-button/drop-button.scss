@@ -13,11 +13,11 @@
 
   .drop-button {
     border-radius: $border-radius;
-    padding: $padding-small $padding-default;
+    padding: $spacing-small $spacing-default;
     cursor: pointer;
     outline: none;
 
-    &:focus-visible {
+    &:focus-outline {
       outline: $outline-width solid $color-active;
       outline-offset: -1px;
       border-top-right-radius: 0;
@@ -30,12 +30,12 @@
       align-items: center;
 
       .split-icon {
-        margin: 0 $margin-default 0 $margin-small;
+        margin: 0 $spacing-default 0 $spacing-small;
         width: 12px;
         height: 12px;
       }
 
-      &:focus-visible {
+      &:focus-outline {
         border-radius: $border-radius;
       }
     }
@@ -56,7 +56,7 @@
       align-items: center;
       justify-content: center;
 
-      &:focus-visible {
+      &:focus-outline {
         outline: $outline-width solid $color-active;
         outline-offset: 0px;
         border-top-right-radius: $border-radius;
@@ -91,7 +91,7 @@
 
       .drop-item {
         white-space: nowrap;
-        @include focus-visible();
+        @include focus-outline();
 
         &:not(:last-child) {
           border-bottom: $border-width solid $color-border;

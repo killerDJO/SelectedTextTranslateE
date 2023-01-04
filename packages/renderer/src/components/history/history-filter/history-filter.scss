@@ -3,7 +3,7 @@ $range-spacing: 25px;
 .history-filter {
   display: flex;
   flex-direction: column;
-  padding: $padding-default;
+  padding: $spacing-default;
   border-radius: $border-radius;
   border: $border-width solid $color-border;
   background-color: $color-background;
@@ -13,7 +13,7 @@ $range-spacing: 25px;
     margin-bottom: 0;
 
     &.not-validated {
-      margin-bottom: $margin-large;
+      margin-bottom: $spacing-large;
     }
 
     &.range-input {
@@ -41,7 +41,7 @@ $range-spacing: 25px;
 
     & > label {
       display: block;
-      margin-bottom: $margin-small;
+      margin-bottom: $spacing-small;
     }
 
     .date-selector {
@@ -55,7 +55,7 @@ $range-spacing: 25px;
       grid-area: tags;
 
       .editor {
-        margin-top: $margin-small;
+        margin-top: $spacing-small;
       }
     }
   }

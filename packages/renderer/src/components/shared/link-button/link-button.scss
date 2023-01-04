@@ -11,7 +11,7 @@
     color: $color-black;
   }
 
-  &:focus-visible {
+  &:focus-outline {
     outline: $outline-width solid $color-active;
     outline-offset: 0px;
     border-radius: $border-radius-small;

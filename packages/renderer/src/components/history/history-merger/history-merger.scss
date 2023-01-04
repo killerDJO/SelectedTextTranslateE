@@ -2,7 +2,7 @@
   min-height: 300px;
   width: 50vw;
   min-width: 600px;
-  padding: 0 $padding-xl $padding-default $padding-xl;
+  padding: 0 $spacing-xl $spacing-default $spacing-xl;
   max-height: 80vh;
   overflow: auto;
 
@@ -23,8 +23,8 @@
 
   .table-header {
     @include ellipsis();
-    padding-left: $padding-default;
-    padding-right: $padding-default;
+    padding-left: $spacing-default;
+    padding-right: $spacing-default;
   }
 
   .candidates-view {
@@ -49,7 +49,7 @@
 
   .candidate-view {
     .candidate-view-header {
-      padding: $padding-small 0;
+      padding: $spacing-small 0;
       display: inline-block;
     }
 
@@ -61,12 +61,12 @@
     .candidate-view-controls {
       display: inline-flex;
       float: right;
-      padding: $padding-small 0;
+      padding: $spacing-small 0;
       height: 30px;
       align-items: center;
 
       .navigation-button {
-        padding-left: $padding-small;
+        padding-left: $spacing-small;
       }
     }
 
@@ -83,7 +83,7 @@
       .actions-column {
         display: flex;
         justify-content: center;
-        column-gap: $padding-small;
+        column-gap: $spacing-small;
         padding: 5px 0;
       }
     }
@@ -92,7 +92,7 @@
 
 .footer {
   border-top: $border-width solid $color-border;
-  padding: $padding-default;
+  padding: $spacing-default;
   justify-content: flex-end;
   align-items: center;
   display: flex;

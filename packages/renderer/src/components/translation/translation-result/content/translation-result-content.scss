@@ -1,22 +1,22 @@
 .content {
-  padding-right: $padding-small;
-  padding-top: $padding-small;
+  padding-right: $spacing-small;
+  padding-top: $spacing-small;
   font-size: $font-medium;
 
   &:not(.is-embedded) {
-    padding-left: $padding-large;
+    padding-left: $spacing-large;
   }
 
   .actions {
-    margin-bottom: $margin-default;
+    margin-bottom: $spacing-default;
     display: flex;
 
     &.tags-visible {
-      margin-bottom: $margin-small;
+      margin-bottom: $spacing-small;
     }
 
     .action {
-      margin-right: $margin-small;
+      margin-right: $spacing-small;
     }
 
     .not-synced-status {
@@ -26,12 +26,12 @@
   }
 
   .tags {
-    margin-bottom: $margin-default;
+    margin-bottom: $spacing-default;
   }
 
   .similar-words {
     color: $color-font;
-    margin-bottom: $margin-small;
+    margin-bottom: $spacing-small;
     font-style: italic;
 
     .similar-words-label {

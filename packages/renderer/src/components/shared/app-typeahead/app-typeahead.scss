@@ -13,7 +13,7 @@ $compact-line-height: 16px;
     }
 
     .drop-content .drop-items .drop-item {
-      padding: $padding-small $padding-small;
+      padding: $spacing-small $spacing-small;
       line-height: $font-small;
     }
   }
@@ -24,9 +24,9 @@ $compact-line-height: 16px;
     border-radius: $border-radius-small;
     border: $border-width solid $color-border;
     max-width: 100%;
-    padding: 0 $padding-small;
+    padding: 0 $spacing-small;
 
-    @include focus-visible();
+    @include focus-outline();
   }
 
   .drop-content {
@@ -54,7 +54,7 @@ $compact-line-height: 16px;
       .drop-item {
         white-space: nowrap;
         cursor: pointer;
-        padding: $padding-small $padding-default;
+        padding: $spacing-small $spacing-default;
         outline: none;
 
         &.selected {

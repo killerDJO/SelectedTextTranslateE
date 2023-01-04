@@ -1,5 +1,5 @@
 .category {
-  padding-bottom: $padding-default;
+  padding-bottom: $spacing-default;
 
   .category-header {
     .part-of-speech {
@@ -14,7 +14,7 @@
 
   .category-entry {
     white-space: nowrap;
-    padding-top: $padding-small;
+    padding-top: $spacing-small;
 
     .reverse-translations {
       font-style: italic;
@@ -50,6 +50,6 @@
 
   .expand {
     margin-left: $score-unit * 3 + $score-margin;
-    margin-top: $padding-small;
+    margin-top: $spacing-small;
   }
 }

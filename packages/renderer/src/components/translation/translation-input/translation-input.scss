@@ -1,11 +1,11 @@
 .translation-input {
-  padding: $padding-default 25px;
+  padding: $spacing-default 25px;
   text-align: center;
   margin-bottom: 0;
 
   > label {
     font-size: $font-medium;
-    margin-bottom: $margin-small;
+    margin-bottom: $spacing-small;
   }
 
   .input-holder {
@@ -28,6 +28,6 @@
   }
 
   .input-language-settings {
-    margin-top: $margin-default;
+    margin-top: $spacing-default;
   }
 }

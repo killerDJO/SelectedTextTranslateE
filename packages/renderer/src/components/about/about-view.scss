@@ -1,5 +1,5 @@
 .about {
-  padding: $padding-default $padding-xl;
+  padding: $spacing-default $spacing-xl;
   background-color: $color-background;
   height: 100vh;
 
@@ -12,13 +12,13 @@
     font-weight: bold;
 
     .version {
-      margin-right: $margin-small;
+      margin-right: $spacing-small;
     }
   }
 
   .actions {
     display: flex;
     align-items: center;
-    column-gap: $padding-default;
+    column-gap: $spacing-default;
   }
 }

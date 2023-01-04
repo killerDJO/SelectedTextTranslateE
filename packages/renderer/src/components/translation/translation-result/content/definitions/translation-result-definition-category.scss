@@ -1,5 +1,5 @@
 .definitions {
-  padding-bottom: $padding-default;
+  padding-bottom: $spacing-default;
   float: left;
   clear: both;
 
@@ -11,8 +11,8 @@
   }
 
   .definition-entry {
-    padding-top: $padding-small;
-    padding-left: $padding-large;
+    padding-top: $spacing-small;
+    padding-left: $spacing-large;
 
     .definition {
       font-size: 11px;

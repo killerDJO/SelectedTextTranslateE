@@ -1,10 +1,10 @@
 .settings {
-  padding: $padding-default;
+  padding: $spacing-default;
   background-color: $color-white;
 
   .footer {
     display: flex;
     justify-content: flex-end;
-    column-gap: $padding-default;
+    column-gap: $spacing-default;
   }
 }

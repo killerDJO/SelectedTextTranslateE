@@ -1,7 +1,7 @@
 .header {
   height: 50px;
-  padding-right: $padding-small;
-  padding-top: $padding-small;
+  padding-right: $spacing-small;
+  padding-top: $spacing-small;
   line-height: 20px;
   display: grid;
   grid-template-columns: 15px 1fr;
@@ -10,7 +10,7 @@
   white-space: nowrap;
 
   &:not(.is-embedded) {
-    padding-left: $padding-large;
+    padding-left: $spacing-large;
   }
 
   .translation-actions {
