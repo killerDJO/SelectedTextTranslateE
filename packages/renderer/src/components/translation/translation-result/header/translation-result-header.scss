@@ -1,0 +1,92 @@
+.header {
+  height: 50px;
+  padding-right: $padding-small;
+  padding-top: $padding-small;
+  line-height: 20px;
+  display: grid;
+  grid-template-columns: 15px 1fr;
+  box-sizing: border-box;
+  border-bottom: $border-width solid $color-border;
+  white-space: nowrap;
+
+  &:not(.is-embedded) {
+    padding-left: $padding-large;
+  }
+
+  .translation-actions {
+    grid-row: 1;
+    grid-column: 1;
+
+    .star-button {
+      margin-left: -1px;
+    }
+
+    .icon-star,
+    .icon-star-empty {
+      width: 13px;
+      height: 12px;
+    }
+
+    .icon-star-empty:hover {
+      color: $color-star;
+    }
+
+    .icon-star {
+      color: $color-star;
+    }
+  }
+
+  .translation {
+    grid-row: 1;
+    grid-column: 2;
+
+    font-size: $font-large;
+
+    .no-translation {
+      font-style: italic;
+      color: $color-gray;
+    }
+
+    &.no-actions {
+      grid-column: 1/2;
+    }
+  }
+
+  .play-text {
+    grid-row: 2;
+    grid-column: 1;
+
+    .play-icon {
+      width: 11px;
+      height: 11px;
+
+      &:hover {
+        color: $color-black;
+      }
+    }
+  }
+
+  .origin-holder {
+    grid-row: 2;
+    grid-column: 2;
+
+    .origin {
+      font-size: $font-small;
+      color: $color-gray;
+      display: inline-block;
+      margin-right: 3px;
+      outline: none;
+      cursor: text;
+    }
+
+    .origin-actions {
+      font-size: $font-small;
+      color: $color-gray;
+      display: inline-block;
+
+      .link-button-wrapper {
+        vertical-align: bottom;
+      }
+    }
+  }
+}

@@ -1,0 +1,88 @@
+.results {
+  :deep(tr:hover) {
+    .word-column .play-icon {
+      display: inline-block;
+    }
+  }
+
+  .word-column {
+    .word-holder {
+      display: inline-block;
+    }
+
+    .icon-star-empty,
+    .icon-star {
+      margin-right: 3px;
+
+      &:hover {
+        color: $color-star;
+      }
+    }
+
+    .icon-star {
+      color: $color-star;
+    }
+
+    .play-icon {
+      margin-left: 2px;
+      display: none;
+      width: 9px;
+      height: 9px;
+    }
+  }
+
+  .translation-column .no-translation {
+    font-style: italic;
+    color: $color-gray;
+  }
+
+  .tags-column {
+    overflow: visible;
+    .tags-editor {
+      vertical-align: middle;
+    }
+  }
+
+  .last-translated-column {
+    display: flex;
+    align-items: center;
+
+    .date {
+      @include ellipsis();
+      display: inline-block;
+    }
+  }
+
+  .archived-column {
+    text-align: center;
+
+    .icon-archive,
+    .icon-restore {
+      height: 10px;
+    }
+
+    .icon-restore {
+      color: $color-error;
+    }
+
+    .icon-archive {
+      color: $color-gray;
+
+      &:hover {
+        color: $color-error;
+      }
+    }
+  }
+
+  .no-history-records {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .icon-no-records {
+      width: 100px;
+      height: 100px;
+      color: $color-background-muted;
+    }
+  }
+}

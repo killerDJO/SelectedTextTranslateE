@@ -1,0 +1,16 @@
+.translate-result {
+  line-height: 1.1;
+  min-width: 100%;
+
+  .translate-result-items {
+    display: grid;
+  }
+
+  .no-results {
+    text-align: center;
+    width: 100%;
+    font-size: $font-large;
+    padding-top: $padding-default;
+    font-weight: bold;
+  }
+}

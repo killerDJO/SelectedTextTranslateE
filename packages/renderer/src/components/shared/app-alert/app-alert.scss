@@ -1,0 +1,37 @@
+.alert {
+  border-radius: $border-radius;
+  border: $border-width solid $color-border;
+  display: flex;
+  padding: $padding-default $padding-xl;
+  justify-content: space-between;
+
+  &.success {
+    border-color: rgba(74, 194, 107, 0.4);
+    background-color: #dafbe1;
+
+    .dismiss-icon:not(:hover) {
+      color: #1a7f37;
+    }
+  }
+
+  &.error {
+    border-color: rgba(255, 129, 130, 0.4);
+    background-color: #ffebe9;
+
+    .dismiss-icon:not(:hover) {
+      color: #cf222e;
+    }
+  }
+
+  $icon-size: 15px;
+
+  .dismiss-button {
+    height: $icon-size;
+    margin-top: 2px;
+
+    .dismiss-icon {
+      width: $icon-size;
+      height: $icon-size;
+    }
+  }
+}

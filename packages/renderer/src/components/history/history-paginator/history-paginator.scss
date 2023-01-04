@@ -1,0 +1,94 @@
+.history-paginator {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  column-gap: $margin-default;
+}
+
+.records-count {
+  display: inline;
+  font-style: italic;
+  font-size: $font-small;
+  color: $color-gray;
+}
+
+:deep(.pagination) {
+  display: inline-block;
+  border-radius: $border-radius;
+  padding: 0;
+
+  $pagination-color: $color-black;
+
+  > .page-item {
+    display: inline;
+
+    > .page-link {
+      position: relative;
+      float: left;
+      padding: $padding-small $padding-default;
+      margin-left: -1px;
+      color: $pagination-color;
+      text-decoration: none;
+      background-color: $color-white;
+      border: $border-width solid $color-border;
+    }
+
+    &.active {
+      .page-link,
+      .page-link:hover,
+      .page-link:focus-visible {
+        color: $color-black;
+        cursor: default;
+        background-color: $color-list-item-hovered;
+        z-index: 0;
+      }
+    }
+
+    &:first-child > .page-link {
+      margin-left: 0;
+      border-top-left-radius: $border-radius;
+      border-bottom-left-radius: $border-radius;
+    }
+
+    &:last-child > .page-link {
+      border-top-right-radius: $border-radius;
+      border-bottom-right-radius: $border-radius;
+    }
+
+    > .page-link:hover,
+    > .page-link:focus-visible {
+      cursor: pointer;
+      color: $pagination-color;
+      background-color: $color-background;
+      border-color: $color-border;
+      outline: none;
+    }
+
+    > .page-link:hover {
+      z-index: 101;
+    }
+
+    > .page-link:focus-visible {
+      z-index: 100;
+    }
+  }
+
+  > .page-item:not(.active):not(.disabled) {
+    > .page-link {
+      @include focus-visible();
+    }
+  }
+
+  > .page-item.disabled {
+    > .page-link,
+    > .page-link:hover,
+    > .page-link:focus-visible {
+      color: $color-gray;
+      cursor: default;
+      background-color: $color-white;
+      border-color: $color-border;
+      outline: none;
+      z-index: 0;
+    }
+  }
+}

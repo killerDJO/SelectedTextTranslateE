@@ -1,0 +1,10 @@
+.translation {
+  line-height: 1.1;
+  display: flex;
+  flex-direction: column;
+
+  .non-text-translation {
+    margin: $margin-default 25px $margin-small 25px;
+    justify-content: center;
+  }
+}

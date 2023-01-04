@@ -1,0 +1,31 @@
+.sortable-header {
+  position: relative;
+  cursor: pointer;
+  padding-left: $padding-default;
+  padding-right: $padding-large;
+  padding-top: 2px;
+  padding-bottom: 2px;
+
+  @include ellipsis();
+
+  .icon {
+    position: absolute;
+    right: 6px;
+    color: $color-gray;
+
+    &.sort-asc {
+      top: 3px;
+    }
+    &.sort-desc {
+      top: 10px;
+    }
+
+    &.hidden {
+      display: none;
+    }
+
+    &.active {
+      color: $color-black;
+    }
+  }
+}

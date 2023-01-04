@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "es6",
+    "strictFunctionTypes": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "importHelpers": true,
+    "inlineSourceMap": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "rootDir": "./src",
+    "outDir": "../../dist/app/main",
+    "paths": {
+      "~/*": ["src/*"]
+    }
+  },
+  "exclude": ["node_modules"],
+  "references": [{ "path": "../common" }]
+}

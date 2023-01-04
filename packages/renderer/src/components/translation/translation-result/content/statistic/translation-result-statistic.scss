@@ -1,0 +1,26 @@
+.statistics-table {
+  display: grid;
+  grid-template-columns: max-content max-content;
+  font-size: $font-medium;
+  width: fit-content;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius-small;
+
+  .label {
+    text-align: right;
+  }
+
+  .label,
+  .value {
+    padding: $padding-small;
+  }
+
+  :nth-child(4n + 1),
+  :nth-child(4n + 2) {
+    background-color: $color-list-item;
+  }
+}
+
+.refresh-button {
+  margin-top: $margin-small;
+}

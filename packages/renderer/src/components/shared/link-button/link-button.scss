@@ -1,0 +1,19 @@
+.link {
+  display: inline-flex;
+  font-size: $font-small;
+  color: $color-gray;
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline-block;
+  white-space: nowrap;
+
+  &:hover {
+    color: $color-black;
+  }
+
+  &:focus-visible {
+    outline: $outline-width solid $color-active;
+    outline-offset: 0px;
+    border-radius: $border-radius-small;
+  }
+}

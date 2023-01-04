@@ -1,0 +1,27 @@
+.toggle-button {
+  display: inline-flex;
+  outline: none;
+  width: 100%;
+  border: $border-width solid $color-border;
+  background-color: $color-background;
+  border-radius: $border-radius;
+  cursor: pointer;
+  padding: math.div($padding-default, 2) $padding-default;
+  justify-content: center;
+
+  &:hover {
+    background-color: $color-button-hover;
+  }
+
+  &.active {
+    background-color: $color-active;
+    border-color: $color-active;
+    color: $color-white;
+
+    &:focus-visible {
+      @include focus-visible($color-button-primary);
+    }
+  }
+
+  @include focus-visible();
+}

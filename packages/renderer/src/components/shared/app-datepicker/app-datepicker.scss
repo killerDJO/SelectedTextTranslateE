@@ -1,0 +1,28 @@
+.datepicker {
+  padding-right: $padding-small;
+
+  &::-webkit-calendar-picker-indicator {
+    padding: 0;
+    cursor: pointer;
+  }
+
+  &:not(.has-value) {
+    &::-webkit-datetime-edit-month-field,
+    &::-webkit-datetime-edit-day-field,
+    &::-webkit-datetime-edit-year-field {
+      color: $color-gray;
+
+      &:focus {
+        color: $color-white;
+      }
+    }
+  }
+
+  &:invalid {
+    border-color: $color-error;
+
+    &:focus-visible {
+      outline: $outline-width solid $color-error;
+    }
+  }
+}

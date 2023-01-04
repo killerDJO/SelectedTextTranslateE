@@ -1,0 +1,120 @@
+.table-holder {
+  position: relative;
+
+  table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border: $border-width solid $color-border;
+    width: 100%;
+    table-layout: fixed;
+    border-radius: $border-radius;
+
+    thead {
+      th {
+        padding: 0;
+        overflow: visible;
+        position: relative;
+        border-bottom: $border-width solid $color-border;
+        background-color: $color-background;
+        text-align: left;
+
+        .grip {
+          $grip-width: 5px;
+
+          position: absolute;
+          width: $grip-width;
+          height: 100%;
+          right: -(math.div($grip-width + $border-width, 2));
+          top: 0;
+          cursor: col-resize;
+          z-index: 1000;
+        }
+      }
+
+      th:not(:last-child) {
+        border-right: $border-width solid $color-border;
+      }
+
+      th:first-child {
+        border-top-left-radius: $border-radius;
+      }
+
+      th:last-child {
+        border-top-right-radius: $border-radius;
+      }
+    }
+
+    tbody {
+      tr {
+        color: $color-font;
+        background-color: $color-white;
+
+        &:nth-child(even) {
+          background-color: $color-list-item;
+        }
+
+        &:hover {
+          background-color: $color-list-item-hovered;
+        }
+      }
+
+      tr:last-child {
+        td:first-child {
+          border-bottom-left-radius: $border-radius;
+        }
+
+        td:last-child {
+          border-bottom-right-radius: $border-radius;
+        }
+      }
+
+      td:not(:last-child) {
+        border-right: $border-width solid $color-border;
+      }
+
+      td {
+        padding-left: $padding-default;
+        overflow: visible;
+
+        & > :deep(*) {
+          @include ellipsis();
+        }
+      }
+    }
+
+    &.clickable tr:hover {
+      cursor: pointer;
+    }
+  }
+}
+
+$placeholders-height: 250px;
+
+.no-records {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: $placeholders-height;
+  font-size: 20px;
+  border: $border-width solid $color-border;
+  border-radius: $border-radius;
+}
+
+.loader {
+  height: 100%;
+  border-radius: $border-radius;
+  height: $placeholders-height;
+
+  &.no-results {
+    border: $border-width solid $color-border;
+  }
+
+  &:not(.no-results) {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+  }
+}

@@ -1,4 +1,9 @@
 node_modules
-src/**/*.js
-*.js.map
-/src/**/.firebase/**/*
+packages/**/*.js
+!packages/**/.eslintrc.js
+*.map
+**/.firebase/**/*
+dist
+types-dist
+*.tsbuildinfo
+

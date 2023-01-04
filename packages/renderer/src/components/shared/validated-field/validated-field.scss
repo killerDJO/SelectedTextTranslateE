@@ -1,0 +1,44 @@
+.validated-field {
+  display: inline-block;
+  width: 100%;
+  position: relative;
+  margin-bottom: 15px;
+
+  .content {
+    width: 100%;
+  }
+
+  &.error {
+    :deep(.form-control) {
+      border-color: $color-error;
+      &:focus-visible {
+        outline-color: $color-error;
+      }
+    }
+  }
+
+  .error-message {
+    position: absolute;
+    color: $color-error;
+    font-size: $font-medium;
+    white-space: nowrap;
+
+    transform-origin: 50% 0;
+    animation: append-animate 0.2s linear;
+
+    .error-icon {
+      margin-right: $margin-small;
+    }
+  }
+}
+
+@keyframes append-animate {
+  from {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}

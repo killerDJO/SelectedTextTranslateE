@@ -1,0 +1,10 @@
+.sign-in-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .sign-in-buttons {
+    display: flex;
+    column-gap: $margin-default;
+  }
+}

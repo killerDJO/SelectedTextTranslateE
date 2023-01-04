@@ -1,0 +1,121 @@
+$line-height: 22px;
+$compact-line-height: 16px;
+
+$margin: 3px;
+
+$icon-height: 12px;
+$compact-icon-height: 9px;
+
+.tags-editor {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  max-width: 100%;
+  padding-right: $padding-small;
+  margin-bottom: -$margin;
+  min-height: $line-height;
+
+  .tag {
+    margin-right: $margin-small;
+    border-radius: $border-radius-small;
+    border: $border-width solid $color-border;
+    padding: 0 $padding-small;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: $margin;
+    background-color: $color-white;
+    height: $line-height;
+    line-height: 1;
+
+    &.disabled:not(:hover) {
+      opacity: 0.5;
+    }
+
+    &.clickable {
+      cursor: pointer;
+
+      &:hover {
+        background-color: $color-button-hover;
+      }
+    }
+
+    .remove-tag-button {
+      margin-left: $margin;
+
+      .remove-tag-icon {
+        height: $icon-height;
+
+        &:hover {
+          color: $color-error;
+        }
+      }
+    }
+
+    @include focus-visible();
+  }
+
+  .add-tag-button {
+    margin-bottom: $margin;
+
+    .add-tag-icon {
+      height: $icon-height;
+    }
+  }
+
+  .tag-input-wrapper {
+    align-self: center;
+    max-width: 100%;
+    margin-bottom: $margin;
+    display: inline-flex;
+
+    .confirm-add-tag-button {
+      margin-left: $margin;
+      align-self: center;
+
+      .confirm-add-tag-icon {
+        height: $icon-height;
+      }
+    }
+
+    .drop-wrapper {
+      width: 70px;
+    }
+  }
+
+  &.compact {
+    font-size: $font-small;
+    min-height: $compact-line-height;
+
+    .no-tags {
+      height: $compact-line-height;
+    }
+
+    .tag {
+      height: $compact-line-height;
+      margin-right: $margin;
+      line-height: $compact-line-height;
+
+      .remove-tag-button .remove-tag-icon {
+        height: $compact-icon-height;
+      }
+    }
+
+    .tag-input-wrapper {
+      .tag-input {
+        height: $compact-line-height;
+      }
+
+      .confirm-add-tag-button {
+        .confirm-add-tag-icon {
+          height: $compact-icon-height;
+        }
+      }
+    }
+
+    .add-tag-button {
+      .add-tag-icon {
+        height: $compact-icon-height;
+      }
+    }
+  }
+}

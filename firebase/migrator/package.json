@@ -1,0 +1,14 @@
+{
+  "name": "migrator",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.4.1"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1"
+  }
+}

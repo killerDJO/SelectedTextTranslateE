@@ -2,7 +2,7 @@ name: Selected Text Translate Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
     tags:
       - v*
   pull_request:
@@ -22,7 +22,7 @@ jobs:
       - name: Install NPM
         run: npm ci
       - name: Lint
-        run: npm run lint-all
+        run: npm run lint
       - name: Build
         run: |
           npm run native-rebuild
@@ -32,6 +32,6 @@ jobs:
       - uses: ncipollo/release-action@v1
         if: ${{ startsWith(github.ref, 'refs/tags/') }}
         with:
-          artifacts: "dist/installer/*"
+          artifacts: 'dist/installer/*'
           omitBody: true
           token: ${{ secrets.GITHUB_TOKEN }}

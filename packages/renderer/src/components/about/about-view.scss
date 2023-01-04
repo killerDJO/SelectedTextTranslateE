@@ -1,0 +1,24 @@
+.about {
+  padding: $padding-default $padding-xl;
+  background-color: $color-background;
+  height: 100vh;
+
+  p {
+    margin: 5px 0;
+  }
+
+  .about-title {
+    font-size: $font-large;
+    font-weight: bold;
+
+    .version {
+      margin-right: $margin-small;
+    }
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    column-gap: $padding-default;
+  }
+}

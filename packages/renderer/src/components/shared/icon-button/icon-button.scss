@@ -1,0 +1,24 @@
+.icon-wrapper {
+  display: inline-flex;
+  line-height: 1;
+  color: $color-background-muted;
+
+  &:hover {
+    color: $color-active;
+  }
+
+  &:not(.disabled) {
+    cursor: pointer;
+  }
+
+  &.disabled {
+    color: $color-background-muted;
+    opacity: 0.5;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-active;
+    outline-offset: 1px;
+    border-radius: 1px;
+  }
+}

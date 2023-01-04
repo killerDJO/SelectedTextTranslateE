@@ -1,0 +1,112 @@
+.drop-wrapper {
+  display: inline-flex;
+  position: relative;
+
+  border: $border-width solid $color-border;
+  background-color: $color-background;
+  border-radius: $border-radius;
+
+  .drop-button:hover,
+  .drop-trigger:hover {
+    background-color: $color-button-hover;
+  }
+
+  .drop-button {
+    border-radius: $border-radius;
+    padding: $padding-small $padding-default;
+    cursor: pointer;
+    outline: none;
+
+    &:focus-visible {
+      outline: $outline-width solid $color-active;
+      outline-offset: -1px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      z-index: 100;
+    }
+
+    &.split {
+      display: flex;
+      align-items: center;
+
+      .split-icon {
+        margin: 0 $margin-default 0 $margin-small;
+        width: 12px;
+        height: 12px;
+      }
+
+      &:focus-visible {
+        border-radius: $border-radius;
+      }
+    }
+  }
+
+  .drop-trigger {
+    border-top-right-radius: $border-radius;
+    border-bottom-right-radius: $border-radius;
+    border-left: $border-width solid $color-border;
+
+    $icon-wrapper-width: 30px;
+
+    .drop-icon {
+      display: inline-flex;
+      font-size: $font-large;
+      width: $icon-wrapper-width;
+      height: $icon-wrapper-width;
+      align-items: center;
+      justify-content: center;
+
+      &:focus-visible {
+        outline: $outline-width solid $color-active;
+        outline-offset: 0px;
+        border-top-right-radius: $border-radius;
+        border-bottom-right-radius: $border-radius;
+      }
+    }
+  }
+
+  .drop-content {
+    position: fixed;
+    left: -10000px;
+    @extend %box-shadow;
+
+    border: $border-width solid $color-border;
+    background-color: $color-white;
+    z-index: 1000;
+    border-radius: $border-radius;
+    overflow: hidden;
+
+    &[data-popper-placement^='bottom'] {
+      margin-top: 2px !important;
+    }
+
+    &[data-popper-placement^='top'] {
+      margin-bottom: 2px !important;
+    }
+
+    .drop-items {
+      margin: 0;
+      list-style: none;
+      padding: 0;
+
+      .drop-item {
+        white-space: nowrap;
+        @include focus-visible();
+
+        &:not(:last-child) {
+          border-bottom: $border-width solid $color-border;
+        }
+
+        &:first-child {
+          border-top-left-radius: $border-radius;
+          border-top-right-radius: $border-radius;
+        }
+
+        &:last-child {
+          border-bottom-left-radius: $border-radius;
+          border-bottom-right-radius: $border-radius;
+        }
+      }
+    }
+  }
+}

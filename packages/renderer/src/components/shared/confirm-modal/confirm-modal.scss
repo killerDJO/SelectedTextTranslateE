@@ -1,0 +1,15 @@
+.confirm-modal-body {
+  padding: $padding-large $padding-xl;
+}
+
+.confirm-modal-footer {
+  border-top: $border-width solid $color-border;
+  padding: $padding-default;
+  justify-content: flex-end;
+  align-items: center;
+  display: flex;
+
+  .cancel {
+    margin-right: $margin-small;
+  }
+}

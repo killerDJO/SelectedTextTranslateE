@@ -1,0 +1,35 @@
+$items-size: 400px;
+
+.settings-holder {
+  border-radius: $border-radius;
+  border: $border-width solid $color-border;
+  width: 100%;
+  margin-bottom: $margin-large;
+  overflow: hidden;
+
+  > .settings-title {
+    font-size: $font-big;
+    margin-bottom: $margin-small;
+    background-color: $color-background;
+    border-bottom: $border-width solid $color-border;
+    padding: $padding-default;
+  }
+
+  > .holder {
+    background-color: $color-white;
+    min-width: $items-size + $margin-large;
+    padding: $padding-default;
+    display: grid;
+  }
+
+  :deep(.settings-separator) {
+    border-top: $border-width solid $color-border;
+    width: calc(100% + #{2 * $margin-default});
+    margin: $margin-default #{-$margin-default};
+  }
+
+  :deep(.settings-item) {
+    max-width: $items-size;
+    display: grid;
+  }
+}

@@ -1,0 +1,98 @@
+.hotkey-settings {
+  display: inline-block;
+  width: 100%;
+
+  .header {
+    width: 100%;
+    margin-bottom: $margin-small;
+  }
+
+  .hotkeys {
+    $action-column-width: 60px;
+
+    .hotkeys-list {
+      margin-top: 0;
+      border: $border-width solid $color-border;
+      border-radius: 6px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr $action-column-width;
+      overflow: hidden;
+
+      .hotkeys-list-header,
+      .hotkeys-list-hotkey,
+      .hotkeys-list-action {
+        padding: $padding-small $padding-default;
+        display: flex;
+        align-items: center;
+
+        &:not(:nth-child(even)) {
+          border-right: $border-width solid $color-border;
+        }
+      }
+
+      .hotkeys-list-header {
+        background-color: $color-background;
+        border-bottom: $border-width solid $color-border;
+        font-weight: bold;
+      }
+
+      .hotkeys-list-hotkey,
+      .hotkeys-list-action {
+        &:not(:nth-last-child(-n + 2)) {
+          border-bottom: $border-width solid $color-border;
+        }
+      }
+
+      .hotkeys-list-action {
+        justify-content: center;
+
+        .remove-icon {
+          width: 15px;
+          height: 15px;
+
+          &:hover {
+            color: $color-error;
+          }
+        }
+      }
+
+      .no-hotkeys {
+        grid-column: 1/3;
+        text-align: center;
+        color: $color-gray;
+        padding: $padding-small 0;
+      }
+    }
+
+    .hotkey-edit {
+      display: inline-block;
+      margin-top: $margin-small;
+      width: 100%;
+
+      .hotkey-input-control {
+        width: 80%;
+      }
+
+      .add-hotkey {
+        float: right;
+        width: calc(#{$action-column-width} + #{2 * $border-width});
+      }
+    }
+
+    .global-hotkey-warning {
+      font-size: $font-small;
+      margin-bottom: $margin-small;
+      color: $color-warning;
+
+      .icon-attention {
+        width: 10px;
+        height: 10px;
+      }
+    }
+
+    .reset-hotkeys {
+      margin-top: $margin-default;
+    }
+  }
+}

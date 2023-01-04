@@ -1,0 +1,14 @@
+.history-auth {
+  .drop-wrapper {
+    position: relative;
+    display: inline-flex;
+  }
+
+  .user-label {
+    display: inline-flex;
+    font-style: italic;
+    font-size: $font-small;
+    color: $color-gray;
+    margin-left: $margin-default;
+  }
+}

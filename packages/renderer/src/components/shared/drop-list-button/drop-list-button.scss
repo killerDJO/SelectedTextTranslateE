@@ -1,0 +1,8 @@
+.drop-item-value {
+  cursor: pointer;
+  padding: $padding-small $padding-default;
+
+  &:hover {
+    background-color: $color-button-hover;
+  }
+}

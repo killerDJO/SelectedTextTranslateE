@@ -1,0 +1,56 @@
+$color-font: #333;
+$color-gray: #777;
+$color-black: #000;
+$color-white: #fff;
+$color-error: #cf222e;
+$color-background: #f6f8fa;
+$color-background-muted: #57606a;
+$color-active: #0969da;
+$color-border: #d0d7de;
+$color-button-hover: #f3f4f6;
+$color-button-primary: #2da44e;
+$color-button-primary-hovered: #2c974b;
+$color-list-item: rgba(208, 215, 222, 0.24);
+$color-list-item-hovered: rgba(208, 215, 222, 0.32);
+$color-item-active: rgba(175, 184, 193, 0.2);
+$color-star: #ffd66e;
+$color-warning: #9a6700;
+
+$font-large: 16px;
+$font-big: 14px;
+$font-medium: 12px;
+$font-small: 10px;
+
+$border-radius-small: 3px;
+$border-radius: 6px;
+$border-width: 1px;
+
+$padding-default: 10px;
+$padding-small: 5px;
+$padding-large: 15px;
+$padding-xl: 20px;
+
+$margin-small: 5px;
+$margin-default: 10px;
+$margin-large: 15px;
+$margin-xl: 20px;
+
+$outline-width: 2px;
+
+%box-shadow {
+  box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
+}
+
+@mixin focus-visible($outline-color: $color-active) {
+  &:focus-visible {
+    outline: $outline-width solid $outline-color;
+    outline-offset: -2px;
+    box-shadow: none;
+  }
+}
+
+@mixin ellipsis() {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -1,97 +1,27 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "renderer: build-dev",
-            "type": "npm",
-            "script": "renderer-build-dev",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "renderer: watch",
-            "type": "npm",
-            "script": "renderer-watch-dev",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "main: build-dev",
-            "type": "npm",
-            "script": "main-build-dev",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "main: watch",
-            "type": "npm",
-            "script": "main-watch-dev",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "service-renderer: build-dev",
-            "type": "npm",
-            "script": "service-renderer-build-dev",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "service-renderer: watch",
-            "type": "npm",
-            "script": "service-renderer-watch-dev",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "native: rebuild",
-            "type": "npm",
-            "script": "native-rebuild",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "full: build-dev",
-            "type": "npm",
-            "script": "full-build-dev",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "full: build-prod",
-            "type": "npm",
-            "script": "full-build-prod",
-            "group": "build",
-            "problemMatcher": []
-        },
-        {
-            "label": "dev: start",
-            "group": "build",
-            "problemMatcher": [],
-            "dependsOn": [
-                "main: watch",
-                "renderer: watch",
-                "service-renderer: watch"
-            ]
-        },
-        {
-            "label": "create: release",
-            "group": "build",
-            "type": "npm",
-            "script": "create-release",
-            "problemMatcher": []
-        },
-        {
-            "label": "firebase: deploy",
-            "group": "build",
-            "type": "shell",
-            "command": "firebase deploy",
-            "options": {
-                "cwd": "${workspaceFolder}/src/firebase"
-            },
-            "problemMatcher": []
-        }
-    ]
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "watch:renderer",
+      "type": "npm",
+      "script": "watch:renderer",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "watch:main",
+      "type": "npm",
+      "script": "watch:main",
+      "group": "build",
+      "problemMatcher": []
+    },
+    {
+      "label": "watch:all",
+      "group": "build",
+      "problemMatcher": [],
+      "dependsOn": ["watch:main", "watch:renderer"]
+    }
+  ]
 }

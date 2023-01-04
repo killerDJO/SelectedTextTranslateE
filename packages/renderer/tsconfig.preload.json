@@ -1,0 +1,10 @@
+{
+  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "include": ["src/preload.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "types": ["node"],
+    "declarationDir": "dist",
+    "noImplicitAny": true
+  }
+}

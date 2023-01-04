@@ -1,0 +1,19 @@
+.scaling-input {
+  .slider-holder {
+    margin-top: $margin-small;
+  }
+
+  .current-scale-factor {
+    font-style: italic;
+  }
+}
+
+.reset-controls {
+  display: flex;
+  column-gap: $padding-small;
+
+  .reset-label {
+    font-size: $font-small;
+    vertical-align: text-bottom;
+  }
+}

@@ -1,0 +1,17 @@
+.interval-item {
+  margin-top: $margin-small;
+
+  input {
+    width: 125px;
+    display: block;
+  }
+}
+
+.form-group {
+  margin-bottom: 0;
+
+  .form-control {
+    width: 50px;
+    display: inline-block;
+  }
+}

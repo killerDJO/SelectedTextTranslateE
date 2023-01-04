@@ -1,34 +1,47 @@
 {
-    "files.exclude": {
-        "**/.git": true,
-        "**/.DS_Store": true,
-        "**/*.js": {
-            "when": "$(basename).ts"
-        },
-        "**/*.js.map": true,
-        "node_modules": true
-    },
-    "typescript.preferences.importModuleSpecifier": "non-relative",
-    "typescript.preferences.quoteStyle": "double",
-    "typescript.tsdk": "./node_modules/typescript/lib",
-    "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
-    "cSpell.words": [
-        "Backuper",
-        "Bootstrapper",
-        "Datepicker",
-        "KEYEVENTF",
-        "Typeahead",
-        "VUEJS",
-        "arraybuffer",
-        "debounced",
-        "deserialize",
-        "devtool",
-        "firestore",
-        "injectable",
-        "inversify",
-        "keybd",
-        "keytar",
-        "unmanaged",
-        "unsynced"
-    ]
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "files.eol": "\n",
+  "files.exclude": {
+    "**/*.js": { "when": "$(basename).ts" },
+    "**/*.js.map": true,
+    "**/*.tsbuildinfo": true,
+    "**/node_modules": true
+  },
+  "eslint.validate": ["vue", "typescript"],
+  "javascript.validate.enable": true,
+  "typescript.preferences.importModuleSpecifier": "shortest",
+  "typescript.tsserver.maxTsServerMemory": 10000,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.insertSpaces": true,
+  "editor.detectIndentation": false,
+  "editor.tabSize": 2,
+  "typescript.validate.enable": true,
+  "cSpell.words": [
+    "arraybuffer",
+    "Backuper",
+    "Bootstrapper",
+    "customizer",
+    "Datepicker",
+    "debounced",
+    "deserialize",
+    "devtool",
+    "firestore",
+    "fontawesome",
+    "Frameless",
+    "injectable",
+    "inversify",
+    "keybd",
+    "KEYEVENTF",
+    "keytar",
+    "Pinia",
+    "Typeahead",
+    "unmanaged",
+    "unsynced",
+    "VUEJS",
+    "Vuelidate"
+  ]
 }

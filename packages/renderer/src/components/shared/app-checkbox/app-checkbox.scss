@@ -1,0 +1,54 @@
+.checkbox {
+  line-height: 1;
+  display: inline-flex;
+
+  &.disabled {
+    opacity: 0.5;
+
+    label .input-wrapper .form-checkbox {
+      cursor: not-allowed;
+    }
+  }
+
+  label {
+    display: flex;
+    margin: 0;
+    overflow: visible;
+    align-items: flex-end;
+    outline: none;
+    white-space: nowrap;
+
+    > :first-child {
+      margin-right: $margin-small;
+    }
+
+    .input-wrapper {
+      display: flex;
+
+      .form-checkbox {
+        appearance: none;
+        display: inline-block;
+        position: relative;
+        background-color: $color-background;
+        color: $color-gray;
+        height: calc(1em + 2px);
+        width: calc(1em + 2px);
+        line-height: 1;
+        border-radius: $border-radius-small;
+        border: $border-width solid $color-border;
+        cursor: pointer;
+        outline: none;
+
+        @include focus-visible();
+
+        &:checked::before {
+          position: absolute;
+          left: 3px;
+          top: -1px;
+          content: '\02143';
+          transform: rotate(40deg);
+        }
+      }
+    }
+  }
+}
