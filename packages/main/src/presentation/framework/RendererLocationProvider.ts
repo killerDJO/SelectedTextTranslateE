@@ -14,7 +14,7 @@ export class RendererLocationProvider {
 
   public static getPreloadLocation(): string {
     const rendererAssets = fs.readdirSync(path.join(this.rendererPath, 'assets'));
-    const preloadScript = rendererAssets.find(asset => asset.startsWith('preload.'));
+    const preloadScript = rendererAssets.find(asset => asset.startsWith('preload-'));
     if (!preloadScript) {
       throw new Error('Unable to find preload script');
     }

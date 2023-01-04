@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig, type PluginOption } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import commonjs from '@rollup/plugin-commonjs';
 import path from 'path';
@@ -6,11 +6,15 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
   root: './src',
-  plugins: [vue(), commonjs(), visualizer({ filename: './dist/stats.html' })],
+  plugins: [
+    vue(),
+    commonjs() as PluginOption,
+    visualizer({ filename: './dist/stats.html' }) as PluginOption
+  ],
   build: {
     outDir: '../../../dist/app/renderer',
     sourcemap: 'inline',
-    chunkSizeWarningLimit: 2048,
+    chunkSizeWarningLimit: 10000,
     rollupOptions: {
       input: {
         index: './src/index.html',

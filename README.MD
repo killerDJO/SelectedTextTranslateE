@@ -12,9 +12,9 @@
 
 ## Components and build tasks
 
-Solution contains 2 components: main and renderer. Main component is build using `tsc`. Renderer component uses Vue 3 and is built using Vite..
+Solution contains 2 components: main and renderer. Main component is build using `tsc`. Renderer component uses Vue 3 and built using Vite.
 
-Main component is a Node.js process which ties all other processes together. There are 4 build tasks available:
+Main component is a Node.js process which ties all other processes together. There are 3 build tasks available:
 
 - `build:main` - builds main component.
 - `watch:main` - builds main component and watches for new changes. Used for development purposes.d
