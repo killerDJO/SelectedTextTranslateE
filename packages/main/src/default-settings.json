@@ -169,8 +169,8 @@
     ]
   },
   "update": {
-    "feedUrl": "https://update.electronjs.org/yevhenii-andrushchak/SelectedTextTranslateE",
-    "releasesUrl": "https://github.com/yevhenii-andrushchak/SelectedTextTranslateE/releases"
+    "feedUrl": "https://update.electronjs.org/killerDJO/SelectedTextTranslateE",
+    "releasesUrl": "https://github.com/killerDJO/SelectedTextTranslateE/releases"
   },
   "firebase": {
     "apiKey": "AIzaSyAuHtBBH6VTFdX12AAOFiIa9xWl7AC2m0A",
