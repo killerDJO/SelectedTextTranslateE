@@ -83,7 +83,7 @@ import type {
 //         ]
 //   ]
 export class TranslationResponseParser {
-  public static readonly Version: string = 'v3.2';
+  public static readonly Version: string = 'v3.3';
 
   public parse(root: any, input: string): TranslateResult {
     if (!Array.isArray(root)) {
@@ -93,8 +93,15 @@ export class TranslationResponseParser {
     const sentence = this.parseSentence(root, input);
     const categories = this.parseTranslateCategories(root);
     const definitions = this.parseDefinitions(root);
+
+    // Since response isn't always accurate, use top category result if available
+    const fixedSentence: TranslateResultSentence = {
+      ...sentence,
+      translation: categories[0]?.entries?.[0]?.word ?? sentence.translation
+    };
+
     return {
-      sentence,
+      sentence: fixedSentence,
       categories,
       definitions,
       version: TranslationResponseParser.Version
