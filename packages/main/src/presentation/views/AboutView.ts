@@ -35,7 +35,6 @@ export class AboutView extends ViewBase {
       Messages.Renderer.About.GetApplicationInfo,
       () => applicationInfo
     );
-    this.window.webContents.openDevTools();
 
     this.checkForUpdates$ = this.messageBus.observeMessage(
       Messages.Renderer.About.CheckForUpdatesCommand
