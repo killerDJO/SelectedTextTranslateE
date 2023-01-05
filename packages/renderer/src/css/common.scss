@@ -1,5 +1,6 @@
 @import 'reset';
 @import 'framework';
+@import 'tippy.js/dist/tippy.css';
 
 body {
   height: 100%;
@@ -56,5 +57,14 @@ body {
     line-height: 1.1;
     font-weight: 600;
     margin-bottom: 5px;
+  }
+}
+
+.tippy-box {
+  border-radius: $border-radius-small;
+
+  .tippy-content {
+    font-size: $font-medium;
+    padding: $spacing-small;
   }
 }

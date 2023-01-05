@@ -6,7 +6,10 @@
   padding-top: 2px;
   padding-bottom: 2px;
 
-  @include ellipsis();
+  .header-name {
+    display: block;
+    @include ellipsis();
+  }
 
   .icon {
     position: absolute;

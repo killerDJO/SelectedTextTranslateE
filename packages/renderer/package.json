@@ -25,6 +25,7 @@
     "mousetrap": "1.6.5",
     "pinia": "2.0.28",
     "string-strip-html": "13.0.6",
+    "tippy.js": "^6.3.7",
     "vue": "3.2.45",
     "vue-router": "4.1.6",
     "vuejs-paginate-next": "1.0.2"

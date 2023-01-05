@@ -1,20 +1,22 @@
 import type { Directive } from 'vue';
+import tippy, { type Instance } from 'tippy.js';
 
-import { CallbacksRegistry } from './callbacks-registry';
-
-const registry = new CallbacksRegistry();
+const instancesMap: Map<HTMLElement, Instance> = new Map();
 
 export const overflowTooltipDirective: Directive = {
   beforeMount: (element: HTMLElement) => {
-    registry.registerCallback(element, 'mouseenter', () => {
-      if (isOverflown(element)) {
-        element.title = element.innerText;
+    const tippyInstance = tippy(element, {
+      content: element.innerText,
+      onShow() {
+        if (!isOverflown(element)) {
+          return false;
+        }
       }
     });
-    registry.registerCallback(element, 'mouseleave', () => element.removeAttribute('title'));
+    instancesMap.set(element, tippyInstance);
   },
   unmounted: (element: HTMLElement) => {
-    registry.unregisterAllCallbacks(element);
+    instancesMap.get(element)?.destroy();
   }
 };
 

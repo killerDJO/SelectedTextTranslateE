@@ -40,8 +40,10 @@ function sort(): void {
 }
 </script>
 <template>
-  <div v-overflow-tooltip class="sortable-header" @click="sort">
-    {{ columnNameResolver.getColumnName(sortColumn) }}
+  <div class="sortable-header" @click="sort">
+    <span v-overflow-tooltip class="header-name">{{
+      columnNameResolver.getColumnName(sortColumn)
+    }}</span>
 
     <font-awesome-icon
       icon="caret-up"
@@ -61,7 +63,7 @@ function sort(): void {
         active: isSortArrowActive(SortOrder.Desc),
         hidden: isSortArrowHidden(SortOrder.Desc)
       }"
-      title="Sort Ascending"
+      title="Sort Descending"
     />
   </div>
 </template>
