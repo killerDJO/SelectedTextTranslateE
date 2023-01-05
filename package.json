@@ -35,6 +35,7 @@
     "start": "electron ./dist/app/main/main.js",
     "pack": "node build-scripts/package.js",
     "create-installer": "node build-scripts/create-installer.js",
+    "create-release": "npm run native-rebuild && npm run build && npm run pack && npm run create-installer",
     "start:debug": "electron ./dist/app/main/main.js --inspect",
     "lint": "npm run lint --workspace=@selected-text-translate/main --workspace=@selected-text-translate/renderer",
     "native-rebuild": "node build-scripts/build-native.js && npx electron-rebuild --parallel"

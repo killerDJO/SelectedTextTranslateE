@@ -23,6 +23,7 @@ export const useHistoryMergerStore = defineStore('history-merger', {
   actions: {
     async fetchCandidates() {
       try {
+        this.mergeCandidates = [];
         this.isActionInProgress = true;
         this.mergeCandidates = (await historyMerger.getMergeCandidates()).slice();
       } catch (e) {

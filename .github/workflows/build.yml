@@ -7,7 +7,7 @@ on:
       - v*
 
 jobs:
-  build:
+  create-release:
     runs-on: [windows-latest]
     steps:
       - uses: actions/checkout@v2
@@ -25,7 +25,6 @@ jobs:
           npm run pack
           npm run create-installer
       - uses: ncipollo/release-action@v1
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
         with:
           artifacts: 'dist/installer/*'
           omitBody: true
