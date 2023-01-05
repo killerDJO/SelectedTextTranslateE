@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 
+import { historyCache } from '~/components/history/services/history-cache';
+
 import type { AccountInfo } from './models/account-info';
 import type {
   AuthResponse,
@@ -45,6 +47,7 @@ export const useHistoryAuthStore = defineStore('history-auth', {
       return authService.signIn(email, password);
     },
     signOut() {
+      historyCache.clearUserData(this.account!.uid);
       return authService.signOut();
     },
     signUp(email: string, password: string): Promise<AuthResponse<SignUpErrorCodes>> {

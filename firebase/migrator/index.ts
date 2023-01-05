@@ -38,7 +38,11 @@ async function executeMigration() {
       (async function () {
         await historyV2Collection.doc(doc.id).set({
           user: recordData.user,
-          ...record
+          ...record,
+          createdDate: ensureUnixDate(record.createdDate),
+          updatedDate: ensureUnixDate(record.updatedDate),
+          lastTranslatedDate: ensureUnixDate(record.lastTranslatedDate),
+          lastModifiedDate: ensureUnixDate(record.lastModifiedDate)
         });
         console.log(`Saved ${++recordsSaved} ouf of ${historyRecords.docs.length}`);
       })()
@@ -46,4 +50,16 @@ async function executeMigration() {
   });
 
   await Promise.all(updates);
+}
+
+function ensureUnixDate(date: string | number | undefined) {
+  if (typeof date === 'number') {
+    return date;
+  }
+
+  if (typeof date === 'string') {
+    return new Date(date).getTime();
+  }
+
+  return new Date('2000-01-01'); // Fallback just in case
 }

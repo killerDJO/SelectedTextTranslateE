@@ -87,8 +87,8 @@ export class HistoryCache {
     const db = await this.ensureInitialized();
 
     const index = db.transaction('history').store.index('user');
-    for await (const cursor of index.iterate(userId)) {
-      await db.delete('history', cursor.value.id);
+    for (const id of await index.getAllKeys()) {
+      await db.delete('history', id);
     }
 
     await db.delete('lastSyncedTimestamp', userId);
