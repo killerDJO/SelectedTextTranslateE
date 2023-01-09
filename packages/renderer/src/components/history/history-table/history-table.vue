@@ -271,16 +271,11 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
         <icon-button
           v-if="record.isArchived"
           title="Restore"
-          :tab-index="-1"
           @click="$emit('set-archived-status', record, false)"
         >
           <font-awesome-icon class="icon-restore" icon="trash" size="sm"
         /></icon-button>
-        <icon-button
-          v-else
-          title="Archive"
-          :tab-index="-1"
-          @click="$emit('set-archived-status', record, true)"
+        <icon-button v-else title="Archive" @click="$emit('set-archived-status', record, true)"
           ><font-awesome-icon class="icon-archive" icon="trash" size="sm"
         /></icon-button>
       </div>

@@ -126,7 +126,7 @@ export class HistoryService {
     const clonedRecord = cloneDeep({ ...record, updatedDate: Date.now() });
     await this.historyCache.patchRecord(clonedRecord);
 
-    // Do not await for remote write, cache servers as a main data source
+    // Do not await for remote write, cache serves as a main data source
     this.historyDatabase.upsertRecord(clonedRecord);
   }
 
