@@ -29,6 +29,9 @@ export const useGlobalErrorsStore = defineStore('global-errors', {
     },
     dismissError(id: number) {
       this.errors = this.errors.filter(error => error.id !== id);
+    },
+    clearErrors() {
+      this.errors = [];
     }
   }
 });

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 
 import { useAppStore } from '~/app.store';
 
@@ -7,10 +7,21 @@ import TranslationResult from './translation-result/translation-result.vue';
 import TranslationInput from './translation-input/translation-input.vue';
 import { useTranslateResultStore } from './translation-result/translation-result.store';
 import { useTranslationStore } from './translation.store';
+import type { TranslateRequest } from './models/requests';
 
 const app = useAppStore();
 const translateResult = useTranslateResultStore();
 const translation = useTranslationStore();
+
+const isMissingTranslation = computed(() => {
+  return (
+    !!translateResult.translateDescriptor &&
+    !translateResult.translateResult &&
+    !translateResult.isTranslationInProgress
+  );
+});
+
+console.log('is missing translation: ', isMissingTranslation);
 
 onMounted(async () => {
   await translation.setup();
@@ -34,7 +45,7 @@ onMounted(async () => {
       @translate-suggestion="translateResult.translateSuggestion()"
       @force-translation="translateResult.forceTranslation()"
       @refresh-translation="translateResult.refreshTranslation()"
-      @translate-text="request => translateResult.translateText(request)"
+      @translate-text="(request: TranslateRequest) => translateResult.translateText(request)"
       @change-language="translateResult.changeLanguage()"
       @play-text="translateResult.playCurrentSentence()"
       @search="translateResult.search()"
@@ -42,7 +53,9 @@ onMounted(async () => {
       @set-starred-status="(isStarred: boolean) => translateResult.setStarredStatus(isStarred)"
       @update-tags="tags => translateResult.updateTags(tags)"
     />
-    <template v-if="translation.showInput || translation.nonTextTranslation">
+    <template
+      v-if="translation.showInput || translation.nonTextTranslation || isMissingTranslation"
+    >
       <app-alert
         v-if="translation.nonTextTranslation"
         :dismissible="false"

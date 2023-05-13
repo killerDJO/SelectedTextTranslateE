@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 
 import { useAppStore } from '~/app.store';
 import { ensureErrorType } from '~/utils/ensure-error-type';
+import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
 
 import type { TranslateRequest } from './models/requests';
 import { textPlayer } from './services/text-player';
@@ -25,8 +26,11 @@ export const useTranslationStore = defineStore('translation', {
     setup() {
       const translateResult = useTranslateResultStore();
       const app = useAppStore();
+      const globalErrorsStore = useGlobalErrorsStore();
 
       window.mainAPI.translation.onTranslateText((text, showDefinitions) => {
+        globalErrorsStore.clearErrors();
+
         if (!text) {
           translateResult.clearCurrentTranslation();
           this.nonTextTranslation = true;
@@ -58,6 +62,7 @@ export const useTranslationStore = defineStore('translation', {
 
       window.mainAPI.translation.onShowTextInput(() => {
         translateResult.clearCurrentTranslation();
+        globalErrorsStore.clearErrors();
 
         this.nonTextTranslation = false;
         this.showInput = true;
