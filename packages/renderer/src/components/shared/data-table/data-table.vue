@@ -19,12 +19,12 @@ interface ResizeInfo {
 interface Props {
   configuration: DataTableConfig;
   isLoading?: boolean;
-  records: { id: string }[];
+  records: any[];
 }
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'record-click', record: { id: string }): void;
+  (e: 'record-click', record: any): void;
   (e: 'update-columns-configuration', columns: ReadonlyArray<DataTableColumnConfig>): void;
 }>();
 

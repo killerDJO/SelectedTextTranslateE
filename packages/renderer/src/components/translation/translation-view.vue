@@ -39,7 +39,7 @@ onMounted(async () => {
       @play-text="translateResult.playCurrentSentence()"
       @search="translateResult.search()"
       @archive="translateResult.archive()"
-      @set-starred-status="isStarred => translateResult.setStarredStatus(isStarred)"
+      @set-starred-status="(isStarred: boolean) => translateResult.setStarredStatus(isStarred)"
       @update-tags="tags => translateResult.updateTags(tags)"
     />
     <template v-if="translation.showInput || translation.nonTextTranslation">

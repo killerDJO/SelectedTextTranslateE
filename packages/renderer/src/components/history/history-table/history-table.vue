@@ -114,7 +114,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
 <template>
   <data-table
     :configuration="tableConfiguration"
-    :records="(historyRecords as any)"
+    :records="historyRecords.slice()"
     :is-loading="isLoading"
     class="results"
     @update-columns-configuration="updateColumnsConfiguration"

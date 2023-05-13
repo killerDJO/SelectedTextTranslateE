@@ -8,8 +8,7 @@
   "files.exclude": {
     "**/*.js": { "when": "$(basename).ts" },
     "**/*.js.map": true,
-    "**/*.tsbuildinfo": true,
-    "**/node_modules": true
+    "**/*.tsbuildinfo": true
   },
   "eslint.validate": ["vue", "typescript"],
   "javascript.validate.enable": true,

@@ -185,7 +185,7 @@ function toggleFilter() {
           @translate-record="translateHistoryRecord"
           @set-starred-status="(record, isStarred) => history.setStarredStatus(record, isStarred)"
           @play-record="record => history.playRecord(record)"
-          @update-tags="(record, tags) => history.updateTags(record, tags)"
+          @update-tags="(record: HistoryRecord, tags: ReadonlyArray<Tag>) => history.updateTags(record, tags)"
           @tag-clicked="onTagClicked"
           @set-archived-status="
             (record, isArchived) => history.setArchivedStatus(record, isArchived)
@@ -224,7 +224,7 @@ function toggleFilter() {
           @play-text="translateResult.playCurrentSentence()"
           @search="translateResult.search()"
           @archive="translateResult.archive()"
-          @set-starred-status="isStarred => translateResult.setStarredStatus(isStarred)"
+          @set-starred-status="(isStarred: boolean) => translateResult.setStarredStatus(isStarred)"
           @update-tags="tags => translateResult.updateTags(tags)"
         />
       </div>
