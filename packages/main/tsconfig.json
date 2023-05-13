@@ -21,6 +21,10 @@
       "~/*": ["src/*"]
     }
   },
+  "watchOptions": {
+    "watchFile": "dynamicPriorityPolling",
+    "watchDirectory": "dynamicPriorityPolling"
+  },
   "exclude": ["node_modules"],
   "references": [{ "path": "../common" }]
 }

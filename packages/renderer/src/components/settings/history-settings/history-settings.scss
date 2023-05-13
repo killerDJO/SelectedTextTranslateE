@@ -10,6 +10,10 @@
 .form-group {
   margin-bottom: -10px;
 
+  label {
+    font-weight: normal;
+  }
+
   .form-control {
     width: 50px;
     display: inline-block;
