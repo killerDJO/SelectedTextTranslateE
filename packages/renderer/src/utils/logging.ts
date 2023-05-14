@@ -2,7 +2,7 @@ import type { TranslateDescriptor } from '~/components/translation/models/transl
 import { Logger } from '~/services/logger';
 
 export function getLogKey(descriptor: TranslateDescriptor): string {
-  return `for "${descriptor.sentence}" when forced translation is set to "${descriptor.isForcedTranslation}" with languages ${descriptor.sourceLanguage}-${descriptor.targetLanguage}`;
+  return `sentence: [${descriptor.sentence}], forced: ${descriptor.isForcedTranslation}, ${descriptor.sourceLanguage}-${descriptor.targetLanguage}`;
 }
 
 export async function traceTimings<TResult>(
@@ -10,13 +10,13 @@ export async function traceTimings<TResult>(
   traceName: string,
   action: () => Promise<TResult>
 ): Promise<TResult> {
-  logger.info(`[Start]: ${traceName}`);
+  logger.info(`[Start] > ${traceName}`);
   const startTime = Date.now();
 
   const result = await action();
 
   const elapsedTime = Date.now() - startTime;
-  logger.info(`[End]: ${traceName}". Elapsed time: ${elapsedTime}ms.`);
+  logger.info(`[End] > ${traceName}. Elapsed time: ${elapsedTime}ms.`);
 
   return result;
 }

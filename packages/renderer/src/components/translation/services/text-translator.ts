@@ -37,7 +37,7 @@ export class TextTranslator {
     request: TranslateRequest,
     skipStatistics: boolean
   ): Promise<TranslationResponse> {
-    this.logger.info(`Translating: "${getLogKey(request)}".`);
+    this.logger.info(`[Translator]: Translating: "${getLogKey(request)}".`);
 
     const sanitizedSentence = this.sanitizeSentence(request.sentence);
 
@@ -77,7 +77,7 @@ export class TextTranslator {
 
   private async getResponseFromService(descriptor: TranslateDescriptor): Promise<TranslateResult> {
     const logKey = getLogKey(descriptor);
-    const response = await traceTimings(this.logger, `Translating "${logKey}".`, () =>
+    const response = await traceTimings(this.logger, `[Translator]: Translating ${logKey}.`, () =>
       this.getTranslationResponse(descriptor)
     );
 
@@ -85,7 +85,7 @@ export class TextTranslator {
   }
 
   private async getHistoryRecord(id: string): Promise<HistoryRecord | undefined> {
-    return traceTimings(this.logger, `Loading history record ${id}`, () =>
+    return traceTimings(this.logger, `[Translator]: Loading history record ${id}`, () =>
       this.historyService.getRecord(id)
     );
   }

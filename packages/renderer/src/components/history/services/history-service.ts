@@ -32,7 +32,10 @@ export class HistoryService {
 
   public async getRecord(id: string, cachedOnly = false): Promise<HistoryRecord | undefined> {
     if (!cachedOnly) {
-      await this.historyCache.refreshRecords();
+      const record = await this.historyDatabase.getRecord(id);
+      if (record) {
+        await this.historyCache.patchRecord(record);
+      }
     }
 
     return await this.historyCache.getRecord(id);
@@ -75,7 +78,7 @@ export class HistoryService {
 
     await this.upsertRecord(historyRecord);
 
-    this.logger.info(`Translation ${getLogKey(descriptor)} is saved to history.`);
+    this.logger.info(`[History]: Translation ${getLogKey(descriptor)} is saved to history.`);
 
     return historyRecord;
   }
@@ -100,7 +103,7 @@ export class HistoryService {
 
     await this.upsertRecord(historyRecord);
 
-    this.logger.info(`Translation ${getLogKey(record)} is updated in history.`);
+    this.logger.info(`[History]: Translation ${getLogKey(record)} is updated in history.`);
 
     return historyRecord;
   }

@@ -3,6 +3,7 @@ import {
   collection,
   Firestore,
   getDocs,
+  getDoc,
   getFirestore,
   query,
   where,
@@ -36,18 +37,32 @@ export class HistoryDatabase {
   ) {}
 
   public async getRecords(afterTimestamp: number): Promise<HistoryRecord[]> {
-    this.logger.info(`Getting history records after timestamp: ${afterTimestamp}`);
+    this.logger.info(`[DB]: Getting history records after timestamp: ${afterTimestamp}`);
 
     const q = await this.createQuery(afterTimestamp);
 
     const querySnapshot = await getDocs(q);
 
-    this.logger.info(`Returned records: ${querySnapshot.docs.length}`);
+    this.logger.info(`[DB]: Returned records: ${querySnapshot.docs.length}`);
     return querySnapshot.docs.map(doc => this.mapHistoryRecord(doc));
   }
 
+  public async getRecord(id: string): Promise<HistoryRecord | undefined> {
+    this.logger.info(`[DB]: Getting history record: ${id}`);
+    const db = await this.ensureInitialized();
+
+    const docRef = doc(db, HISTORY_COLLECTION, id);
+    const historyRecord = await getDoc(docRef);
+
+    if (!historyRecord.exists()) {
+      return;
+    }
+
+    return this.mapHistoryRecord(historyRecord);
+  }
+
   public async upsertRecord(record: HistoryRecord): Promise<void> {
-    this.logger.info(`Upserting history record ${record.id}.`);
+    this.logger.info(`[DB]: Upserting history record ${record.id}.`);
 
     const db = await this.ensureInitialized();
 
