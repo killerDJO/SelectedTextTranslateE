@@ -34,7 +34,7 @@ defineEmits<{
   (e: 'change-language'): void;
   (e: 'search'): void;
   (e: 'translate', text: string): void;
-  (e: 'refresh-translation'): void;
+  (e: 'hard-delete'): void;
   (e: 'update-tags', tags: Tag[]): void;
 }>();
 
@@ -199,7 +199,7 @@ function initializeCurrentView(): void {
       v-if="!!historyRecord && currentView === TranslateResultViews.Statistic"
       :history-record="historyRecord"
       :languages="languages"
-      @refresh-translation="$emit('refresh-translation')"
+      @hard-delete="$emit('hard-delete')"
     />
   </div>
 </template>

@@ -44,7 +44,7 @@ const $emit = defineEmits<{
   (e: 'change-language'): void;
   (e: 'search'): void;
   (e: 'translate', text: string): void;
-  (e: 'refresh-translation'): void;
+  (e: 'hard-delete'): void;
   (e: 'update-tags', tags: ReadonlyArray<Tag>): void;
 }>();
 
@@ -71,7 +71,6 @@ function translateText(text: string): void {
   const request: TranslateRequest = {
     sentence: text,
     isForcedTranslation: false,
-    refreshCache: false,
     sourceLanguage: props.translateDescriptor.sourceLanguage,
     targetLanguage: props.translateDescriptor.targetLanguage
   };
@@ -104,7 +103,7 @@ function translateText(text: string): void {
         @search="$emit('search')"
         @translate="text => translateText(text)"
         @change-language="$emit('change-language')"
-        @refresh-translation="$emit('refresh-translation')"
+        @hard-delete="$emit('hard-delete')"
         @update-tags="tags => $emit('update-tags', tags)"
       />
     </div>

@@ -8,13 +8,12 @@ import {
 import type { HistoryRecord } from '~/components/history/models/history-record';
 import { historyService, type HistoryService } from '~/components/history/services/history-service';
 import type { TranslateRequest } from '~/components/translation/models/requests';
+import { getLogKey, traceTimings } from '~/utils/logging';
 import type {
   TranslateResult,
   TranslateDescriptor
 } from '~/components/translation/models/translation';
 import { logger, Logger } from '~/services/logger';
-import { settingsProvider, type SettingsProvider } from '~/services/settings-provider';
-import { getLogKey } from '~/utils/logging';
 
 import {
   translationResponseParser,
@@ -31,15 +30,14 @@ export class TextTranslator {
     private readonly logger: Logger,
     private readonly responseParser: TranslationResponseParser,
     private readonly historyService: HistoryService,
-    private readonly authService: AuthService,
-    private readonly settingsProvider: SettingsProvider
+    private readonly authService: AuthService
   ) {}
 
   public async translate(
     request: TranslateRequest,
     skipStatistics: boolean
   ): Promise<TranslationResponse> {
-    this.logger.info(`Translating text: "${request.sentence}".`);
+    this.logger.info(`Translating: "${getLogKey(request)}".`);
 
     const sanitizedSentence = this.sanitizeSentence(request.sentence);
 
@@ -53,15 +51,23 @@ export class TextTranslator {
     }
 
     const id = this.generateId(request, account);
-    const historyRecord = await this.historyService.getRecord(this.generateId(request, account));
 
-    const updatedRecord = await this.getTranslateResult(
-      id,
-      request,
-      request.refreshCache,
-      skipStatistics,
-      historyRecord
-    );
+    const [historyRecord, translateResult] = await Promise.all([
+      this.getHistoryRecord(id),
+      this.getResponseFromService(request)
+    ]);
+
+    let updatedRecord: HistoryRecord;
+    if (!historyRecord) {
+      updatedRecord = await this.historyService.createHistoryRecord(id, request, translateResult);
+    } else {
+      updatedRecord = await this.historyService.updateHistoryRecord(
+        historyRecord,
+        translateResult,
+        !skipStatistics,
+        !skipStatistics
+      );
+    }
 
     return {
       result: updatedRecord.translateResult,
@@ -69,60 +75,19 @@ export class TextTranslator {
     };
   }
 
-  private async getTranslateResult(
-    id: string,
-    descriptor: TranslateDescriptor,
-    refreshCache: boolean,
-    skipStatistics: boolean,
-    historyRecord: HistoryRecord | undefined
-  ): Promise<HistoryRecord> {
-    const incrementTranslationsNumber = !refreshCache && !skipStatistics;
-
-    if (!historyRecord || this.isHistoryRecordExpired(historyRecord) || refreshCache) {
-      this.logger.info(`Serving translation ${getLogKey(descriptor)} from service.`);
-      const translateResult = await this.getResponseFromService(descriptor);
-
-      if (!historyRecord) {
-        return this.historyService.createHistoryRecord(id, descriptor, translateResult);
-      } else {
-        return this.historyService.updateHistoryRecord(
-          historyRecord,
-          translateResult,
-          incrementTranslationsNumber,
-          incrementTranslationsNumber
-        );
-      }
-    }
-
-    this.logger.info(`Serving translation ${getLogKey(descriptor)} from dictionary.`);
-
-    if (incrementTranslationsNumber) {
-      return this.historyService.incrementTranslationsNumber(historyRecord);
-    }
-
-    return historyRecord;
-  }
-
-  private isHistoryRecordExpired(historyRecord: HistoryRecord): boolean {
-    const currentTime = Date.now();
-    const elapsedMilliseconds = currentTime - historyRecord.lastModifiedDate;
-    const MillisecondsInSecond = 1000;
-    const SecondsInMinute = 60;
-    const MinutesInHour = 60;
-    const HoursInDay = 24;
-    const elapsedDays =
-      elapsedMilliseconds / MillisecondsInSecond / SecondsInMinute / MinutesInHour / HoursInDay;
-    const isVersionExpired =
-      historyRecord.translateResult.version !== TranslationResponseParser.Version;
-    return (
-      elapsedDays > this.settingsProvider.getSettings().engine.historyRefreshInterval ||
-      isVersionExpired
-    );
-  }
-
   private async getResponseFromService(descriptor: TranslateDescriptor): Promise<TranslateResult> {
-    const response = await this.getTranslationResponse(descriptor);
+    const logKey = getLogKey(descriptor);
+    const response = await traceTimings(this.logger, `Translating "${logKey}".`, () =>
+      this.getTranslationResponse(descriptor)
+    );
+
     return this.responseParser.parse(response, descriptor.sentence);
+  }
+
+  private async getHistoryRecord(id: string): Promise<HistoryRecord | undefined> {
+    return traceTimings(this.logger, `Loading history record ${id}`, () =>
+      this.historyService.getRecord(id)
+    );
   }
 
   private sanitizeSentence(sentence: string | null): string {
@@ -147,6 +112,5 @@ export const textTranslator = new TextTranslator(
   logger,
   translationResponseParser,
   historyService,
-  authService,
-  settingsProvider
+  authService
 );

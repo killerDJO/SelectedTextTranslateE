@@ -8,6 +8,7 @@ import { useAppStore } from '~/app.store';
 import { normalizeTag } from '~/utils/normalize-tag';
 import { useTranslateResultStore } from '~/components/translation/translation-result/translation-result.store';
 import TranslationResult from '~/components/translation/translation-result/translation-result.vue';
+import type { TranslateRequest } from '../translation/models/requests';
 
 import ColumnsEditor from './columns-editor/columns-editor.vue';
 import TagsEditor from './tags-editor/tags-editor.vue';
@@ -218,8 +219,7 @@ function toggleFilter() {
           :languages="app.settings.supportedLanguages"
           @translate-suggestion="translateResult.translateSuggestion()"
           @force-translation="translateResult.forceTranslation()"
-          @refresh-translation="translateResult.refreshTranslation()"
-          @translate-text="request => translateResult.translateText(request)"
+          @translate-text="(request: TranslateRequest) => translateResult.translateText(request)"
           @change-language="translateResult.changeLanguage()"
           @play-text="translateResult.playCurrentSentence()"
           @search="translateResult.search()"

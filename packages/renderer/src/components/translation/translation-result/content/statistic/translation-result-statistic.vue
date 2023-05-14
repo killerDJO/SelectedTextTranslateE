@@ -8,7 +8,7 @@ interface Props {
 defineProps<Props>();
 
 defineEmits<{
-  (e: 'refresh-translation'): void;
+  (e: 'hard-delete'): void;
 }>();
 </script>
 
@@ -31,9 +31,9 @@ defineEmits<{
       ><span class="value">{{ historyRecord.isArchived ? 'Yes' : 'No' }}</span>
     </div>
     <link-button
-      :text="'Refresh Record'"
-      class="refresh-button"
-      @click="$emit('refresh-translation')"
+      :text="'Delete Forever'"
+      class="hard-delete-button"
+      @click="$emit('hard-delete')"
     />
   </div>
 </template>

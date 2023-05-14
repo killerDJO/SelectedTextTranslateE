@@ -47,7 +47,7 @@ function archive() {
       :languages="app.settings.supportedLanguages"
       @translate-suggestion="translateResult.translateSuggestion()"
       @force-translation="translateResult.forceTranslation()"
-      @refresh-translation="translateResult.refreshTranslation()"
+      @hard-delete="translateResult.hardDelete()"
       @translate-text="(request: TranslateRequest) => translateResult.translateText(request)"
       @change-language="translateResult.changeLanguage()"
       @play-text="translateResult.playCurrentSentence()"

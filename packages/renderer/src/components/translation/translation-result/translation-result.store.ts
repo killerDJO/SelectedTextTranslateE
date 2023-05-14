@@ -68,14 +68,7 @@ export const useTranslateResultStore = defineStore('translate-result', {
     },
 
     async showHistoryRecord(record: HistoryRecord) {
-      await this.translateText(
-        {
-          ...getDescriptor(record),
-          refreshCache: false
-        },
-        false,
-        true
-      );
+      await this.translateText(getDescriptor(record), false, true);
     },
     async patchHistoryRecord(record: HistoryRecord) {
       this.historyRecord = record;
@@ -106,7 +99,6 @@ export const useTranslateResultStore = defineStore('translate-result', {
       await this.translateText({
         sentence: this.translateResult.sentence.suggestion,
         isForcedTranslation: false,
-        refreshCache: false,
         sourceLanguage: this.translateDescriptor.sourceLanguage,
         targetLanguage: this.translateDescriptor.targetLanguage
       });
@@ -119,20 +111,6 @@ export const useTranslateResultStore = defineStore('translate-result', {
       await this.translateText({
         sentence: this.translateResult.sentence.input,
         isForcedTranslation: true,
-        refreshCache: false,
-        sourceLanguage: this.translateDescriptor.sourceLanguage,
-        targetLanguage: this.translateDescriptor.targetLanguage
-      });
-    },
-    async refreshTranslation() {
-      if (!this.translateResult?.sentence || !this.translateDescriptor) {
-        return;
-      }
-
-      await this.translateText({
-        sentence: this.translateResult.sentence.input,
-        isForcedTranslation: this.translateDescriptor.isForcedTranslation,
-        refreshCache: true,
         sourceLanguage: this.translateDescriptor.sourceLanguage,
         targetLanguage: this.translateDescriptor.targetLanguage
       });
@@ -150,7 +128,6 @@ export const useTranslateResultStore = defineStore('translate-result', {
       await this.translateText({
         sentence: this.translateResult.sentence.input,
         isForcedTranslation: this.translateDescriptor.isForcedTranslation,
-        refreshCache: false,
         sourceLanguage: language,
         targetLanguage: this.translateDescriptor.targetLanguage
       });
@@ -169,7 +146,8 @@ export const useTranslateResultStore = defineStore('translate-result', {
     },
     async archive() {
       await updateRecord(this, record => historyService.setArchivedStatus(record, true));
-    }
+    },
+    async hardDelete() {}
   }
 });
 

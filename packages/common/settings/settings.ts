@@ -28,7 +28,6 @@ export interface HotkeySettings {
 
 export interface TranslationEngineSettings {
   readonly copyDelayMilliseconds: number;
-  readonly historyRefreshInterval: number;
   readonly userAgent: string;
   readonly requestTimeout: number;
   readonly proxy: ProxySettings;

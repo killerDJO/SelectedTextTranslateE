@@ -105,22 +105,6 @@ export class HistoryService {
     return historyRecord;
   }
 
-  public async incrementTranslationsNumber(record: HistoryRecord): Promise<HistoryRecord> {
-    const currentTime = new Date().getTime();
-    const historyRecord: HistoryRecord = {
-      ...record,
-      lastTranslatedDate: currentTime,
-      translationsNumber: record.translationsNumber + 1,
-      tags: this.getTags(record)
-    };
-
-    await this.upsertRecord(historyRecord);
-
-    this.logger.info(`Translations number ${getLogKey(record)} is incremented.`);
-
-    return historyRecord;
-  }
-
   public async upsertRecord(record: HistoryRecord): Promise<void> {
     // Make sure record is a plain object and has tracking fields
     const clonedRecord = cloneDeep({ ...record, updatedDate: Date.now() });

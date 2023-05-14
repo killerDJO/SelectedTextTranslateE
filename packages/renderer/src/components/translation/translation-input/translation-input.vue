@@ -42,7 +42,6 @@ function translate(): void {
     const request: TranslateRequest = {
       sentence: text.value,
       isForcedTranslation: false,
-      refreshCache: false,
       sourceLanguage: selectedLanguages.sourceLanguage,
       targetLanguage: selectedLanguages.targetLanguage
     };

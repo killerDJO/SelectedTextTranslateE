@@ -44,7 +44,6 @@ export const useTranslationStore = defineStore('translation', {
           {
             sentence: text,
             isForcedTranslation: false,
-            refreshCache: false,
             sourceLanguage: app.settings.language.sourceLanguage,
             targetLanguage: app.settings.language.targetLanguage
           },

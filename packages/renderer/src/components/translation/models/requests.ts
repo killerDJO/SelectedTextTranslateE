@@ -1,8 +1,6 @@
 import type { TranslateDescriptor } from './translation';
 
-export interface TranslateRequest extends TranslateDescriptor {
-  readonly refreshCache: boolean;
-}
+export interface TranslateRequest extends TranslateDescriptor {}
 
 export interface PlayTextRequest {
   readonly text: string;
