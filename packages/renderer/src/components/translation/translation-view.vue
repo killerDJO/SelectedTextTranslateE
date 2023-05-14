@@ -21,11 +21,14 @@ const isMissingTranslation = computed(() => {
   );
 });
 
-console.log('is missing translation: ', isMissingTranslation);
-
 onMounted(async () => {
   await translation.setup();
 });
+
+function archive() {
+  translateResult.archive();
+  window.close();
+}
 </script>
 
 <template>
@@ -49,7 +52,7 @@ onMounted(async () => {
       @change-language="translateResult.changeLanguage()"
       @play-text="translateResult.playCurrentSentence()"
       @search="translateResult.search()"
-      @archive="translateResult.archive()"
+      @archive="archive()"
       @set-starred-status="(isStarred: boolean) => translateResult.setStarredStatus(isStarred)"
       @update-tags="tags => translateResult.updateTags(tags)"
     />
