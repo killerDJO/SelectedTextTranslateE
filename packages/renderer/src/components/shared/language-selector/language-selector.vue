@@ -26,7 +26,10 @@ const $emit = defineEmits<{
   (e: 'languages-updated', languages: SelectedLanguages): void;
 }>();
 
-const selectedLanguages = reactive({ ...props.languages });
+const selectedLanguages = reactive({
+  sourceLanguage: props.languages.sourceLanguage,
+  targetLanguage: props.languages.targetLanguage
+});
 
 watch(selectedLanguages, updatedLanguages => $emit('languages-updated', updatedLanguages));
 watch(
