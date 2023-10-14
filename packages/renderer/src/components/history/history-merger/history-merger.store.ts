@@ -3,8 +3,8 @@ import { defineStore } from 'pinia';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
 import { useHistoryStore } from '~/components/history/history.store';
 
-import type { MergeCandidate } from './models/merge-candidate';
-import { historyMerger } from './services/history-merger';
+import type { MergeCandidate } from './models/merge-candidate.model';
+import { historyMerger } from './services/history-merger.service';
 
 interface HistoryMergerState {
   isActionInProgress: boolean;

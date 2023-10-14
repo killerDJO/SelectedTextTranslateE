@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type { ScalingSettings } from '@selected-text-translate/common/settings/settings';
+import type { ScalingSettings } from '@selected-text-translate/common';
 
 import { useSettingsStore } from '~/components/settings/settings.store';
 

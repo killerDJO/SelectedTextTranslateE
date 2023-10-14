@@ -2,13 +2,10 @@
 import { computed, ref } from 'vue';
 import { isEqual } from 'lodash-es';
 
-import type {
-  ColumnSettings,
-  HistorySortColumn
-} from '@selected-text-translate/common/settings/settings';
+import type { ColumnSettings, HistorySortColumn } from '@selected-text-translate/common';
 
 import type { DropItem } from '~/components/shared/drop-button/drop-button.vue';
-import { ColumnNameResolver } from '~/components/history/column-name-resolver';
+import { ColumnNameResolver } from '~/components/history/column-name-resolver.service';
 import DropButton from '~/components/shared/drop-button/drop-button.vue';
 
 type Mutable<T> = {

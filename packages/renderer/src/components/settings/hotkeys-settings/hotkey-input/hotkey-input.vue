@@ -2,7 +2,7 @@
 import { computed, ref, watch } from 'vue';
 import { isEqual } from 'lodash-es';
 
-import type { Hotkey } from '@selected-text-translate/common/settings/settings';
+import type { Hotkey } from '@selected-text-translate/common';
 
 interface Props {
   hotkey: Hotkey | null;

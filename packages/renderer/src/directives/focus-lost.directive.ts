@@ -2,7 +2,7 @@ import type { Directive, DirectiveBinding } from 'vue';
 import { isFunction } from 'lodash-es';
 
 import { CallbacksRegistry } from './callbacks-registry';
-import { isElementOutside } from './utils';
+import { isElementOutside } from './directives.utils';
 
 const registry = new CallbacksRegistry();
 

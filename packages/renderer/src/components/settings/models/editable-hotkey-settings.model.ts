@@ -1,4 +1,4 @@
-import type { Hotkey } from '@selected-text-translate/common/settings/settings';
+import type { Hotkey } from '@selected-text-translate/common';
 
 export interface EditableHotkeySettings {
   readonly global: GlobalHotkeySettings;

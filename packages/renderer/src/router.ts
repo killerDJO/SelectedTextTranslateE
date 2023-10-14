@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 
-import { ViewNames } from '@selected-text-translate/common/views/view-names';
+import { ViewNames } from '@selected-text-translate/common';
 
 import TranslationView from './components/translation/translation-view.vue';
 import HistoryView from './components/history/history-view.vue';

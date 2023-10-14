@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import type { TranslateResultRendererSettings } from '@selected-text-translate/common/settings/Settings';
+import type { TranslateResultRendererSettings } from '@selected-text-translate/common';
 
 import type {
   TranslateResultCategory,
   TranslateResultCategoryEntry
-} from '~/components/translation/models/translation';
+} from '~/components/translation/models/translation.model';
 
 interface Props {
   category: TranslateResultCategory;

@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 
-import type { Settings } from '@selected-text-translate/common/settings/Settings';
-import type { DeepPartial } from '@selected-text-translate/common/typings/deep-partial';
+import type { Settings, DeepPartial } from '@selected-text-translate/common';
 
 interface AppState {
   accentColor?: string;

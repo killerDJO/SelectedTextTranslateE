@@ -3,7 +3,7 @@ import { useVuelidate } from '@vuelidate/core';
 import { helpers, minValue } from '@vuelidate/validators';
 import { computed, reactive, watch } from 'vue';
 
-import { executeIfValid } from '~/utils/execute-if-valid';
+import { executeIfValid } from '~/utils/validation.utils';
 import { useSettingsStore } from '~/components/settings/settings.store';
 
 const settingsStore = useSettingsStore();

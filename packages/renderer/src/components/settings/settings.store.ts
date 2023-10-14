@@ -1,13 +1,11 @@
 import { defineStore } from 'pinia';
 import { cloneDeep } from 'lodash-es';
 
-import type { Settings } from '@selected-text-translate/common/settings/settings';
-import type { DeepPartial } from '@selected-text-translate/common/typings/deep-partial';
-import type { SettingsGroup } from '@selected-text-translate/common/settings/settings-group';
+import type { Settings, DeepPartial, SettingsGroup } from '@selected-text-translate/common';
 
 import { useAppStore } from '~/app.store';
 
-import type { EditableHotkeySettings } from './models/editable-hotkey-settings';
+import type { EditableHotkeySettings } from './models/editable-hotkey-settings.model';
 
 interface SettingsState {
   defaultSettings: Settings | null;

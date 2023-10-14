@@ -3,8 +3,8 @@ import { useVuelidate } from '@vuelidate/core';
 import { helpers, required, email as emailValidator } from '@vuelidate/validators';
 import { computed, reactive } from 'vue';
 
-import { executeIfValid } from '~/utils/execute-if-valid';
-import type { AuthResponse } from '~/components/history/history-auth/models/auth-response';
+import { executeIfValid } from '~/utils/validation.utils';
+import type { AuthResponse } from '~/components/history/history-auth/models/auth-response.model';
 import { useHistoryAuthStore } from '~/components/history/history-auth/history-auth.store';
 
 interface Props {

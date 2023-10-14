@@ -1,4 +1,4 @@
-import { ensureErrorType } from '~/utils/ensure-error-type';
+import { ensureErrorType } from '~/utils/error-handling.utils';
 
 export class Logger {
   public info(message: string): void {

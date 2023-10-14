@@ -2,12 +2,12 @@
 import { RouterView } from 'vue-router';
 import { onMounted, ref, watch } from 'vue';
 
-import type { Hotkey } from '@selected-text-translate/common/settings/Settings';
+import type { Hotkey } from '@selected-text-translate/common';
 
 import GlobalErrors from './components/global-errors/global-errors.vue';
 import { useAppStore } from './app.store';
 import { useHistoryAuthStore } from './components/history/history-auth/history-auth.store';
-import { hotkeysRegistry } from './services/hotkeys-registry';
+import { hotkeysRegistry } from './services/hotkeys-registry.service';
 
 const app = useAppStore();
 const historyAuth = useHistoryAuthStore();

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type { HistoryRecord } from '~/components/history/models/history-record';
-import type { TranslateResult } from '../../models/translation';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
+import type { TranslateResult } from '~/components/translation/models/translation.model';
 
 interface Props {
   translateResult: TranslateResult;

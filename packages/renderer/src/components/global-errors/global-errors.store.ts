@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { logger } from '~/services/logger';
+import { logger } from '~/services/logger.service';
 
 interface AppErrorState {
   errors: ErrorDetails[];

@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import type { Placement } from '@popperjs/core';
 
-import { useDrop } from '~/components/shared/use-drop';
+import { useDrop } from '~/components/shared/use-drop.hook';
 
 export interface DropItem {
   readonly text: string;

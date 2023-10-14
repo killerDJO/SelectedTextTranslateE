@@ -6,7 +6,7 @@ import type { DataTableConfig } from '~/components/shared/data-table/data-table.
 import ForcedTranslationIcon from '~/components/history/icons/forced-translation-icon.vue';
 
 import { useHistoryMergerStore } from './history-merger.store';
-import type { MergeCandidate, MergeHistoryRecord } from './models/merge-candidate';
+import type { MergeCandidate, MergeHistoryRecord } from './models/merge-candidate.model';
 
 enum CandidatesTableColumns {
   Word = 'word',

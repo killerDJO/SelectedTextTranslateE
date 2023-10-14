@@ -23,9 +23,9 @@ import {
   SignUpErrorCodes,
   VerifyResetTokenErrorCodes,
   type AuthResponse
-} from '~/components/history/history-auth/models/auth-response';
-import type { AccountInfo } from '~/components/history/history-auth/models/account-info';
-import { settingsProvider, SettingsProvider } from '~/services/settings-provider';
+} from '~/components/history/history-auth/models/auth-response.model';
+import type { AccountInfo } from '~/components/history/history-auth/models/account-info.model';
+import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
 
 export class AuthService {
   private auth: Promise<Auth> | null = null;

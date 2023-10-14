@@ -1,24 +1,24 @@
 import md5 from 'md5';
 
-import type { AccountInfo } from '~/components/history/history-auth/models/account-info';
+import type { AccountInfo } from '~/components/history/history-auth/models/account-info.model';
 import {
   authService,
   type AuthService
-} from '~/components/history/history-auth/services/auth-service';
-import type { HistoryRecord } from '~/components/history/models/history-record';
-import { historyService, type HistoryService } from '~/components/history/services/history-service';
-import type { TranslateRequest } from '~/components/translation/models/requests';
-import { getLogKey, traceTimings } from '~/utils/logging';
+} from '~/components/history/history-auth/services/auth.service';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
+import { historyService, type HistoryService } from '~/components/history/services/history.service';
+import type { TranslateRequest } from '~/components/translation/models/requests.model';
+import { getLogKey, traceTimings } from '~/utils/logging.utils';
 import type {
   TranslateResult,
   TranslateDescriptor
-} from '~/components/translation/models/translation';
-import { logger, Logger } from '~/services/logger';
+} from '~/components/translation/models/translation.model';
+import { logger, Logger } from '~/services/logger.service';
 
 import {
   translationResponseParser,
   TranslationResponseParser
-} from './translation-response-parser';
+} from './translation-response-parser.service';
 
 export type TranslationResponse = {
   result?: TranslateResult | undefined;

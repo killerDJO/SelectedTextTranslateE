@@ -1,4 +1,4 @@
-import { HistorySortColumn } from '@selected-text-translate/common/settings/settings';
+import { HistorySortColumn } from '@selected-text-translate/common';
 
 export class ColumnNameResolver {
   public columnToNameMap: Map<HistorySortColumn, string> = new Map<HistorySortColumn, string>([

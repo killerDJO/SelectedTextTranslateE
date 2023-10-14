@@ -4,7 +4,8 @@
   "compilerOptions": {
     "composite": true,
     "types": ["node"],
-    "declarationDir": "dist",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./dist/tsconfig.preload.tsbuildinfo",
     "noImplicitAny": true
   }
 }

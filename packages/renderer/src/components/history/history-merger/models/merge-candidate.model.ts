@@ -1,4 +1,4 @@
-import type { TranslateDescriptor } from '~/components/translation/models/translation';
+import type { TranslateDescriptor } from '~/components/translation/models/translation.model';
 
 export interface MergeCandidate {
   readonly id: string;

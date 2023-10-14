@@ -1,18 +1,21 @@
 import { uniq } from 'lodash-es';
 
-import { HistorySortColumn } from '@selected-text-translate/common/settings/settings';
+import { HistorySortColumn } from '@selected-text-translate/common';
 
-import { logger, type Logger } from '~/services/logger';
-import type { HistoryRecord } from '~/components/history/models/history-record';
-import { SortOrder } from '~/components/history/models/sort-order';
-import { historyService, type HistoryService } from '~/components/history/services/history-service';
+import { logger, type Logger } from '~/services/logger.service';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
+import { SortOrder } from '~/components/history/models/sort-order.enum';
+import { historyService, type HistoryService } from '~/components/history/services/history.service';
 import type {
   MergeCandidate,
   MergeHistoryRecord
-} from '~/components/history/history-merger/models/merge-candidate';
-import { settingsProvider, type SettingsProvider } from '~/services/settings-provider';
+} from '~/components/history/history-merger/models/merge-candidate.model';
+import { settingsProvider, type SettingsProvider } from '~/services/settings-provider.service';
 
-import { mergeCandidatesFinder, type MergeCandidatesFinder } from './merge-candidates-finder';
+import {
+  mergeCandidatesFinder,
+  type MergeCandidatesFinder
+} from './merge-candidates-finder.service';
 
 export class HistoryMerger {
   constructor(

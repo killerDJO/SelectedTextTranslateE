@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import type { Tag } from '@selected-text-translate/common/settings/settings';
+import type { Tag } from '@selected-text-translate/common';
 
-import { normalizeTag } from '~/utils/normalize-tag';
-import { historyCache } from '~/components/history/services/history-cache';
+import { normalizeTag } from '~/utils/tags.utils';
+import { historyCache } from '~/components/history/services/history-cache.service';
 
 interface Props {
   tags: ReadonlyArray<string | Tag>;

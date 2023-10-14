@@ -2,14 +2,14 @@
 import { ref, watch, computed } from 'vue';
 import { cloneDeep, isEqual } from 'lodash-es';
 
-import type { Hotkey } from '@selected-text-translate/common/settings/settings';
+import type { Hotkey } from '@selected-text-translate/common';
 
 import { useSettingsStore } from '~/components/settings/settings.store';
 import type {
   EditableHotkeySettings,
   GlobalHotkeySettings,
   LocalHotkeySettings
-} from '~/components/settings/models/editable-hotkey-settings';
+} from '~/components/settings/models/editable-hotkey-settings.model';
 import type ConfirmModal from '~/components/shared/confirm-modal/confirm-modal.vue';
 
 import HotkeyInput from './hotkey-input/hotkey-input.vue';

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { HistoryRecord } from '~/components/history/models/history-record';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
 
 interface Props {
   historyRecord: HistoryRecord;

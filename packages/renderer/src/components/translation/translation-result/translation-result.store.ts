@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia';
 
-import type { Tag } from '@selected-text-translate/common/settings/settings';
+import type { Tag } from '@selected-text-translate/common';
 
-import { TranslateResultViews } from '~/components/translation/models/translate-result-views';
-import type { HistoryRecord } from '~/components/history/models/history-record';
-import type { TranslateResult, TranslateDescriptor } from '../models/translation';
-import type { PlayTextRequest, TranslateRequest } from '../models/requests';
-import { textTranslator } from '../services/text-translator';
-import { searchExecutor } from '../services/search-executor';
-import { textPlayer } from '../services/text-player';
+import { TranslateResultViews } from '~/components/translation/models/translate-result-views.enum';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
+import type { TranslateResult, TranslateDescriptor } from '../models/translation.model';
+import type { PlayTextRequest, TranslateRequest } from '../models/requests.model';
+import { textTranslator } from '../services/text-translator.service';
+import { searchExecutor } from '../services/search-executor.service';
+import { textPlayer } from '../services/text-player.service';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
-import { historyService } from '~/components/history/services/history-service';
+import { historyService } from '~/components/history/services/history.service';
 
 export interface TranslateResultState {
   translateDescriptor?: TranslateDescriptor;

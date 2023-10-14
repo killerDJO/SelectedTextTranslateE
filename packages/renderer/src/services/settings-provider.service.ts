@@ -1,4 +1,4 @@
-import type { Settings } from '@selected-text-translate/common/settings/settings';
+import type { Settings } from '@selected-text-translate/common';
 
 import { useAppStore } from '~/app.store';
 

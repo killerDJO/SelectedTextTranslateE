@@ -1,5 +1,5 @@
-import type { TranslateDescriptor } from '~/components/translation/models/translation';
-import { Logger } from '~/services/logger';
+import type { TranslateDescriptor } from '~/components/translation/models/translation.model';
+import { Logger } from '~/services/logger.service';
 
 export function getLogKey(descriptor: TranslateDescriptor): string {
   return `sentence: [${descriptor.sentence}], forced: ${descriptor.isForcedTranslation}, ${descriptor.sourceLanguage}-${descriptor.targetLanguage}`;

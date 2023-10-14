@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { HistorySortColumn } from '@selected-text-translate/common/settings/settings';
+import type { HistorySortColumn } from '@selected-text-translate/common';
 
-import { ColumnNameResolver } from '~/components/history/column-name-resolver';
-import { SortOrder } from '~/components/history/models/sort-order';
+import { ColumnNameResolver } from '~/components/history/column-name-resolver.service';
+import { SortOrder } from '~/components/history/models/sort-order.enum';
 
 interface Props {
   sortColumn: HistorySortColumn;

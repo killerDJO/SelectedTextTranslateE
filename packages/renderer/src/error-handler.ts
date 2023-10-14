@@ -1,6 +1,6 @@
 import type { App as VueApp } from 'vue';
 
-import { ensureErrorType } from './utils/ensure-error-type';
+import { ensureErrorType } from './utils/error-handling.utils';
 
 export function setupErrorHandling(app: VueApp<Element>): void {
   window.onunhandledrejection = event => {

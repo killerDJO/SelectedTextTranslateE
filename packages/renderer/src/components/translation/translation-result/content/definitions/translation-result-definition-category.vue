@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { TranslateResultDefinitionCategory } from '~/components/translation/models/translation';
+import type { TranslateResultDefinitionCategory } from '~/components/translation/models/translation.model';
 
 interface Props {
   definitionCategory: TranslateResultDefinitionCategory;

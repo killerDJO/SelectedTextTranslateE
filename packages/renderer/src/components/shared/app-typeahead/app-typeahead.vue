@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 
-import { useDrop } from '~/components/shared/use-drop';
+import { useDrop } from '~/components/shared/use-drop.hook';
 
 interface Props {
   suggestions: string[];

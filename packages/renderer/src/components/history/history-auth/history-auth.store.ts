@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 
-import { historyCache } from '~/components/history/services/history-cache';
+import { historyCache } from '~/components/history/services/history-cache.service';
 
-import type { AccountInfo } from './models/account-info';
+import type { AccountInfo } from './models/account-info.model';
 import type {
   AuthResponse,
   PasswordChangeErrorCodes,
@@ -11,8 +11,8 @@ import type {
   SignInErrorCodes,
   SignUpErrorCodes,
   VerifyResetTokenErrorCodes
-} from './models/auth-response';
-import { authService } from './services/auth-service';
+} from './models/auth-response.model';
+import { authService } from './services/auth.service';
 
 interface HistoryAuthState {
   account: AccountInfo | null;

@@ -1,18 +1,15 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
-import type {
-  Tag,
-  TranslateResultRendererSettings
-} from '@selected-text-translate/common/settings/Settings';
+import type { Tag, TranslateResultRendererSettings } from '@selected-text-translate/common';
 
-import type { HistoryRecord } from '~/components/history/models/history-record';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type {
   TranslateDescriptor,
   TranslateResult
-} from '~/components/translation/models/translation';
-import { hotkeysRegistry } from '~/services/hotkeys-registry';
-import { TranslateResultViews } from '~/components/translation/models/translate-result-views';
+} from '~/components/translation/models/translation.model';
+import { hotkeysRegistry } from '~/services/hotkeys-registry.service';
+import { TranslateResultViews } from '~/components/translation/models/translate-result-views.enum';
 import TagsEditor from '~/components/history/tags-editor/tags-editor.vue';
 
 import TranslationResultContentCategory from './category/translation-result-content-category.vue';

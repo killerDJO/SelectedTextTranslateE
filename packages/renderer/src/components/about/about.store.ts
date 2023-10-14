@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import type { ApplicationInfo } from '@selected-text-translate/common/messaging/about';
+import type { ApplicationInfo } from '@selected-text-translate/common';
 
 interface AboutState {
   info: ApplicationInfo | null;

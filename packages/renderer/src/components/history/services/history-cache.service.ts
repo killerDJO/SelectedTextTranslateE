@@ -2,17 +2,17 @@ import { orderBy } from 'lodash-es';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import { add } from 'date-fns';
 
-import { HistorySortColumn } from '@selected-text-translate/common/settings/settings';
+import { HistorySortColumn } from '@selected-text-translate/common';
 
-import type { HistoryRecord } from '~/components/history/models/history-record';
-import type { SortOrder } from '~/components/history/models/sort-order';
-import type { HistoryFilter } from '~/components/history/models/history-filter';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
+import type { SortOrder } from '~/components/history/models/sort-order.enum';
+import type { HistoryFilter } from '~/components/history/models/history-filter.model';
 import {
   authService,
   type AuthService
-} from '~/components/history/history-auth/services/auth-service';
+} from '~/components/history/history-auth/services/auth.service';
 
-import { historyDatabase, type HistoryDatabase } from './history-database';
+import { historyDatabase, type HistoryDatabase } from './history-database.service';
 
 const HISTORY_DB_NAME = 'History';
 

@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 
 import { useAppStore } from '~/app.store';
-import { ensureErrorType } from '~/utils/ensure-error-type';
+import { ensureErrorType } from '~/utils/error-handling.utils';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
 
-import type { TranslateRequest } from './models/requests';
-import { textPlayer } from './services/text-player';
+import type { TranslateRequest } from './models/requests.model';
+import { textPlayer } from './services/text-player.service';
 import { useTranslateResultStore } from './translation-result/translation-result.store';
 
 interface TranslationState {

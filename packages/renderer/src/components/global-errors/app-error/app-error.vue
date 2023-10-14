@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { ensureErrorType } from '~/utils/ensure-error-type';
+import { ensureErrorType } from '~/utils/error-handling.utils';
 
 interface Props {
   message: string;

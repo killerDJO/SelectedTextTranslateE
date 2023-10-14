@@ -1,6 +1,6 @@
-import { replacePattern } from '@selected-text-translate/common/utils/replace-pattern';
+import { replacePattern } from '@selected-text-translate/common';
 
-import { settingsProvider, SettingsProvider } from '~/services/settings-provider';
+import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
 
 export class SearchExecutor {
   public constructor(private readonly settingsProvider: SettingsProvider) {}

@@ -1,25 +1,25 @@
 import { cloneDeep, uniq } from 'lodash-es';
 
-import type { HistorySortColumn, Tag } from '@selected-text-translate/common/settings/settings';
+import type { HistorySortColumn, Tag } from '@selected-text-translate/common';
 
-import type { HistoryRecord } from '~/components/history/models/history-record';
-import type { HistoryFilter } from '~/components/history/models/history-filter';
-import type { SortOrder } from '~/components/history/models/sort-order';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
+import type { HistoryFilter } from '~/components/history/models/history-filter.model';
+import type { SortOrder } from '~/components/history/models/sort-order.enum';
 import type {
   TranslateDescriptor,
   TranslateResult
-} from '~/components/translation/models/translation';
-import { settingsProvider, type SettingsProvider } from '~/services/settings-provider';
-import { normalizeTag } from '~/utils/normalize-tag';
-import { logger, type Logger } from '~/services/logger';
-import { getLogKey } from '~/utils/logging';
+} from '~/components/translation/models/translation.model';
+import { settingsProvider, type SettingsProvider } from '~/services/settings-provider.service';
+import { normalizeTag } from '~/utils/tags.utils';
+import { logger, type Logger } from '~/services/logger.service';
+import { getLogKey } from '~/utils/logging.utils';
 import {
   authService,
   type AuthService
-} from '~/components/history/history-auth/services/auth-service';
+} from '~/components/history/history-auth/services/auth.service';
 
-import { historyDatabase, type HistoryDatabase } from './history-database';
-import { historyCache, type HistoryCache } from './history-cache';
+import { historyDatabase, type HistoryDatabase } from './history-database.service';
+import { historyCache, type HistoryCache } from './history-cache.service';
 
 export class HistoryService {
   constructor(

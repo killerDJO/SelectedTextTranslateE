@@ -2,20 +2,20 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { cloneDeep, uniq } from 'lodash-es';
 
-import type { ColumnSettings, Tag } from '@selected-text-translate/common/settings/settings';
+import type { ColumnSettings, Tag } from '@selected-text-translate/common';
 
 import { useAppStore } from '~/app.store';
-import { normalizeTag } from '~/utils/normalize-tag';
+import { normalizeTag } from '~/utils/tags.utils';
 import { useTranslateResultStore } from '~/components/translation/translation-result/translation-result.store';
 import TranslationResult from '~/components/translation/translation-result/translation-result.vue';
-import type { TranslateRequest } from '../translation/models/requests';
+import type { TranslateRequest } from '../translation/models/requests.model';
 
 import ColumnsEditor from './columns-editor/columns-editor.vue';
 import TagsEditor from './tags-editor/tags-editor.vue';
 import HistoryUser from './history-auth/history-user/history-user.vue';
 import { useHistoryStore } from './history.store';
 import { useHistoryAuthStore } from './history-auth/history-auth.store';
-import type { HistoryRecord } from './models/history-record';
+import type { HistoryRecord } from './models/history-record.model';
 import HistoryLogin from './history-auth/history-login/history-login.vue';
 import HistoryTable from './history-table/history-table.vue';
 import HistoryPaginator from './history-paginator/history-paginator.vue';

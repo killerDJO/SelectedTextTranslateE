@@ -1,6 +1,6 @@
 import * as Mousetrap from 'mousetrap';
 
-import type { Hotkey } from '@selected-text-translate/common/settings/Settings';
+import type { Hotkey } from '@selected-text-translate/common';
 
 class HotkeysRegistry {
   private readonly hotkeysByNamespace: Map<string, ReadonlyArray<Hotkey>> = new Map();

@@ -4,11 +4,11 @@ import { cloneDeep, debounce, isEqual } from 'lodash-es';
 import { computed, reactive, watch } from 'vue';
 import { helpers, maxValue, minValue } from '@vuelidate/validators';
 
-import type { Tag } from '@selected-text-translate/common/settings/settings';
+import type { Tag } from '@selected-text-translate/common';
 
 import TagsEditor from '~/components/history/tags-editor/tags-editor.vue';
-import { executeIfValid } from '~/utils/execute-if-valid';
-import type { HistoryFilter } from '~/components/history/models/history-filter';
+import { executeIfValid } from '~/utils/validation.utils';
+import type { HistoryFilter } from '~/components/history/models/history-filter.model';
 import { useAppStore } from '~/app.store';
 import type { SelectedLanguages } from '~/components/shared/language-selector/language-selector.vue';
 

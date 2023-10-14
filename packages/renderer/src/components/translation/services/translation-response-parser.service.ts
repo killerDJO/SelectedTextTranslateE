@@ -8,7 +8,7 @@ import type {
   TranslateResultDefinitionCategory,
   TranslateResultDefinitionCategoryEntry,
   TranslateResultSentence
-} from '~/components/translation/models/translation';
+} from '~/components/translation/models/translation.model';
 
 // Response structure:
 // [

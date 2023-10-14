@@ -4,14 +4,14 @@ import { required, helpers } from '@vuelidate/validators';
 import { computed, reactive, ref } from 'vue';
 
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
-import { executeIfValid } from '~/utils/execute-if-valid';
+import { executeIfValid } from '~/utils/validation.utils';
 import { commonErrorMessages } from '~/components/history/history-auth/error-codes';
 import { useHistoryAuthStore } from '~/components/history/history-auth/history-auth.store';
-import type { AuthResponse } from '~/components/history/history-auth/models/auth-response';
+import type { AuthResponse } from '~/components/history/history-auth/models/auth-response.model';
 import {
   passwordValidators,
   PASSWORD_TOO_WEAK_MESSAGE
-} from '~/components/history/history-auth/password-validators';
+} from '~/components/history/history-auth/password.utils';
 
 const historyAuth = useHistoryAuthStore();
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 
-import { SettingsGroup } from '@selected-text-translate/common/settings/settings-group';
+import { SettingsGroup } from '@selected-text-translate/common';
 
 import type ConfirmModal from '~/components/shared/confirm-modal/confirm-modal.vue';
 

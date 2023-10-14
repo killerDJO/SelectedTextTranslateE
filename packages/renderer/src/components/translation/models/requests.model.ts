@@ -1,4 +1,4 @@
-import type { TranslateDescriptor } from './translation';
+import type { TranslateDescriptor } from './translation.model';
 
 export interface TranslateRequest extends TranslateDescriptor {}
 

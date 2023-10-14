@@ -1,8 +1,8 @@
-import type { Settings } from '@selected-text-translate/common/settings/settings';
+import type { Settings } from '@selected-text-translate/common';
 
-import type { PlayTextRequest } from '~/components/translation/models/requests';
-import { logger, Logger } from '~/services/logger';
-import { settingsProvider, SettingsProvider } from '~/services/settings-provider';
+import type { PlayTextRequest } from '~/components/translation/models/requests.model';
+import { logger, Logger } from '~/services/logger.service';
+import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
 
 export class TextPlayer {
   private isPlayInProgress = false;

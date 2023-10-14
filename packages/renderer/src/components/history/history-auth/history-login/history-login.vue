@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import type { AuthResponse } from '~/components/history/history-auth/models/auth-response';
+import type { AuthResponse } from '~/components/history/history-auth/models/auth-response.model';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
 import { commonErrorMessages } from '~/components/history/history-auth/error-codes';
 

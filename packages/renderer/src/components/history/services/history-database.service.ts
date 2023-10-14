@@ -20,10 +20,10 @@ import {
 import {
   authService,
   type AuthService
-} from '~/components/history/history-auth/services/auth-service';
-import type { HistoryRecord } from '~/components/history/models/history-record';
-import { settingsProvider, SettingsProvider } from '~/services/settings-provider';
-import { logger, type Logger } from '~/services/logger';
+} from '~/components/history/history-auth/services/auth.service';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
+import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
+import { logger, type Logger } from '~/services/logger.service';
 
 const HISTORY_COLLECTION = 'history_v2';
 

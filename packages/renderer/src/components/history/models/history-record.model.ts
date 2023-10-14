@@ -1,7 +1,7 @@
 import type {
   TranslateResult,
   TranslateDescriptor
-} from '~/components/translation/models/translation';
+} from '~/components/translation/models/translation.model';
 
 export interface HistoryRecord extends TranslateDescriptor {
   readonly id: string;

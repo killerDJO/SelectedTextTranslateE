@@ -1,10 +1,7 @@
 import type { IpcRendererEvent } from 'electron';
 
-import type { Settings } from '@selected-text-translate/common/settings/settings';
-import { Messages } from '@selected-text-translate/common/messaging/messages';
-import { createChannel } from '@selected-text-translate/common/messaging/create-channel';
-import type { DeepPartial } from '@selected-text-translate/common/typings/deep-partial';
-import type { SettingsGroup } from '@selected-text-translate/common/settings/settings-group';
+import type { Settings, DeepPartial, SettingsGroup } from '@selected-text-translate/common';
+import { Messages, createChannel } from '@selected-text-translate/common';
 
 import type {
   ICoreApi,

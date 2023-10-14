@@ -1,16 +1,16 @@
 import { defineStore } from 'pinia';
 
-import { HistorySortColumn, type Tag } from '@selected-text-translate/common/settings/settings';
+import { HistorySortColumn, type Tag } from '@selected-text-translate/common';
 
 import { useAppStore } from '~/app.store';
-import { textPlayer } from '~/components/translation/services/text-player';
+import { textPlayer } from '~/components/translation/services/text-player.service';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
 import { useTranslateResultStore } from '~/components/translation/translation-result/translation-result.store';
 
-import type { HistoryFilter } from './models/history-filter';
-import type { HistoryRecord } from './models/history-record';
-import { SortOrder } from './models/sort-order';
-import { historyService } from './services/history-service';
+import type { HistoryFilter } from './models/history-filter.model';
+import type { HistoryRecord } from './models/history-record.model';
+import { SortOrder } from './models/sort-order.enum';
+import { historyService } from './services/history.service';
 
 interface HistoryState {
   isLoading: boolean;

@@ -7,7 +7,7 @@ import TranslationResult from './translation-result/translation-result.vue';
 import TranslationInput from './translation-input/translation-input.vue';
 import { useTranslateResultStore } from './translation-result/translation-result.store';
 import { useTranslationStore } from './translation.store';
-import type { TranslateRequest } from './models/requests';
+import type { TranslateRequest } from './models/requests.model';
 
 const app = useAppStore();
 const translateResult = useTranslateResultStore();

@@ -1,19 +1,15 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 
-import {
-  type ColumnSettings,
-  HistorySortColumn,
-  type Tag
-} from '@selected-text-translate/common/settings/settings';
+import { type ColumnSettings, HistorySortColumn, Tag } from '@selected-text-translate/common';
 
 import type {
   DataTableColumnConfig,
   DataTableConfig
 } from '~/components/shared/data-table/data-table.vue';
 import TagsEditor from '~/components/history/tags-editor/tags-editor.vue';
-import type { HistoryRecord } from '~/components/history/models/history-record';
-import type { SortOrder } from '~/components/history/models/sort-order';
+import type { HistoryRecord } from '~/components/history/models/history-record.model';
+import type { SortOrder } from '~/components/history/models/sort-order.enum';
 import ForcedTranslationIcon from '~/components/history/icons/forced-translation-icon.vue';
 
 import SortableHeader from './sortable-header/sortable-header.vue';
