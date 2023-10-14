@@ -76,7 +76,7 @@ export class Installer {
     this.logger.info(`Spawning child process ${command} with arguments: ${args.join(' ')}`);
     try {
       childProcess.spawn(command, args, { detached: true });
-    } catch (error: any) {
+    } catch (error) {
       this.logger.error('Error spawning child process', error);
     }
   }

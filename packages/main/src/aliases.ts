@@ -6,5 +6,5 @@ const aliases = {
 };
 
 Object.keys(aliases).forEach(alias => {
-  moduleAlias.addAlias(alias, (aliases as any)[alias]);
+  moduleAlias.addAlias(alias, aliases[alias as keyof typeof aliases]);
 });

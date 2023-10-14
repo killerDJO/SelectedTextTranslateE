@@ -156,7 +156,8 @@ function getHotkeySetting(
     for (const currentKey of Object.keys(settings[hotkeyType])) {
       if (currentKey === key) {
         return {
-          hotkeys: (settings[hotkeyType] as any)[currentKey],
+          hotkeys:
+            settings[hotkeyType][currentKey as keyof (LocalHotkeySettings | GlobalHotkeySettings)],
           isGlobal: hotkeyType === 'global'
         };
       }

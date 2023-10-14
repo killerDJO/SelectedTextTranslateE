@@ -191,7 +191,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
     <template #[tagsBodySlotId]="{ record }">
       <div class="tags-column">
         <tags-editor
-          :tags="record.tags"
+          :tags="record.tags ?? []"
           :compact-view="true"
           :clickable="true"
           @update-tags="tags => $emit('update-tags', record, tags)"

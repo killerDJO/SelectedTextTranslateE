@@ -19,7 +19,7 @@ module.exports = {
     tsconfigRootDir: __dirname
   },
   rules: {
-    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-explicit-any': 'error',
     'import/order': [
       'warn',
       {
@@ -38,6 +38,7 @@ module.exports = {
         ]
       }
     ],
+    '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_' }],
     'unused-imports/no-unused-imports': 'error',
     'import/no-unresolved': 'off'
   }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useVuelidate } from '@vuelidate/core';
-import { helpers, required, email } from '@vuelidate/validators';
+import { helpers, required, email as emailValidator } from '@vuelidate/validators';
 import { computed, reactive } from 'vue';
 
 import { executeIfValid } from '~/utils/execute-if-valid';
@@ -32,7 +32,7 @@ const state = reactive({
 const rules = computed(() => ({
   email: {
     required: helpers.withMessage('Email must not be empty.', required),
-    email: helpers.withMessage('Email is not valid.', email)
+    email: helpers.withMessage('Email is not valid.', emailValidator)
   },
   password: {
     required: helpers.withMessage('Password must not be empty.', required)

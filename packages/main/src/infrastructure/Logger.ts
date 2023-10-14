@@ -41,7 +41,7 @@ export class Logger {
       if (error) {
         this.warning(`Unable to open error log folder. ${error}`);
       }
-    } catch (e: any) {
+    } catch (e) {
       this.error('Unable to open error log folder.', e);
     }
   }
@@ -64,8 +64,10 @@ export class Logger {
     this.logger.warn(message);
   }
 
-  public error(message: string, error: Error): void {
-    this.logger.error(`${message} | Error: "${error.message}" | Stack trace: "${error.stack}"`);
+  public error(message: string, error: unknown): void {
+    const errorMessage = error instanceof Error ? error.message : JSON.stringify(error);
+    const errorStack = error instanceof Error ? error.stack : '-';
+    this.logger.error(`${message} | Error: "${errorMessage}" | Stack trace: "${errorStack}"`);
   }
 
   private getLogFormat(): Format {

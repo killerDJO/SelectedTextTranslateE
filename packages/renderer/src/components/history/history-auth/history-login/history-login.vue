@@ -39,7 +39,7 @@ async function executeLoginAction<TErrorCodes extends string>(
         `Unknown error: ${authResponse.errorCode}`;
       return false;
     }
-  } catch (e: any) {
+  } catch (e) {
     useGlobalErrorsStore().addError('Unknown error', e);
     return false;
   } finally {

@@ -36,7 +36,7 @@ export interface TranslationEngineSettings {
 }
 
 export interface ProxySettings {
-  readonly isEnabled: string;
+  readonly isEnabled: boolean;
   readonly url: string;
 }
 
@@ -63,8 +63,8 @@ export interface ScalingSettings {
 
 export interface TranslationViewSettings extends ViewSize {
   readonly margin: number;
-  readonly x?: number;
-  readonly y?: number;
+  readonly x?: number | null;
+  readonly y?: number | null;
   readonly renderer: TranslateResultRendererSettings;
 }
 

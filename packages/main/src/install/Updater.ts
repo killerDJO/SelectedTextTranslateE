@@ -1,4 +1,4 @@
-import { autoUpdater, shell, dialog, app } from 'electron';
+import { autoUpdater, shell, dialog, app, MessageBoxOptions } from 'electron';
 import { injectable } from 'inversify';
 
 import { SettingsProvider } from '~/infrastructure/SettingsProvider';
@@ -36,7 +36,7 @@ export class Updater {
   }
 
   private async promptForUpdate(releaseNotes: string, releaseName: string): Promise<void> {
-    const dialogOpts = {
+    const dialogOpts: MessageBoxOptions = {
       type: 'info',
       buttons: ['Restart', 'Later'],
       title: 'Application Update',

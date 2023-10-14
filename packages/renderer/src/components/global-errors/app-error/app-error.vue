@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+import { ensureErrorType } from '~/utils/ensure-error-type';
+
 interface Props {
   message: string;
-  error?: any;
+  error: unknown;
   dismissible?: boolean;
 }
-withDefaults(defineProps<Props>(), { dismissible: true, error: undefined });
+withDefaults(defineProps<Props>(), { dismissible: true });
 
 defineEmits<{
   (e: 'dismiss'): void;
@@ -14,8 +16,9 @@ defineEmits<{
 
 const isExpanded = ref(false);
 
-function getFriendlyMessage(message: string, error: any): string {
-  const errorText = (error?.message ?? error)?.toString() ?? '';
+function getFriendlyMessage(message: string, error: unknown): string {
+  const errorType = ensureErrorType(error);
+  const errorText = (errorType?.message ?? errorType)?.toString() ?? '';
   if (errorText.includes('ENOTFOUND') || errorText.includes('timeout')) {
     return `${message} Network error.`;
   }

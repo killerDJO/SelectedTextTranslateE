@@ -37,7 +37,13 @@ const rules = computed(() => ({
     minValue: helpers.withMessage('Should be bigger than 1', minValue(1))
   }
 }));
-const v$ = useVuelidate(rules as any, state, { $autoDirty: true });
+const v$ = useVuelidate(
+  rules,
+  state as Required<Pick<HistoryFilter, 'minTranslatedTime' | 'maxTranslatedTime'>>,
+  {
+    $autoDirty: true
+  }
+);
 
 watch(state, async () => await executeIfValid(v$, () => $emit('filter-updated', cloneDeep(state))));
 watch(

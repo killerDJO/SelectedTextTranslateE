@@ -67,8 +67,7 @@ export class HistoryDatabase {
     const db = await this.ensureInitialized();
 
     const recordRef = doc(db, HISTORY_COLLECTION, record.id);
-    const recordData: any = { ...record };
-    delete recordData.id;
+    const { id: _, ...recordData } = record;
 
     await setDoc(recordRef, recordData);
   }

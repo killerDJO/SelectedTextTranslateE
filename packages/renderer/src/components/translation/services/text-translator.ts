@@ -94,7 +94,7 @@ export class TextTranslator {
     return (sentence || '').trim();
   }
 
-  private async getTranslationResponse(descriptor: TranslateDescriptor): Promise<any> {
+  private async getTranslationResponse(descriptor: TranslateDescriptor): Promise<unknown> {
     const data = `[[\\"${descriptor.sentence}\\",\\"${descriptor.sourceLanguage}\\",\\"${
       descriptor.targetLanguage
     }\\",${descriptor.isForcedTranslation ? 'null' : 'true'}],[null]]`;

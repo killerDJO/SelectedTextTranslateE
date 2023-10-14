@@ -22,7 +22,7 @@ defineEmits<{
       :value="value"
       :step="step"
       class="slider"
-      @input="$emit('update:value', ($event.target as HTMLInputElement)!.value)"
+      @input="$emit('update:value', Number(($event.target as HTMLInputElement)!.value))"
     />
     <span class="range-value max-value">{{ $filters.percent(maxValue) }}</span>
   </div>

@@ -1,6 +1,6 @@
 import { computed, onBeforeUnmount, ref } from 'vue';
 import { createPopper } from '@popperjs/core';
-import type { Placement, Modifier, Instance as PopperInstance } from '@popperjs/core';
+import type { Placement, Modifier, Instance as PopperInstance, Obj } from '@popperjs/core';
 
 export function useDrop() {
   const drop = ref<PopperInstance | null>(null);
@@ -14,7 +14,7 @@ export function useDrop() {
     dropTarget: HTMLElement,
     dropContent: HTMLElement,
     placement: Placement,
-    modifiers: Modifier<any, any>[]
+    modifiers: Modifier<string, Obj>[]
   ): void {
     isDropContentVisible.value = true;
     drop.value = createPopper(dropTarget, dropContent, {

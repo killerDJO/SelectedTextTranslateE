@@ -36,8 +36,12 @@ export const useHistoryStore = defineStore('history', {
     return state;
   },
   getters: {
-    pageSize: () => useAppStore().settings.views.history.renderer.pageSize,
-    totalPages: state => Math.ceil(state.totalRecords / (state as any).pageSize)
+    pageSize(): number {
+      return useAppStore().settings.views.history.renderer.pageSize;
+    },
+    totalPages(state): number {
+      return Math.ceil(state.totalRecords / this.pageSize);
+    }
   },
   actions: {
     setup() {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { stripHtml } from 'string-strip-html';
 
 import type {
@@ -45,11 +46,13 @@ import type {
 //      1: [
 //         0: [
 //             0: [
-//                  0: "<part_of_speech>",
+//                  0: <..>,
 //                  1: [
 //                       0: [<definition>", "<sample>", <..>, ["<synonym>", ...]],
 //                          ....
-//                     ]
+//                     ],
+//                  2: <..>,
+//                  3: <part_of_speech>
 //                ]
 //            ],
 //            ....
@@ -72,23 +75,27 @@ import type {
 //      5: [
 //           0: [
 //                 0: [
-//                      0: "<part_of_speech">
+//                      0: null,
 //                      1: [
 //                           0: ["<variant_1>", <...>, ["<reverse_translation_1>", "<reverse_translation_2>", ..], <score>, null]
 //                              .....
-//                         ]
+//                         ],
+//                      2: ...,
+//                      3: ...,
+//                      4: <part_of_speech>,
 //                    ],
 //                    ...
 //               ]
 //         ]
 //   ]
 export class TranslationResponseParser {
-  public static readonly Version: string = 'v3.3';
+  public static readonly Version: string = 'v3.5';
 
   public parse(root: any, input: string): TranslateResult {
     if (!Array.isArray(root)) {
       throw Error('root is not an array');
     }
+    console.log(root);
 
     const sentence = this.parseSentence(root, input);
     const categories = this.parseTranslateCategories(root);
@@ -168,7 +175,7 @@ export class TranslationResponseParser {
     const categoriesResponse: TranslateResultCategory[] = [];
 
     for (const categoryResponse of categoriesSection) {
-      const partOfSpeech: string = categoryResponse[0];
+      const partOfSpeech: string = this.mapPartOfSpeech(categoryResponse[4] ?? 0);
       const baseForm: string = this.getBaseForm(root);
       const categoryEntries: TranslateResultCategoryEntry[] = [];
 
@@ -200,7 +207,7 @@ export class TranslationResponseParser {
 
     const definitionCategories: TranslateResultDefinitionCategory[] = [];
     for (const definitionCategory of definitionsSection) {
-      const partOfSpeech: string = definitionCategory[0];
+      const partOfSpeech: string = this.mapPartOfSpeech(definitionCategory[3]);
       const baseForm: string = this.getBaseForm(root);
 
       const definitionCategoryEntries: TranslateResultDefinitionCategoryEntry[] = [];
@@ -221,6 +228,32 @@ export class TranslationResponseParser {
 
   private getBaseForm(root: any): string {
     return root[3]?.[0] ?? 'N/A';
+  }
+
+  private mapPartOfSpeech(index: number): string {
+    const indexToPartOfSpeechMap: Record<number, string> = {
+      1: 'Noun',
+      2: 'Verb',
+      3: 'Adjective',
+      4: 'Adverb',
+      5: 'Preposition',
+      6: 'Abbreviation',
+      7: 'Conjunction',
+      8: 'Pronoun',
+      9: 'Interjection',
+      10: 'Phrase',
+      11: 'Prefix',
+      12: 'Suffix',
+      13: 'Article',
+      14: 'Combining form',
+      15: 'Numeral',
+      16: 'Auxiliary verb',
+      17: 'Exclamation',
+      18: 'Plural',
+      19: 'Particle'
+    };
+
+    return indexToPartOfSpeechMap[index] ?? index.toString();
   }
 }
 

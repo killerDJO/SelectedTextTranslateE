@@ -21,7 +21,7 @@ module.exports = {
   ignorePatterns: ['.eslintrc.js', 'node_modules', 'dist', '*.d.ts', '*.js'],
   rules: {
     '@typescript-eslint/explicit-function-return-type': ['error', { allowExpressions: true }],
-    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/no-explicit-any': 'error',
     'import/order': [
       'warn',
       {

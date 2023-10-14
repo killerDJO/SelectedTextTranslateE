@@ -52,7 +52,7 @@ export class RequestProvider {
     return JSON.parse(responseContent);
   }
 
-  private async executePostRequest(url: string, data?: string): Promise<any> {
+  private async executePostRequest(url: string, data?: string): Promise<string> {
     if (this.proxySettings.isEnabled) {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
     }

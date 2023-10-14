@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="TRecord extends { id: string }">
 import { cloneDeep } from 'lodash-es';
 import { computed, onMounted, ref, useSlots, watch } from 'vue';
 
@@ -19,12 +19,12 @@ interface ResizeInfo {
 interface Props {
   configuration: DataTableConfig;
   isLoading?: boolean;
-  records: any[];
+  records: TRecord[];
 }
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'record-click', record: any): void;
+  (e: 'record-click', record: TRecord): void;
   (e: 'update-columns-configuration', columns: ReadonlyArray<DataTableColumnConfig>): void;
 }>();
 
@@ -59,7 +59,7 @@ onMounted(() => {
   document.addEventListener('mouseup', onResizeFinished);
 });
 
-function onRecordClick(record: { id: string }) {
+function onRecordClick(record: TRecord) {
   if (clickable.value) {
     $emit('record-click', record);
   }

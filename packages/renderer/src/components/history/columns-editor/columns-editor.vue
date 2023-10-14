@@ -131,7 +131,7 @@ function mapItems(items: ReadonlyArray<ColumnDropItem>): Mutable<ColumnSettings>
         :value="(item as ColumnDropItem).isChecked"
         :label="item.text"
         :tab-index="-1"
-        :disabled="isHideDisabled(item  as ColumnDropItem)"
+        :disabled="isHideDisabled(item as ColumnDropItem)"
         @update:value="() => itemClick(item as ColumnDropItem)"
       />
       <span class="order-icons">

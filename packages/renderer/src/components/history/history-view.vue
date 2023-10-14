@@ -186,7 +186,9 @@ function toggleFilter() {
           @translate-record="translateHistoryRecord"
           @set-starred-status="(record, isStarred) => history.setStarredStatus(record, isStarred)"
           @play-record="record => history.playRecord(record)"
-          @update-tags="(record: HistoryRecord, tags: ReadonlyArray<Tag>) => history.updateTags(record, tags)"
+          @update-tags="
+            (record: HistoryRecord, tags: ReadonlyArray<Tag>) => history.updateTags(record, tags)
+          "
           @tag-clicked="onTagClicked"
           @set-archived-status="
             (record, isArchived) => history.setArchivedStatus(record, isArchived)

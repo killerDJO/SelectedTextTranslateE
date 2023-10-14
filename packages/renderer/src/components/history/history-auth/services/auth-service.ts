@@ -1,4 +1,4 @@
-import { initializeApp } from 'firebase/app';
+import { FirebaseError, initializeApp } from 'firebase/app';
 import {
   getAuth,
   type Auth,
@@ -133,8 +133,8 @@ export class AuthService {
     const credentials = EmailAuthProvider.credential(currentUser.email as string, oldPassword);
     try {
       await reauthenticateWithCredential(currentUser, credentials);
-    } catch (error: any) {
-      if (error.code === 'auth/wrong-password') {
+    } catch (error: unknown) {
+      if (error instanceof FirebaseError && error.code === 'auth/wrong-password') {
         return {
           isSuccessful: false,
           errorCode: PasswordChangeErrorCodes.WrongPassword
@@ -163,16 +163,17 @@ export class AuthService {
   }
 
   private async handleAuthResponse<TErrorCodes>(
-    response: Promise<any>,
+    response: Promise<unknown>,
     errorCodeMapper: (errorCode: string) => TErrorCodes
   ): Promise<AuthResponse<TErrorCodes>> {
     try {
       await response;
       return { isSuccessful: true };
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorCode = error instanceof FirebaseError ? error.code : 'unknown';
       return {
         isSuccessful: false,
-        errorCode: errorCodeMapper(error.code) ?? error.code
+        errorCode: errorCodeMapper(errorCode) ?? errorCode
       };
     }
   }

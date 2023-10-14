@@ -68,7 +68,7 @@ async function executeAuthAction<TErrorCodes extends string>(
 
       return false;
     }
-  } catch (e: any) {
+  } catch (e) {
     useGlobalErrorsStore().addError('Unknown error', e);
     isVisible.value = false;
     return false;

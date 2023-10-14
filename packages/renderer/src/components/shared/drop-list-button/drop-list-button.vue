@@ -41,7 +41,7 @@ function itemClick(item: DropListItem) {
     :tab-index="tabIndex"
     :placement="placement"
     @click="$emit('click')"
-    @item-click="item => itemClick((item as DropListItem))"
+    @item-click="item => itemClick(item as DropListItem)"
   >
     <div class="drop-item-value">
       {{ item.text }}

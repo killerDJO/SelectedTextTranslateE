@@ -25,7 +25,7 @@ export class AboutView extends ViewBase {
       )
     });
 
-    const packageJson = this.readJsonFile('../../../../../package.json');
+    const packageJson = this.readPackageJsonFile();
     const applicationInfo: ApplicationInfo = {
       name: packageJson.productName,
       homepage: packageJson.homepage,
@@ -46,8 +46,8 @@ export class AboutView extends ViewBase {
     return this.getCentralPositionAbsolute(aboutViewSettings.width, aboutViewSettings.height);
   }
 
-  private readJsonFile(fileName: string): any {
-    const filePath = path.resolve(__dirname, fileName);
+  private readPackageJsonFile(): { productName: string; homepage: string; version: string } {
+    const filePath = path.resolve(__dirname, '../../../../../package.json');
     const fileContent = fs.readFileSync(filePath).toString('utf8');
     return JSON.parse(fileContent);
   }

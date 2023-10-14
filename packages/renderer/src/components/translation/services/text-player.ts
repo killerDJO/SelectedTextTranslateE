@@ -51,8 +51,8 @@ export class TextPlayer {
     try {
       await audio.play();
       await endPromise;
-    } catch (error: any) {
-      this.logger.error('Unable to play audio file.', error);
+    } catch (error) {
+      this.logger.error(error, 'Unable to play audio file.');
     }
   }
 
