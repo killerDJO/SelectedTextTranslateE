@@ -2,18 +2,15 @@ import { BrowserWindow, screen, shell } from 'electron';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { distinctUntilChanged, first } from 'rxjs/operators';
 
-import { ViewNames } from '@selected-text-translate/common/views/view-names';
-import { Messages } from '@selected-text-translate/common/messaging/messages';
-import { Settings } from '@selected-text-translate/common/settings/settings';
-import { DeepPartial } from '@selected-text-translate/common/typings/deep-partial';
+import { ViewNames, Messages, Settings, DeepPartial } from '@selected-text-translate/common';
 
-import { RendererLocationProvider } from '~/presentation/framework/RendererLocationProvider';
-import { ViewContext } from '~/presentation/framework/ViewContext';
-import { ViewOptions } from '~/presentation/framework/ViewOptions';
-import { IScaler } from '~/presentation/framework/scaling/IScaler';
-import { MessageBus } from '~/presentation/framework/MessageBus';
+import { RendererLocationProvider } from '~/presentation/framework/renderer-location-provider.service';
+import { ViewContext } from '~/presentation/framework/view-context.service';
+import { ViewOptions } from '~/presentation/framework/view-options.interface';
+import { IScaler } from '~/presentation/framework/scaling/scaling.interface';
+import { MessageBus } from '~/presentation/framework/message-bus';
 
-export abstract class ViewBase {
+export abstract class BaseView {
   private readonly subscriptions: Subscription[] = [];
 
   protected readonly window: BrowserWindow;

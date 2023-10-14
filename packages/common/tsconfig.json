@@ -6,8 +6,9 @@
     "baseUrl": ".",
     "declaration": true,
     "composite": true,
-    "rootDir": ".",
-    "declarationDir": "./dist"
+    "rootDir": "src",
+    "outDir": "./dist",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "exclude": ["node_modules", "dist"]
 }

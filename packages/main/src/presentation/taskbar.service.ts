@@ -4,12 +4,12 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import { injectable } from 'inversify';
 import { isString } from 'lodash';
 
-import { Tag } from '@selected-text-translate/common/settings/Settings';
+import { Tag } from '@selected-text-translate/common';
 
-import { mapSubject } from '~/utils/map-subject';
-import { SettingsProvider } from '~/infrastructure/SettingsProvider';
+import { mapSubject } from '~/utils/observable.utils';
+import { SettingsProvider } from '~/infrastructure/settings-provider.service';
 
-import { IconsProvider } from './framework/IconsProvider';
+import { IconsProvider } from './framework/icons-provider.service';
 
 @injectable()
 export class Taskbar {

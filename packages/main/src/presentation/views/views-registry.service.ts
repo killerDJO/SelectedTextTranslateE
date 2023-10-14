@@ -1,22 +1,22 @@
 import { injectable } from 'inversify';
 
-import { ViewNames } from '@selected-text-translate/common/views/view-names';
+import { ViewNames } from '@selected-text-translate/common';
 
-import { ViewContext } from '~/presentation/framework/ViewContext';
+import { ViewContext } from '~/presentation/framework/view-context.service';
 
-import { ViewBase } from './ViewBase';
-import { TranslationView } from './TranslationView';
-import { SettingsView } from './SettingsView';
-import { HistoryView } from './HistoryView';
-import { AboutView } from './AboutView';
+import { BaseView } from './base.view';
+import { TranslationView } from './translation.view';
+import { SettingsView } from './settings.view';
+import { HistoryView } from './history.view';
+import { AboutView } from './about.view';
 
 @injectable()
 export class ViewsRegistry {
-  private readonly viewsCache: Map<ViewNames, ViewBase> = new Map<ViewNames, ViewBase>();
+  private readonly viewsCache: Map<ViewNames, BaseView> = new Map<ViewNames, BaseView>();
 
-  private readonly viewFactories: Map<ViewNames, (viewContext: ViewContext) => ViewBase> = new Map<
+  private readonly viewFactories: Map<ViewNames, (viewContext: ViewContext) => BaseView> = new Map<
     ViewNames,
-    (viewContext: ViewContext) => ViewBase
+    (viewContext: ViewContext) => BaseView
   >([
     [ViewNames.Translation, viewContext => new TranslationView(viewContext)],
     [ViewNames.History, viewContext => new HistoryView(viewContext)],
@@ -26,7 +26,7 @@ export class ViewsRegistry {
 
   constructor(private readonly viewContext: ViewContext) {}
 
-  public getOrCreateView<TView extends ViewBase>(
+  public getOrCreateView<TView extends BaseView>(
     name: ViewNames,
     postCreateAction?: (view: TView) => void
   ): TView {
@@ -38,7 +38,7 @@ export class ViewsRegistry {
     return this.viewsCache.get(name) as TView;
   }
 
-  public getView<TView extends ViewBase>(name: ViewNames): TView | null {
+  public getView<TView extends BaseView>(name: ViewNames): TView | null {
     const existingView = this.viewsCache.get(name) || null;
     if (existingView === null || existingView.isDestroyed()) {
       return null;
@@ -51,7 +51,7 @@ export class ViewsRegistry {
     return this.getView(name) !== null;
   }
 
-  private createView<TView extends ViewBase>(
+  private createView<TView extends BaseView>(
     name: ViewNames,
     postCreateAction?: (view: TView) => void
   ): TView {

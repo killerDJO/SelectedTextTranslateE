@@ -2,9 +2,9 @@ import { app } from 'electron';
 import childProcess = require('child_process');
 import { injectable } from 'inversify';
 
-import { StartupHandler } from '~/install/StartupHandler';
-import { StartupItemsProvider } from '~/install/StartupItemsProvider';
-import { Logger } from '~/infrastructure/Logger';
+import { StartupHandler } from '~/install/startup-handler.service';
+import { StartupItemsProvider } from '~/install/startup-items-provider.service';
+import { Logger } from '~/infrastructure/logger.service';
 
 @injectable()
 export class Installer {

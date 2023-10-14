@@ -3,10 +3,10 @@ import 'reflect-metadata';
 
 import { app } from 'electron';
 
-import { Application } from '~/presentation/Application';
-import { ErrorHandler } from '~/infrastructure/ErrorHandler';
-import { Logger } from '~/infrastructure/Logger';
-import { Installer } from '~/install/Installer';
+import { Application } from '~/presentation/application.service';
+import { ErrorHandler } from '~/infrastructure/error-handler.service';
+import { Logger } from '~/infrastructure/logger.service';
+import { Installer } from '~/install/installer.service';
 
 import { container } from './inversify.config';
 

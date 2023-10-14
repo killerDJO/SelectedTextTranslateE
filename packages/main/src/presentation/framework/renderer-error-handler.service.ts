@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 
-import { Logger } from '~/infrastructure/Logger';
-import { NotificationSender } from '~/infrastructure/NotificationSender';
+import { Logger } from '~/infrastructure/logger.service';
+import { NotificationSender } from '~/infrastructure/notification-sender.service';
 
 @injectable()
 export class RendererErrorHandler {

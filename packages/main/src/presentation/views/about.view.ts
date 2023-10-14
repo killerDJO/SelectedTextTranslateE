@@ -2,16 +2,14 @@ import { Observable } from 'rxjs';
 import * as path from 'path';
 import * as fs from 'fs';
 
-import { Messages } from '@selected-text-translate/common/messaging/messages';
-import { ViewNames } from '@selected-text-translate/common/views/view-names';
-import { ApplicationInfo } from '@selected-text-translate/common/messaging/about';
+import { Messages, ApplicationInfo, ViewNames } from '@selected-text-translate/common';
 
-import { ViewContext } from '~/presentation/framework/ViewContext';
-import { mapSubject } from '~/utils/map-subject';
+import { ViewContext } from '~/presentation/framework/view-context.service';
+import { mapSubject } from '~/utils/observable.utils';
 
-import { ViewBase } from './ViewBase';
+import { BaseView } from './base.view';
 
-export class AboutView extends ViewBase {
+export class AboutView extends BaseView {
   public readonly checkForUpdates$: Observable<void>;
 
   constructor(viewContext: ViewContext) {

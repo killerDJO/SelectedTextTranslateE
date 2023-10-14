@@ -2,7 +2,7 @@ import { BehaviorSubject } from 'rxjs';
 import { injectable } from 'inversify';
 import { systemPreferences } from 'electron';
 
-import { mapSubject } from '~/utils/map-subject';
+import { mapSubject } from '~/utils/observable.utils';
 
 @injectable()
 export class AccentColorProvider {

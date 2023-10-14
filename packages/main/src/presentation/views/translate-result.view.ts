@@ -1,14 +1,13 @@
 import { Observable } from 'rxjs';
 
-import { Messages } from '@selected-text-translate/common/messaging/messages';
-import { ViewNames } from '@selected-text-translate/common/views/view-names';
+import { Messages, ViewNames } from '@selected-text-translate/common';
 
-import { ViewContext } from '~/presentation/framework/ViewContext';
-import { ViewOptions } from '~/presentation/framework/ViewOptions';
+import { ViewContext } from '~/presentation/framework/view-context.service';
+import { ViewOptions } from '~/presentation/framework/view-options.interface';
 
-import { ViewBase } from './ViewBase';
+import { BaseView } from './base.view';
 
-export abstract class TranslateResultView extends ViewBase {
+export abstract class TranslateResultView extends BaseView {
   public readonly playingStateChange$: Observable<boolean>;
   public readonly historyRecordChange$: Observable<string>;
 

@@ -1,8 +1,8 @@
 import { injectable } from 'inversify';
 
-import { IScaler } from './IScaler';
-import { Scaler } from './Scaler';
-import { NullScaler } from './NullScaler';
+import { IScaler } from './scaling.interface.js';
+import { Scaler } from './scaler.service.js';
+import { NullScaler } from './null-scaler.service.js';
 
 @injectable()
 export class ScalerFactory {

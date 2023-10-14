@@ -5,11 +5,6 @@
     "source.fixAll.eslint": true
   },
   "files.eol": "\n",
-  "files.exclude": {
-    "**/*.js": { "when": "$(basename).ts" },
-    "**/*.js.map": true,
-    "**/*.tsbuildinfo": true
-  },
   "eslint.validate": ["vue", "typescript"],
   "javascript.validate.enable": true,
   "typescript.preferences.importModuleSpecifier": "shortest",

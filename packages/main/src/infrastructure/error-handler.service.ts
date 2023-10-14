@@ -1,7 +1,7 @@
 import { injectable } from 'inversify';
 import { dialog } from 'electron';
 
-import { Logger } from '~/infrastructure/Logger';
+import { Logger } from '~/infrastructure/logger.service';
 
 @injectable()
 export class ErrorHandler {

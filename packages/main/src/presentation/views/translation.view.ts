@@ -2,13 +2,11 @@ import { screen } from 'electron';
 import { BehaviorSubject } from 'rxjs';
 import * as _ from 'lodash';
 
-import { Messages } from '@selected-text-translate/common/messaging/messages';
-import { ViewNames } from '@selected-text-translate/common/views/view-names';
-import { TranslationViewSettings } from '@selected-text-translate/common/settings/Settings';
+import { Messages, ViewNames, TranslationViewSettings } from '@selected-text-translate/common';
 
-import { ViewContext } from '~/presentation/framework/ViewContext';
+import { ViewContext } from '~/presentation/framework/view-context.service';
 
-import { TranslateResultView } from './TranslateResultView';
+import { TranslateResultView } from './translate-result.view';
 
 export class TranslationView extends TranslateResultView {
   private currentScaleFactor?: number;

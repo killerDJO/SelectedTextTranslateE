@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, IpcMainEvent } from 'electron';
 import { Observable, Subscription } from 'rxjs';
 
-import { createChannel } from '@selected-text-translate/common/messaging/create-channel';
+import { createChannel } from '@selected-text-translate/common';
 
 export class MessageBus {
   constructor(

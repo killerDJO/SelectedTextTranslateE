@@ -4,8 +4,8 @@ import { shell } from 'electron';
 import { injectable } from 'inversify';
 import * as path from 'path';
 
-import { StorageFolderProvider } from '~/infrastructure/StorageFolderProvider';
-import { SettingsProvider } from '~/infrastructure/SettingsProvider';
+import { StorageFolderProvider } from '~/infrastructure/storage-folder-provider.service';
+import { SettingsProvider } from '~/infrastructure/settings-provider.service';
 
 @injectable()
 export class Logger {

@@ -30,7 +30,7 @@ module.exports = {
         pathGroupsExcludedImportTypes: [],
         pathGroups: [
           {
-            pattern: '@selected-text-translate/common/**',
+            pattern: '@selected-text-translate/**',
             group: 'internal'
           },
           {

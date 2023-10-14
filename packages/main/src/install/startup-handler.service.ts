@@ -2,9 +2,9 @@ import { injectable } from 'inversify';
 import { app } from 'electron';
 import { BehaviorSubject } from 'rxjs';
 
-import { Logger } from '~/infrastructure/Logger';
+import { Logger } from '~/infrastructure/logger.service';
 
-import { StartupItemsProvider } from './StartupItemsProvider';
+import { StartupItemsProvider } from './startup-items-provider.service';
 
 @injectable()
 export class StartupHandler {

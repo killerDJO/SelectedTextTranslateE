@@ -1,9 +1,9 @@
 import { autoUpdater, shell, dialog, app, MessageBoxOptions } from 'electron';
 import { injectable } from 'inversify';
 
-import { SettingsProvider } from '~/infrastructure/SettingsProvider';
-import { Logger } from '~/infrastructure/Logger';
-import { NotificationSender } from '~/infrastructure/NotificationSender';
+import { SettingsProvider } from '~/infrastructure/settings-provider.service';
+import { Logger } from '~/infrastructure/logger.service';
+import { NotificationSender } from '~/infrastructure/notification-sender.service';
 
 @injectable()
 export class Updater {

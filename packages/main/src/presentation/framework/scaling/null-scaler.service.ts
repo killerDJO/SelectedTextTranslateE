@@ -1,7 +1,7 @@
 import { BehaviorSubject } from 'rxjs';
 import { injectable } from 'inversify';
 
-import { IScaler } from './IScaler';
+import { IScaler } from './scaling.interface.js';
 
 @injectable()
 export class NullScaler implements IScaler {

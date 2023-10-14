@@ -1,12 +1,11 @@
 import { Observable } from 'rxjs';
 
-import { Messages } from '@selected-text-translate/common/messaging/messages';
-import { ViewNames } from '@selected-text-translate/common/views/view-names';
+import { Messages, ViewNames } from '@selected-text-translate/common';
 
-import { ViewContext } from '~/presentation/framework/ViewContext';
-import { mapSubject } from '~/utils/map-subject';
+import { ViewContext } from '~/presentation/framework/view-context.service';
+import { mapSubject } from '~/utils/observable.utils';
 
-import { TranslateResultView } from './TranslateResultView';
+import { TranslateResultView } from './translate-result.view';
 
 export class HistoryView extends TranslateResultView {
   public readonly showHistorySettings$: Observable<void>;

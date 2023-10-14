@@ -1,24 +1,23 @@
 import { injectable } from 'inversify';
 import { concatMap, distinctUntilChanged } from 'rxjs/operators';
 
-import { ViewNames } from '@selected-text-translate/common/views/view-names';
-import { SettingsGroup } from '@selected-text-translate/common/settings/settings-group';
+import { ViewNames, SettingsGroup } from '@selected-text-translate/common';
 
-import { Taskbar } from '~/presentation/Taskbar';
-import { TranslationView } from '~/presentation/views/TranslationView';
-import { HotkeysRegistry } from '~/presentation/hotkeys/HotkeysRegistry';
-import { IconsProvider } from '~/presentation/framework/IconsProvider';
-import { ViewsRegistry } from '~/presentation/views/ViewsRegistry';
-import { ViewBase } from '~/presentation/views/ViewBase';
-import { HistoryView } from '~/presentation/views/HistoryView';
-import { SettingsView } from '~/presentation/views/SettingsView';
-import { AboutView } from '~/presentation/views/AboutView';
-import { TextExtractor } from '~/services/TextExtractor';
-import { SettingsProvider } from '~/infrastructure/SettingsProvider';
-import { StartupHandler } from '~/install/StartupHandler';
-import { Updater } from '~/install/Updater';
+import { Taskbar } from '~/presentation/taskbar.service';
+import { TranslationView } from '~/presentation/views/translation.view';
+import { HotkeysRegistry } from '~/presentation/hotkeys/hotkeys-registry.service';
+import { IconsProvider } from '~/presentation/framework/icons-provider.service';
+import { ViewsRegistry } from '~/presentation/views/views-registry.service';
+import { BaseView } from '~/presentation/views/base.view';
+import { HistoryView } from '~/presentation/views/history.view';
+import { SettingsView } from '~/presentation/views/settings.view';
+import { AboutView } from '~/presentation/views/about.view';
+import { TextExtractor } from '~/services/text-extractor.service';
+import { SettingsProvider } from '~/infrastructure/settings-provider.service';
+import { StartupHandler } from '~/install/startup-handler.service';
+import { Updater } from '~/install/updater.service';
 
-import { TranslateResultView } from './views/TranslateResultView';
+import { TranslateResultView } from './views/translate-result.view';
 
 @injectable()
 export class Application {
@@ -106,7 +105,7 @@ export class Application {
       .subscribe(text => this.translationView.translateText(text, showDefinitions));
   }
 
-  private createView<TView extends ViewBase>(
+  private createView<TView extends BaseView>(
     viewName: ViewNames,
     postCreateAction?: (view: TView) => void
   ): TView {

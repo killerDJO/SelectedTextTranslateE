@@ -2,11 +2,11 @@ import { globalShortcut } from 'electron';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { injectable } from 'inversify';
 
-import { Hotkey, HotkeySettings } from '@selected-text-translate/common/settings/Settings';
+import { Hotkey, HotkeySettings } from '@selected-text-translate/common';
 
-import { NotificationSender } from '~/infrastructure/NotificationSender';
-import { Logger } from '~/infrastructure/Logger';
-import { SettingsProvider } from '~/infrastructure/SettingsProvider';
+import { NotificationSender } from '~/infrastructure/notification-sender.service';
+import { Logger } from '~/infrastructure/logger.service';
+import { SettingsProvider } from '~/infrastructure/settings-provider.service';
 
 @injectable()
 export class HotkeysRegistry {

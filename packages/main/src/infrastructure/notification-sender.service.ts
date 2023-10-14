@@ -1,7 +1,7 @@
 import { Notification } from 'electron';
 import { injectable } from 'inversify';
 
-import { Logger } from '~/infrastructure/Logger';
+import { Logger } from '~/infrastructure/logger.service';
 
 @injectable()
 export class NotificationSender {

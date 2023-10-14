@@ -3,8 +3,7 @@ import { injectable } from 'inversify';
 import { BehaviorSubject } from 'rxjs';
 import { has, isArray, isPlainObject } from 'lodash';
 
-import { Settings } from '@selected-text-translate/common/settings/Settings';
-import { DeepPartial } from '@selected-text-translate/common/typings/deep-partial';
+import { Settings, DeepPartial } from '@selected-text-translate/common';
 
 import * as defaultSettings from '~/default-settings.json';
 import * as languages from '~/languages.json';

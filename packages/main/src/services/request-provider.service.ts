@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { injectable } from 'inversify';
 
-import { ProxySettings } from '@selected-text-translate/common/settings/settings';
+import { ProxySettings } from '@selected-text-translate/common';
 
-import { Logger } from '~/infrastructure/Logger';
-import { SettingsProvider } from '../infrastructure/SettingsProvider';
+import { Logger } from '~/infrastructure/logger.service';
+import { SettingsProvider } from '../infrastructure/settings-provider.service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const HttpsProxyAgent = require('https-proxy-agent');

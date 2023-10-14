@@ -1,12 +1,12 @@
 import { BehaviorSubject } from 'rxjs';
 import { injectable } from 'inversify';
 
-import { ScalingSettings } from '@selected-text-translate/common/settings/Settings';
+import { ScalingSettings } from '@selected-text-translate/common';
 
-import { SettingsProvider } from '~/infrastructure/SettingsProvider';
-import { mapSubject } from '~/utils/map-subject';
+import { SettingsProvider } from '~/infrastructure/settings-provider.service';
+import { mapSubject } from '~/utils/observable.utils';
 
-import { IScaler } from './IScaler';
+import { IScaler } from './scaling.interface.js';
 
 @injectable()
 export class Scaler implements IScaler {

@@ -1,15 +1,13 @@
 import { Observable } from 'rxjs';
 
-import { ViewNames } from '@selected-text-translate/common/views/view-names';
-import { Messages } from '@selected-text-translate/common/messaging/messages';
-import { SettingsGroup } from '@selected-text-translate/common/settings/settings-group';
+import { ViewNames, Messages, SettingsGroup } from '@selected-text-translate/common';
 
-import { mapSubject } from '~/utils/map-subject';
-import { ViewContext } from '~/presentation/framework/ViewContext';
+import { mapSubject } from '~/utils/observable.utils';
+import { ViewContext } from '~/presentation/framework/view-context.service';
 
-import { ViewBase } from './ViewBase';
+import { BaseView } from './base.view';
 
-export class SettingsView extends ViewBase {
+export class SettingsView extends BaseView {
   public readonly pauseHotkeys$: Observable<boolean>;
   public readonly setStartupState$: Observable<boolean>;
   public readonly openSettingsFile$: Observable<void>;
