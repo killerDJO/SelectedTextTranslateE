@@ -32,6 +32,8 @@ defineEmits<{
   (e: 'search'): void;
   (e: 'translate', text: string): void;
   (e: 'hard-delete'): void;
+  (e: 'archive'): void;
+  (e: 'unarchive'): void;
   (e: 'update-tags', tags: Tag[]): void;
 }>();
 
@@ -119,7 +121,7 @@ function initializeCurrentView(): void {
 </script>
 
 <template>
-  <div class="content" :class="{ 'is-embedded': isEmbedded }">
+  <div class="content">
     <div class="actions" :class="{ 'tags-visible': showTags }">
       <link-button
         v-if="languageSuggestion && hasLanguageSuggestion"
@@ -196,7 +198,10 @@ function initializeCurrentView(): void {
       v-if="!!historyRecord && currentView === TranslateResultViews.Statistic"
       :history-record="historyRecord"
       :languages="languages"
+      :is-embedded="isEmbedded"
       @hard-delete="$emit('hard-delete')"
+      @archive="$emit('archive')"
+      @unarchive="$emit('unarchive')"
     />
   </div>
 </template>

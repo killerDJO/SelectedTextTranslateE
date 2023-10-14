@@ -72,7 +72,7 @@
       padding: $spacing-small $spacing-small $spacing-small 0;
       overflow: auto;
       position: relative;
-      min-height: calc(100vh - $spacing-small);
+      height: calc(100vh - $spacing-small);
 
       .history-translate-result {
         border: $border-width solid $color-border;

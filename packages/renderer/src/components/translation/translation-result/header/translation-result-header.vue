@@ -7,7 +7,6 @@ import type { TranslateResult } from '~/components/translation/models/translatio
 interface Props {
   translateResult: TranslateResult;
   historyRecord?: HistoryRecord;
-  isEmbedded: boolean;
 }
 const props = defineProps<Props>();
 
@@ -37,7 +36,7 @@ function translateText(text: string): void {
 </script>
 
 <template>
-  <div class="header" :class="{ 'is-embedded': isEmbedded }">
+  <div class="header">
     <div v-if="historyRecord" class="translation-actions">
       <icon-button
         v-if="historyRecord?.isStarred"
@@ -75,7 +74,7 @@ function translateText(text: string): void {
         @blur="translateText(($event.target as HTMLDivElement).innerText)"
         @keydown.enter.prevent="translateText(($event.target as HTMLDivElement).innerText)"
       >
-        {{ translateResult.sentence.origin }}
+        {{ translateResult.sentence.origin || sentence.input }}
       </div>
       <div class="origin-actions">
         <span v-if="isInputCorrected"

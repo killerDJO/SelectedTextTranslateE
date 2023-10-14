@@ -42,6 +42,8 @@ const $emit = defineEmits<{
   (e: 'search'): void;
   (e: 'translate', text: string): void;
   (e: 'hard-delete'): void;
+  (e: 'archive'): void;
+  (e: 'unarchive'): void;
   (e: 'update-tags', tags: ReadonlyArray<Tag>): void;
 }>();
 
@@ -82,7 +84,6 @@ function translateText(text: string): void {
       <translation-result-header
         :translate-result="translateResult"
         :history-record="historyRecord"
-        :is-embedded="isEmbedded"
         @translate-suggestion="$emit('translate-suggestion')"
         @force-translation="$emit('force-translation')"
         @translate-text="text => translateText(text)"
@@ -101,6 +102,8 @@ function translateText(text: string): void {
         @translate="text => translateText(text)"
         @change-language="$emit('change-language')"
         @hard-delete="$emit('hard-delete')"
+        @archive="$emit('archive')"
+        @unarchive="$emit('unarchive')"
         @update-tags="tags => $emit('update-tags', tags)"
       />
     </div>

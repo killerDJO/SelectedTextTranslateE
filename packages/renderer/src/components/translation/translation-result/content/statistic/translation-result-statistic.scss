@@ -21,6 +21,8 @@
   }
 }
 
-.hard-delete-button {
+.statistic-actions {
   margin-top: $spacing-small;
+  display: flex;
+  gap: $spacing-small;
 }

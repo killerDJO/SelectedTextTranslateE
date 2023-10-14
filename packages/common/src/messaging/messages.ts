@@ -15,6 +15,7 @@ export const Messages = {
       HandlerRendererErrorCommand: 'command:handle-renderer-error',
       OpenDevToolsCommand: 'command:open-dev-tools',
       OpenUrl: 'command:open-url',
+      HideWindowCommand: 'command:hide-window',
 
       LogInfo: 'command:log-info',
       LogWarning: 'command:log-warning',

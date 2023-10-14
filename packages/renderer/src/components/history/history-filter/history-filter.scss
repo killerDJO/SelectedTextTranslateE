@@ -7,7 +7,7 @@ $range-spacing: 25px;
   border-radius: $border-radius;
   border: $border-width solid $color-border;
   background-color: $color-background;
-  height: 100%;
+  min-height: 100%;
 
   .history-filter-item {
     margin-bottom: 0;

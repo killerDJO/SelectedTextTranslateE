@@ -27,7 +27,7 @@ onMounted(async () => {
 
 function archive() {
   translateResult.archive();
-  window.close();
+  translateResult.hide();
 }
 </script>
 
@@ -47,12 +47,12 @@ function archive() {
       :languages="app.settings.supportedLanguages"
       @translate-suggestion="translateResult.translateSuggestion()"
       @force-translation="translateResult.forceTranslation()"
-      @hard-delete="translateResult.hardDelete()"
+      @archive="archive()"
+      @unarchive="translateResult.unarchive()"
       @translate-text="(request: TranslateRequest) => translateResult.translateText(request)"
       @change-language="translateResult.changeLanguage()"
       @play-text="translateResult.playCurrentSentence()"
       @search="translateResult.search()"
-      @archive="archive()"
       @set-starred-status="(isStarred: boolean) => translateResult.setStarredStatus(isStarred)"
       @update-tags="tags => translateResult.updateTags(tags)"
     />

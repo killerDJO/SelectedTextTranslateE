@@ -7,6 +7,7 @@ export interface ICoreApi {
   notifyViewReady: () => Promise<void>;
   openDevTools: () => Promise<void>;
   openUrl: (url: string) => Promise<void>;
+  hideWindow: () => Promise<void>;
 }
 
 export interface IZoomApi {

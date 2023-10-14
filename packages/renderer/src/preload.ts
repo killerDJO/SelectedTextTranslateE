@@ -18,7 +18,8 @@ const { contextBridge, ipcRenderer } = require('electron');
 const coreApi: ICoreApi = {
   notifyViewReady: () => invoke(Messages.Renderer.Common.ViewReady),
   openDevTools: () => invoke(Messages.Renderer.Common.OpenDevToolsCommand),
-  openUrl: (url: string) => invoke(Messages.Renderer.Common.OpenUrl, url)
+  openUrl: (url: string) => invoke(Messages.Renderer.Common.OpenUrl, url),
+  hideWindow: () => invoke(Messages.Renderer.Common.HideWindowCommand)
 };
 
 const zoomApi: IZoomApi = {

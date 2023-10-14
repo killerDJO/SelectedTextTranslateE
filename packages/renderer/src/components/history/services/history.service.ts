@@ -144,6 +144,11 @@ export class HistoryService {
   public async setArchivedStatus(record: HistoryRecord, isArchived: boolean) {
     await this.upsertRecord({ ...record, isArchived });
   }
+
+  public async hardDelete(id: string) {
+    await this.historyCache.deleteRecord(id);
+    await this.historyDatabase.deleteRecord(id);
+  }
 }
 
 export const historyService = new HistoryService(

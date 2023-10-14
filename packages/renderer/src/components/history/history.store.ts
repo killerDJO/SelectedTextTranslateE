@@ -78,6 +78,7 @@ export const useHistoryStore = defineStore('history', {
         historyService.setArchivedStatus(record, isArchived)
       );
     },
+
     openSettings() {
       window.mainAPI.settings.showHistorySettings();
     }

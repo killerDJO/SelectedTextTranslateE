@@ -77,7 +77,7 @@ export class TextTranslator {
 
   private async getResponseFromService(descriptor: TranslateDescriptor): Promise<TranslateResult> {
     const logKey = getLogKey(descriptor);
-    const response = await traceTimings(this.logger, `[Translator]: Translating ${logKey}.`, () =>
+    const response = await traceTimings(this.logger, `[Translator]: Translating ${logKey}`, () =>
       this.getTranslationResponse(descriptor)
     );
 

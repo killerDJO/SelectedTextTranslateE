@@ -16,6 +16,7 @@ import {
   setDoc,
   initializeFirestore
 } from '@firebase/firestore';
+import { deleteDoc } from 'firebase/firestore';
 
 import {
   authService,
@@ -70,6 +71,16 @@ export class HistoryDatabase {
     const { id: _, ...recordData } = record;
 
     await setDoc(recordRef, recordData);
+  }
+
+  public async deleteRecord(id: string): Promise<void> {
+    this.logger.info(`[DB]: Deleting history record ${id}.`);
+
+    const db = await this.ensureInitialized();
+
+    const recordRef = doc(db, HISTORY_COLLECTION, id);
+
+    await deleteDoc(recordRef);
   }
 
   private mapHistoryRecord(doc: DocumentSnapshot<DocumentData>): HistoryRecord {

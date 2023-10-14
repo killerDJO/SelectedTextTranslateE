@@ -147,7 +147,26 @@ export const useTranslateResultStore = defineStore('translate-result', {
     async archive() {
       await updateRecord(this, record => historyService.setArchivedStatus(record, true));
     },
-    async hardDelete() {}
+    async unarchive() {
+      await updateRecord(this, record => historyService.setArchivedStatus(record, false));
+    },
+    async hardDelete() {
+      if (!this.historyRecord) {
+        throw new Error('History record is not available.');
+      }
+
+      try {
+        this.isTranslationInProgress = true;
+        await historyService.hardDelete(this.historyRecord.id);
+        window.mainAPI.translation.historyRecordChange(this.historyRecord.id);
+        this.clearCurrentTranslation();
+      } finally {
+        this.isTranslationInProgress = false;
+      }
+    },
+    async hide() {
+      await window.mainAPI.core.hideWindow();
+    }
   }
 });
 

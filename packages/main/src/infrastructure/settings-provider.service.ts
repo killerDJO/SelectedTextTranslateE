@@ -5,8 +5,8 @@ import { has, isArray, isPlainObject } from 'lodash';
 
 import { Settings, DeepPartial } from '@selected-text-translate/common';
 
-import * as defaultSettings from '~/default-settings.json';
-import * as languages from '~/languages.json';
+import defaultSettings from '~/default-settings.json';
+import languages from '~/languages.json';
 
 type DefaultSettings = typeof defaultSettings;
 
@@ -47,7 +47,7 @@ export class SettingsProvider {
     const mainSettings = this.getSettingsByDefaultSettings(defaultSettings, '');
 
     const languagesMap = new Map<string, string>();
-    for (const language of Array.from(languages)) {
+    for (const language of languages) {
       languagesMap.set(language.code, language.name);
     }
     mainSettings.supportedLanguages = languagesMap;

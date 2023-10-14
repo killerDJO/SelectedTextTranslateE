@@ -2,16 +2,13 @@
   height: 50px;
   padding-right: $spacing-small;
   padding-top: $spacing-small;
+  padding-left: $spacing-large;
   line-height: 20px;
   display: grid;
   grid-template-columns: 15px 1fr;
   box-sizing: border-box;
   border-bottom: $border-width solid $color-border;
   white-space: nowrap;
-
-  &:not(.is-embedded) {
-    padding-left: $spacing-large;
-  }
 
   .translation-actions {
     grid-row: 1;

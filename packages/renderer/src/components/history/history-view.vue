@@ -119,6 +119,11 @@ function toggleFilter() {
   isFilterVisible.value = !isFilterVisible.value;
   isTranslationVisible.value = false;
 }
+
+async function hardDelete() {
+  await translateResult.hardDelete();
+  isTranslationVisible.value = false;
+}
 </script>
 
 <template>
@@ -219,6 +224,7 @@ function toggleFilter() {
           :is-in-progress="translateResult.isTranslationInProgress"
           :settings="app.settings.views.translation.renderer"
           :languages="app.settings.supportedLanguages"
+          :is-embedded="true"
           @translate-suggestion="translateResult.translateSuggestion()"
           @force-translation="translateResult.forceTranslation()"
           @translate-text="(request: TranslateRequest) => translateResult.translateText(request)"
@@ -226,6 +232,8 @@ function toggleFilter() {
           @play-text="translateResult.playCurrentSentence()"
           @search="translateResult.search()"
           @archive="translateResult.archive()"
+          @unarchive="translateResult.unarchive()"
+          @hard-delete="hardDelete()"
           @set-starred-status="(isStarred: boolean) => translateResult.setStarredStatus(isStarred)"
           @update-tags="tags => translateResult.updateTags(tags)"
         />

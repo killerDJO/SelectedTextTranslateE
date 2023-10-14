@@ -1,11 +1,8 @@
 .content {
   padding-right: $spacing-small;
   padding-top: $spacing-small;
+  padding-left: $spacing-large;
   font-size: $font-medium;
-
-  &:not(.is-embedded) {
-    padding-left: $spacing-large;
-  }
 
   .actions {
     margin-bottom: $spacing-default;

@@ -169,6 +169,7 @@ export abstract class BaseView {
     this.messageBus.listenToMessage(Messages.Renderer.Common.OpenUrl, (url: string) =>
       shell.openExternal(url)
     );
+    this.messageBus.listenToMessage(Messages.Renderer.Common.HideWindowCommand, () => this.hide());
   }
 
   private setupSettingsApi(): void {

@@ -72,6 +72,11 @@ export class HistoryCache {
     await db.put('history', record);
   }
 
+  public async deleteRecord(id: string) {
+    const db = await this.ensureInitialized();
+    await db.delete('history', id);
+  }
+
   public async getAllTags(): Promise<string[]> {
     const db = await this.ensureInitialized();
 
