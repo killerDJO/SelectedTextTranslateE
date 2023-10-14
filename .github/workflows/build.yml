@@ -14,8 +14,6 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: '18.x'
-      - name: Setup node-gyp
-        run: npm config set msvs_version 2019
       - name: Install NPM
         run: npm ci
       - name: Build
