@@ -21,7 +21,7 @@ import { TranslateResultView } from './views/translate-result.view';
 
 @injectable()
 export class Application {
-  private taskbar!: Taskbar;
+  private taskbar: Taskbar;
 
   constructor(
     private readonly hotkeysRegistry: HotkeysRegistry,
@@ -32,7 +32,7 @@ export class Application {
     private readonly updater: Updater,
     private readonly startupHandler: StartupHandler
   ) {
-    this.createTaskbar();
+    this.taskbar = this.createTaskbar();
     this.setupHotkeys();
   }
 
@@ -85,18 +85,19 @@ export class Application {
     );
   }
 
-  private createTaskbar(): void {
-    this.taskbar = new Taskbar(this.iconsProvider, this.settingsProvider);
+  private createTaskbar(): Taskbar {
+    const taskbar = new Taskbar(this.iconsProvider, this.settingsProvider);
 
-    this.taskbar.translateSelectedText$.subscribe(() => this.translateSelectedText());
-    this.taskbar.showSettings$.subscribe(() => this.settingsView.show());
-    this.taskbar.showHistory$.subscribe(() => this.historyView.show());
-    this.taskbar.isSuspended$
+    taskbar.translateSelectedText$.subscribe(() => this.translateSelectedText());
+    taskbar.showSettings$.subscribe(() => this.settingsView.show());
+    taskbar.showHistory$.subscribe(() => this.historyView.show());
+    taskbar.isSuspended$
       .pipe(distinctUntilChanged())
       .subscribe(areSuspended =>
         areSuspended ? this.hotkeysRegistry.suspendHotkeys() : this.hotkeysRegistry.enableHotkeys()
       );
-    this.taskbar.showAbout$.subscribe(() => this.aboutView.show());
+    taskbar.showAbout$.subscribe(() => this.aboutView.show());
+    return taskbar;
   }
 
   private translateSelectedText(showDefinitions = false): void {

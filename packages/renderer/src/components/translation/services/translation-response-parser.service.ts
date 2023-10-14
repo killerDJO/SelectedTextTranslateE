@@ -95,7 +95,6 @@ export class TranslationResponseParser {
     if (!Array.isArray(root)) {
       throw Error('root is not an array');
     }
-    console.log(root);
 
     const sentence = this.parseSentence(root, input);
     const categories = this.parseTranslateCategories(root);

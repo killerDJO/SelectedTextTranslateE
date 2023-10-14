@@ -1,13 +1,13 @@
 {
   "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*.ts", "src/**/*.vue"],
+
   "compilerOptions": {
     "baseUrl": ".",
     "skipLibCheck": true,
-    "declaration": false,
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": false,
     "outDir": "./dist",
+    "composite": true,
     "paths": {
       "~/*": ["./src/*"]
     }
@@ -16,7 +16,8 @@
     "watchFile": "dynamicPriorityPolling",
     "watchDirectory": "dynamicPriorityPolling"
   },
-  "exclude": ["preload.ts"],
+  "include": ["env.d.ts", "src/**/*.ts", "src/**/*.vue"],
+  "exclude": ["src/preload.ts"],
   "references": [
     {
       "path": "./tsconfig.config.json"

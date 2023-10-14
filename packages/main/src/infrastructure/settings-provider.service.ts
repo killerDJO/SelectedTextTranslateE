@@ -47,7 +47,7 @@ export class SettingsProvider {
     const mainSettings = this.getSettingsByDefaultSettings(defaultSettings, '');
 
     const languagesMap = new Map<string, string>();
-    for (const language of languages) {
+    for (const language of Array.from(languages)) {
       languagesMap.set(language.code, language.name);
     }
     mainSettings.supportedLanguages = languagesMap;

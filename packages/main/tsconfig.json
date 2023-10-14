@@ -17,8 +17,6 @@
     "baseUrl": ".",
     "rootDir": "./src",
     "outDir": "../../dist/app/main",
-    "incremental": true,
-    "tsBuildInfoFile": "../../dist/app/main/.tsbuildinfo",
     "paths": {
       "~/*": ["src/*"]
     }

@@ -2,10 +2,11 @@
   "name": "@selected-text-translate/renderer",
   "private": true,
   "scripts": {
-    "build": "tsc --build . && run-p type-check build-only",
-    "watch": "tsc --build && run-p type-check build-only:watch",
-    "build-only": "vite build --emptyOutDir",
-    "build-only:watch": "vite build --emptyOutDir --watch",
+    "build": "rimraf ../../dist/app/renderer && tsc --build . && run-p type-check build:preload build-only",
+    "watch": "rimraf ../../dist/app/renderer && tsc --build && run-p type-check build:preload build-only:watch",
+    "build:preload": "vite build --config ./dist/vite-preload.config.js",
+    "build-only": "vite build",
+    "build-only:watch": "vite build --watch",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint . --ext .vue,.ts --fix"
   },

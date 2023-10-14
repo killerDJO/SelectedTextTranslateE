@@ -17,8 +17,7 @@ export default defineConfig({
     chunkSizeWarningLimit: 10000,
     rollupOptions: {
       input: {
-        index: './src/index.html',
-        preload: './src/preload.ts'
+        index: './src/index.html'
       },
       output: {
         manualChunks(id) {
@@ -28,7 +27,8 @@ export default defineConfig({
         }
       },
       external: ['electron']
-    }
+    },
+    emptyOutDir: false
   },
   resolve: {
     alias: {
