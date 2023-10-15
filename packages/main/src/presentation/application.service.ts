@@ -98,6 +98,7 @@ export class Application {
       .subscribe(areSuspended =>
         areSuspended ? this.hotkeysRegistry.suspendHotkeys() : this.hotkeysRegistry.enableHotkeys()
       );
+    taskbar.showAbout$.subscribe(() => this.aboutView.show());
     taskbar.openLogs$.subscribe(() => this.logger.openLogFolder());
     return taskbar;
   }
