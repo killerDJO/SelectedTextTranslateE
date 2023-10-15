@@ -39,7 +39,9 @@ export class HistoryMerger {
       }
     );
 
-    const mergeCandidates = this.mergeCandidatesFinder.getMergeCandidates(recentRecords.records);
+    const mergeCandidates = await this.mergeCandidatesFinder.getMergeCandidates(
+      recentRecords.records
+    );
     return this.filterBlacklistedRecords(mergeCandidates);
   }
 
