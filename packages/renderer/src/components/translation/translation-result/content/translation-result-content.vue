@@ -106,17 +106,21 @@ watch(
 );
 
 function initializeCurrentView(): void {
-  if (
-    !hasCategories.value &&
-    hasDefinitions.value &&
-    props.defaultView === TranslateResultViews.Translation
-  ) {
-    currentView.value = TranslateResultViews.Definition;
-  } else if (!hasDefinitions.value && props.defaultView === TranslateResultViews.Definition) {
-    currentView.value = TranslateResultViews.Translation;
-  } else {
-    currentView.value = props.defaultView;
+  if (props.defaultView === TranslateResultViews.Translation && !hasCategories.value) {
+    currentView.value = hasDefinitions.value
+      ? TranslateResultViews.Definition
+      : TranslateResultViews.Statistic;
+    return;
   }
+
+  if (props.defaultView === TranslateResultViews.Definition && !hasDefinitions.value) {
+    currentView.value = hasCategories.value
+      ? TranslateResultViews.Translation
+      : TranslateResultViews.Statistic;
+    return;
+  }
+
+  currentView.value = props.defaultView;
 }
 </script>
 
