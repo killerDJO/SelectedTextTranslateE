@@ -26,4 +26,5 @@ jobs:
         with:
           artifacts: 'dist/installer/*'
           omitBody: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          repo: SelectedTextTranslateReleases
+          token: ${{ secrets.RELEASES_TOKEN }}
