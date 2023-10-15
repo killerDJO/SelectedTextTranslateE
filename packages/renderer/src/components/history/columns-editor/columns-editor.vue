@@ -26,12 +26,15 @@ const $emit = defineEmits<{
 const dropInstance = ref<InstanceType<typeof DropButton> | null>(null);
 const dropItems = computed<ColumnDropItem[]>(() => {
   const columns = Object.keys(props.columns) as HistoryColumn[];
-  return columns.map(column => ({
-    column: column,
-    text: getColumnName(column),
-    isChecked: props.columns[column].isVisible,
-    weight: props.columns[column].weight
-  }));
+  return columns
+    .map(column => ({
+      column: column,
+      text: getColumnName(column),
+      isChecked: props.columns[column].isVisible,
+      weight: props.columns[column].weight,
+      index: props.columns[column].index
+    }))
+    .sort((a, b) => a.index - b.index);
 });
 
 function itemClick(item: ColumnDropItem) {
@@ -103,10 +106,11 @@ function moveItem(item: ColumnDropItem, nextIndexGenerator: (index: number) => n
 }
 
 function mapItems(items: ReadonlyArray<ColumnDropItem>): ColumnsSettings {
-  return items.reduce((columnsSettings, setting) => {
+  return items.reduce((columnsSettings, setting, index) => {
     columnsSettings[setting.column] = {
       isVisible: setting.isChecked,
-      weight: setting.weight
+      weight: setting.weight,
+      index: index
     };
     return columnsSettings;
   }, {} as ColumnsSettings);

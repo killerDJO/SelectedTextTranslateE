@@ -102,6 +102,7 @@ export type ColumnsSettings = { [key in HistoryColumn]: ColumnSettings };
 export interface ColumnSettings {
   readonly isVisible: boolean;
   readonly weight: number;
+  readonly index: number;
 }
 
 export enum HistoryColumn {

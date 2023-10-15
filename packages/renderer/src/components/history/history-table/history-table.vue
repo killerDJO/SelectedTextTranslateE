@@ -47,21 +47,25 @@ const sortOrder$ = computed({
 const dataTableConfig$ = computed<DataTableConfig<HistoryColumn>>(() => {
   const columns = Object.keys(props.columns) as HistoryColumn[];
   return {
-    columns: columns.map(column => ({
-      id: column,
-      isVisible: props.columns[column].isVisible,
-      weight: props.columns[column].weight
-    }))
+    columns: columns
+      .map(column => ({
+        id: column,
+        isVisible: props.columns[column].isVisible,
+        weight: props.columns[column].weight,
+        index: props.columns[column].index
+      }))
+      .sort((a, b) => a.index - b.index)
   };
 });
 
 function updateColumnsConfiguration(
   columnsConfiguration: ReadonlyArray<DataTableColumnConfig<HistoryColumn>>
 ): void {
-  const updatedColumns = columnsConfiguration.reduce((columnsSettings, config) => {
+  const updatedColumns = columnsConfiguration.reduce((columnsSettings, config, index) => {
     columnsSettings[config.id] = {
       isVisible: config.isVisible,
-      weight: config.weight
+      weight: config.weight,
+      index: index
     };
     return columnsSettings;
   }, {} as ColumnsSettings);

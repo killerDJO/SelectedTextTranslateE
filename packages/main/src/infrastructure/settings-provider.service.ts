@@ -6,7 +6,7 @@ import { dump, load } from 'js-yaml';
 
 import { Settings, DeepPartial } from '@selected-text-translate/common';
 
-import { defaultSettings } from '~/default-settings';
+import defaultSettings from '~/default-settings.json';
 import languages from '~/languages.json';
 
 type DefaultSettings = typeof defaultSettings;
