@@ -1,15 +1,15 @@
-import { HistorySortColumn } from '@selected-text-translate/common';
+import { HistoryColumn } from '@selected-text-translate/common';
 
-export function getColumnName(column: HistorySortColumn): string {
-  const columnToNameMap: Map<HistorySortColumn, string> = new Map<HistorySortColumn, string>([
-    [HistorySortColumn.Input, 'Word'],
-    [HistorySortColumn.Translation, 'Translation'],
-    [HistorySortColumn.Tags, 'Tags'],
-    [HistorySortColumn.TimesTranslated, 'Times'],
-    [HistorySortColumn.SourceLanguage, 'Source'],
-    [HistorySortColumn.TargetLanguage, 'Target'],
-    [HistorySortColumn.LastTranslatedDate, 'Last Translated'],
-    [HistorySortColumn.IsArchived, 'Status']
+export function getColumnName(column: HistoryColumn): string {
+  const columnToNameMap: Map<HistoryColumn, string> = new Map<HistoryColumn, string>([
+    [HistoryColumn.Input, 'Word'],
+    [HistoryColumn.Translation, 'Translation'],
+    [HistoryColumn.Tags, 'Tags'],
+    [HistoryColumn.TimesTranslated, 'Times'],
+    [HistoryColumn.SourceLanguage, 'Source'],
+    [HistoryColumn.TargetLanguage, 'Target'],
+    [HistoryColumn.LastTranslatedDate, 'Last Translated'],
+    [HistoryColumn.IsArchived, 'Status']
   ]);
 
   const columnName = columnToNameMap.get(column);

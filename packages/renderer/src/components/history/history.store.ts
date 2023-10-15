@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-import { HistorySortColumn, type Tag } from '@selected-text-translate/common';
+import { HistoryColumn, type Tag } from '@selected-text-translate/common';
 
 import { useAppStore } from '~/app.store';
 import { textPlayer } from '~/components/translation/services/text-player.service';
@@ -15,7 +15,7 @@ import { historyService } from './services/history.service';
 interface HistoryState {
   isLoading: boolean;
   filter: HistoryFilter;
-  sortColumn: HistorySortColumn;
+  sortColumn: HistoryColumn;
   sortOrder: SortOrder;
   pageNumber: number;
   totalRecords: number;
@@ -26,7 +26,7 @@ export const useHistoryStore = defineStore('history', {
   state: () => {
     const state: HistoryState = {
       filter: { starredOnly: false, includeArchived: false },
-      sortColumn: HistorySortColumn.LastTranslatedDate,
+      sortColumn: HistoryColumn.LastTranslatedDate,
       sortOrder: SortOrder.Desc,
       pageNumber: 0,
       totalRecords: 0,

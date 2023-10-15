@@ -2,7 +2,7 @@ import { orderBy } from 'lodash-es';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import { add } from 'date-fns';
 
-import { HistorySortColumn } from '@selected-text-translate/common';
+import { HistoryColumn } from '@selected-text-translate/common';
 
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { SortOrder } from '~/components/history/models/sort-order.enum';
@@ -37,7 +37,7 @@ export class HistoryCache {
   ) {}
 
   public async queryRecords(
-    sortColumn: HistorySortColumn,
+    sortColumn: HistoryColumn,
     sortOrder: SortOrder,
     start: number,
     limit: number,
@@ -131,18 +131,18 @@ export class HistoryCache {
 
   private sortRecords(
     records: HistoryRecord[],
-    sortColumn: HistorySortColumn,
+    sortColumn: HistoryColumn,
     sortOrder: SortOrder
   ): HistoryRecord[] {
     const sortColumnMap = {
-      [HistorySortColumn.Input]: 'sentence',
-      [HistorySortColumn.TimesTranslated]: 'translationsNumber',
-      [HistorySortColumn.LastTranslatedDate]: 'lastTranslatedDate',
-      [HistorySortColumn.Translation]: 'translateResult.sentence.translation',
-      [HistorySortColumn.SourceLanguage]: 'sourceLanguage',
-      [HistorySortColumn.TargetLanguage]: 'targetLanguage',
-      [HistorySortColumn.IsArchived]: 'isArchived',
-      [HistorySortColumn.Tags]: 'tags'
+      [HistoryColumn.Input]: 'sentence',
+      [HistoryColumn.TimesTranslated]: 'translationsNumber',
+      [HistoryColumn.LastTranslatedDate]: 'lastTranslatedDate',
+      [HistoryColumn.Translation]: 'translateResult.sentence.translation',
+      [HistoryColumn.SourceLanguage]: 'sourceLanguage',
+      [HistoryColumn.TargetLanguage]: 'targetLanguage',
+      [HistoryColumn.IsArchived]: 'isArchived',
+      [HistoryColumn.Tags]: 'tags'
     };
 
     return orderBy(records, [sortColumnMap[sortColumn]], [sortOrder]);

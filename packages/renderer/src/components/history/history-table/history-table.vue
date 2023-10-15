@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { HistorySortColumn, Tag, ColumnsSettings } from '@selected-text-translate/common';
+import { HistoryColumn, Tag, ColumnsSettings } from '@selected-text-translate/common';
 
 import type {
   DataTableColumnConfig,
@@ -16,7 +16,7 @@ import SortableHeader from './sortable-header/sortable-header.vue';
 
 interface Props {
   historyRecords: ReadonlyArray<HistoryRecord>;
-  sortColumn: HistorySortColumn;
+  sortColumn: HistoryColumn;
   sortOrder: SortOrder;
   columns: ColumnsSettings;
   languages: Map<string, string>;
@@ -25,7 +25,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'update:sortColumn', column: HistorySortColumn): void;
+  (e: 'update:sortColumn', column: HistoryColumn): void;
   (e: 'update:sortOrder', column: SortOrder): void;
   (e: 'update-columns', columns: ColumnsSettings): void;
   (e: 'translate-record', record: HistoryRecord): void;
@@ -44,10 +44,10 @@ const sortOrder$ = computed({
   get: () => props.sortOrder,
   set: order => $emit('update:sortOrder', order)
 });
-const dataTableConfig$ = computed<DataTableConfig<HistorySortColumn>>(() => {
-  const sortColumns = Object.keys(props.columns) as HistorySortColumn[];
+const dataTableConfig$ = computed<DataTableConfig<HistoryColumn>>(() => {
+  const columns = Object.keys(props.columns) as HistoryColumn[];
   return {
-    columns: sortColumns.map(column => ({
+    columns: columns.map(column => ({
       id: column,
       isVisible: props.columns[column].isVisible,
       weight: props.columns[column].weight
@@ -56,7 +56,7 @@ const dataTableConfig$ = computed<DataTableConfig<HistorySortColumn>>(() => {
 });
 
 function updateColumnsConfiguration(
-  columnsConfiguration: ReadonlyArray<DataTableColumnConfig<HistorySortColumn>>
+  columnsConfiguration: ReadonlyArray<DataTableColumnConfig<HistoryColumn>>
 ): void {
   const updatedColumns = columnsConfiguration.reduce((columnsSettings, config) => {
     columnsSettings[config.id] = {
@@ -68,37 +68,37 @@ function updateColumnsConfiguration(
   $emit('update-columns', updatedColumns);
 }
 
-function getHeaderSlotId(sortColumn: HistorySortColumn): string {
+function getHeaderSlotId(sortColumn: HistoryColumn): string {
   return `header.${sortColumn}`;
 }
 
-function getBodySlotId(sortColumn: HistorySortColumn): string {
+function getBodySlotId(sortColumn: HistoryColumn): string {
   return `body.${sortColumn}`;
 }
 
-const inputHeaderSlotId = getHeaderSlotId(HistorySortColumn.Input);
-const inputBodySlotId = getBodySlotId(HistorySortColumn.Input);
+const inputHeaderSlotId = getHeaderSlotId(HistoryColumn.Input);
+const inputBodySlotId = getBodySlotId(HistoryColumn.Input);
 
-const translationHeaderSlotId = getHeaderSlotId(HistorySortColumn.Translation);
-const translationBodySlotId = getBodySlotId(HistorySortColumn.Translation);
+const translationHeaderSlotId = getHeaderSlotId(HistoryColumn.Translation);
+const translationBodySlotId = getBodySlotId(HistoryColumn.Translation);
 
-const tagsHeaderSlotId = getHeaderSlotId(HistorySortColumn.Tags);
-const tagsBodySlotId = getBodySlotId(HistorySortColumn.Tags);
+const tagsHeaderSlotId = getHeaderSlotId(HistoryColumn.Tags);
+const tagsBodySlotId = getBodySlotId(HistoryColumn.Tags);
 
-const timesHeaderSlotId = getHeaderSlotId(HistorySortColumn.TimesTranslated);
-const timesBodySlotId = getBodySlotId(HistorySortColumn.TimesTranslated);
+const timesHeaderSlotId = getHeaderSlotId(HistoryColumn.TimesTranslated);
+const timesBodySlotId = getBodySlotId(HistoryColumn.TimesTranslated);
 
-const sourceHeaderSlotId = getHeaderSlotId(HistorySortColumn.SourceLanguage);
-const sourceBodySlotId = getBodySlotId(HistorySortColumn.SourceLanguage);
+const sourceHeaderSlotId = getHeaderSlotId(HistoryColumn.SourceLanguage);
+const sourceBodySlotId = getBodySlotId(HistoryColumn.SourceLanguage);
 
-const targetHeaderSlotId = getHeaderSlotId(HistorySortColumn.TargetLanguage);
-const targetBodySlotId = getBodySlotId(HistorySortColumn.TargetLanguage);
+const targetHeaderSlotId = getHeaderSlotId(HistoryColumn.TargetLanguage);
+const targetBodySlotId = getBodySlotId(HistoryColumn.TargetLanguage);
 
-const lastTranslatedHeaderSlotId = getHeaderSlotId(HistorySortColumn.LastTranslatedDate);
-const lastTranslatedBodySlotId = getBodySlotId(HistorySortColumn.LastTranslatedDate);
+const lastTranslatedHeaderSlotId = getHeaderSlotId(HistoryColumn.LastTranslatedDate);
+const lastTranslatedBodySlotId = getBodySlotId(HistoryColumn.LastTranslatedDate);
 
-const statusHeaderSlotId = getHeaderSlotId(HistorySortColumn.IsArchived);
-const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
+const statusHeaderSlotId = getHeaderSlotId(HistoryColumn.IsArchived);
+const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
 </script>
 <template>
   <data-table
@@ -114,7 +114,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistorySortColumn.Input"
+          :sort-column="HistoryColumn.Input"
         />
       </div>
     </template>
@@ -155,7 +155,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistorySortColumn.Translation"
+          :sort-column="HistoryColumn.Translation"
         />
       </div>
     </template>
@@ -173,7 +173,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistorySortColumn.Tags"
+          :sort-column="HistoryColumn.Tags"
         />
       </div>
     </template>
@@ -193,7 +193,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistorySortColumn.TimesTranslated"
+          :sort-column="HistoryColumn.TimesTranslated"
         />
       </div>
     </template>
@@ -207,7 +207,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistorySortColumn.SourceLanguage"
+          :sort-column="HistoryColumn.SourceLanguage"
         />
       </div>
     </template>
@@ -221,7 +221,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistorySortColumn.TargetLanguage"
+          :sort-column="HistoryColumn.TargetLanguage"
         />
       </div>
     </template>
@@ -235,7 +235,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistorySortColumn.LastTranslatedDate"
+          :sort-column="HistoryColumn.LastTranslatedDate"
         />
       </div>
     </template>
@@ -251,7 +251,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistorySortColumn.IsArchived"
+          :sort-column="HistoryColumn.IsArchived"
         />
       </div>
     </template>

@@ -2,14 +2,14 @@
 import { computed, ref } from 'vue';
 import { isEqual } from 'lodash-es';
 
-import type { ColumnsSettings, HistorySortColumn } from '@selected-text-translate/common';
+import type { ColumnsSettings, HistoryColumn } from '@selected-text-translate/common';
 
 import type { DropItem } from '~/components/shared/drop-button/drop-button.vue';
 import { getColumnName } from '~/components/history/history.utils';
 import DropButton from '~/components/shared/drop-button/drop-button.vue';
 
 interface ColumnDropItem extends DropItem {
-  readonly column: HistorySortColumn;
+  readonly column: HistoryColumn;
   weight: number;
   isChecked: boolean;
 }
@@ -25,12 +25,12 @@ const $emit = defineEmits<{
 
 const dropInstance = ref<InstanceType<typeof DropButton> | null>(null);
 const dropItems = computed<ColumnDropItem[]>(() => {
-  const sortColumns = Object.keys(props.columns) as HistorySortColumn[];
-  return sortColumns.map(sortColumn => ({
-    column: sortColumn,
-    text: getColumnName(sortColumn),
-    isChecked: props.columns[sortColumn].isVisible,
-    weight: props.columns[sortColumn].weight
+  const columns = Object.keys(props.columns) as HistoryColumn[];
+  return columns.map(column => ({
+    column: column,
+    text: getColumnName(column),
+    isChecked: props.columns[column].isVisible,
+    weight: props.columns[column].weight
   }));
 });
 
@@ -51,11 +51,9 @@ function itemClick(item: ColumnDropItem) {
 }
 
 function isHideDisabled(item: ColumnDropItem): boolean {
-  const sortColumns = Object.keys(props.columns) as HistorySortColumn[];
-  const numberOfHiddenColumns = sortColumns.filter(
-    column => !props.columns[column].isVisible
-  ).length;
-  const isLastItemHideDisabled = numberOfHiddenColumns >= sortColumns.length - 1;
+  const columns = Object.keys(props.columns) as HistoryColumn[];
+  const numberOfHiddenColumns = columns.filter(column => !props.columns[column].isVisible).length;
+  const isLastItemHideDisabled = numberOfHiddenColumns >= columns.length - 1;
 
   return isLastItemHideDisabled && item.isChecked;
 }

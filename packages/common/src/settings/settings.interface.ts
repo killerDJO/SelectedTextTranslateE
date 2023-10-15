@@ -97,14 +97,14 @@ export interface HistoryViewRendererSettings {
   readonly columns: ColumnsSettings;
 }
 
-export type ColumnsSettings = { [key in HistorySortColumn]: ColumnSettings };
+export type ColumnsSettings = { [key in HistoryColumn]: ColumnSettings };
 
 export interface ColumnSettings {
   readonly isVisible: boolean;
   readonly weight: number;
 }
 
-export enum HistorySortColumn {
+export enum HistoryColumn {
   Input = 'Input',
   TimesTranslated = 'TimesTranslated',
   LastTranslatedDate = 'LastTranslatedDate',

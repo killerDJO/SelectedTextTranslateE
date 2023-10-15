@@ -1,4 +1,4 @@
-import { HistorySortColumn, Settings } from '@selected-text-translate/common';
+import { HistoryColumn, Settings } from '@selected-text-translate/common';
 
 export const defaultSettings: Omit<Settings, 'supportedLanguages'> = {
   engine: {
@@ -90,35 +90,35 @@ export const defaultSettings: Omit<Settings, 'supportedLanguages'> = {
         pageSize: 20,
         lastRecordsToScanForMerge: 10000,
         columns: {
-          [HistorySortColumn.Translation]: {
+          [HistoryColumn.Translation]: {
             isVisible: true,
             weight: 1
           },
-          [HistorySortColumn.Input]: {
+          [HistoryColumn.Input]: {
             isVisible: true,
             weight: 1
           },
-          [HistorySortColumn.Tags]: {
+          [HistoryColumn.Tags]: {
             isVisible: true,
             weight: 0.65
           },
-          [HistorySortColumn.TimesTranslated]: {
+          [HistoryColumn.TimesTranslated]: {
             isVisible: true,
             weight: 0.25
           },
-          [HistorySortColumn.LastTranslatedDate]: {
+          [HistoryColumn.LastTranslatedDate]: {
             isVisible: true,
             weight: 0.45
           },
-          [HistorySortColumn.SourceLanguage]: {
+          [HistoryColumn.SourceLanguage]: {
             isVisible: false,
             weight: 0.4
           },
-          [HistorySortColumn.TargetLanguage]: {
+          [HistoryColumn.TargetLanguage]: {
             isVisible: false,
             weight: 0.4
           },
-          [HistorySortColumn.IsArchived]: {
+          [HistoryColumn.IsArchived]: {
             isVisible: true,
             weight: 0.2
           }

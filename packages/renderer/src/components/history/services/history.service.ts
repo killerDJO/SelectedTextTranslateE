@@ -1,6 +1,6 @@
 import { cloneDeep, uniq } from 'lodash-es';
 
-import type { HistorySortColumn, Tag } from '@selected-text-translate/common';
+import type { HistoryColumn, Tag } from '@selected-text-translate/common';
 
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { HistoryFilter } from '~/components/history/models/history-filter.model';
@@ -42,7 +42,7 @@ export class HistoryService {
   }
 
   public async queryRecords(
-    sortColumn: HistorySortColumn,
+    sortColumn: HistoryColumn,
     sortOrder: SortOrder,
     start: number,
     limit: number,

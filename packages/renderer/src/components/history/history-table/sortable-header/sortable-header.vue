@@ -1,22 +1,20 @@
 <script setup lang="ts">
-import type { HistorySortColumn } from '@selected-text-translate/common';
+import type { HistoryColumn } from '@selected-text-translate/common';
 
-import { ColumnNameResolver } from '~/components/history/column-name-resolver.service';
+import { getColumnName } from '~/components/history/history.utils';
 import { SortOrder } from '~/components/history/models/sort-order.enum';
 
 interface Props {
-  sortColumn: HistorySortColumn;
+  sortColumn: HistoryColumn;
   currentSortOrder?: SortOrder;
-  currentSortColumn?: HistorySortColumn;
+  currentSortColumn?: HistoryColumn;
 }
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
   (e: 'update:currentSortOrder', sortOrder: SortOrder): void;
-  (e: 'update:currentSortColumn', sortColumn: HistorySortColumn): void;
+  (e: 'update:currentSortColumn', sortColumn: HistoryColumn): void;
 }>();
-
-const columnNameResolver = new ColumnNameResolver();
 
 function isSortArrowHidden(sortOrder: SortOrder): boolean {
   return props.sortColumn === props.currentSortColumn && props.currentSortOrder !== sortOrder;
@@ -41,9 +39,7 @@ function sort(): void {
 </script>
 <template>
   <div class="sortable-header" @click="sort">
-    <span v-overflow-tooltip class="header-name">{{
-      columnNameResolver.getColumnName(sortColumn)
-    }}</span>
+    <span v-overflow-tooltip class="header-name">{{ getColumnName(sortColumn) }}</span>
 
     <font-awesome-icon
       icon="caret-up"

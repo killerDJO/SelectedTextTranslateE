@@ -42,7 +42,7 @@ const currentMergeRecords = computed(() => {
 
   return [currentCandidate.value.record].concat(currentCandidate.value.mergeRecords);
 });
-const candidatesTableConfiguration = computed<DataTableConfig>(() => {
+const candidatesTableConfiguration = computed<DataTableConfig<CandidatesTableColumns>>(() => {
   return {
     columns: [
       { id: CandidatesTableColumns.Word, isVisible: true, weight: 1 },
@@ -53,7 +53,7 @@ const candidatesTableConfiguration = computed<DataTableConfig>(() => {
     ]
   };
 });
-const candidateTableConfiguration = computed<DataTableConfig>(() => {
+const candidateTableConfiguration = computed<DataTableConfig<CandidateTableColumns>>(() => {
   return {
     columns: [
       { id: CandidateTableColumns.Word, isVisible: true, weight: 1 },
