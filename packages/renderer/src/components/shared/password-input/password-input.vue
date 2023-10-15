@@ -38,14 +38,13 @@ const value$ = computed({
       :placeholder="placeholder"
       @blur="$emit('blur')"
     />
-    <font-awesome-icon
+    <icon-button
+      :title="!isPasswordVisible ? 'Reveal Password' : 'Hide Password'"
       class="reveal-icon"
-      icon="eye"
-      size="sm"
-      @mousedown="isPasswordVisible = true"
-      @mouseup="isPasswordVisible = false"
-      @mouseout="isPasswordVisible = false"
-    />
+      @click="isPasswordVisible = !isPasswordVisible"
+    >
+      <font-awesome-icon :icon="!isPasswordVisible ? 'eye' : 'eye-slash'" size="sm" />
+    </icon-button>
   </div>
 </template>
 
