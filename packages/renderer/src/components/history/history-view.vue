@@ -174,13 +174,6 @@ async function hardDelete() {
             :columns="columns"
             @update-columns="updateColumns"
           />
-          <!-- <app-button
-            v-if="isFilterVisible || isTranslationVisible"
-            icon="angles-right"
-            class="hide-sidebar-button"
-            :primary="false"
-            @click="closeSidebar()"
-          /> -->
         </div>
       </div>
       <div class="results-holder" :class="{ 'full-height': !history.records?.length }">

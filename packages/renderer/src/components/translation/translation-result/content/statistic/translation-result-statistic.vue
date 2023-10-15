@@ -22,30 +22,44 @@ const confirmModalInstance = ref<InstanceType<typeof ConfirmModal> | null>(null)
 
 <template>
   <div class="statistic">
-    <div class="statistics-table">
-      <span class="label">Times translated:</span
-      ><span class="value">{{ historyRecord.translationsNumber }}</span>
-      <span class="label">First translated:</span
-      ><span class="value">{{ $filters.dateTime(historyRecord.createdDate) }}</span>
-      <span class="label">Last translated:</span
-      ><span class="value">{{ $filters.dateTime(historyRecord.lastTranslatedDate) }}</span>
-      <span class="label">Last updated:</span
-      ><span class="value">{{ $filters.dateTime(historyRecord.updatedDate) }}</span>
-      <span class="label">Source Language:</span
-      ><span class="value">{{ languages.get(historyRecord.sourceLanguage) }}</span>
-      <span class="label">Target Language:</span
-      ><span class="value">{{ languages.get(historyRecord.targetLanguage) }}</span>
-      <span class="label">Archived:</span
-      ><span class="value">{{ historyRecord.isArchived ? 'Yes' : 'No' }}</span>
-    </div>
-    <div class="statistic-actions">
-      <link-button v-if="!historyRecord.isArchived" :text="'Archive'" @click="$emit('archive')" />
-      <link-button v-else :text="'Unarchive'" @click="$emit('unarchive')" />
-      <link-button
-        v-if="isEmbedded"
-        :text="'Delete Forever'"
-        @click="confirmModalInstance?.open()"
-      />
+    <div class="statistics-summary">
+      <div class="summary-item">
+        <font-awesome-icon icon="hashtag" size="sm" class="icon" />
+        <span
+          >{{ historyRecord.translationsNumber }} time{{
+            historyRecord.translationsNumber > 1 ? 's' : ''
+          }}</span
+        >
+      </div>
+      <div class="summary-item">
+        <font-awesome-icon icon="globe" size="sm" class="icon" />
+        <span
+          >{{ languages.get(historyRecord.sourceLanguage) }} ➜
+          {{ languages.get(historyRecord.targetLanguage) }}</span
+        >
+      </div>
+      <div class="summary-item">
+        <font-awesome-icon :icon="['far', 'calendar']" size="sm" class="icon" />
+        <span
+          >{{ $filters.dateTime(historyRecord.createdDate) }} ➜
+          {{ $filters.dateTime(historyRecord.lastTranslatedDate) }}</span
+        >
+      </div>
+      <div class="summary-item">
+        <font-awesome-icon
+          icon="trash"
+          size="sm"
+          class="icon"
+          :class="{ archived: historyRecord.isArchived }"
+        />
+        <link-button v-if="!historyRecord.isArchived" :text="'Archive'" @click="$emit('archive')" />
+        <link-button v-else :text="'Restore'" @click="$emit('unarchive')" />
+        <link-button
+          v-if="isEmbedded"
+          :text="'Delete Forever'"
+          @click="confirmModalInstance?.open()"
+        />
+      </div>
     </div>
   </div>
   <confirm-modal ref="confirmModalInstance" @confirm="$emit('hard-delete')">

@@ -9,6 +9,7 @@ import {
   faChevronRight,
   faCaretUp,
   faCaretDown,
+  faHashtag,
   faTriangleExclamation,
   faEye,
   faArrowRight,
@@ -19,10 +20,13 @@ import {
   faBolt,
   faTrash,
   faBookOpen,
-  faAnglesRight,
-  faKeyboard
+  faKeyboard,
+  faGlobe
 } from '@fortawesome/free-solid-svg-icons';
-import { faStar as faStarRegular } from '@fortawesome/free-regular-svg-icons';
+import {
+  faStar as faStarRegular,
+  faCalendar as faCalendarRegular
+} from '@fortawesome/free-regular-svg-icons';
 
 library.add(
   faXmark,
@@ -42,10 +46,12 @@ library.add(
   faBolt,
   faTrash,
   faBookOpen,
-  faAnglesRight,
   faArrowRight,
   faArrowLeft,
-  faKeyboard
+  faKeyboard,
+  faHashtag,
+  faGlobe,
+  faCalendarRegular
 );
 
 export default FontAwesomeIcon;
