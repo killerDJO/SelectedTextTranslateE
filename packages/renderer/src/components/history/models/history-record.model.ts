@@ -3,6 +3,11 @@ import type {
   TranslateDescriptor
 } from '~/components/translation/models/translation.model';
 
+export interface TranslationInstance {
+  readonly translationDate: number;
+  readonly tags: ReadonlyArray<string>;
+}
+
 export interface HistoryRecord extends TranslateDescriptor {
   readonly id: string;
   readonly translateResult: TranslateResult;
@@ -16,4 +21,5 @@ export interface HistoryRecord extends TranslateDescriptor {
   readonly tags?: ReadonlyArray<string>;
   readonly blacklistedMergeRecords?: ReadonlyArray<string>;
   readonly user: string;
+  readonly instances?: ReadonlyArray<TranslationInstance>;
 }

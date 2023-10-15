@@ -73,7 +73,13 @@ export class HistoryService {
       isArchived: false,
       lastModifiedDate: currentTime,
       tags: this.getActiveCurrentTags(),
-      user: (await this.authService.getAccount())!.uid
+      user: (await this.authService.getAccount())!.uid,
+      instances: [
+        {
+          translationDate: currentTime,
+          tags: this.getActiveCurrentTags()
+        }
+      ]
     };
 
     await this.upsertRecord(historyRecord);
@@ -90,6 +96,15 @@ export class HistoryService {
     addTags: boolean
   ): Promise<HistoryRecord> {
     const currentTime = new Date().getTime();
+
+    const instances = record.instances?.slice() ?? [];
+    if (incrementTranslationsNumber) {
+      instances.push({
+        translationDate: currentTime,
+        tags: this.getActiveCurrentTags()
+      });
+    }
+
     const historyRecord: HistoryRecord = {
       ...record,
       translateResult: translateResult,
@@ -98,7 +113,8 @@ export class HistoryService {
       lastTranslatedDate: incrementTranslationsNumber ? currentTime : record.lastTranslatedDate,
       translationsNumber: incrementTranslationsNumber
         ? record.translationsNumber + 1
-        : record.translationsNumber
+        : record.translationsNumber,
+      instances: instances
     };
 
     await this.upsertRecord(historyRecord);

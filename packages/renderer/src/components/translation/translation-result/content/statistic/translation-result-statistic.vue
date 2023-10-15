@@ -45,7 +45,7 @@ const confirmModalInstance = ref<InstanceType<typeof ConfirmModal> | null>(null)
           {{ $filters.dateTime(historyRecord.lastTranslatedDate) }}</span
         >
       </div>
-      <div class="summary-item">
+      <div class="summary-item archive-actions">
         <font-awesome-icon
           icon="trash"
           size="sm"
@@ -59,6 +59,16 @@ const confirmModalInstance = ref<InstanceType<typeof ConfirmModal> | null>(null)
           :text="'Delete Forever'"
           @click="confirmModalInstance?.open()"
         />
+      </div>
+    </div>
+    <div v-if="historyRecord.instances" class="translation-instances">
+      <div
+        v-for="(instance, index) in historyRecord.instances.slice().reverse()"
+        :key="index"
+        class="instance"
+      >
+        At {{ $filters.dateTime(instance.translationDate) }}
+        <span v-for="tag in instance.tags" :key="tag" class="tag">{{ tag }}</span>
       </div>
     </div>
   </div>
