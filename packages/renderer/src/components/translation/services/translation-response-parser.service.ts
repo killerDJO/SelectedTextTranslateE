@@ -48,8 +48,16 @@ import type {
 //             0: [
 //                  0: <..>,
 //                  1: [
-//                       0: [<definition>", "<sample>", <..>, ["<synonym>", ...]],
-//                          ....
+//                       0: [
+//                            0: "<definition>",
+//                            1: "<sample>",
+//                            2: <..>,
+//                            3: <..>,
+//                            4: <..>,
+//                            5: [
+//                              0: [[["<synonym_1>"], ["<synonym_2>"], ...]]]
+//                            ]
+//                          ]
 //                     ],
 //                  2: <..>,
 //                  3: <part_of_speech>
@@ -89,12 +97,13 @@ import type {
 //         ]
 //   ]
 export class TranslationResponseParser {
-  public static readonly Version: string = 'v3.5';
+  public static readonly Version: string = 'v3.6';
 
   public parse(root: any, input: string): TranslateResult {
     if (!Array.isArray(root)) {
       throw Error('root is not an array');
     }
+    console.log(root);
 
     const sentence = this.parseSentence(root, input);
     const categories = this.parseTranslateCategories(root);
@@ -214,7 +223,8 @@ export class TranslationResponseParser {
         for (const definitionCategoryEntry of definitionCategory[1]) {
           const definition = definitionCategoryEntry[0];
           const sample = definitionCategoryEntry[1];
-          const categoryEntrySynonyms = definitionCategoryEntry[3] || [];
+          const categoryEntrySynonyms =
+            definitionCategoryEntry[5]?.[0]?.[0].map((entry: any) => entry?.[0]?.toString()) || [];
           definitionCategoryEntries.push({ definition, sample, synonyms: categoryEntrySynonyms });
         }
       }
