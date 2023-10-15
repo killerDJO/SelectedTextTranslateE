@@ -21,6 +21,7 @@ export class Taskbar {
   public readonly showSettings$: Subject<void> = new Subject();
   public readonly showHistory$: Subject<void> = new Subject();
   public readonly showAbout$: Subject<void> = new Subject();
+  public readonly openLogs$: Subject<void> = new Subject();
   public readonly isSuspended$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public readonly translateSelectedText$: Subject<void> = new Subject();
 
@@ -107,6 +108,7 @@ export class Taskbar {
       suspendMenuItem,
       { type: 'separator' },
       { label: 'About', click: () => this.showAbout() },
+      { label: 'Logs', click: () => this.openLogs$.next() },
       { label: 'Quit', type: 'normal', role: 'quit' }
     ]);
   }

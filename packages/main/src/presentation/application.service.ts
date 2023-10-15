@@ -16,6 +16,7 @@ import { TextExtractor } from '~/services/text-extractor.service';
 import { SettingsProvider } from '~/infrastructure/settings-provider.service';
 import { StartupHandler } from '~/install/startup-handler.service';
 import { Updater } from '~/install/updater.service';
+import { Logger } from '~/infrastructure/logger.service';
 
 import { TranslateResultView } from './views/translate-result.view';
 
@@ -30,7 +31,8 @@ export class Application {
     private readonly settingsProvider: SettingsProvider,
     private readonly viewsRegistry: ViewsRegistry,
     private readonly updater: Updater,
-    private readonly startupHandler: StartupHandler
+    private readonly startupHandler: StartupHandler,
+    private readonly logger: Logger
   ) {
     this.taskbar = this.createTaskbar();
     this.setupHotkeys();
@@ -96,7 +98,7 @@ export class Application {
       .subscribe(areSuspended =>
         areSuspended ? this.hotkeysRegistry.suspendHotkeys() : this.hotkeysRegistry.enableHotkeys()
       );
-    taskbar.showAbout$.subscribe(() => this.aboutView.show());
+    taskbar.openLogs$.subscribe(() => this.logger.openLogFolder());
     return taskbar;
   }
 
