@@ -95,10 +95,16 @@ export class TextTranslator {
   }
 
   private async getTranslationResponse(descriptor: TranslateDescriptor): Promise<unknown> {
-    const data = `[[\\"${descriptor.sentence}\\",\\"${descriptor.sourceLanguage}\\",\\"${
+    // Double-escape string for correct processing by rpc
+    const escapedData = this.escapeString(this.escapeString(descriptor.sentence));
+    const data = `[[\\"${escapedData}\\",\\"${descriptor.sourceLanguage}\\",\\"${
       descriptor.targetLanguage
-    }\\",${descriptor.isForcedTranslation ? 'null' : 'true'}],[null]]`;
+    }\\",${descriptor.isForcedTranslation ? 'null' : '1'}],[]]`;
     return window.mainAPI.translation.executeGoogleRequest('MkEWBc', data);
+  }
+
+  private escapeString(str: string): string {
+    return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   }
 
   private generateId(descriptor: TranslateDescriptor, account: AccountInfo) {
