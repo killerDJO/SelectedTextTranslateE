@@ -1,6 +1,5 @@
 <script setup lang="ts">
 interface Props {
-  text: string;
   isActive: boolean;
 }
 defineProps<Props>();
@@ -12,7 +11,7 @@ defineEmits<{
 
 <template>
   <button class="toggle-button" :class="{ active: isActive }" @click.stop="$emit('click')">
-    {{ text }}
+    <slot></slot>
   </button>
 </template>
 

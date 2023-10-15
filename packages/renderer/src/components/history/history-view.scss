@@ -14,11 +14,11 @@
 
     &.sidebar-visible {
       grid-template:
-        'header sidebar'
-        'content sidebar';
-      grid-template-columns: 1fr 30%;
-      grid-column-gap: $spacing-large;
+        'header sidebar-controls sidebar'
+        'content sidebar-controls sidebar';
+      grid-template-columns: 1fr $spacing-large 30%;
       grid-template-rows: $header-height max-content;
+      column-gap: $spacing-small;
     }
 
     .results-header {
@@ -45,6 +45,11 @@
         display: flex;
         align-items: center;
         column-gap: $spacing-small;
+
+        .filter-button .filter-active-icon {
+          margin-right: $spacing-small;
+          color: $color-button-primary;
+        }
       }
     }
 
@@ -79,6 +84,21 @@
         border-radius: $border-radius;
         overflow: auto;
         height: 100%;
+      }
+    }
+
+    .sidebar-controls {
+      grid-area: sidebar-controls;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: $color-background;
+      margin: $spacing-small 0;
+      border-radius: $border-radius;
+
+      &:hover {
+        background-color: $color-button-hover;
       }
     }
   }

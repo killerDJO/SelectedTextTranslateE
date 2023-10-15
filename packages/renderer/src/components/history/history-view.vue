@@ -154,12 +154,15 @@ async function hardDelete() {
             :left-to-right="true"
             @update:value="starredOnly => (history.filter.starredOnly = starredOnly)"
           />
-          <toggle-button
-            text="Filter"
-            :is-active="isFilterActive()"
-            class="filter-button"
-            @click="toggleFilter()"
-          />
+          <toggle-button :is-active="isFilterVisible" class="filter-button" @click="toggleFilter()">
+            <font-awesome-icon
+              v-if="isFilterActive()"
+              icon="filter"
+              size="xs"
+              class="filter-active-icon"
+            />Filter</toggle-button
+          >
+
           <app-button
             text="Merge"
             :primary="false"
@@ -171,13 +174,13 @@ async function hardDelete() {
             :columns="columns"
             @update-columns="updateColumns"
           />
-          <app-button
+          <!-- <app-button
             v-if="isFilterVisible || isTranslationVisible"
             icon="angles-right"
             class="hide-sidebar-button"
             :primary="false"
             @click="closeSidebar()"
-          />
+          /> -->
         </div>
       </div>
       <div class="results-holder" :class="{ 'full-height': !history.records?.length }">
@@ -210,6 +213,15 @@ async function hardDelete() {
             @update:page-number="pageNumber => changePage(pageNumber)"
           />
         </div>
+      </div>
+      <div
+        v-if="isFilterVisible || isTranslationVisible"
+        class="sidebar-controls"
+        @click="closeSidebar()"
+      >
+        <icon-button title="Close Sidebar" @click="closeSidebar()">
+          <font-awesome-icon icon="chevron-right" size="xs" class="icon" />
+        </icon-button>
       </div>
       <div
         v-if="isTranslationVisible && !isFilterVisible && translateResult.translateDescriptor"

@@ -8,15 +8,14 @@
   cursor: pointer;
   padding: math.div($spacing-default, 2) $spacing-default;
   justify-content: center;
+  align-items: baseline;
 
   &:hover {
     background-color: $color-button-hover;
   }
 
   &.active {
-    background-color: $color-active;
-    border-color: $color-active;
-    color: $color-white;
+    background-color: #ebecf0;
 
     @include focus-outline($color-button-primary);
   }
