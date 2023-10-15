@@ -94,11 +94,12 @@ export interface FirebaseSettings {
 export interface HistoryViewRendererSettings {
   readonly pageSize: number;
   readonly lastRecordsToScanForMerge: number;
-  readonly columns: ReadonlyArray<ColumnSettings>;
+  readonly columns: ColumnsSettings;
 }
 
+export type ColumnsSettings = { [key in HistorySortColumn]: ColumnSettings };
+
 export interface ColumnSettings {
-  readonly column: HistorySortColumn;
   readonly isVisible: boolean;
   readonly weight: number;
 }

@@ -2,7 +2,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { cloneDeep, uniq } from 'lodash-es';
 
-import type { ColumnSettings, Tag } from '@selected-text-translate/common';
+import type { Tag, ColumnsSettings } from '@selected-text-translate/common';
 
 import { useAppStore } from '~/app.store';
 import { normalizeTag } from '~/utils/tags.utils';
@@ -59,7 +59,7 @@ async function changePage(pageNumber: number) {
   await history.queryRecords();
 }
 
-function updateColumns(columns: ReadonlyArray<ColumnSettings>) {
+function updateColumns(columns: ColumnsSettings) {
   app.updateSettings({ views: { history: { renderer: { columns } } } });
 }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 
-import { type ColumnSettings, HistorySortColumn, Tag } from '@selected-text-translate/common';
+import { HistorySortColumn, Tag, ColumnsSettings } from '@selected-text-translate/common';
 
 import type {
   DataTableColumnConfig,
@@ -18,7 +18,7 @@ interface Props {
   historyRecords: ReadonlyArray<HistoryRecord>;
   sortColumn: HistorySortColumn;
   sortOrder: SortOrder;
-  columns: ReadonlyArray<ColumnSettings>;
+  columns: ColumnsSettings;
   languages: Map<string, string>;
   isLoading: boolean;
 }
@@ -27,7 +27,7 @@ const props = defineProps<Props>();
 const $emit = defineEmits<{
   (e: 'update:sortColumn', column: HistorySortColumn): void;
   (e: 'update:sortOrder', column: SortOrder): void;
-  (e: 'update-columns', columns: ReadonlyArray<ColumnSettings>): void;
+  (e: 'update-columns', columns: ColumnsSettings): void;
   (e: 'translate-record', record: HistoryRecord): void;
   (e: 'set-starred-status', record: HistoryRecord, isStarred: boolean): void;
   (e: 'play-record', record: HistoryRecord): void;
@@ -35,8 +35,6 @@ const $emit = defineEmits<{
   (e: 'tag-clicked', tag: Tag): void;
   (e: 'set-archived-status', record: HistoryRecord, isArchived: boolean): void;
 }>();
-
-const tableConfiguration = ref<DataTableConfig>(createTableConfig());
 
 const sortColumn$ = computed({
   get: () => props.sortColumn,
@@ -46,32 +44,27 @@ const sortOrder$ = computed({
   get: () => props.sortOrder,
   set: order => $emit('update:sortOrder', order)
 });
-
-watch(
-  () => props.columns,
-  () => {
-    tableConfiguration.value = createTableConfig();
-  }
-);
-
-function createTableConfig(): DataTableConfig {
+const dataTableConfig$ = computed<DataTableConfig<HistorySortColumn>>(() => {
+  const sortColumns = Object.keys(props.columns) as HistorySortColumn[];
   return {
-    columns: props.columns.map<DataTableColumnConfig>(column => ({
-      id: column.column,
-      isVisible: column.isVisible,
-      weight: column.weight
+    columns: sortColumns.map(column => ({
+      id: column,
+      isVisible: props.columns[column].isVisible,
+      weight: props.columns[column].weight
     }))
   };
-}
+});
 
 function updateColumnsConfiguration(
-  columnsConfiguration: ReadonlyArray<DataTableColumnConfig>
+  columnsConfiguration: ReadonlyArray<DataTableColumnConfig<HistorySortColumn>>
 ): void {
-  const updatedColumns: ReadonlyArray<ColumnSettings> = columnsConfiguration.map(column => ({
-    column: column.id as HistorySortColumn,
-    isVisible: column.isVisible,
-    weight: column.weight
-  }));
+  const updatedColumns = columnsConfiguration.reduce((columnsSettings, config) => {
+    columnsSettings[config.id] = {
+      isVisible: config.isVisible,
+      weight: config.weight
+    };
+    return columnsSettings;
+  }, {} as ColumnsSettings);
   $emit('update-columns', updatedColumns);
 }
 
@@ -109,7 +102,7 @@ const statusBodySlotId = getBodySlotId(HistorySortColumn.IsArchived);
 </script>
 <template>
   <data-table
-    :configuration="tableConfiguration"
+    :configuration="dataTableConfig$"
     :records="historyRecords.slice()"
     :is-loading="isLoading"
     class="results"

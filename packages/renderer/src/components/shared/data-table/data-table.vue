@@ -1,23 +1,23 @@
-<script setup lang="ts" generic="TRecord extends { id: string }">
+<script setup lang="ts" generic="TRecord extends { id: string }, TColumns extends string">
 import { cloneDeep } from 'lodash-es';
-import { computed, onMounted, ref, useSlots, watch } from 'vue';
+import { Ref, computed, onMounted, ref, useSlots, watch } from 'vue';
 
-export interface DataTableConfig {
-  readonly columns: ReadonlyArray<DataTableColumnConfig>;
+export interface DataTableConfig<TColumns> {
+  readonly columns: ReadonlyArray<DataTableColumnConfig<TColumns>>;
   clickable?: boolean;
 }
-export interface DataTableColumnConfig {
-  readonly id: string;
+export interface DataTableColumnConfig<TColumns> {
+  readonly id: TColumns;
   weight: number;
   isVisible: boolean;
 }
 interface ResizeInfo {
   readonly element: HTMLElement;
-  readonly columnConfiguration: DataTableColumnConfig;
+  readonly columnConfiguration: DataTableColumnConfig<TColumns>;
 }
 
 interface Props {
-  configuration: DataTableConfig;
+  configuration: DataTableConfig<TColumns>;
   isLoading?: boolean;
   records: TRecord[];
 }
@@ -25,14 +25,17 @@ const props = defineProps<Props>();
 
 const $emit = defineEmits<{
   (e: 'record-click', record: TRecord): void;
-  (e: 'update-columns-configuration', columns: ReadonlyArray<DataTableColumnConfig>): void;
+  (
+    e: 'update-columns-configuration',
+    columns: ReadonlyArray<DataTableColumnConfig<TColumns>>
+  ): void;
 }>();
 
 const slots = useSlots();
 
 const table = ref<HTMLElement | null>(null);
-const currentConfiguration = ref(cloneDeep(props.configuration));
-const resizeInfo = ref<ResizeInfo | null>(null);
+const currentConfiguration = ref(cloneDeep(props.configuration)) as Ref<DataTableConfig<TColumns>>;
+const resizeInfo = ref<ResizeInfo | null>(null) as Ref<ResizeInfo | null>;
 
 const visibleColumns = computed(() =>
   currentConfiguration.value.columns.filter(column => column.isVisible)
@@ -65,16 +68,19 @@ function onRecordClick(record: TRecord) {
   }
 }
 
-function getColumnWidth(id: string) {
-  const currentColumn = visibleColumns.value.find(column => column.id === id);
-  if (!currentColumn) {
+function geTColumnsWidth(id: string) {
+  const currenTColumns = visibleColumns.value.find(column => column.id === id);
+  if (!currenTColumns) {
     throw new Error(`Unable to find column with id ${id}`);
   }
 
-  return getWidthByWeight(currentColumn.weight);
+  return getWidthByWeight(currenTColumns.weight);
 }
 
-function onResizeStarted(event: MouseEvent, columnConfiguration: DataTableColumnConfig): void {
+function onResizeStarted(
+  event: MouseEvent,
+  columnConfiguration: DataTableColumnConfig<TColumns>
+): void {
   const headerBeingResized = (event.target as HTMLElement).parentElement;
   if (headerBeingResized === null) {
     throw Error('Header to resize is not found');
@@ -92,7 +98,7 @@ function onResizeProgress(event: MouseEvent): void {
   }
 
   const columnConfiguration = resizeInfo.value.columnConfiguration;
-  const newWeight = getColumnWeightAfterResize(event, resizeInfo.value);
+  const newWeight = geTColumnsWeightAfterResize(event, resizeInfo.value);
   const weightDelta = newWeight - columnConfiguration.weight;
 
   const siblingColumnIndex =
@@ -114,7 +120,7 @@ function onResizeFinished(): void {
   $emit('update-columns-configuration', currentConfiguration.value.columns);
 }
 
-function getColumnWeightAfterResize(event: MouseEvent, resizeInfo: ResizeInfo): number {
+function geTColumnsWeightAfterResize(event: MouseEvent, resizeInfo: ResizeInfo): number {
   const newWidth = event.pageX - resizeInfo.element.getBoundingClientRect().left;
   const tableWidth = table.value!.getBoundingClientRect().width;
   const widthPercentage = newWidth / tableWidth;
@@ -137,7 +143,7 @@ function getMinWeight(): number {
   return minWeight;
 }
 
-function checkIfSlotRegistered(type: string, column: DataTableColumnConfig): void {
+function checkIfSlotRegistered(type: string, column: DataTableColumnConfig<TColumns>): void {
   const key = `${type}.${column.id}`;
   if (!slots[key]) {
     throw new Error(`${type} slot for column ${column.id} must be registered`);
@@ -164,7 +170,7 @@ function getTotalColumnWeights(): number {
         <th
           v-for="(column, index) in visibleColumns"
           :key="column.id"
-          :style="{ width: getColumnWidth(column.id) + '%' }"
+          :style="{ width: geTColumnsWidth(column.id) + '%' }"
         >
           <slot :name="'header.' + column.id" />
           <div

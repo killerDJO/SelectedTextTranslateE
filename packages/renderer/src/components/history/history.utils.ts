@@ -1,7 +1,7 @@
 import { HistorySortColumn } from '@selected-text-translate/common';
 
-export class ColumnNameResolver {
-  public columnToNameMap: Map<HistorySortColumn, string> = new Map<HistorySortColumn, string>([
+export function getColumnName(column: HistorySortColumn): string {
+  const columnToNameMap: Map<HistorySortColumn, string> = new Map<HistorySortColumn, string>([
     [HistorySortColumn.Input, 'Word'],
     [HistorySortColumn.Translation, 'Translation'],
     [HistorySortColumn.Tags, 'Tags'],
@@ -12,11 +12,9 @@ export class ColumnNameResolver {
     [HistorySortColumn.IsArchived, 'Status']
   ]);
 
-  public getColumnName(column: HistorySortColumn): string {
-    const columnName = this.columnToNameMap.get(column);
-    if (!columnName) {
-      throw new Error(`${column} is not available.`);
-    }
-    return columnName;
+  const columnName = columnToNameMap.get(column);
+  if (!columnName) {
+    throw new Error(`${column} is not available.`);
   }
+  return columnName;
 }

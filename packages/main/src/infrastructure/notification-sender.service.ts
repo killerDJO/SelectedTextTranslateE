@@ -5,25 +5,29 @@ import { Logger } from '~/infrastructure/logger.service';
 
 @injectable()
 export class NotificationSender {
+  // Store current notification to prevent it from garbage collection
+  private notification?: Notification;
+
   constructor(private readonly logger: Logger) {}
 
   public async send(title: string, message: string, clickHandler?: () => void): Promise<void> {
     if (!Notification.isSupported()) {
       return;
     }
-    const notification = new Notification({
+    this.notification = new Notification({
       title: title,
       body: message
     });
 
     return new Promise<void>(resolve => {
-      notification.on('show', () => resolve());
+      this.notification?.on('show', () => resolve());
+      this.notification?.on('close', () => (this.notification = undefined));
 
       if (!!clickHandler) {
-        notification.on('click', clickHandler);
+        this.notification?.on('click', clickHandler);
       }
 
-      notification.show();
+      this.notification?.show();
     });
   }
 
