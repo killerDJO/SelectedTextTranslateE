@@ -2,6 +2,7 @@ import Store = require('electron-store');
 import { injectable } from 'inversify';
 import { BehaviorSubject } from 'rxjs';
 import { isPlainObject } from 'lodash';
+import { dump, load } from 'js-yaml';
 
 import { Settings, DeepPartial } from '@selected-text-translate/common';
 
@@ -13,7 +14,10 @@ type DefaultSettings = typeof defaultSettings;
 @injectable()
 export class SettingsProvider {
   private readonly store = new Store({
-    name: 'settings'
+    name: 'settings',
+    fileExtension: 'yaml',
+    serialize: dump,
+    deserialize: load as (text: string) => Record<string, unknown>
   });
   private settings$: BehaviorSubject<Settings> | null = null;
 

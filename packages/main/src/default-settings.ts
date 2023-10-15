@@ -4,7 +4,7 @@ export const defaultSettings: Omit<Settings, 'supportedLanguages'> = {
   engine: {
     copyDelayMilliseconds: 100,
     userAgent:
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.5249.181 Electron/21.3.1 Safari/537.36',
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
     requestTimeout: 10000,
     playVolume: 100,
     enableRequestsLogging: false,
