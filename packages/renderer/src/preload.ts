@@ -11,7 +11,7 @@ import type {
   ITranslationApi,
   IMainApi,
   IAboutApi
-} from './typings/renderer';
+} from './typings/renderer.js';
 
 const { contextBridge, ipcRenderer } = require('electron');
 

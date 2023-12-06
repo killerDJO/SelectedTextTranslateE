@@ -22,6 +22,7 @@ if (isDevelopmentRun) {
 }
 
 app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+app.disableHardwareAcceleration();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 let application: Application;

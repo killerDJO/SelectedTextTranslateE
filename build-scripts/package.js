@@ -3,6 +3,7 @@ const path = require('path');
 const rimraf = require('rimraf');
 const fs = require('fs');
 const _ = require('lodash');
+const Pruner = require('electron-packager/src/prune').Pruner;
 
 const packageConfig = {
   arch: 'x64',
@@ -19,6 +20,17 @@ const packageConfig = {
 };
 
 const INTERNAL_MODULE_NAME = '@selected-text-translate';
+
+// Reference to the `@selected-text-translate/main` package is included in the main `package.json`
+// to make sure it's dependencies are included in the package.
+// However, the workspace itself shouldn't be included, since it's just a symlink, so we should ignore it
+const originalShouldKeepModule = Pruner.prototype.shouldKeepModule;
+Pruner.prototype.shouldKeepModule = function (module, isDevDep) {
+  if (module.name === `${INTERNAL_MODULE_NAME}/main`) {
+    return false;
+  }
+  return originalShouldKeepModule.call(this, module, isDevDep);
+};
 
 clean();
 package();
