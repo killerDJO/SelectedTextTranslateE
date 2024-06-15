@@ -1,13 +1,13 @@
 import * as Mousetrap from 'mousetrap';
 
-import type { Hotkey } from '@selected-text-translate/common';
+import { Keys } from '~/host/models/settings.model';
 
 class HotkeysRegistry {
-  private readonly hotkeysByNamespace: Map<string, ReadonlyArray<Hotkey>> = new Map();
+  private readonly hotkeysByNamespace: Map<string, ReadonlyArray<Keys>> = new Map();
 
   public registerHotkeys(
     namespace: string,
-    hotkeys: ReadonlyArray<Hotkey>,
+    hotkeys: ReadonlyArray<Keys>,
     callback: () => void
   ): void {
     Mousetrap.bind(this.mapHotkeysToStrings(hotkeys), () => {
@@ -25,12 +25,12 @@ class HotkeysRegistry {
     this.hotkeysByNamespace.set(namespace, []);
   }
 
-  private mapHotkeysToStrings(hotkeys: ReadonlyArray<Hotkey>): string[] {
+  private mapHotkeysToStrings(hotkeys: ReadonlyArray<Keys>): string[] {
     return hotkeys.map(this.createCommand.bind(this));
   }
 
-  private createCommand(hotkey: Hotkey): string {
-    return hotkey.keys.map(this.remapKey.bind(this)).join('+');
+  private createCommand(hotkey: Keys): string {
+    return hotkey.map(this.remapKey.bind(this)).join('+');
   }
 
   private remapKey(key: string): string {

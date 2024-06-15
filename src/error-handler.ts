@@ -1,6 +1,7 @@
 import type { App as VueApp } from 'vue';
 
-import { ensureErrorType } from './utils/error-handling.utils';
+import { logger } from './services/logger.service';
+import { hostApi } from './host/host-api.service';
 
 export function setupErrorHandling(app: VueApp<Element>): void {
   window.onunhandledrejection = event => {
@@ -9,9 +10,9 @@ export function setupErrorHandling(app: VueApp<Element>): void {
 
   window.onerror = (
     message: string | Event,
-    source: string | undefined,
-    lineno: number | undefined,
-    colno: number | undefined,
+    _source: string | undefined,
+    _lineno: number | undefined,
+    _colno: number | undefined,
     error: Error | undefined
   ) => {
     sendErrorMessage(error || new Error(message.toString()));
@@ -23,6 +24,6 @@ export function setupErrorHandling(app: VueApp<Element>): void {
 }
 
 function sendErrorMessage(error: unknown): void {
-  console.error(error);
-  window.mainAPI.logging.notifyOnError(ensureErrorType(error));
+  logger.error(error, 'An error occurred');
+  hostApi.notifyOnError();
 }

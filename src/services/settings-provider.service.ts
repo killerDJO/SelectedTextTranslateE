@@ -1,6 +1,5 @@
-import type { Settings } from '@selected-text-translate/common';
-
 import { useAppStore } from '~/app.store';
+import { Settings } from '~/host/models/settings.model';
 
 export class SettingsProvider {
   public getSettings(): Settings {

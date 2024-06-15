@@ -1,11 +1,12 @@
 import { defineStore } from 'pinia';
 
-import type { Settings, DeepPartial } from '@selected-text-translate/common';
+import type { PartialSettings, Settings } from '~/host/models/settings.model';
+import { hostApi } from '~/host/host-api.service';
+
+import { ViewNames } from './host/models/views.model';
 
 interface AppState {
   accentColor?: string;
-  scaleFactor: number;
-  isFrameless: boolean;
   _settings?: Settings;
 }
 
@@ -13,8 +14,6 @@ export const useAppStore = defineStore('app', {
   state: () => {
     const state: AppState = {
       accentColor: undefined,
-      scaleFactor: 1,
-      isFrameless: false,
       _settings: undefined
     };
     return state;
@@ -27,32 +26,56 @@ export const useAppStore = defineStore('app', {
       }
 
       return state._settings;
+    },
+    scaleFactor: state => {
+      if (!state._settings) {
+        return 1;
+      }
+      const viewName = hostApi.getViewName();
+      if (viewName !== ViewNames.Translation && state._settings.scaling.scaleTranslationViewOnly) {
+        return 1;
+      }
+
+      return state._settings.scaling.scaleFactor;
+    },
+    isFrameless: () => {
+      return hostApi.getViewName() === ViewNames.Translation;
     }
   },
   actions: {
     async setup(): Promise<void> {
-      this.accentColor = await window.mainAPI.settings.getAccentColor();
-      this.scaleFactor = await window.mainAPI.zoom.getScaleFactor();
-      this.isFrameless = await window.mainAPI.settings.getFramelessStatus();
-      this._settings = await window.mainAPI.settings.getSettings();
-      window.mainAPI.settings.onAccentColorChange(accentColor => (this.accentColor = accentColor));
-      window.mainAPI.zoom.onScaleFactorChange(scaleFactor => (this.scaleFactor = scaleFactor));
-      window.mainAPI.settings.onSettingsChange(settings => (this._settings = settings));
+      this.accentColor = await hostApi.getAccentColor();
+      hostApi.onAccentColorChange(accentColor => (this.accentColor = accentColor));
+
+      this._settings = await hostApi.getSettings();
+      hostApi.onSettingsChange(settings => (this._settings = settings));
     },
     zoomIn(): void {
-      window.mainAPI.zoom.zoomIn();
+      const scalingSettings = this.settings.scaling;
+      const newScaleFactor = scalingSettings.scaleFactor + scalingSettings.scalingStep;
+      if (newScaleFactor > scalingSettings.maxScaling) {
+        return;
+      }
+
+      this.changeScale(newScaleFactor);
     },
     zoomOut(): void {
-      window.mainAPI.zoom.zoomOut();
+      const scalingSettings = this.settings.scaling;
+      const newScaleFactor = scalingSettings.scaleFactor - scalingSettings.scalingStep;
+      if (newScaleFactor < scalingSettings.minScaling) {
+        return;
+      }
+
+      this.changeScale(newScaleFactor);
     },
     resetZoom(): void {
-      window.mainAPI.zoom.resetZoom();
+      this.changeScale(1);
     },
-    openDevTools(): void {
-      window.mainAPI.core.openDevTools();
+    async updateSettings(settings: PartialSettings): Promise<void> {
+      await hostApi.updateSettings(settings);
     },
-    async updateSettings(settings: DeepPartial<Settings>): Promise<void> {
-      await window.mainAPI.settings.updateSettings(settings);
+    async changeScale(scaleFactor: number): Promise<void> {
+      await hostApi.updateSettings({ scaling: { scaleFactor } });
     }
   }
 });

@@ -2,8 +2,6 @@
 import { RouterView } from 'vue-router';
 import { onMounted, ref, watch } from 'vue';
 
-import type { Hotkey } from '@selected-text-translate/common';
-
 import GlobalErrors from './components/global-errors/global-errors.vue';
 import { useAppStore } from './app.store';
 import { useHistoryAuthStore } from './components/history/history-auth/history-auth.store';
@@ -13,15 +11,11 @@ const app = useAppStore();
 const historyAuth = useHistoryAuthStore();
 const isSetupCompleted = ref(false);
 
+// TODO: use suspense
 onMounted(async () => {
   await app.setup();
-
   historyAuth.setup();
-  registerDevToolsHotkey();
-
   isSetupCompleted.value = true;
-
-  await window.mainAPI.core.notifyViewReady();
 });
 
 watch(
@@ -38,7 +32,7 @@ function registerHotkeys(): void {
   const GLOBAL_HOTKEYS_NAMESPACE = 'global';
   hotkeysRegistry.unregisterHotkeys(GLOBAL_HOTKEYS_NAMESPACE);
 
-  const hotkeySettings = app.settings.renderer.hotkeys;
+  const hotkeySettings = app.settings.hotkeys;
   hotkeysRegistry.registerHotkeys(GLOBAL_HOTKEYS_NAMESPACE, hotkeySettings.zoomIn, app.zoomIn);
   hotkeysRegistry.registerHotkeys(GLOBAL_HOTKEYS_NAMESPACE, hotkeySettings.zoomOut, app.zoomOut);
   hotkeysRegistry.registerHotkeys(
@@ -46,11 +40,6 @@ function registerHotkeys(): void {
     hotkeySettings.resetZoom,
     app.resetZoom
   );
-}
-
-function registerDevToolsHotkey(): void {
-  const devToolsHotkey: Hotkey = { keys: ['ctrl', 'shift', 'i'] };
-  hotkeysRegistry.registerHotkeys('devtools', [devToolsHotkey], () => app.openDevTools());
 }
 </script>
 

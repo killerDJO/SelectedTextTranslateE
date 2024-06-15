@@ -1,11 +1,10 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 
-import { ViewNames } from '@selected-text-translate/common';
-
 import TranslationView from './components/translation/translation-view.vue';
 import HistoryView from './components/history/history-view.vue';
 import SettingsView from './components/settings/settings-view.vue';
 import AboutView from './components/about/about-view.vue';
+import { ViewNames } from './host/models/views.model';
 
 const router = createRouter({
   history: createWebHashHistory(),

@@ -1,3 +1,5 @@
+const { ar } = require('date-fns/locale');
+
 /* eslint-env node */
 module.exports = {
   root: true,
@@ -28,17 +30,17 @@ module.exports = {
         pathGroupsExcludedImportTypes: [],
         pathGroups: [
           {
-            pattern: '@selected-text-translate/**',
-            group: 'internal'
-          },
-          {
-            pattern: '#**',
+            pattern: '~/**',
             group: 'parent'
           }
         ]
       }
     ],
-    '@typescript-eslint/no-unused-vars': ['warn', { varsIgnorePattern: '^_' }],
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      { varsIgnorePattern: '^_', argsIgnorePattern: '^_' }
+    ],
+    'import/no-unresolved': 'off',
     'unused-imports/no-unused-imports': 'error'
   }
 };

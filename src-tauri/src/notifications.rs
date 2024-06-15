@@ -10,6 +10,12 @@ pub fn show_error_notification(
     let title_str = title.into();
     error!("Non critical error: [{}]. Details: {}.", title_str, err,);
 
+    show_notification(app, title_str);
+}
+
+pub fn show_notification(app: &AppHandle, title: impl Into<String>) {
+    let title_str = title.into();
+
     if !ensure_notifications_permissions(app) {
         return;
     }

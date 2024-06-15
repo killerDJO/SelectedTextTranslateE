@@ -1,6 +1,7 @@
 use tauri::AppHandle;
 
 use crate::{
+    notifications,
     settings::{PartialSettings, Settings, SettingsManager},
     text_extractor::TextExtractor,
 };
@@ -51,4 +52,9 @@ pub fn update_settings(
         updated_settings
     );
     settings_manager.update_settings(updated_settings);
+}
+
+#[tauri::command]
+pub fn notify_on_frontend_error(app: AppHandle) {
+    notifications::show_notification(&app, "Presentation error has ocurred.");
 }
