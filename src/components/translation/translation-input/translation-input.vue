@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { reactive, ref, watch } from 'vue';
 
-import type { LanguageSettings } from '@selected-text-translate/common';
-
 import type {
   PlayTextRequest,
   TranslateRequest
 } from '~/components/translation/models/requests.model';
 import type { SelectedLanguages } from '~/components/shared/language-selector/language-selector.vue';
+import { TranslationSettings } from '~/host/models/settings.model';
 
 interface Props {
-  languageSettings: LanguageSettings;
+  translationSettings: TranslationSettings;
   languages: Map<string, string>;
 }
 const props = defineProps<Props>();
@@ -21,16 +20,16 @@ const $emit = defineEmits<{
 }>();
 
 const selectedLanguages = reactive({
-  sourceLanguage: props.languageSettings.sourceLanguage,
-  targetLanguage: props.languageSettings.targetLanguage
+  sourceLanguage: props.translationSettings.sourceLanguage,
+  targetLanguage: props.translationSettings.targetLanguage
 });
 const text = ref('');
 
 watch(
-  () => props.languageSettings,
+  () => props.translationSettings,
   () => {
-    selectedLanguages.sourceLanguage = props.languageSettings.sourceLanguage;
-    selectedLanguages.targetLanguage = props.languageSettings.targetLanguage;
+    selectedLanguages.sourceLanguage = props.translationSettings.sourceLanguage;
+    selectedLanguages.targetLanguage = props.translationSettings.targetLanguage;
   },
   { deep: true }
 );

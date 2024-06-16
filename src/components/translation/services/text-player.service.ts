@@ -1,15 +1,18 @@
-import type { Settings } from '@selected-text-translate/common';
-
 import type { PlayTextRequest } from '~/components/translation/models/requests.model';
 import { logger, Logger } from '~/services/logger.service';
 import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
+import { hostApi } from '~/host/host-api.service';
+import { Settings } from '~/host/models/settings.model';
+
+import { requestsExecutor, RequestsExecutor } from './requests-executor.service';
 
 export class TextPlayer {
   private isPlayInProgress = false;
 
   public constructor(
     private readonly settingsProvider: SettingsProvider,
-    private readonly logger: Logger
+    private readonly logger: Logger,
+    private readonly requestsExecutor: RequestsExecutor
   ) {}
 
   public async playText(request: PlayTextRequest): Promise<void> {
@@ -20,10 +23,10 @@ export class TextPlayer {
     this.isPlayInProgress = true;
 
     try {
-      window.mainAPI.translation.setPlayingState(true);
+      hostApi.setPlayingState(true);
       const settings = this.settingsProvider.getSettings();
 
-      const language = request.language || settings.language.sourceLanguage;
+      const language = request.language || settings.translation.sourceLanguage;
       this.logger.info(`Playing ${this.getLogKey(request.text, language)}`);
 
       const content = await this.getAudioContent(request.text, language);
@@ -32,13 +35,13 @@ export class TextPlayer {
 
       this.logger.info(`End playing ${this.getLogKey(request.text, language)}`);
     } finally {
-      window.mainAPI.translation.setPlayingState(false);
+      hostApi.setPlayingState(false);
       this.isPlayInProgress = false;
     }
   }
 
   private async playFile(audioContent: string, settings: Settings): Promise<void> {
-    const volume = settings.engine.playVolume;
+    const volume = settings.core.playVolume;
 
     const audio = new Audio(`data:audio/mpeg;base64,${audioContent}`);
     audio.volume = volume / 100;
@@ -62,7 +65,7 @@ export class TextPlayer {
 
   private async getAudioContent(text: string, language: string): Promise<string> {
     const data = `[\\"${text}\\",\\"${language}\\",true,\\"null\\"]`;
-    const response = await window.mainAPI.translation.executeGoogleRequest<string[]>(
+    const response = await this.requestsExecutor.executeGoogleTranslateRequest<string[]>(
       'jQ1olc',
       data
     );
@@ -70,4 +73,4 @@ export class TextPlayer {
   }
 }
 
-export const textPlayer = new TextPlayer(settingsProvider, logger);
+export const textPlayer = new TextPlayer(settingsProvider, logger, requestsExecutor);

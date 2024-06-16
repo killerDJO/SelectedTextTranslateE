@@ -1,7 +1,5 @@
 import { defineStore } from 'pinia';
 
-import type { Tag } from '@selected-text-translate/common';
-
 import { TranslateResultViews } from '~/components/translation/models/translate-result-views.enum';
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { TranslateResult, TranslateDescriptor } from '../models/translation.model';
@@ -11,6 +9,8 @@ import { searchExecutor } from '../services/search-executor.service';
 import { textPlayer } from '../services/text-player.service';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
 import { historyService } from '~/components/history/services/history.service';
+import { hostApi } from '~/host/host-api.service';
+import { Tag } from '~/host/models/settings.model';
 
 export interface TranslateResultState {
   translateDescriptor?: TranslateDescriptor;
@@ -58,7 +58,7 @@ export const useTranslateResultStore = defineStore('translate-result', {
           : TranslateResultViews.Translation;
 
         if (this.historyRecord) {
-          window.mainAPI.translation.historyRecordChange(this.historyRecord.id);
+          hostApi.emitHistoryRecordChangeEvent(this.historyRecord.id);
         }
       } catch (e: unknown) {
         useGlobalErrorsStore().addError('Unable to translate text.', e);
@@ -158,14 +158,14 @@ export const useTranslateResultStore = defineStore('translate-result', {
       try {
         this.isTranslationInProgress = true;
         await historyService.hardDelete(this.historyRecord.id);
-        window.mainAPI.translation.historyRecordChange(this.historyRecord.id);
+        hostApi.emitHistoryRecordChangeEvent(this.historyRecord.id);
         this.clearCurrentTranslation();
       } finally {
         this.isTranslationInProgress = false;
       }
     },
     async hide() {
-      await window.mainAPI.core.hideWindow();
+      await hostApi.hideWindow();
     }
   }
 });
@@ -180,7 +180,7 @@ async function updateRecord(
     }
 
     const actionPromise = action(store.historyRecord);
-    window.mainAPI.translation.historyRecordChange(store.historyRecord!.id);
+    hostApi.emitHistoryRecordChangeEvent(store.historyRecord!.id);
     store.historyRecord = await historyService.getRecord(store.historyRecord.id, true);
     await actionPromise;
   } catch (e: unknown) {

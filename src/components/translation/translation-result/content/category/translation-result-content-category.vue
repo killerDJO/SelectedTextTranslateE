@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import type { TranslateResultRendererSettings } from '@selected-text-translate/common';
-
 import type {
   TranslateResultCategory,
   TranslateResultCategoryEntry
 } from '~/components/translation/models/translation.model';
+import { DisplaySettings } from '~/host/models/settings.model';
 
 interface Props {
   category: TranslateResultCategory;
-  settings: TranslateResultRendererSettings;
+  settings: DisplaySettings;
 }
 const props = defineProps<Props>();
 
@@ -54,7 +53,9 @@ function getInitiallyVisibleEntries(): ReadonlyArray<TranslateResultCategoryEntr
 
 function isVisibleEntry(entry: TranslateResultCategoryEntry, index: number): boolean {
   const LowScoreValue = 3;
-  return entry.score < LowScoreValue || index < props.settings.visibility.visibleByDefaultNumber;
+  return (
+    entry.score < LowScoreValue || index < props.settings.visibleByDefaultTranslationsInCategory
+  );
 }
 </script>
 

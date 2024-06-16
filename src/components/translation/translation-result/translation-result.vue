@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { watch } from 'vue';
 
-import type { Tag, TranslateResultRendererSettings } from '@selected-text-translate/common';
-
 import type { TranslateResultViews } from '~/components/translation/models/translate-result-views.enum';
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { TranslateRequest } from '~/components/translation/models/requests.model';
@@ -11,6 +9,7 @@ import type {
   TranslateDescriptor
 } from '~/components/translation/models/translation.model';
 import { hotkeysRegistry } from '~/services/hotkeys-registry.service';
+import { Settings, Tag } from '~/host/models/settings.model';
 
 import TranslationResultHeader from './header/translation-result-header.vue';
 import TranslationResultContent from './content/translation-result-content.vue';
@@ -19,7 +18,7 @@ interface Props {
   translateDescriptor: TranslateDescriptor;
   translateResult?: TranslateResult;
   historyRecord?: HistoryRecord;
-  settings: TranslateResultRendererSettings;
+  settings: Settings;
   defaultView: TranslateResultViews;
   isInProgress: boolean;
   languages: Map<string, string>;
@@ -55,7 +54,7 @@ watch(
 
     hotkeysRegistry.registerHotkeys(
       TRANSLATE_RESULT_HOTKEY_NAMESPACE,
-      props.settings.archiveResultHotkey,
+      props.settings.hotkeys.archiveResult,
       () => {
         if (props.historyRecord) {
           $emit('archive', props.historyRecord);

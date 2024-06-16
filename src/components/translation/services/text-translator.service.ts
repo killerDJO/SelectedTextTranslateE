@@ -19,6 +19,7 @@ import {
   translationResponseParser,
   TranslationResponseParser
 } from './translation-response-parser.service';
+import { requestsExecutor, RequestsExecutor } from './requests-executor.service';
 
 export type TranslationResponse = {
   result?: TranslateResult | undefined;
@@ -30,7 +31,8 @@ export class TextTranslator {
     private readonly logger: Logger,
     private readonly responseParser: TranslationResponseParser,
     private readonly historyService: HistoryService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly requestsExecutor: RequestsExecutor
   ) {}
 
   public async translate(
@@ -100,7 +102,7 @@ export class TextTranslator {
     const data = `[[\\"${escapedData}\\",\\"${descriptor.sourceLanguage}\\",\\"${
       descriptor.targetLanguage
     }\\",${descriptor.isForcedTranslation ? 'null' : '1'}],[]]`;
-    return window.mainAPI.translation.executeGoogleRequest('MkEWBc', data);
+    return this.requestsExecutor.executeGoogleTranslateRequest('MkEWBc', data);
   }
 
   private escapeString(str: string): string {
@@ -118,5 +120,6 @@ export const textTranslator = new TextTranslator(
   logger,
   translationResponseParser,
   historyService,
-  authService
+  authService,
+  requestsExecutor
 );

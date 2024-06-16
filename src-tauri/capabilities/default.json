@@ -12,6 +12,8 @@
     "resources:default",
     "menu:default",
     "tray:default",
-    "window:allow-start-dragging"
+    "window:allow-start-dragging",
+    "window:allow-hide",
+    "shell:allow-open"
   ]
 }

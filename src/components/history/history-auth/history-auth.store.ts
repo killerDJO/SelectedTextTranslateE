@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 
+import { historyCache } from '~/components/history/services/history-cache.service';
+
 import type { AccountInfo } from './models/account-info.model';
 import type {
   AuthResponse,
@@ -11,8 +13,6 @@ import type {
   VerifyResetTokenErrorCodes
 } from './models/auth-response.model';
 import { authService } from './services/auth.service';
-
-import { historyCache } from '~/components/history/services/history-cache.service';
 
 interface HistoryAuthState {
   account: AccountInfo | null;

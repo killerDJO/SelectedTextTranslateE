@@ -1,7 +1,7 @@
 import { isString } from 'lodash-es';
 
-import type { Tag } from '@selected-text-translate/common';
+import { Tag } from '~/host/models/settings.model';
 
 export function normalizeTag(tag: Tag | string): Tag {
-  return isString(tag) ? { tag: tag, isEnabled: true } : tag;
+  return isString(tag) ? { tag: tag, enabled: true } : tag;
 }

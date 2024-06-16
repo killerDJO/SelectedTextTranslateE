@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue';
 
-import type { Tag, TranslateResultRendererSettings } from '@selected-text-translate/common';
-
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type {
   TranslateDescriptor,
@@ -11,6 +9,7 @@ import type {
 import { hotkeysRegistry } from '~/services/hotkeys-registry.service';
 import { TranslateResultViews } from '~/components/translation/models/translate-result-views.enum';
 import TagsEditor from '~/components/history/tags-editor/tags-editor.vue';
+import { Settings, Tag } from '~/host/models/settings.model';
 
 import TranslationResultContentCategory from './category/translation-result-content-category.vue';
 import TranslationResultDefinitionCategory from './definitions/translation-result-definition-category.vue';
@@ -20,7 +19,7 @@ interface Props {
   translateDescriptor: TranslateDescriptor;
   translateResult: TranslateResult;
   historyRecord?: HistoryRecord;
-  settings: TranslateResultRendererSettings;
+  settings: Settings;
   defaultView: TranslateResultViews;
   languages: Map<string, string>;
   isEmbedded: boolean;
@@ -77,7 +76,7 @@ watch(
 
     hotkeysRegistry.registerHotkeys(
       HOTKEYS_NAMESPACE,
-      props.settings.toggleDefinitionHotkey,
+      props.settings.hotkeys.toggleDefinition,
       () => {
         if (currentView.value === TranslateResultViews.Definition && hasCategories) {
           currentView.value = TranslateResultViews.Translation;
@@ -86,10 +85,10 @@ watch(
         }
       }
     );
-    hotkeysRegistry.registerHotkeys(HOTKEYS_NAMESPACE, props.settings.toggleTagsHotkey, () => {
+    hotkeysRegistry.registerHotkeys(HOTKEYS_NAMESPACE, props.settings.hotkeys.toggleTags, () => {
       showTags.value = !showTags.value;
     });
-    hotkeysRegistry.registerHotkeys(HOTKEYS_NAMESPACE, props.settings.addTagHotkey, async () => {
+    hotkeysRegistry.registerHotkeys(HOTKEYS_NAMESPACE, props.settings.hotkeys.addTag, async () => {
       showTags.value = true;
       await nextTick();
       tagsEditorInstance.value?.openEditor();
@@ -187,7 +186,7 @@ function initializeCurrentView(): void {
         v-for="category in translateResult.categories"
         :key="category.baseForm + category.partOfSpeech"
         :category="category"
-        :settings="settings"
+        :settings="settings.display"
         @translate="$emit('translate', $event)"
       />
     </div>

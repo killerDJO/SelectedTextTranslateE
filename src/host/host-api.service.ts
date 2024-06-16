@@ -1,9 +1,13 @@
 import { invoke } from '@tauri-apps/api/core';
-import { listen, Event } from '@tauri-apps/api/event';
+import { listen, Event, emit } from '@tauri-apps/api/event';
 import { warn, info, error } from '@tauri-apps/plugin-log';
+import { open } from '@tauri-apps/plugin-shell';
+import { window as tauriWindow } from '@tauri-apps/api';
 
 import { PartialSettings, Settings } from './models/settings.model';
 import { ViewNames } from './models/views.model';
+
+const HISTORY_RECORD_CHANGE_EVENT = 'history_record_changed';
 
 export class HostApi {
   getViewName(): ViewNames {
@@ -30,8 +34,34 @@ export class HostApi {
     listen('settings_changed', (event: Event<Settings>) => callback(event.payload));
   }
 
+  setPlayingState(isPlaying: boolean): void {
+    if (isPlaying) {
+      emit('play_start');
+    } else {
+      emit('play_stop');
+    }
+  }
+
+  emitHistoryRecordChangeEvent(recordId: string): void {
+    emit(HISTORY_RECORD_CHANGE_EVENT, { recordId });
+  }
+
+  onHistoryRecordChange(callback: (recordId: string) => void): void {
+    listen(HISTORY_RECORD_CHANGE_EVENT, (event: Event<{ recordId: string }>) =>
+      callback(event.payload.recordId)
+    );
+  }
+
   notifyOnError(): void {
     invoke('notify_on_frontend_error');
+  }
+
+  openUrl(url: string): void {
+    open(url);
+  }
+
+  hideWindow(): Promise<void> {
+    return tauriWindow.getCurrent().hide();
   }
 
   logInfo(message: string): void {

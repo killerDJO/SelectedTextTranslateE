@@ -1,6 +1,6 @@
-import { replacePattern } from '@selected-text-translate/common';
-
+import { hostApi } from '~/host/host-api.service';
 import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
+import { replacePattern } from '~/utils/pattern.utils';
 
 export class SearchExecutor {
   public constructor(private readonly settingsProvider: SettingsProvider) {}
@@ -9,9 +9,9 @@ export class SearchExecutor {
     const settings = this.settingsProvider.getSettings();
 
     const encodedText = encodeURIComponent(text);
-    const searchUrlPattern = settings.search.searchPattern;
+    const searchUrlPattern = settings.core.searchPattern;
     const searchUrl = replacePattern(searchUrlPattern, 'query', encodedText);
-    window.mainAPI.core.openUrl(searchUrl);
+    hostApi.openUrl(searchUrl);
   }
 }
 

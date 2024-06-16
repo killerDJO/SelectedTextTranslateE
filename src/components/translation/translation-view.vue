@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import { useAppStore } from '~/app.store';
+import { settingsProvider } from '~/services/settings-provider.service';
 
 import TranslationResult from './translation-result/translation-result.vue';
 import TranslationInput from './translation-input/translation-input.vue';
@@ -12,6 +13,8 @@ import type { TranslateRequest } from './models/requests.model';
 const app = useAppStore();
 const translateResult = useTranslateResultStore();
 const translation = useTranslationStore();
+
+const languages = ref(settingsProvider.getLanguages());
 
 const isMissingTranslation = computed(() => {
   return (
@@ -43,8 +46,8 @@ function archive() {
       :translate-descriptor="translateResult.translateDescriptor"
       :history-record="translateResult.historyRecord"
       :is-in-progress="translateResult.isTranslationInProgress"
-      :settings="app.settings.views.translation.renderer"
-      :languages="app.settings.supportedLanguages"
+      :settings="app.settings"
+      :languages="languages"
       @translate-suggestion="translateResult.translateSuggestion()"
       @force-translation="translateResult.forceTranslation()"
       @archive="archive()"
@@ -67,8 +70,8 @@ function archive() {
         class="non-text-translation"
       ></app-alert>
       <translation-input
-        :languages="app.settings.supportedLanguages"
-        :language-settings="app.settings.language"
+        :languages="languages"
+        :translation-settings="app.settings.translation"
         @translate-text="request => translation.translateText(request)"
         @play-text="request => translateResult.playText(request)"
       />
