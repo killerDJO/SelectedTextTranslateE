@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import type { Tag } from '@selected-text-translate/common';
-
 import { normalizeTag } from '~/utils/tags.utils';
 import { historyCache } from '~/components/history/services/history-cache.service';
+import { Tag } from '~/host/models/settings.model';
 
 interface Props {
   tags: ReadonlyArray<string | Tag>;
@@ -61,7 +60,7 @@ function removeTag(tagToRemove: Tag): void {
 }
 
 function setCurrentTag(tag: string): void {
-  currentTag.value = { tag: tag, isEnabled: true };
+  currentTag.value = { tag: tag, enabled: true };
 }
 
 function addCurrentTag(): void {
@@ -88,7 +87,7 @@ defineExpose({
       v-for="tag in currentTags"
       :key="tag.tag"
       class="tag"
-      :class="{ clickable: clickable, disabled: !tag.isEnabled }"
+      :class="{ clickable: clickable, disabled: !tag.enabled }"
       tabindex="0"
       @click.stop="onTagClicked(tag)"
       @keyup.enter="onTagClicked(tag)"

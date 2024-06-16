@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { HistoryColumn, Tag, ColumnsSettings } from '@selected-text-translate/common';
-
 import type {
   DataTableColumnConfig,
   DataTableConfig
@@ -11,23 +9,24 @@ import TagsEditor from '~/components/history/tags-editor/tags-editor.vue';
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { SortOrder } from '~/components/history/models/sort-order.enum';
 import ForcedTranslationIcon from '~/components/history/icons/forced-translation-icon.vue';
+import { HistoryColumnName, HistoryColumns, Tag } from '~/host/models/settings.model';
 
 import SortableHeader from './sortable-header/sortable-header.vue';
 
 interface Props {
   historyRecords: ReadonlyArray<HistoryRecord>;
-  sortColumn: HistoryColumn;
+  sortColumn: HistoryColumnName;
   sortOrder: SortOrder;
-  columns: ColumnsSettings;
+  columns: HistoryColumns;
   languages: Map<string, string>;
   isLoading: boolean;
 }
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'update:sortColumn', column: HistoryColumn): void;
+  (e: 'update:sortColumn', column: HistoryColumnName): void;
   (e: 'update:sortOrder', column: SortOrder): void;
-  (e: 'update-columns', columns: ColumnsSettings): void;
+  (e: 'update-columns', columns: HistoryColumns): void;
   (e: 'translate-record', record: HistoryRecord): void;
   (e: 'set-starred-status', record: HistoryRecord, isStarred: boolean): void;
   (e: 'play-record', record: HistoryRecord): void;
@@ -44,13 +43,13 @@ const sortOrder$ = computed({
   get: () => props.sortOrder,
   set: order => $emit('update:sortOrder', order)
 });
-const dataTableConfig$ = computed<DataTableConfig<HistoryColumn>>(() => {
-  const columns = Object.keys(props.columns) as HistoryColumn[];
+const dataTableConfig$ = computed<DataTableConfig<HistoryColumnName>>(() => {
+  const columns = Object.keys(props.columns) as HistoryColumnName[];
   return {
     columns: columns
       .map(column => ({
         id: column,
-        isVisible: props.columns[column].isVisible,
+        isVisible: props.columns[column].visible,
         weight: props.columns[column].weight,
         index: props.columns[column].index
       }))
@@ -59,50 +58,50 @@ const dataTableConfig$ = computed<DataTableConfig<HistoryColumn>>(() => {
 });
 
 function updateColumnsConfiguration(
-  columnsConfiguration: ReadonlyArray<DataTableColumnConfig<HistoryColumn>>
+  columnsConfiguration: ReadonlyArray<DataTableColumnConfig<HistoryColumnName>>
 ): void {
   const updatedColumns = columnsConfiguration.reduce((columnsSettings, config, index) => {
     columnsSettings[config.id] = {
-      isVisible: config.isVisible,
+      visible: config.isVisible,
       weight: config.weight,
       index: index
     };
     return columnsSettings;
-  }, {} as ColumnsSettings);
+  }, {} as HistoryColumns);
   $emit('update-columns', updatedColumns);
 }
 
-function getHeaderSlotId(sortColumn: HistoryColumn): string {
+function getHeaderSlotId(sortColumn: HistoryColumnName): string {
   return `header.${sortColumn}`;
 }
 
-function getBodySlotId(sortColumn: HistoryColumn): string {
+function getBodySlotId(sortColumn: HistoryColumnName): string {
   return `body.${sortColumn}`;
 }
 
-const inputHeaderSlotId = getHeaderSlotId(HistoryColumn.Input);
-const inputBodySlotId = getBodySlotId(HistoryColumn.Input);
+const inputHeaderSlotId = getHeaderSlotId('input');
+const inputBodySlotId = getBodySlotId('input');
 
-const translationHeaderSlotId = getHeaderSlotId(HistoryColumn.Translation);
-const translationBodySlotId = getBodySlotId(HistoryColumn.Translation);
+const translationHeaderSlotId = getHeaderSlotId('translation');
+const translationBodySlotId = getBodySlotId('translation');
 
-const tagsHeaderSlotId = getHeaderSlotId(HistoryColumn.Tags);
-const tagsBodySlotId = getBodySlotId(HistoryColumn.Tags);
+const tagsHeaderSlotId = getHeaderSlotId('tags');
+const tagsBodySlotId = getBodySlotId('tags');
 
-const timesHeaderSlotId = getHeaderSlotId(HistoryColumn.TimesTranslated);
-const timesBodySlotId = getBodySlotId(HistoryColumn.TimesTranslated);
+const timesHeaderSlotId = getHeaderSlotId('timesTranslated');
+const timesBodySlotId = getBodySlotId('timesTranslated');
 
-const sourceHeaderSlotId = getHeaderSlotId(HistoryColumn.SourceLanguage);
-const sourceBodySlotId = getBodySlotId(HistoryColumn.SourceLanguage);
+const sourceHeaderSlotId = getHeaderSlotId('sourceLanguage');
+const sourceBodySlotId = getBodySlotId('sourceLanguage');
 
-const targetHeaderSlotId = getHeaderSlotId(HistoryColumn.TargetLanguage);
-const targetBodySlotId = getBodySlotId(HistoryColumn.TargetLanguage);
+const targetHeaderSlotId = getHeaderSlotId('targetLanguage');
+const targetBodySlotId = getBodySlotId('targetLanguage');
 
-const lastTranslatedHeaderSlotId = getHeaderSlotId(HistoryColumn.LastTranslatedDate);
-const lastTranslatedBodySlotId = getBodySlotId(HistoryColumn.LastTranslatedDate);
+const lastTranslatedHeaderSlotId = getHeaderSlotId('lastTranslatedDate');
+const lastTranslatedBodySlotId = getBodySlotId('lastTranslatedDate');
 
-const statusHeaderSlotId = getHeaderSlotId(HistoryColumn.IsArchived);
-const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
+const statusHeaderSlotId = getHeaderSlotId('archived');
+const statusBodySlotId = getBodySlotId('archived');
 </script>
 <template>
   <data-table
@@ -118,7 +117,7 @@ const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistoryColumn.Input"
+          :sort-column="'input'"
         />
       </div>
     </template>
@@ -159,7 +158,7 @@ const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistoryColumn.Translation"
+          :sort-column="'translation'"
         />
       </div>
     </template>
@@ -177,7 +176,7 @@ const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistoryColumn.Tags"
+          :sort-column="'tags'"
         />
       </div>
     </template>
@@ -197,7 +196,7 @@ const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistoryColumn.TimesTranslated"
+          :sort-column="'timesTranslated'"
         />
       </div>
     </template>
@@ -211,7 +210,7 @@ const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistoryColumn.SourceLanguage"
+          :sort-column="'sourceLanguage'"
         />
       </div>
     </template>
@@ -225,7 +224,7 @@ const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistoryColumn.TargetLanguage"
+          :sort-column="'targetLanguage'"
         />
       </div>
     </template>
@@ -239,7 +238,7 @@ const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistoryColumn.LastTranslatedDate"
+          :sort-column="'lastTranslatedDate'"
         />
       </div>
     </template>
@@ -255,7 +254,7 @@ const statusBodySlotId = getBodySlotId(HistoryColumn.IsArchived);
         <sortable-header
           v-model:current-sort-column="sortColumn$"
           v-model:current-sort-order="sortOrder$"
-          :sort-column="HistoryColumn.IsArchived"
+          :sort-column="'archived'"
         />
       </div>
     </template>

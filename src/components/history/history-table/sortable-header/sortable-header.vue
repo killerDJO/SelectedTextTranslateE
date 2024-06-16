@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import type { HistoryColumn } from '@selected-text-translate/common';
-
-import { getColumnName } from '~/components/history/history.utils';
 import { SortOrder } from '~/components/history/models/sort-order.enum';
+import { HistoryColumnName } from '~/host/models/settings.model';
+import { getColumnDisplayName } from '../../history.utils';
 
 interface Props {
-  sortColumn: HistoryColumn;
+  sortColumn: HistoryColumnName;
   currentSortOrder?: SortOrder;
-  currentSortColumn?: HistoryColumn;
+  currentSortColumn?: HistoryColumnName;
 }
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
   (e: 'update:currentSortOrder', sortOrder: SortOrder): void;
-  (e: 'update:currentSortColumn', sortColumn: HistoryColumn): void;
+  (e: 'update:currentSortColumn', sortColumn: HistoryColumnName): void;
 }>();
 
 function isSortArrowHidden(sortOrder: SortOrder): boolean {
@@ -39,7 +38,7 @@ function sort(): void {
 </script>
 <template>
   <div class="sortable-header" @click="sort">
-    <span v-overflow-tooltip class="header-name">{{ getColumnName(sortColumn) }}</span>
+    <span v-overflow-tooltip class="header-name">{{ getColumnDisplayName(sortColumn) }}</span>
 
     <font-awesome-icon
       icon="caret-up"

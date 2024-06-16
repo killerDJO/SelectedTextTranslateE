@@ -1,7 +1,5 @@
 import { uniq } from 'lodash-es';
 
-import { HistoryColumn } from '@selected-text-translate/common';
-
 import { logger, type Logger } from '~/services/logger.service';
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import { SortOrder } from '~/components/history/models/sort-order.enum';
@@ -26,10 +24,9 @@ export class HistoryMerger {
   ) {}
 
   public async getMergeCandidates(): Promise<ReadonlyArray<MergeCandidate>> {
-    const lastRecordsToScan =
-      this.settingsProvider.getSettings().views.history.renderer.lastRecordsToScanForMerge;
+    const lastRecordsToScan = this.settingsProvider.getSettings().core.lastRecordsToScanForMerge;
     const recentRecords = await this.historyService.queryRecords(
-      HistoryColumn.LastTranslatedDate,
+      'lastTranslatedDate',
       SortOrder.Desc,
       0,
       lastRecordsToScan,

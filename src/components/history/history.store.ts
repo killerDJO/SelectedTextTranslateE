@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia';
 
-import { HistoryColumn, type Tag } from '@selected-text-translate/common';
-
 import { useAppStore } from '~/app.store';
 import { textPlayer } from '~/components/translation/services/text-player.service';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
 import { useTranslateResultStore } from '~/components/translation/translation-result/translation-result.store';
+import { HistoryColumnName, Tag } from '~/host/models/settings.model';
+import { hostApi } from '~/host/host-api.service';
 
 import type { HistoryFilter } from './models/history-filter.model';
 import type { HistoryRecord } from './models/history-record.model';
@@ -15,7 +15,7 @@ import { historyService } from './services/history.service';
 interface HistoryState {
   isLoading: boolean;
   filter: HistoryFilter;
-  sortColumn: HistoryColumn;
+  sortColumn: HistoryColumnName;
   sortOrder: SortOrder;
   pageNumber: number;
   totalRecords: number;
@@ -26,7 +26,7 @@ export const useHistoryStore = defineStore('history', {
   state: () => {
     const state: HistoryState = {
       filter: { starredOnly: false, includeArchived: false },
-      sortColumn: HistoryColumn.LastTranslatedDate,
+      sortColumn: 'lastTranslatedDate',
       sortOrder: SortOrder.Desc,
       pageNumber: 0,
       totalRecords: 0,
@@ -37,7 +37,7 @@ export const useHistoryStore = defineStore('history', {
   },
   getters: {
     pageSize(): number {
-      return useAppStore().settings.views.history.renderer.pageSize;
+      return useAppStore().settings.display.historyPageSize;
     },
     totalPages(state): number {
       return Math.ceil(state.totalRecords / this.pageSize);
@@ -45,7 +45,7 @@ export const useHistoryStore = defineStore('history', {
   },
   actions: {
     setup() {
-      window.mainAPI.translation.onHistoryRecordChange(id => {
+      hostApi.onHistoryRecordChange(id => {
         queryRecordsInternal(this, true);
         updateTranslationIfNecessary(id);
       });
@@ -77,10 +77,6 @@ export const useHistoryStore = defineStore('history', {
       await updateRecord(this, record.id, () =>
         historyService.setArchivedStatus(record, isArchived)
       );
-    },
-
-    openSettings() {
-      window.mainAPI.settings.showHistorySettings();
     }
   }
 });

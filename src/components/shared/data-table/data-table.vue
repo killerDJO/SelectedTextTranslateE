@@ -68,7 +68,7 @@ function onRecordClick(record: TRecord) {
   }
 }
 
-function geTColumnsWidth(id: string) {
+function getColumnsWidth(id: string) {
   const currenTColumns = visibleColumns.value.find(column => column.id === id);
   if (!currenTColumns) {
     throw new Error(`Unable to find column with id ${id}`);
@@ -170,7 +170,7 @@ function getTotalColumnWeights(): number {
         <th
           v-for="(column, index) in visibleColumns"
           :key="column.id"
-          :style="{ width: geTColumnsWidth(column.id) + '%' }"
+          :style="{ width: getColumnsWidth(column.id) + '%' }"
         >
           <slot :name="'header.' + column.id" />
           <div

@@ -2,35 +2,34 @@
 import { computed, ref } from 'vue';
 import { isEqual } from 'lodash-es';
 
-import type { ColumnsSettings, HistoryColumn } from '@selected-text-translate/common';
-
 import type { DropItem } from '~/components/shared/drop-button/drop-button.vue';
-import { getColumnName } from '~/components/history/history.utils';
 import DropButton from '~/components/shared/drop-button/drop-button.vue';
+import { HistoryColumnName, HistoryColumns } from '~/host/models/settings.model';
+import { getColumnDisplayName } from '../history.utils';
 
 interface ColumnDropItem extends DropItem {
-  readonly column: HistoryColumn;
+  readonly column: HistoryColumnName;
   weight: number;
   isChecked: boolean;
 }
 
 interface Props {
-  columns: ColumnsSettings;
+  columns: HistoryColumns;
 }
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'update-columns', columns: ColumnsSettings): void;
+  (e: 'update-columns', columns: HistoryColumns): void;
 }>();
 
 const dropInstance = ref<InstanceType<typeof DropButton> | null>(null);
 const dropItems = computed<ColumnDropItem[]>(() => {
-  const columns = Object.keys(props.columns) as HistoryColumn[];
+  const columns = Object.keys(props.columns) as HistoryColumnName[];
   return columns
     .map(column => ({
       column: column,
-      text: getColumnName(column),
-      isChecked: props.columns[column].isVisible,
+      text: getColumnDisplayName(column),
+      isChecked: props.columns[column].visible,
       weight: props.columns[column].weight,
       index: props.columns[column].index
     }))
@@ -45,7 +44,7 @@ function itemClick(item: ColumnDropItem) {
   const updatedColumns = mapItems(dropItems.value);
   updatedColumns[item.column] = {
     ...updatedColumns[item.column],
-    isVisible: !updatedColumns[item.column].isVisible
+    visible: !updatedColumns[item.column].visible
   };
 
   if (!isEqual(props.columns, updatedColumns)) {
@@ -54,8 +53,8 @@ function itemClick(item: ColumnDropItem) {
 }
 
 function isHideDisabled(item: ColumnDropItem): boolean {
-  const columns = Object.keys(props.columns) as HistoryColumn[];
-  const numberOfHiddenColumns = columns.filter(column => !props.columns[column].isVisible).length;
+  const columns = Object.keys(props.columns) as HistoryColumnName[];
+  const numberOfHiddenColumns = columns.filter(column => !props.columns[column].visible).length;
   const isLastItemHideDisabled = numberOfHiddenColumns >= columns.length - 1;
 
   return isLastItemHideDisabled && item.isChecked;
@@ -105,15 +104,15 @@ function moveItem(item: ColumnDropItem, nextIndexGenerator: (index: number) => n
   $emit('update-columns', mapItems(clonedItems));
 }
 
-function mapItems(items: ReadonlyArray<ColumnDropItem>): ColumnsSettings {
+function mapItems(items: ReadonlyArray<ColumnDropItem>): HistoryColumns {
   return items.reduce((columnsSettings, setting, index) => {
     columnsSettings[setting.column] = {
-      isVisible: setting.isChecked,
+      visible: setting.isChecked,
       weight: setting.weight,
       index: index
     };
     return columnsSettings;
-  }, {} as ColumnsSettings);
+  }, {} as HistoryColumns);
 }
 </script>
 

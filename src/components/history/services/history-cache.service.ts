@@ -2,8 +2,6 @@ import { orderBy } from 'lodash-es';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 import { add } from 'date-fns';
 
-import { HistoryColumn } from '@selected-text-translate/common';
-
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { SortOrder } from '~/components/history/models/sort-order.enum';
 import type { HistoryFilter } from '~/components/history/models/history-filter.model';
@@ -11,6 +9,7 @@ import {
   authService,
   type AuthService
 } from '~/components/history/history-auth/services/auth.service';
+import { HistoryColumnName } from '~/host/models/settings.model';
 
 import { historyDatabase, type HistoryDatabase } from './history-database.service';
 
@@ -37,7 +36,7 @@ export class HistoryCache {
   ) {}
 
   public async queryRecords(
-    sortColumn: HistoryColumn,
+    sortColumn: HistoryColumnName,
     sortOrder: SortOrder,
     start: number,
     limit: number,
@@ -131,18 +130,18 @@ export class HistoryCache {
 
   private sortRecords(
     records: HistoryRecord[],
-    sortColumn: HistoryColumn,
+    sortColumn: HistoryColumnName,
     sortOrder: SortOrder
   ): HistoryRecord[] {
-    const sortColumnMap = {
-      [HistoryColumn.Input]: 'sentence',
-      [HistoryColumn.TimesTranslated]: 'translationsNumber',
-      [HistoryColumn.LastTranslatedDate]: 'lastTranslatedDate',
-      [HistoryColumn.Translation]: 'translateResult.sentence.translation',
-      [HistoryColumn.SourceLanguage]: 'sourceLanguage',
-      [HistoryColumn.TargetLanguage]: 'targetLanguage',
-      [HistoryColumn.IsArchived]: 'isArchived',
-      [HistoryColumn.Tags]: 'tags'
+    const sortColumnMap: { [key in HistoryColumnName]: string } = {
+      input: 'sentence',
+      timesTranslated: 'translationsNumber',
+      lastTranslatedDate: 'lastTranslatedDate',
+      translation: 'translateResult.sentence.translation',
+      sourceLanguage: 'sourceLanguage',
+      targetLanguage: 'targetLanguage',
+      archived: 'isArchived',
+      tags: 'tags'
     };
 
     return orderBy(records, [sortColumnMap[sortColumn]], [sortOrder]);

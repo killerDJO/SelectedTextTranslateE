@@ -52,6 +52,8 @@ export type HistoryColumns = {
   archived: HistoryColumn;
 };
 
+export type HistoryColumnName = keyof HistoryColumns;
+
 export type HistoryColumn = {
   visible: boolean;
   weight: number;

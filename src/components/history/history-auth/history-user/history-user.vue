@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { useHistoryStore } from '~/components/history/history.store';
 import { useHistoryAuthStore } from '~/components/history/history-auth/history-auth.store';
 
 import ChangePassword from './change-password/change-password.vue';
 
 const historyAuth = useHistoryAuthStore();
-const history = useHistoryStore();
 
 const changePassword = ref<InstanceType<typeof ChangePassword> | null>(null);
 
@@ -22,10 +20,7 @@ function signOut() {
       <drop-list-button
         :text="'Sign Out'"
         :overflow-position="'start'"
-        :items="[
-          { text: 'Change Password', callback: () => changePassword?.open() },
-          { text: 'Settings', callback: () => history.openSettings() }
-        ]"
+        :items="[{ text: 'Change Password', callback: () => changePassword?.open() }]"
         @click="signOut()"
       />
     </div>

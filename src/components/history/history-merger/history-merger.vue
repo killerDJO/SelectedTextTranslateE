@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { useAppStore } from '~/app.store';
 import type { DataTableConfig } from '~/components/shared/data-table/data-table.vue';
 import ForcedTranslationIcon from '~/components/history/icons/forced-translation-icon.vue';
+import { settingsProvider } from '~/services/settings-provider.service';
 
 import { useHistoryMergerStore } from './history-merger.store';
 import type { MergeCandidate, MergeHistoryRecord } from './models/merge-candidate.model';
@@ -23,7 +23,7 @@ enum CandidateTableColumns {
 }
 
 const historyMerger = useHistoryMergerStore();
-const languages = useAppStore().settings.supportedLanguages;
+const languages = ref(settingsProvider.getLanguages());
 
 const isVisible = ref(false);
 const currentCandidateIndex = ref(-1);

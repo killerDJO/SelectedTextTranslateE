@@ -1,20 +1,17 @@
-import { HistoryColumn } from '@selected-text-translate/common';
+import { HistoryColumnName } from '~/host/models/settings.model';
 
-export function getColumnName(column: HistoryColumn): string {
-  const columnToNameMap: Map<HistoryColumn, string> = new Map<HistoryColumn, string>([
-    [HistoryColumn.Input, 'Word'],
-    [HistoryColumn.Translation, 'Translation'],
-    [HistoryColumn.Tags, 'Tags'],
-    [HistoryColumn.TimesTranslated, 'Times'],
-    [HistoryColumn.SourceLanguage, 'Source'],
-    [HistoryColumn.TargetLanguage, 'Target'],
-    [HistoryColumn.LastTranslatedDate, 'Last Translated'],
-    [HistoryColumn.IsArchived, 'Status']
-  ]);
+export function getColumnDisplayName(column: HistoryColumnName): string {
+  const columnToNameMap: { [key in HistoryColumnName]: string } = {
+    input: 'Word',
+    translation: 'Translation',
+    tags: 'Tags',
+    timesTranslated: 'Times',
+    sourceLanguage: 'Source',
+    targetLanguage: 'Target',
+    lastTranslatedDate: 'Last Translated',
+    archived: 'Status'
+  };
 
-  const columnName = columnToNameMap.get(column);
-  if (!columnName) {
-    throw new Error(`${column} is not available.`);
-  }
+  const columnName = columnToNameMap[column];
   return columnName;
 }

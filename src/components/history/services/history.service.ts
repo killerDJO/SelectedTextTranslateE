@@ -1,7 +1,5 @@
 import { cloneDeep, uniq } from 'lodash-es';
 
-import type { HistoryColumn, Tag } from '@selected-text-translate/common';
-
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { HistoryFilter } from '~/components/history/models/history-filter.model';
 import type { SortOrder } from '~/components/history/models/sort-order.enum';
@@ -10,13 +8,13 @@ import type {
   TranslateResult
 } from '~/components/translation/models/translation.model';
 import { settingsProvider, type SettingsProvider } from '~/services/settings-provider.service';
-import { normalizeTag } from '~/utils/tags.utils';
 import { logger, type Logger } from '~/services/logger.service';
 import { getLogKey } from '~/utils/logging.utils';
 import {
   authService,
   type AuthService
 } from '~/components/history/history-auth/services/auth.service';
+import { HistoryColumnName, Tag } from '~/host/models/settings.model';
 
 import { historyDatabase, type HistoryDatabase } from './history-database.service';
 import { historyCache, type HistoryCache } from './history-cache.service';
@@ -42,7 +40,7 @@ export class HistoryService {
   }
 
   public async queryRecords(
-    sortColumn: HistoryColumn,
+    sortColumn: HistoryColumnName,
     sortOrder: SortOrder,
     start: number,
     limit: number,
@@ -143,8 +141,7 @@ export class HistoryService {
     return (
       this.settingsProvider
         .getSettings()
-        .tags.currentTags?.map(normalizeTag)
-        .filter(tag => tag.isEnabled)
+        .translation.tags.filter(tag => tag.enabled)
         .map(tag => tag.tag) ?? []
     );
   }

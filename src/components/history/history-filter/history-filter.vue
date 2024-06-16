@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { useVuelidate } from '@vuelidate/core';
 import { cloneDeep, debounce, isEqual } from 'lodash-es';
-import { computed, reactive, watch } from 'vue';
+import { computed, reactive, ref, watch } from 'vue';
 import { helpers, maxValue, minValue } from '@vuelidate/validators';
-
-import type { Tag } from '@selected-text-translate/common';
 
 import TagsEditor from '~/components/history/tags-editor/tags-editor.vue';
 import { executeIfValid } from '~/utils/validation.utils';
 import type { HistoryFilter } from '~/components/history/models/history-filter.model';
-import { useAppStore } from '~/app.store';
 import type { SelectedLanguages } from '~/components/shared/language-selector/language-selector.vue';
+import { Tag } from '~/host/models/settings.model';
+import { settingsProvider } from '~/services/settings-provider.service';
 
 interface Props {
   filter: HistoryFilter;
@@ -22,7 +21,7 @@ const $emit = defineEmits<{
   (e: 'close'): void;
 }>();
 
-const app = useAppStore();
+const languages = ref(settingsProvider.getLanguages());
 
 const state = reactive<HistoryFilter>(cloneDeep(props.filter));
 const rules = computed(() => ({
@@ -111,7 +110,7 @@ function clearFilter() {
       <label>Languages:</label>
       <language-selector
         :languages="state"
-        :all-languages="app.settings.supportedLanguages"
+        :all-languages="languages"
         :allow-unselect="true"
         @languages-updated="onLanguagesUpdated"
       />

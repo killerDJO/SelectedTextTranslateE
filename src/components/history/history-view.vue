@@ -2,13 +2,12 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { cloneDeep, uniq } from 'lodash-es';
 
-import type { Tag, ColumnsSettings } from '@selected-text-translate/common';
-
 import { useAppStore } from '~/app.store';
-import { normalizeTag } from '~/utils/tags.utils';
 import { useTranslateResultStore } from '~/components/translation/translation-result/translation-result.store';
 import TranslationResult from '~/components/translation/translation-result/translation-result.vue';
 import type { TranslateRequest } from '../translation/models/requests.model';
+import { HistoryColumns, Tag } from '~/host/models/settings.model';
+import { settingsProvider } from '~/services/settings-provider.service';
 
 import ColumnsEditor from './columns-editor/columns-editor.vue';
 import TagsEditor from './tags-editor/tags-editor.vue';
@@ -32,14 +31,15 @@ const isTranslationVisible = ref(false);
 
 const historyMergerInstance = ref<InstanceType<typeof HistoryMerger> | null>(null);
 
-const columns = computed(() => app.settings.views.history.renderer.columns);
+const columns = computed(() => app.settings.display.historyColumns);
+const languages = ref(settingsProvider.getLanguages());
 
 watch([() => historyAuth.isSignedIn, () => history.sortOrder, () => history.sortColumn], loadData, {
   immediate: true
 });
 watch(() => history.filter, loadData, { deep: true });
 watch(
-  () => app.settings.views.history.renderer.pageSize,
+  () => app.settings.display.historyPageSize,
   () => {
     history.refreshRecords();
   }
@@ -59,24 +59,24 @@ async function changePage(pageNumber: number) {
   await history.queryRecords();
 }
 
-function updateColumns(columns: ColumnsSettings) {
-  app.updateSettings({ views: { history: { renderer: { columns } } } });
+function updateColumns(columns: HistoryColumns) {
+  app.updateSettings({ display: { historyColumns: columns } });
 }
 
 function updateCurrentTags(tags: Tag[]) {
-  app.updateSettings({ tags: { currentTags: cloneDeep(tags) } });
+  app.updateSettings({ translation: { tags: cloneDeep(tags) } });
 }
 
 function toggleActiveTag(tag: Tag) {
-  const clonedTags = cloneDeep(app.settings.tags.currentTags)
-    .map(normalizeTag)
-    .filter(currentTag => currentTag.tag !== tag.tag);
+  const clonedTags = cloneDeep(app.settings.translation.tags).filter(
+    currentTag => currentTag.tag !== tag.tag
+  );
 
   updateCurrentTags(
     clonedTags.concat([
       {
         tag: tag.tag,
-        isEnabled: !tag.isEnabled
+        enabled: !tag.enabled
       }
     ])
   );
@@ -141,7 +141,7 @@ async function hardDelete() {
         <div class="tags">
           <span class="tags-label">Tags:</span>
           <tags-editor
-            :tags="app.settings.tags.currentTags"
+            :tags="app.settings.translation.tags"
             :clickable="true"
             @update-tags="updateCurrentTags"
             @tag-clicked="toggleActiveTag"
@@ -183,7 +183,7 @@ async function hardDelete() {
           :columns="columns"
           :history-records="history.records ?? []"
           :is-loading="history.isLoading"
-          :languages="app.settings.supportedLanguages"
+          :languages="languages"
           @translate-record="translateHistoryRecord"
           @set-starred-status="(record, isStarred) => history.setStarredStatus(record, isStarred)"
           @play-record="record => history.playRecord(record)"
@@ -227,8 +227,8 @@ async function hardDelete() {
           :translate-descriptor="translateResult.translateDescriptor"
           :history-record="translateResult.historyRecord"
           :is-in-progress="translateResult.isTranslationInProgress"
-          :settings="app.settings.views.translation.renderer"
-          :languages="app.settings.supportedLanguages"
+          :settings="app.settings"
+          :languages="languages"
           :is-embedded="true"
           @translate-suggestion="translateResult.translateSuggestion()"
           @force-translation="translateResult.forceTranslation()"
