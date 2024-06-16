@@ -1,15 +1,14 @@
 import { defineStore } from 'pinia';
 import { cloneDeep } from 'lodash-es';
 
-import type { Settings, DeepPartial, SettingsGroup } from '@selected-text-translate/common';
-
 import { useAppStore } from '~/app.store';
+import { DeepPartial, Settings } from '~/host/models/settings.model';
+import { hostApi } from '~/host/host-api.service';
 
 import type { EditableHotkeySettings } from './models/editable-hotkey-settings.model';
 
 interface SettingsState {
   defaultSettings: Settings | null;
-  currentSettingsGroup: SettingsGroup | null;
   isStartupEnabled: boolean;
 }
 
@@ -17,7 +16,6 @@ export const useSettingsStore = defineStore('settings', {
   state: () => {
     const state: SettingsState = {
       defaultSettings: null,
-      currentSettingsGroup: null,
       isStartupEnabled: false
     };
     return state;
@@ -37,12 +35,11 @@ export const useSettingsStore = defineStore('settings', {
   },
   actions: {
     async setup() {
-      this.defaultSettings = await window.mainAPI.settings.getDefaultSettings();
-      this.isStartupEnabled = await window.mainAPI.settings.getStartupState();
-      window.mainAPI.settings.onSettingsGroupChange(group => (this.currentSettingsGroup = group));
+      this.defaultSettings = await hostApi.getDefaultSettings();
+      this.isStartupEnabled = await hostApi.getStartupState();
     },
     async updateSettings(settings: DeepPartial<Settings>) {
-      await window.mainAPI.settings.updateSettings(cloneDeep(settings));
+      await hostApi.updateSettings(cloneDeep(settings));
     },
     async updateHotkeys(hotkeySettings: EditableHotkeySettings) {
       this.updateSettings(mapEditableHotkeysToSettings(hotkeySettings));
@@ -57,10 +54,10 @@ export const useSettingsStore = defineStore('settings', {
       await window.mainAPI.settings.openSettingsFile();
     },
     async resetSettings() {
-      await this.updateSettings(this.defaultSettings!);
+      await hostApi.resetSettingsToDefault();
     },
     async updateStartupState(isEnabled: boolean) {
-      await window.mainAPI.settings.updateStartupState(isEnabled);
+      await hostApi.updateStartupState(isEnabled);
     }
   }
 });
@@ -75,13 +72,13 @@ function mapHotkeySettingsToEditable(settings: Settings): EditableHotkeySettings
       toggleSuspend: settings.hotkeys.toggleSuspend
     },
     local: {
-      zoomIn: settings.renderer.hotkeys.zoomIn,
-      zoomOut: settings.renderer.hotkeys.zoomOut,
-      resetZoom: settings.renderer.hotkeys.resetZoom,
-      toggleDefinition: settings.views.translation.renderer.toggleDefinitionHotkey,
-      archiveResult: settings.views.translation.renderer.archiveResultHotkey,
-      toggleTags: settings.views.translation.renderer.toggleTagsHotkey,
-      addTag: settings.views.translation.renderer.addTagHotkey
+      zoomIn: settings.hotkeys.zoomIn,
+      zoomOut: settings.hotkeys.zoomOut,
+      resetZoom: settings.hotkeys.resetZoom,
+      toggleDefinition: settings.hotkeys.toggleDefinition,
+      archiveResult: settings.hotkeys.archiveResult,
+      toggleTags: settings.hotkeys.toggleTags,
+      addTag: settings.hotkeys.addTag
     }
   };
 }
@@ -95,24 +92,14 @@ function mapEditableHotkeysToSettings(
       translate: hotkeySettings.global.translate,
       showDefinition: hotkeySettings.global.showDefinition,
       inputText: hotkeySettings.global.inputText,
-      toggleSuspend: hotkeySettings.global.toggleSuspend
-    },
-    renderer: {
-      hotkeys: {
-        zoomIn: hotkeySettings.local.zoomIn,
-        zoomOut: hotkeySettings.local.zoomOut,
-        resetZoom: hotkeySettings.local.resetZoom
-      }
-    },
-    views: {
-      translation: {
-        renderer: {
-          toggleDefinitionHotkey: hotkeySettings.local.toggleDefinition,
-          archiveResultHotkey: hotkeySettings.local.archiveResult,
-          toggleTagsHotkey: hotkeySettings.local.toggleTags,
-          addTagHotkey: hotkeySettings.local.addTag
-        }
-      }
+      toggleSuspend: hotkeySettings.global.toggleSuspend,
+      zoomIn: hotkeySettings.local.zoomIn,
+      zoomOut: hotkeySettings.local.zoomOut,
+      resetZoom: hotkeySettings.local.resetZoom,
+      toggleDefinition: hotkeySettings.local.toggleDefinition,
+      archiveResult: hotkeySettings.local.archiveResult,
+      toggleTags: hotkeySettings.local.toggleTags,
+      addTag: hotkeySettings.local.addTag
     }
   };
 }

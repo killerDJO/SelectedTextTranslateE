@@ -2,8 +2,6 @@
 import { ref, watch, computed } from 'vue';
 import { cloneDeep, isEqual } from 'lodash-es';
 
-import type { Hotkey } from '@selected-text-translate/common';
-
 import { useSettingsStore } from '~/components/settings/settings.store';
 import type {
   EditableHotkeySettings,
@@ -11,6 +9,7 @@ import type {
   LocalHotkeySettings
 } from '~/components/settings/models/editable-hotkey-settings.model';
 import type ConfirmModal from '~/components/shared/confirm-modal/confirm-modal.vue';
+import { Keys } from '~/host/models/settings.model';
 
 import HotkeyInput from './hotkey-input/hotkey-input.vue';
 
@@ -18,7 +17,7 @@ interface Command {
   readonly name: string;
   readonly key: string;
   readonly isGlobal: boolean;
-  hotkeys: Hotkey[];
+  hotkeys: Keys[];
 }
 
 const settingsStore = useSettingsStore();
@@ -40,7 +39,7 @@ const hotkeysDisplayName = new Map<keyof LocalHotkeySettings | keyof GlobalHotke
 
 const commands = ref<Command[]>([]);
 const currentCommandIndex = ref<number>(0);
-const currentHotkey = ref<Hotkey | null>(null);
+const currentHotkey = ref<Keys | null>(null);
 const currentHotkeyValidationMessage = ref<string | null>(null);
 const confirmModalInstance = ref<InstanceType<typeof ConfirmModal> | null>(null);
 
@@ -75,11 +74,11 @@ function createCommandsList(): void {
   }
 }
 
-function removeHotkey(hotkeyToRemove: Hotkey): void {
+function removeHotkey(hotkeyToRemove: Keys): void {
   if (!currentCommand.value) {
     return;
   }
-  const newHotkeys: Hotkey[] = [];
+  const newHotkeys: Keys[] = [];
   currentCommand.value.hotkeys.forEach(hotkey => {
     if (createHotkeyString(hotkey) !== createHotkeyString(hotkeyToRemove)) {
       newHotkeys.push(hotkey);
@@ -107,8 +106,8 @@ function hotkeyInputCompleted(): void {
   settingsStore.enableHotkeys();
 }
 
-function createHotkeyString(hotkey: Hotkey): string {
-  return hotkey.keys.join(' + ');
+function createHotkeyString(hotkey: Keys): string {
+  return hotkey.join(' + ');
 }
 
 function validateCurrentHotkey() {
@@ -150,7 +149,7 @@ function updateHotkeySettings(): void {
 function getHotkeySetting(
   key: string,
   settings: EditableHotkeySettings
-): { hotkeys: Hotkey[]; isGlobal: boolean } {
+): { hotkeys: Keys[]; isGlobal: boolean } {
   const hotkeyTypes: Array<keyof EditableHotkeySettings> = ['global', 'local'];
   for (const hotkeyType of hotkeyTypes) {
     for (const currentKey of Object.keys(settings[hotkeyType])) {

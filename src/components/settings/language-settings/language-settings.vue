@@ -1,12 +1,14 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import type { SelectedLanguages } from '~/components/shared/language-selector/language-selector.vue';
 import { useSettingsStore } from '~/components/settings/settings.store';
+import { settingsProvider } from '~/services/settings-provider.service';
 
 const settingsStore = useSettingsStore();
 
-const languageSettings = computed(() => settingsStore.settings.language);
+const languageSettings = computed(() => settingsStore.settings.translation);
+const languages = ref(settingsProvider.getLanguages());
 
 function onLanguagesUpdated(languages: SelectedLanguages) {
   if (languages.sourceLanguage === undefined || languages.targetLanguage === undefined) {
@@ -14,7 +16,10 @@ function onLanguagesUpdated(languages: SelectedLanguages) {
   }
 
   settingsStore.updateSettings({
-    language: { sourceLanguage: languages.sourceLanguage, targetLanguage: languages.targetLanguage }
+    translation: {
+      sourceLanguage: languages.sourceLanguage,
+      targetLanguage: languages.targetLanguage
+    }
   });
 }
 </script>
@@ -23,7 +28,7 @@ function onLanguagesUpdated(languages: SelectedLanguages) {
   <div class="language-input settings-item">
     <language-selector
       :languages="languageSettings"
-      :all-languages="settingsStore.settings.supportedLanguages"
+      :all-languages="languages"
       @languages-updated="onLanguagesUpdated"
     />
   </div>

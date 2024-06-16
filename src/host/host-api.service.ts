@@ -3,6 +3,11 @@ import { listen, Event, emit } from '@tauri-apps/api/event';
 import { warn, info, error } from '@tauri-apps/plugin-log';
 import { open } from '@tauri-apps/plugin-shell';
 import { window as tauriWindow } from '@tauri-apps/api';
+import {
+  enable as enableAutostart,
+  isEnabled as isAutostartEnabled,
+  disable as disableAutostart
+} from '@tauri-apps/plugin-autostart';
 
 import { PartialSettings, Settings } from './models/settings.model';
 import { ViewNames } from './models/views.model';
@@ -26,8 +31,16 @@ export class HostApi {
     return invoke<Settings>('settings');
   }
 
+  async getDefaultSettings(): Promise<Settings> {
+    return invoke<Settings>('default_settings');
+  }
+
   async updateSettings(updated_settings: PartialSettings): Promise<void> {
     await invoke('update_settings', { updated_settings: updated_settings });
+  }
+
+  async resetSettingsToDefault(): Promise<void> {
+    await invoke('reset_settings_to_default');
   }
 
   onSettingsChange(callback: (settings: Settings) => void): void {
@@ -50,6 +63,18 @@ export class HostApi {
     listen(HISTORY_RECORD_CHANGE_EVENT, (event: Event<{ recordId: string }>) =>
       callback(event.payload.recordId)
     );
+  }
+
+  getStartupState(): Promise<boolean> {
+    return isAutostartEnabled();
+  }
+
+  updateStartupState(enabled: boolean): Promise<void> {
+    if (enabled) {
+      return enableAutostart();
+    } else {
+      return disableAutostart();
+    }
   }
 
   notifyOnError(): void {

@@ -8,7 +8,7 @@ import { useSettingsStore } from '~/components/settings/settings.store';
 
 const settingsStore = useSettingsStore();
 
-const pageSize = computed(() => settingsStore.settings.views.history.renderer.pageSize);
+const pageSize = computed(() => settingsStore.settings.display.historyPageSize);
 
 const state = reactive({
   pageSize: pageSize.value ?? 0
@@ -32,7 +32,7 @@ async function updateIfValid() {
   v$.value.pageSize.$touch();
   executeIfValid(v$, () => {
     settingsStore.updateSettings({
-      views: { history: { renderer: { pageSize: state.pageSize } } }
+      display: { historyPageSize: state.pageSize }
     });
   });
 }

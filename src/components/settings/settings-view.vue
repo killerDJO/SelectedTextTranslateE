@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
-
-import { SettingsGroup } from '@selected-text-translate/common';
+import { onMounted, ref } from 'vue';
 
 import type ConfirmModal from '~/components/shared/confirm-modal/confirm-modal.vue';
 
@@ -19,36 +17,28 @@ const settingsStore = useSettingsStore();
 const confirmModalInstance = ref<InstanceType<typeof ConfirmModal> | null>(null);
 
 onMounted(() => settingsStore.setup());
-watch(() => settingsStore.currentSettingsGroup, onCurrentSettingsGroupChanged, { immediate: true });
-
-function onCurrentSettingsGroupChanged(): void {
-  if (settingsStore.currentSettingsGroup !== null) {
-    const element = document.getElementById(settingsStore.currentSettingsGroup);
-    element?.scrollIntoView({ behavior: 'smooth' });
-  }
-}
 </script>
 
 <template>
   <div class="settings">
     <div v-if="!!settingsStore.defaultSettings">
       <settings-holder :title="'Hotkeys'">
-        <hotkey-settings :id="SettingsGroup.Hotkeys" />
+        <hotkey-settings />
       </settings-holder>
       <settings-holder :title="'Scaling'">
-        <scaling-settings :id="SettingsGroup.Scaling" />
+        <scaling-settings />
       </settings-holder>
       <settings-holder :title="'History'">
-        <history-settings :id="SettingsGroup.History" />
+        <history-settings />
       </settings-holder>
       <settings-holder :title="'Play'">
-        <play-settings :id="SettingsGroup.Play" />
+        <play-settings />
       </settings-holder>
       <settings-holder :title="'Language'">
-        <language-settings :id="SettingsGroup.Language" />
+        <language-settings />
       </settings-holder>
       <settings-holder :title="'Startup'">
-        <startup-settings :id="SettingsGroup.Startup" />
+        <startup-settings />
       </settings-holder>
       <div class="footer">
         <link-button :text="'Reset to Default'" @click="confirmModalInstance?.open()" />

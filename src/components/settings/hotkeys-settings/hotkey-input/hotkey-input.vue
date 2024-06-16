@@ -2,17 +2,17 @@
 import { computed, ref, watch } from 'vue';
 import { isEqual } from 'lodash-es';
 
-import type { Hotkey } from '@selected-text-translate/common';
+import { Keys } from '~/host/models/settings.model';
 
 interface Props {
-  hotkey: Hotkey | null;
+  hotkey: Keys | null;
 }
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
   (e: 'input-started'): void;
   (e: 'input-completed'): void;
-  (e: 'update:hotkey', hotkey: Hotkey | null): void;
+  (e: 'update:hotkey', hotkey: Keys | null): void;
 }>();
 
 const keys = ref<string[]>([]);
@@ -25,7 +25,7 @@ const inputValue = computed(() => {
 watch(
   () => props.hotkey,
   () => {
-    keys.value = props.hotkey ? props.hotkey.keys : [];
+    keys.value = props.hotkey ?? [];
   }
 );
 
@@ -93,7 +93,7 @@ function handleCompletion(): void {
 }
 
 function notifyHotkeyUpdated(): void {
-  const hotkey: Hotkey | null = keys.value.length ? createHotkey() : null;
+  const hotkey: Keys | null = keys.value.length ? createHotkey() : null;
   $emit('update:hotkey', hotkey);
   isInputInProgress.value = false;
 }
@@ -116,8 +116,8 @@ function isStandaloneKey(event: KeyboardEvent): boolean {
   return event.key === 'Delete';
 }
 
-function createHotkey(): Hotkey {
-  return { keys: keys.value.slice() };
+function createHotkey(): Keys {
+  return keys.value.slice();
 }
 
 function remapKey(key: string): string {
