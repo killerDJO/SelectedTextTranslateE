@@ -45,10 +45,10 @@ export const useAppStore = defineStore('app', {
   actions: {
     async setup(): Promise<void> {
       this.accentColor = await hostApi.getAccentColor();
-      hostApi.onAccentColorChange(accentColor => (this.accentColor = accentColor));
+      await hostApi.onAccentColorChange(accentColor => (this.accentColor = accentColor));
 
       this._settings = await hostApi.getSettings();
-      hostApi.onSettingsChange(settings => (this._settings = settings));
+      await hostApi.onSettingsChange(settings => (this._settings = settings));
     },
     zoomIn(): void {
       const scalingSettings = this.settings.scaling;

@@ -23,7 +23,7 @@ export class HostApi {
     return invoke<string>('accent_color');
   }
 
-  onAccentColorChange(_callback: (accentColor: string) => void): void {
+  async onAccentColorChange(_callback: (accentColor: string) => void): Promise<void> {
     // TODO: not implemented
   }
 
@@ -43,24 +43,36 @@ export class HostApi {
     await invoke('reset_settings_to_default');
   }
 
-  onSettingsChange(callback: (settings: Settings) => void): void {
-    listen('settings_changed', (event: Event<Settings>) => callback(event.payload));
+  async openSettingsFile(): Promise<void> {
+    await invoke('open_settings_file');
   }
 
-  setPlayingState(isPlaying: boolean): void {
+  async pauseHotkeys(): Promise<void> {
+    await emit('pause_hotkeys');
+  }
+
+  async resumeHotkeys(): Promise<void> {
+    await emit('resume_hotkeys');
+  }
+
+  async onSettingsChange(callback: (settings: Settings) => void): Promise<void> {
+    await listen('settings_changed', (event: Event<Settings>) => callback(event.payload));
+  }
+
+  async setPlayingState(isPlaying: boolean): Promise<void> {
     if (isPlaying) {
-      emit('play_start');
+      await emit('play_start');
     } else {
-      emit('play_stop');
+      await emit('play_stop');
     }
   }
 
-  emitHistoryRecordChangeEvent(recordId: string): void {
-    emit(HISTORY_RECORD_CHANGE_EVENT, { recordId });
+  async emitHistoryRecordChangeEvent(recordId: string): Promise<void> {
+    await emit(HISTORY_RECORD_CHANGE_EVENT, { recordId });
   }
 
-  onHistoryRecordChange(callback: (recordId: string) => void): void {
-    listen(HISTORY_RECORD_CHANGE_EVENT, (event: Event<{ recordId: string }>) =>
+  async onHistoryRecordChange(callback: (recordId: string) => void): Promise<void> {
+    await listen(HISTORY_RECORD_CHANGE_EVENT, (event: Event<{ recordId: string }>) =>
       callback(event.payload.recordId)
     );
   }
@@ -77,12 +89,12 @@ export class HostApi {
     }
   }
 
-  notifyOnError(): void {
-    invoke('notify_on_frontend_error');
+  async notifyOnError(): Promise<void> {
+    await invoke('notify_on_frontend_error');
   }
 
-  openUrl(url: string): void {
-    open(url);
+  async openUrl(url: string): Promise<void> {
+    await open(url);
   }
 
   hideWindow(): Promise<void> {

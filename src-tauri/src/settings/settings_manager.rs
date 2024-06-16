@@ -3,6 +3,7 @@ use std::ops::Deref;
 use std::path::PathBuf;
 use std::{fs, sync::Mutex};
 use tauri::{async_runtime::Receiver, AppHandle, Manager};
+use tauri_plugin_shell::ShellExt;
 
 use crate::notifications::show_error_notification;
 
@@ -93,6 +94,16 @@ impl SettingsManager {
         let default_settings: Settings = serde_json::from_str(&default_settings_json).unwrap();
 
         default_settings
+    }
+
+    pub fn open_settings_file(&self) {
+        let user_settings_path = SettingsManager::get_user_settings_path(&self.app);
+        self.app
+            .shell()
+            .open(user_settings_path.to_str().unwrap(), None)
+            .unwrap_or_else(|e| {
+                show_error_notification(&self.app, Box::new(e), "Error opening settings file.")
+            });
     }
 
     fn call_change_handlers(&self, old_settings: &Settings, new_settings: &Settings) {

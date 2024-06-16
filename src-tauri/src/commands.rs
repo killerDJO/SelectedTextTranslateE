@@ -43,6 +43,11 @@ pub fn reset_settings_to_default(settings_manager: tauri::State<SettingsManager>
 }
 
 #[tauri::command]
+pub fn open_settings_file(settings_manager: tauri::State<SettingsManager>) {
+    settings_manager.open_settings_file();
+}
+
+#[tauri::command]
 pub fn update_settings(
     settings_manager: tauri::State<SettingsManager>,
     updated_settings: PartialSettings,

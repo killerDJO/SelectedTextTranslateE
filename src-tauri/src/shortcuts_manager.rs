@@ -9,7 +9,10 @@ use tauri::{AppHandle, Manager};
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
 
 use crate::{
-    events::{emit_play_text_command, emit_show_input_command, emit_translate_text_command},
+    events::{
+        emit_play_text_command, emit_show_input_command, emit_translate_text_command,
+        PAUSE_HOTKEYS_EVENT, RESUME_HOTKEYS_EVENT,
+    },
     notifications::show_error_notification,
     settings::{HotkeySettings, Keys, SettingsManager},
     text_extractor::TextExtractor,
@@ -36,6 +39,7 @@ impl ShortcutsManager {
         };
 
         shortcuts_manager.register_shortcuts(false);
+        shortcuts_manager.watch_hotkeys_state_events();
 
         let settings_manager = app.state::<SettingsManager>();
         let self_clone = shortcuts_manager.clone();
@@ -150,6 +154,20 @@ impl ShortcutsManager {
                     }
                 })
                 .unwrap();
+        });
+    }
+
+    fn watch_hotkeys_state_events(&self) {
+        let app = self.app.app_handle();
+
+        let shortcuts_manager = self.clone();
+        app.listen(PAUSE_HOTKEYS_EVENT, move |_| {
+            shortcuts_manager.unregister_all();
+        });
+
+        let shortcuts_manager = self.clone();
+        app.listen(RESUME_HOTKEYS_EVENT, move |_| {
+            shortcuts_manager.register_shortcuts(false)
         });
     }
 

@@ -10,7 +10,11 @@ const SHOW_INPUT_COMMAND: &str = "show_input";
 
 pub const PLAY_START_EVENT: &str = "play_start";
 pub const PLAY_STOP_EVENT: &str = "play_stop";
+
 pub const SETTINGS_CHANGED_EVENT: &str = "settings_changed";
+
+pub const PAUSE_HOTKEYS_EVENT: &str = "pause_hotkeys";
+pub const RESUME_HOTKEYS_EVENT: &str = "resume_hotkeys";
 
 #[derive(Serialize, Clone)]
 struct TranslateTextCommandData {

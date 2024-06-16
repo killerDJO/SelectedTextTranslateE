@@ -42,16 +42,16 @@ export const useSettingsStore = defineStore('settings', {
       await hostApi.updateSettings(cloneDeep(settings));
     },
     async updateHotkeys(hotkeySettings: EditableHotkeySettings) {
-      this.updateSettings(mapEditableHotkeysToSettings(hotkeySettings));
+      await this.updateSettings(mapEditableHotkeysToSettings(hotkeySettings));
     },
     async pauseHotkeys() {
-      await window.mainAPI.settings.pauseHotkeys(true);
+      await hostApi.pauseHotkeys();
     },
     async enableHotkeys() {
-      await window.mainAPI.settings.pauseHotkeys(false);
+      await hostApi.resumeHotkeys();
     },
     async openSettingsFile() {
-      await window.mainAPI.settings.openSettingsFile();
+      await hostApi.openSettingsFile();
     },
     async resetSettings() {
       await hostApi.resetSettingsToDefault();
