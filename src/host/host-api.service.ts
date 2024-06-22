@@ -59,6 +59,24 @@ export class HostApi {
     await listen('settings_changed', (event: Event<Settings>) => callback(event.payload));
   }
 
+  async onTranslateText(callback: (showDefinitions: boolean) => void): Promise<void> {
+    await listen('translate_text', (event: Event<{ show_definition: boolean }>) =>
+      callback(event.payload.show_definition)
+    );
+  }
+
+  async onPlayText(callback: () => void): Promise<void> {
+    await listen('play_text', () => callback());
+  }
+
+  async onShowInput(callback: () => void): Promise<void> {
+    await listen('show_input', () => callback());
+  }
+
+  async getTextFromClipboard(): Promise<string> {
+    return invoke<string>('clipboard_text');
+  }
+
   async setPlayingState(isPlaying: boolean): Promise<void> {
     if (isPlaying) {
       await emit('play_start');
@@ -89,8 +107,8 @@ export class HostApi {
     }
   }
 
-  async notifyOnError(): Promise<void> {
-    await invoke('notify_on_frontend_error');
+  async notifyOnError(message: string): Promise<void> {
+    await invoke('notify_on_frontend_error', { message });
   }
 
   async openUrl(url: string): Promise<void> {

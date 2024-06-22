@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia';
 
 import { useAppStore } from '~/app.store';
-import { ensureErrorType } from '~/utils/error-handling.utils';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
+import { hostApi } from '~/host/host-api.service';
+import { logger } from '~/services/logger.service';
 
 import type { TranslateRequest } from './models/requests.model';
 import { textPlayer } from './services/text-player.service';
@@ -28,8 +29,9 @@ export const useTranslationStore = defineStore('translation', {
       const app = useAppStore();
       const globalErrorsStore = useGlobalErrorsStore();
 
-      window.mainAPI.translation.onTranslateText((text, showDefinitions) => {
+      hostApi.onTranslateText(async showDefinitions => {
         globalErrorsStore.clearErrors();
+        const text = await hostApi.getTextFromClipboard();
 
         if (!text) {
           translateResult.clearCurrentTranslation();
@@ -44,22 +46,24 @@ export const useTranslationStore = defineStore('translation', {
           {
             sentence: text,
             isForcedTranslation: false,
-            sourceLanguage: app.settings.language.sourceLanguage,
-            targetLanguage: app.settings.language.targetLanguage
+            sourceLanguage: app.settings.translation.sourceLanguage,
+            targetLanguage: app.settings.translation.targetLanguage
           },
           showDefinitions
         );
       });
 
-      window.mainAPI.translation.onPlayText(async text => {
+      hostApi.onPlayText(async () => {
         try {
+          const text = await hostApi.getTextFromClipboard();
           await textPlayer.playText({ text: text });
         } catch (error: unknown) {
-          window.mainAPI.logging.notifyOnError(ensureErrorType(error), 'Error playing text.');
+          logger.error(error, 'Error playing text.');
+          hostApi.notifyOnError('Error playing text.');
         }
       });
 
-      window.mainAPI.translation.onShowTextInput(() => {
+      hostApi.onShowInput(() => {
         translateResult.clearCurrentTranslation();
         globalErrorsStore.clearErrors();
 

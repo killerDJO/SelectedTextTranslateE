@@ -60,6 +60,9 @@ pub fn update_settings(
 }
 
 #[tauri::command]
-pub fn notify_on_frontend_error(app: AppHandle) {
-    notifications::show_notification(&app, "Presentation error has ocurred.");
+pub fn notify_on_frontend_error(app: AppHandle, message: Option<String>) {
+    notifications::show_notification(
+        &app,
+        message.unwrap_or("Presentation error has ocurred.".to_string()),
+    );
 }
