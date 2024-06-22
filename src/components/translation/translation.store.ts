@@ -25,51 +25,50 @@ export const useTranslationStore = defineStore('translation', {
   getters: {},
   actions: {
     setup() {
-      const translateResult = useTranslateResultStore();
-      const app = useAppStore();
-      const globalErrorsStore = useGlobalErrorsStore();
+      // Since events will be sent before setup, we read last command from the host API
+      hostApi
+        .getLastTranslationCommand()
+        .then(command => {
+          if (!command) {
+            logger.warning('No last translation command found on startup.');
+            return;
+          }
 
-      hostApi.onTranslateText(async showDefinitions => {
-        globalErrorsStore.clearErrors();
-        const text = await hostApi.getTextFromClipboard();
+          if (command === 'Play') {
+            this.handlePlayTextCommand();
+            return;
+          }
 
-        if (!text) {
-          translateResult.clearCurrentTranslation();
-          this.nonTextTranslation = true;
-          return;
-        }
+          if (command === 'ShowInput') {
+            this.handleShowInputCommand();
+            return;
+          }
 
-        this.nonTextTranslation = false;
-        this.showInput = false;
+          this.handleTranslateTextCommand(command.Translate);
+        })
+        .catch(error => {
+          logger.error(error, 'Error getting last translation command.');
+        });
 
-        translateResult.translateText(
-          {
-            sentence: text,
-            isForcedTranslation: false,
-            sourceLanguage: app.settings.translation.sourceLanguage,
-            targetLanguage: app.settings.translation.targetLanguage
-          },
-          showDefinitions
-        );
-      });
+      hostApi.onTranslateText(showDefinitions => this.handleTranslateTextCommand(showDefinitions));
+      hostApi.onPlayText(() => this.handlePlayTextCommand());
+      hostApi.onShowInput(() => this.handleShowInputCommand());
 
-      hostApi.onPlayText(async () => {
-        try {
-          const text = await hostApi.getTextFromClipboard();
-          await textPlayer.playText({ text: text });
-        } catch (error: unknown) {
-          logger.error(error, 'Error playing text.');
-          hostApi.notifyOnError('Error playing text.');
-        }
-      });
-
-      hostApi.onShowInput(() => {
+      hostApi.onBeforeShow(() => {
+        const translateResult = useTranslateResultStore();
         translateResult.clearCurrentTranslation();
-        globalErrorsStore.clearErrors();
-
-        this.nonTextTranslation = false;
-        this.showInput = true;
+        translateResult.isTranslationInProgress = true;
+        this.showInput = false;
       });
+    },
+    async handlePlayTextCommand() {
+      try {
+        const text = await hostApi.getTextFromClipboard();
+        await textPlayer.playText({ text: text });
+      } catch (error: unknown) {
+        logger.error(error, 'Error playing text.');
+        hostApi.notifyOnError('Error playing text.');
+      }
     },
     translateText(request: TranslateRequest) {
       this.nonTextTranslation = false;
@@ -77,6 +76,43 @@ export const useTranslationStore = defineStore('translation', {
 
       const translateResult = useTranslateResultStore();
       translateResult.translateText(request);
+    },
+    handleShowInputCommand() {
+      const translateResult = useTranslateResultStore();
+      const globalErrorsStore = useGlobalErrorsStore();
+
+      translateResult.clearCurrentTranslation();
+      globalErrorsStore.clearErrors();
+
+      this.nonTextTranslation = false;
+      this.showInput = true;
+    },
+    async handleTranslateTextCommand(showDefinitions: boolean) {
+      const translateResult = useTranslateResultStore();
+      const globalErrorsStore = useGlobalErrorsStore();
+      const app = useAppStore();
+
+      globalErrorsStore.clearErrors();
+      const text = await hostApi.getTextFromClipboard();
+
+      if (!text) {
+        translateResult.clearCurrentTranslation();
+        this.nonTextTranslation = true;
+        return;
+      }
+
+      this.nonTextTranslation = false;
+      this.showInput = false;
+
+      translateResult.translateText(
+        {
+          sentence: text,
+          isForcedTranslation: false,
+          sourceLanguage: app.settings.translation.sourceLanguage,
+          targetLanguage: app.settings.translation.targetLanguage
+        },
+        showDefinitions
+      );
     }
   }
 });

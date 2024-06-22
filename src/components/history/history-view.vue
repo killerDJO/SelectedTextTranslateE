@@ -59,20 +59,20 @@ async function changePage(pageNumber: number) {
   await history.queryRecords();
 }
 
-function updateColumns(columns: HistoryColumns) {
-  app.updateSettings({ display: { historyColumns: columns } });
+async function updateColumns(columns: HistoryColumns) {
+  await app.updateSettings({ display: { historyColumns: columns } });
 }
 
-function updateCurrentTags(tags: Tag[]) {
-  app.updateSettings({ translation: { tags: cloneDeep(tags) } });
+async function updateCurrentTags(tags: Tag[]) {
+  await app.updateSettings({ translation: { tags: cloneDeep(tags) } });
 }
 
-function toggleActiveTag(tag: Tag) {
+async function toggleActiveTag(tag: Tag) {
   const clonedTags = cloneDeep(app.settings.translation.tags).filter(
     currentTag => currentTag.tag !== tag.tag
   );
 
-  updateCurrentTags(
+  await updateCurrentTags(
     clonedTags.concat([
       {
         tag: tag.tag,

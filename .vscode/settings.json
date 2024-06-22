@@ -39,6 +39,7 @@
     "KEYEVENTF",
     "keytar",
     "Pinia",
+    "reqwest",
     "Tauri",
     "Typeahead",
     "unmanaged",

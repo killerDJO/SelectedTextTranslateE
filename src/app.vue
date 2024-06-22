@@ -46,13 +46,13 @@ function registerHotkeys(): void {
 <template>
   <div
     class="main"
-    :style="{ 'border-color': '#' + app.accentColor }"
+    :style="{ 'border-color': app.accentColor }"
     :class="{ frameless: app.isFrameless }"
   >
     <div
       v-if="app.isFrameless"
       class="frameless-header"
-      :style="{ 'background-color': '#' + app.accentColor }"
+      :style="{ 'background-color': app.accentColor }"
     />
     <global-errors></global-errors>
     <div v-if="isSetupCompleted" class="scroll-holder">

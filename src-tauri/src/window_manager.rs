@@ -7,7 +7,7 @@ use windows::Win32::{
 };
 
 use crate::{
-    events::emit_before_show_event,
+    events_manager::EventsManager,
     settings::{
         PartialSettings, PartialTranslationWindowSettings, SettingsManager,
         TranslationWindowSettings, WindowSettings,
@@ -73,7 +73,7 @@ pub fn show_translation_window(app: &AppHandle) -> WebviewWindow {
 
     // Emit the event before show to ensure loader is shown
     // This prevents flashes of the window content
-    emit_before_show_event(&translate_win);
+    EventsManager::emit_before_show_event(&translate_win);
 
     translate_win.show().unwrap();
     translate_win.set_focus().unwrap();
@@ -187,7 +187,7 @@ fn handle_translate_window_events(translate_window: &WebviewWindow) {
                 // This check prevents the window from hiding when it's resized
                 let is_actually_focused: bool = window.is_focused().unwrap();
                 if !is_focused && !is_actually_focused {
-                    window.hide().unwrap();
+                    // window.hide().unwrap();
                 }
             }
             tauri::WindowEvent::Resized(size) => update_translation_window_settings(

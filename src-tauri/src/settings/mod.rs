@@ -45,6 +45,7 @@ pub struct CoreSettings {
     pub play_volume: u32,
     pub search_pattern: String,
     pub last_records_to_scan_for_merge: u32,
+    pub proxy: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Partial)]

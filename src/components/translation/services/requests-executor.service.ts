@@ -1,3 +1,5 @@
+import { hostApi } from '~/host/host-api.service';
+
 export class RequestsExecutor {
   public constructor() {}
 
@@ -8,13 +10,9 @@ export class RequestsExecutor {
     const url = `https://translate.google.com/_/TranslateWebserverUi/data/batchexecute?rpcids=${rpcId}&hl=ru&soc-app=1&soc-platform=1&soc-device=1&rt=c`;
     const formData = encodeURIComponent(`[[["${rpcId}","${data}",null,"generic"]]]`);
 
-    const headers = {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    };
-    const response = await fetch(url, { method: 'POST', headers, body: `f.req=${formData}` });
-    const responseData = await response.text();
+    const response = await hostApi.executeGoogleTranslateRequest(url, `f.req=${formData}`);
 
-    return this.parseGoogleResponse(responseData, rpcId);
+    return this.parseGoogleResponse(response, rpcId);
   }
 
   private parseGoogleResponse<TContent>(response: string, rpcId: string): TContent {

@@ -1,7 +1,8 @@
 use tauri::AppHandle;
 
 use crate::{
-    notifications,
+    events_manager::{EventsManager, TranslationCommands},
+    notifications, requests_executor,
     settings::{PartialSettings, Settings, SettingsManager},
     text_extractor::TextExtractor,
 };
@@ -25,6 +26,26 @@ pub fn accent_color() -> String {
 #[tauri::command]
 pub fn clipboard_text(text_extractor: tauri::State<TextExtractor>) -> String {
     text_extractor.text_from_clipboard()
+}
+
+#[tauri::command]
+pub fn last_translation_command(
+    events_manager: tauri::State<EventsManager>,
+) -> Option<TranslationCommands> {
+    let last_command = events_manager.last_translation_command.lock().unwrap();
+    last_command.clone()
+}
+
+#[tauri::command]
+pub async fn execute_google_translate_request(
+    app: AppHandle,
+    url: String,
+    body: String,
+    user_agent: String,
+) -> String {
+    let result =
+        requests_executor::execute_google_translate_request(&app, url, body, user_agent).await;
+    result.unwrap()
 }
 
 #[tauri::command]

@@ -9,7 +9,7 @@ use tauri::{
 use tauri_plugin_shell::ShellExt;
 
 use crate::{
-    events::{emit_translate_text_command, PLAY_START_EVENT, PLAY_STOP_EVENT},
+    events_manager::{EventsManager, PLAY_START_EVENT, PLAY_STOP_EVENT},
     notifications::show_error_notification,
     settings::{PartialSettings, PartialTranslationSettings, SettingsManager, Tag},
     shortcuts_manager::ShortcutsManager,
@@ -106,7 +106,8 @@ impl AppTrayIcon {
     fn translate_from_clipboard(app: &AppHandle) {
         app.state::<TextExtractor>().extract_text_from_clipboard();
         let window = window_manager::show_translation_window(app);
-        emit_translate_text_command(&window, false);
+        app.state::<EventsManager>()
+            .emit_translate_text_command(&window, false);
     }
 
     fn handle_suspended_state_change(&self, suspended: bool) {

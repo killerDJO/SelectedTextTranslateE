@@ -48,6 +48,7 @@ function archive() {
       :is-in-progress="translateResult.isTranslationInProgress"
       :settings="app.settings"
       :languages="languages"
+      :is-embedded="false"
       @translate-suggestion="translateResult.translateSuggestion()"
       @force-translation="translateResult.forceTranslation()"
       @archive="archive()"

@@ -9,10 +9,7 @@ use tauri::{AppHandle, Manager};
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
 
 use crate::{
-    events::{
-        emit_play_text_command, emit_show_input_command, emit_translate_text_command,
-        PAUSE_HOTKEYS_EVENT, RESUME_HOTKEYS_EVENT,
-    },
+    events_manager::{EventsManager, PAUSE_HOTKEYS_EVENT, RESUME_HOTKEYS_EVENT},
     notifications::show_error_notification,
     settings::{HotkeySettings, Keys, SettingsManager},
     text_extractor::TextExtractor,
@@ -122,19 +119,21 @@ impl ShortcutsManager {
         self.register_shortcut(&settings.play_text, "Play Text", |app| {
             app.state::<TextExtractor>().copy_selected_text();
             let window = window_manager::get_or_create_translation_window(app);
-            emit_play_text_command(&window);
+            app.state::<EventsManager>().emit_play_text_command(&window);
         });
 
         self.register_shortcut(&settings.input_text, "Show Input", |app| {
             let window = window_manager::show_translation_window(app);
-            emit_show_input_command(&window);
+            app.state::<EventsManager>()
+                .emit_show_input_command(&window);
         });
     }
 
     fn handle_translation_window_command(app: &AppHandle, show_definition: bool) {
         app.state::<TextExtractor>().copy_selected_text();
         let window = window_manager::show_translation_window(app);
-        emit_translate_text_command(&window, show_definition)
+        app.state::<EventsManager>()
+            .emit_translate_text_command(&window, show_definition)
     }
 
     fn handle_toggle_suspend_shortcut(&self) {

@@ -4,7 +4,8 @@
     "requestTimeoutMilliseconds": 10000,
     "playVolume": 100,
     "searchPattern": "https://www.google.com.ua/search?safe=off&source=hp&q={{query}}",
-    "lastRecordsToScanForMerge": 10000
+    "lastRecordsToScanForMerge": 10000,
+    "proxy": null
   },
   "translation": {
     "sourceLanguage": "en",

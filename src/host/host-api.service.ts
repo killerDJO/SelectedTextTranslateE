@@ -14,9 +14,15 @@ import { ViewNames } from './models/views.model';
 
 const HISTORY_RECORD_CHANGE_EVENT = 'history_record_changed';
 
+export type TranslationCommand = 'Play' | 'ShowInput' | { Translate: boolean };
+
 export class HostApi {
   getViewName(): ViewNames {
-    return window.location.hash.slice(1) as ViewNames;
+    return window.location.hash.slice(2) as ViewNames;
+  }
+
+  async onBeforeShow(callback: () => void): Promise<void> {
+    await listen('before_show', () => callback());
   }
 
   async getAccentColor(): Promise<string> {
@@ -35,8 +41,8 @@ export class HostApi {
     return invoke<Settings>('default_settings');
   }
 
-  async updateSettings(updated_settings: PartialSettings): Promise<void> {
-    await invoke('update_settings', { updated_settings: updated_settings });
+  async updateSettings(updatedSettings: PartialSettings): Promise<void> {
+    await invoke('update_settings', { updatedSettings: updatedSettings });
   }
 
   async resetSettingsToDefault(): Promise<void> {
@@ -75,6 +81,18 @@ export class HostApi {
 
   async getTextFromClipboard(): Promise<string> {
     return invoke<string>('clipboard_text');
+  }
+
+  async getLastTranslationCommand(): Promise<TranslationCommand> {
+    return invoke<TranslationCommand>('last_translation_command');
+  }
+
+  async executeGoogleTranslateRequest(url: string, body: string): Promise<string> {
+    return invoke<string>('execute_google_translate_request', {
+      url,
+      body,
+      userAgent: navigator.userAgent
+    });
   }
 
   async setPlayingState(isPlaying: boolean): Promise<void> {
@@ -128,7 +146,7 @@ export class HostApi {
   }
 
   logError(err: Error, message: string): void {
-    error(`Error: ${message}. Error details: ${err}. Stack: ${err.stack}.`);
+    error(`Error: ${message}. Error details: ${JSON.stringify(err)}. Stack: ${err.stack}.`);
   }
 }
 
