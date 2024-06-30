@@ -26,5 +26,5 @@ export function setupErrorHandling(app: VueApp<Element>): void {
 
 function sendErrorMessage(error: unknown): void {
   logger.error(error, 'An error occurred');
-  hostApi.notifyOnError('An error occurred. Please check the logs for more details.');
+  hostApi.showErrorNotification('An error has occurred.');
 }

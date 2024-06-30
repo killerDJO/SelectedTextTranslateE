@@ -67,7 +67,7 @@ export const useTranslationStore = defineStore('translation', {
         await textPlayer.playText({ text: text });
       } catch (error: unknown) {
         logger.error(error, 'Error playing text.');
-        hostApi.notifyOnError('Error playing text.');
+        hostApi.showErrorNotification('Error playing text.');
       }
     },
     translateText(request: TranslateRequest) {

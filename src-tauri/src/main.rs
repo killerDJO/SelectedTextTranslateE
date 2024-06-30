@@ -76,7 +76,7 @@ fn main() {
             commands::default_settings,
             commands::open_settings_file,
             commands::reset_settings_to_default,
-            commands::notify_on_frontend_error,
+            commands::show_notification,
         ])
         .build(tauri::generate_context!())
         .expect("error while building tauri application")

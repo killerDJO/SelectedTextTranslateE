@@ -15,6 +15,7 @@
     "autostart:allow-is-enabled",
     "autostart:allow-enable",
     "autostart:allow-disable",
-    "app:allow-version"
+    "app:allow-version",
+    "updater:default"
   ]
 }

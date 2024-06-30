@@ -10,22 +10,27 @@ pub fn show_error_notification(
     let title_str = title.into();
     error!("Non critical error: [{}]. Details: {}.", title_str, err,);
 
-    show_notification(app, title_str);
+    show_notification(app, title_str, Some("Details can be found in logs"));
 }
 
-pub fn show_notification(app: &AppHandle, title: impl Into<String>) {
+pub fn show_notification(
+    app: &AppHandle,
+    title: impl Into<String>,
+    body: Option<impl Into<String>>,
+) {
     let title_str = title.into();
 
     if !ensure_notifications_permissions(app) {
         return;
     }
 
-    let notification_result = app
-        .notification()
-        .builder()
-        .title(title_str)
-        .body("Details can be found in logs")
-        .show();
+    let mut notification_builder = app.notification().builder().title(title_str);
+
+    if let Some(boyd) = body {
+        notification_builder = notification_builder.body(boyd);
+    }
+
+    let notification_result = notification_builder.show();
 
     if notification_result.is_err() {
         warn!(

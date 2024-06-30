@@ -127,8 +127,12 @@ export class HostApi {
     }
   }
 
-  async notifyOnError(message: string): Promise<void> {
-    await invoke('notify_on_frontend_error', { message });
+  async showNotification(message: string, body?: string): Promise<void> {
+    await invoke('show_notification', { message, body });
+  }
+
+  async showErrorNotification(message: string): Promise<void> {
+    await invoke('show_notification', { message, body: 'Details can be found in log' });
   }
 
   async openUrl(url: string): Promise<void> {
@@ -146,7 +150,13 @@ export class HostApi {
   }
 
   async checkForUpdates(): Promise<void> {
-    await check();
+    const update = await check();
+    if (update) {
+      await this.showNotification('Update is available. Downloading...');
+      await update.downloadAndInstall();
+    } else {
+      await this.showNotification('No updates available.');
+    }
   }
 
   logInfo(message: string): void {
