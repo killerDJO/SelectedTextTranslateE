@@ -39,7 +39,10 @@ impl AppTrayIcon {
 
         let tray_icon = TrayIconBuilder::new()
             .menu(&menu)
-            .icon(Self::get_tray_icon_image(shortcuts_manager.is_suspended()))
+            .icon(Self::get_tray_icon_image(
+                app,
+                shortcuts_manager.is_suspended(),
+            ))
             .tooltip("Selected text translate..")
             .on_menu_event(Self::menu_event_handler)
             .on_tray_icon_event(Self::tray_icon_event_handler)
@@ -112,7 +115,10 @@ impl AppTrayIcon {
 
     fn handle_suspended_state_change(&self, suspended: bool) {
         self.tray_icon
-            .set_icon(Some(Self::get_tray_icon_image(suspended)))
+            .set_icon(Some(Self::get_tray_icon_image(
+                self.tray_icon.app_handle(),
+                suspended,
+            )))
             .unwrap();
         self.tray_icon
             .set_menu(Some(Self::build_menu(
@@ -160,14 +166,18 @@ impl AppTrayIcon {
 
         let tray_icon_clone = tray_icon.clone();
         app.listen(PLAY_START_EVENT, move |_| {
-            let playing_icon = Image::from_path("./icons/tray-playing.ico").unwrap();
+            let playing_icon =
+                Self::read_icon_from_resources(tray_icon_clone.app_handle(), "tray-playing.ico");
             tray_icon_clone.set_icon(Some(playing_icon)).unwrap();
         });
 
         let tray_icon_clone = tray_icon.clone();
         app.listen(PLAY_STOP_EVENT, move |_| {
             let shortcuts_manager = tray_icon_clone.app_handle().state::<ShortcutsManager>();
-            let regular_icon = Self::get_tray_icon_image(shortcuts_manager.is_suspended());
+            let regular_icon = Self::get_tray_icon_image(
+                tray_icon_clone.app_handle(),
+                shortcuts_manager.is_suspended(),
+            );
             tray_icon_clone.set_icon(Some(regular_icon)).unwrap();
         });
     }
@@ -245,13 +255,24 @@ impl AppTrayIcon {
         tags_submenu
     }
 
-    fn get_tray_icon_image(is_suspended: bool) -> Image<'static> {
+    fn get_tray_icon_image(app: &AppHandle, is_suspended: bool) -> Image<'static> {
         let icon = if is_suspended {
-            Image::from_path("./icons/tray-suspended.ico").unwrap()
+            Self::read_icon_from_resources(app, "tray-suspended.ico")
         } else {
-            Image::from_path("./icons/tray.ico").unwrap()
+            Self::read_icon_from_resources(app, "tray.ico")
         };
         icon
+    }
+
+    fn read_icon_from_resources(app: &AppHandle, icon_name: &str) -> Image<'static> {
+        let resources_dir = app.path().resource_dir().unwrap();
+
+        let icon_path = resources_dir
+            .join("resources")
+            .join("icons")
+            .join(icon_name);
+
+        Image::from_path(icon_path).unwrap()
     }
 
     fn open_logs_folder(app: &AppHandle) -> Result<(), Box<dyn Error>> {

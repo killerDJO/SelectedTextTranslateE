@@ -8,23 +8,24 @@ export default defineConfig(async () => ({
   plugins: [vue(), visualizer({ filename: './dist/stats.html' })],
 
   base: './',
-  // build: {
-  //   sourcemap: 'inline',
-  //   chunkSizeWarningLimit: 10000,
-  //   rollupOptions: {
-  //     input: {
-  //       index: './index.html'
-  //     },
-  //     output: {
-  //       manualChunks(id) {
-  //         if (id.includes('node_modules')) {
-  //           return 'vendor';
-  //         }
-  //       }
-  //     }
-  //   },
-  //   emptyOutDir: false
-  // },
+
+  build: {
+    // sourcemap: 'inline',
+    chunkSizeWarningLimit: 1000,
+    rollupOptions: {
+      input: {
+        index: './index.html'
+      },
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    }
+  },
+
   resolve: {
     alias: {
       '~': path.resolve(__dirname, './src')

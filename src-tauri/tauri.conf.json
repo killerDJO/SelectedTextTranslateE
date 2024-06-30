@@ -15,6 +15,7 @@
     }
   },
   "bundle": {
+    "publisher": "killerDJO",
     "active": true,
     "targets": "all",
     "icon": [
@@ -22,7 +23,10 @@
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.png",
-      "icons/icon.ico"
+      "icons/icon.ico",
+      "icons/tray-playing.ico",
+      "icons/tray-suspended.ico",
+      "icons/tray.ico"
     ],
     "resources": ["resources/*"]
   }

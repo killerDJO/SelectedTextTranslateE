@@ -15,7 +15,7 @@ const sortedInstances = computed(() =>
 
 <template>
   <div class="translation-result-timeline">
-    <template v-for="(instance, index) in sortedInstances" :key="index">
+    <template v-for="(instance, _index) in sortedInstances" :key="_index">
       <span class="date">{{ $filters.dateTime(instance.translationDate) }}</span>
       <div class="separator">
         <div class="dot"></div>
