@@ -21,17 +21,3 @@
     }
   }
 }
-
-.translation-instances {
-  margin-top: $spacing-large;
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-small;
-
-  .tag {
-    border-radius: $border-radius-small;
-    border: $border-width solid $color-border;
-    padding: 0 3px;
-    margin-right: 3px;
-  }
-}

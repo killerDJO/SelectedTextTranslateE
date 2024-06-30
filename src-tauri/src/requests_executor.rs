@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use reqwest::header::{CONTENT_TYPE, ORIGIN, USER_AGENT};
 use tauri::{AppHandle, Manager};
 
@@ -24,6 +26,9 @@ pub async fn execute_google_translate_request(
         .body(body)
         .header(USER_AGENT, user_agent)
         .header(ORIGIN, "https://translate.google.com")
+        .timeout(Duration::from_millis(
+            settings.core.request_timeout_milliseconds.into(),
+        ))
         .header(
             CONTENT_TYPE,
             "application/x-www-form-urlencoded;charset=UTF-8",

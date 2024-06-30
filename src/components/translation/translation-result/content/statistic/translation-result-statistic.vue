@@ -61,16 +61,6 @@ const confirmModalInstance = ref<InstanceType<typeof ConfirmModal> | null>(null)
         />
       </div>
     </div>
-    <div v-if="historyRecord.instances" class="translation-instances">
-      <div
-        v-for="(instance, index) in historyRecord.instances.slice().reverse()"
-        :key="index"
-        class="instance"
-      >
-        At {{ $filters.dateTime(instance.translationDate) }}
-        <span v-for="tag in instance.tags" :key="tag" class="tag">{{ tag }}</span>
-      </div>
-    </div>
   </div>
   <confirm-modal ref="confirmModalInstance" @confirm="$emit('hard-delete')">
     <template #header>Are you sure you want to delete this record?</template>

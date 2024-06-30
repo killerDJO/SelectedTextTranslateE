@@ -14,6 +14,7 @@ import { Settings, Tag } from '~/host/models/settings.model';
 import TranslationResultContentCategory from './category/translation-result-content-category.vue';
 import TranslationResultDefinitionCategory from './definitions/translation-result-definition-category.vue';
 import TranslationResultStatistic from './statistic/translation-result-statistic.vue';
+import TranslationResultTimeline from './timeline/translation-result-timeline.vue';
 
 interface Props {
   translateDescriptor: TranslateDescriptor;
@@ -161,6 +162,12 @@ function initializeCurrentView(): void {
         class="action"
         @click="currentView = TranslateResultViews.Statistic"
       />
+      <link-button
+        v-if="currentView !== TranslateResultViews.Timeline && !!historyRecord?.instances?.length"
+        :text="'Timeline'"
+        class="action"
+        @click="currentView = TranslateResultViews.Timeline"
+      />
       <span v-if="!historyRecord" class="action not-synced-status">Not Synced</span>
     </div>
     <div v-if="showTags && historyRecord" class="tags">
@@ -205,6 +212,10 @@ function initializeCurrentView(): void {
       @hard-delete="$emit('hard-delete')"
       @archive="$emit('archive')"
       @unarchive="$emit('unarchive')"
+    />
+    <translation-result-timeline
+      v-if="!!historyRecord && currentView === TranslateResultViews.Timeline"
+      :instances="historyRecord?.instances ?? []"
     />
   </div>
 </template>
