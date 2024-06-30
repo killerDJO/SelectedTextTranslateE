@@ -4,6 +4,7 @@ import { warn, info, error } from '@tauri-apps/plugin-log';
 import { open } from '@tauri-apps/plugin-shell';
 import { window as tauriWindow } from '@tauri-apps/api';
 import { getVersion } from '@tauri-apps/api/app';
+import { check } from '@tauri-apps/plugin-updater';
 import {
   enable as enableAutostart,
   isEnabled as isAutostartEnabled,
@@ -145,7 +146,7 @@ export class HostApi {
   }
 
   async checkForUpdates(): Promise<void> {
-    // TODO: not implemented
+    await check();
   }
 
   logInfo(message: string): void {

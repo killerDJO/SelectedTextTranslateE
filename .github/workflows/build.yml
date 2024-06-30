@@ -10,21 +10,22 @@ jobs:
   create-release:
     runs-on: [windows-latest]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
         with:
-          node-version: '18.x'
-      - name: Install NPM
+          node-version: lts/*
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: install frontend dependencies
         run: npm ci
-      - name: Build
-        run: |
-          npm run native-rebuild
-          npm run build
-          npm run pack
-          npm run create-installer
-      - uses: ncipollo/release-action@v1
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          artifacts: 'dist/installer/*'
-          omitBody: true
-          repo: SelectedTextTranslateReleases
-          token: ${{ secrets.RELEASES_TOKEN }}
+          releaseName: 'App v${{ github.ref_name }}
+          releaseBody: 'See the assets to download this version and install.'

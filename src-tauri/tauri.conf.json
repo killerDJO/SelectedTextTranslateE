@@ -17,17 +17,22 @@
   "bundle": {
     "publisher": "killerDJO",
     "active": true,
-    "targets": "all",
+    "targets": ["updater", "msi"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
       "icons/128x128@2x.png",
       "icons/icon.png",
-      "icons/icon.ico",
-      "icons/tray-playing.ico",
-      "icons/tray-suspended.ico",
-      "icons/tray.ico"
+      "icons/icon.ico"
     ],
     "resources": ["resources/*"]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk1QUY2MzA3MUU5QUU4NTgKUldSWTZKb2VCMk92bGNCM1JRcGJUYmRwa3lCLzhZeXZUWVFlNzBMVkZ2RHJGazdzOS9HNFlmUnIK",
+      "endpoints": [
+        "https://github.com/killerDJO/SelectedTextTranslateReleases/releases/latest/download/latest.json"
+      ]
+    }
   }
 }

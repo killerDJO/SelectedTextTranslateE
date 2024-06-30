@@ -47,6 +47,7 @@ fn main() {
             MacosLauncher::LaunchAgent,
             None,
         ))
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(|app| {
             let settings_manager = SettingsManager::new(app.handle());
             let events_manager = EventsManager::new();
