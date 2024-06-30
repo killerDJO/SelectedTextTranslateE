@@ -41,6 +41,7 @@
     "Pinia",
     "reqwest",
     "Tauri",
+    "tinykeys",
     "Typeahead",
     "unmanaged",
     "unsynced",

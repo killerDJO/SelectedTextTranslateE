@@ -1,46 +1,38 @@
-import * as Mousetrap from 'mousetrap';
+import { KeyBindingMap, tinykeys } from 'tinykeys';
 
 import { Keys } from '~/host/models/settings.model';
 
 class HotkeysRegistry {
-  private readonly hotkeysByNamespace: Map<string, ReadonlyArray<Keys>> = new Map();
+  private readonly hotkeysUnregisterByNamespace: Map<string, ReadonlyArray<() => void>> = new Map();
 
   public registerHotkeys(
     namespace: string,
     hotkeys: ReadonlyArray<Keys>,
     callback: () => void
   ): void {
-    Mousetrap.bind(this.mapHotkeysToStrings(hotkeys), () => {
-      callback();
-      return false;
-    });
+    const bindingsMap: KeyBindingMap = this.mapHotkeysToStrings(hotkeys).reduce((map, hotkey) => {
+      map[hotkey] = event => {
+        event.preventDefault();
+        callback();
+      };
+      return map;
+    }, {} as KeyBindingMap);
+    const unregister = tinykeys(window, bindingsMap);
 
-    const currentNamespaceHotkeys = (this.hotkeysByNamespace.get(namespace) || []).concat(hotkeys);
-    this.hotkeysByNamespace.set(namespace, currentNamespaceHotkeys);
+    const currentNamespaceHotkeys = (this.hotkeysUnregisterByNamespace.get(namespace) ?? []).concat(
+      unregister
+    );
+    this.hotkeysUnregisterByNamespace.set(namespace, currentNamespaceHotkeys);
   }
 
   public unregisterHotkeys(namespace: string): void {
-    const hotkeys = this.hotkeysByNamespace.get(namespace) || [];
-    Mousetrap.unbind(this.mapHotkeysToStrings(hotkeys));
-    this.hotkeysByNamespace.set(namespace, []);
+    const hotkeys = this.hotkeysUnregisterByNamespace.get(namespace) || [];
+    hotkeys.forEach(unregister => unregister());
+    this.hotkeysUnregisterByNamespace.set(namespace, []);
   }
 
   private mapHotkeysToStrings(hotkeys: ReadonlyArray<Keys>): string[] {
-    return hotkeys.map(this.createCommand.bind(this));
-  }
-
-  private createCommand(hotkey: Keys): string {
-    return hotkey.map(this.remapKey.bind(this)).join('+');
-  }
-
-  private remapKey(key: string): string {
-    const lowerCaseKey = key.toLowerCase();
-    const keysMap: { [key: string]: string } = {
-      control: 'ctrl',
-      delete: 'del'
-    };
-    return keysMap[lowerCaseKey] || lowerCaseKey;
+    return hotkeys.map(hotkeys => hotkeys.join('+'));
   }
 }
-
 export const hotkeysRegistry = new HotkeysRegistry();
