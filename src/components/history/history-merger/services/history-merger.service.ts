@@ -52,10 +52,16 @@ export class HistoryMerger {
 
     this.logger.info(`Merge history records: ${sourceRecord.id} and ${targetRecord.id}`);
 
+    // Sort translation instances by date in descending order
+    const mergedTranslationInstances = (targetRecord.instances ?? [])
+      .concat(sourceRecord.instances ?? [])
+      .sort((a, b) => b.translationDate - a.translationDate);
+
     const updatedTargetRecord: HistoryRecord = {
       ...targetRecord,
       translationsNumber: targetRecord.translationsNumber + sourceRecord.translationsNumber,
-      tags: uniq((targetRecord.tags || []).concat(sourceRecord.tags || []))
+      tags: uniq((targetRecord.tags || []).concat(sourceRecord.tags || [])),
+      instances: mergedTranslationInstances
     };
 
     const updatedSourceRecord: HistoryRecord = {

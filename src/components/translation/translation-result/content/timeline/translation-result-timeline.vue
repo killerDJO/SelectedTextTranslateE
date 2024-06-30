@@ -1,15 +1,21 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 import type { TranslationInstance } from '~/components/history/models/history-record.model';
 
 interface Props {
   instances: ReadonlyArray<TranslationInstance>;
 }
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const sortedInstances = computed(() =>
+  props.instances.slice().sort((a, b) => b.translationDate - a.translationDate)
+);
 </script>
 
 <template>
   <div class="translation-result-timeline">
-    <template v-for="(instance, index) in instances.slice().reverse()" :key="index">
+    <template v-for="(instance, index) in sortedInstances" :key="index">
       <span class="date">{{ $filters.dateTime(instance.translationDate) }}</span>
       <div class="separator">
         <div class="dot"></div>
