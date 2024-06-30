@@ -1,27 +1,29 @@
 import { defineStore } from 'pinia';
 
-import type { ApplicationInfo } from '@selected-text-translate/common';
+import { hostApi } from '~/host/host-api.service';
 
 interface AboutState {
-  info: ApplicationInfo | null;
+  version: string | null;
+  homepage: string;
 }
 
 export const useAboutStore = defineStore('about', {
   state: () => {
     const state: AboutState = {
-      info: null
+      version: null,
+      homepage: 'https://github.com/killerDJO/SelectedTextTranslateE'
     };
     return state;
   },
   actions: {
     async setup() {
-      this.info = await window.mainAPI.about.getApplicationInfo();
+      this.version = await hostApi.getVersion();
     },
     async checkForUpdates() {
-      await window.mainAPI.about.checkForUpdates();
+      await hostApi.checkForUpdates();
     },
     async openHomePage() {
-      await window.mainAPI.core.openUrl(this.info!.homepage);
+      await hostApi.openUrl(this.homepage);
     }
   }
 });

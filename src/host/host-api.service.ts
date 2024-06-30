@@ -3,6 +3,7 @@ import { listen, Event, emit } from '@tauri-apps/api/event';
 import { warn, info, error } from '@tauri-apps/plugin-log';
 import { open } from '@tauri-apps/plugin-shell';
 import { window as tauriWindow } from '@tauri-apps/api';
+import { getVersion } from '@tauri-apps/api/app';
 import {
   enable as enableAutostart,
   isEnabled as isAutostartEnabled,
@@ -137,6 +138,14 @@ export class HostApi {
     await tauriWindow.getCurrent().hide();
     // Show loader for next time
     emit('before_show');
+  }
+
+  async getVersion(): Promise<string> {
+    return getVersion();
+  }
+
+  async checkForUpdates(): Promise<void> {
+    // TODO: not implemented
   }
 
   logInfo(message: string): void {

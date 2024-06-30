@@ -1,18 +1,14 @@
 {
   "name": "selected-text-translate",
   "private": true,
-  "productName": "Selected Text Translate",
-  "homepage": "https://github.com/killerDJO/SelectedTextTranslateE",
-  "version": "3.0.0",
-  "description": "Util to translate selected text.",
-  "author": "killerDJO",
-  "license": "ISC",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
+    "tauri:dev": "npx tauri dev",
+    "tauri:build": "npx tauri build",
     "lint": "eslint . --ext .vue,.ts --fix"
   },
   "dependencies": {

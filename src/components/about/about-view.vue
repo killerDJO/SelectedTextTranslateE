@@ -8,14 +8,15 @@ const about = useAboutStore();
 onMounted(() => about.setup());
 </script>
 <template>
-  <div v-if="about.info" class="about">
+  <div v-if="about.version" class="about">
     <p class="about-title">
-      {{ about.info.name }} v<span class="version">{{ about.info.version }}</span>
+      Selected Text Translate v<span class="version">{{ about.version }}</span>
     </p>
+    <p>Utility to translate selected text.</p>
     <div class="actions">
       <app-button
         text="Check for Updates"
-        :primary="false"
+        :primary="true"
         @click="about.checkForUpdates()"
       ></app-button>
       <link-button :text="'Home Page'" @click="about.openHomePage()" />

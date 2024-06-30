@@ -1,11 +1,10 @@
 .about {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
   padding: $spacing-default $spacing-xl;
   background-color: $color-background;
   height: 100vh;
-
-  p {
-    margin: 5px 0;
-  }
 
   .about-title {
     font-size: $font-large;
@@ -17,6 +16,7 @@
   }
 
   .actions {
+    margin-top: $spacing-default;
     display: flex;
     align-items: center;
     column-gap: $spacing-default;

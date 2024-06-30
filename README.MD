@@ -6,9 +6,8 @@
 
 ## Prerequisites
 
-1. Node.js 16+
-2. Install [node-gyp](https://github.com/nodejs/node-gyp) on windows. Please note that it might not work if path to global npm modules contains non-latin symbols, so default modules installation location might have to be changed. Also, please make sure the correct version of MsBuild is set by running `npm config set msvs_version 2017`.
-3. Visual Studio Code for development.
+1. Node.js 20+
+2. Visual Studio Code for development.
 
 ## Components and build tasks
 
