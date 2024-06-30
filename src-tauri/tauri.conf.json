@@ -1,6 +1,6 @@
 {
   "productName": "Selected Text Translate",
-  "version": "3.0.1",
+  "version": "3.0.0",
   "identifier": "selected.text.translate.t",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -18,7 +18,7 @@
   "bundle": {
     "publisher": "killerDJO",
     "active": true,
-    "targets": ["updater", "msi"],
+    "targets": ["updater", "nsis"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
