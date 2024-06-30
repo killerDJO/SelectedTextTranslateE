@@ -58,7 +58,7 @@ export const useTranslateResultStore = defineStore('translate-result', {
           : TranslateResultViews.Translation;
 
         if (this.historyRecord) {
-          hostApi.emitHistoryRecordChangeEvent(this.historyRecord.id);
+          hostApi.translation.emitHistoryRecordChangeEvent(this.historyRecord.id);
         }
       } catch (e: unknown) {
         useGlobalErrorsStore().addError('Unable to translate text.', e);
@@ -158,14 +158,14 @@ export const useTranslateResultStore = defineStore('translate-result', {
       try {
         this.isTranslationInProgress = true;
         await historyService.hardDelete(this.historyRecord.id);
-        hostApi.emitHistoryRecordChangeEvent(this.historyRecord.id);
+        hostApi.translation.emitHistoryRecordChangeEvent(this.historyRecord.id);
         this.clearCurrentTranslation();
       } finally {
         this.isTranslationInProgress = false;
       }
     },
     async hide() {
-      await hostApi.hideWindow();
+      await hostApi.view.hideWindow();
     }
   }
 });
@@ -180,7 +180,7 @@ async function updateRecord(
     }
 
     const actionPromise = action(store.historyRecord);
-    hostApi.emitHistoryRecordChangeEvent(store.historyRecord!.id);
+    hostApi.translation.emitHistoryRecordChangeEvent(store.historyRecord!.id);
     store.historyRecord = await historyService.getRecord(store.historyRecord.id, true);
     await actionPromise;
   } catch (e: unknown) {

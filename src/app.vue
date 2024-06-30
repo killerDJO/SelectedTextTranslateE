@@ -19,9 +19,9 @@ onMounted(async () => {
 });
 
 watch(
-  isSetupCompleted,
+  () => (app.hasSettings ? app.settings : null),
   () => {
-    if (isSetupCompleted.value) {
+    if (app.hasSettings) {
       registerHotkeys();
     }
   },

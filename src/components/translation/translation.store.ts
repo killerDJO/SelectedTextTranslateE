@@ -26,7 +26,7 @@ export const useTranslationStore = defineStore('translation', {
   actions: {
     setup() {
       // Since events will be sent before setup, we read last command from the host API
-      hostApi
+      hostApi.translation
         .getLastTranslationCommand()
         .then(command => {
           if (!command) {
@@ -50,11 +50,13 @@ export const useTranslationStore = defineStore('translation', {
           logger.error(error, 'Error getting last translation command.');
         });
 
-      hostApi.onTranslateText(showDefinitions => this.handleTranslateTextCommand(showDefinitions));
-      hostApi.onPlayText(() => this.handlePlayTextCommand());
-      hostApi.onShowInput(() => this.handleShowInputCommand());
+      hostApi.translation.onTranslateText(showDefinitions =>
+        this.handleTranslateTextCommand(showDefinitions)
+      );
+      hostApi.translation.onPlayText(() => this.handlePlayTextCommand());
+      hostApi.translation.onShowInput(() => this.handleShowInputCommand());
 
-      hostApi.onBeforeShow(() => {
+      hostApi.view.onBeforeShow(() => {
         const translateResult = useTranslateResultStore();
         translateResult.clearCurrentTranslation();
         translateResult.isTranslationInProgress = true;
@@ -63,11 +65,11 @@ export const useTranslationStore = defineStore('translation', {
     },
     async handlePlayTextCommand() {
       try {
-        const text = await hostApi.getTextFromClipboard();
+        const text = await hostApi.translation.getTextFromClipboard();
         await textPlayer.playText({ text: text });
       } catch (error: unknown) {
         logger.error(error, 'Error playing text.');
-        hostApi.showErrorNotification('Error playing text.');
+        hostApi.notifications.showErrorNotification('Error playing text.');
       }
     },
     translateText(request: TranslateRequest) {
@@ -93,7 +95,7 @@ export const useTranslationStore = defineStore('translation', {
       const app = useAppStore();
 
       globalErrorsStore.clearErrors();
-      const text = await hostApi.getTextFromClipboard();
+      const text = await hostApi.translation.getTextFromClipboard();
 
       if (!text) {
         translateResult.clearCurrentTranslation();

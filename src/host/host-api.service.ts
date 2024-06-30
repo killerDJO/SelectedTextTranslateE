@@ -18,158 +18,172 @@ const HISTORY_RECORD_CHANGE_EVENT = 'history_record_changed';
 
 export type TranslationCommand = 'Play' | 'ShowInput' | { Translate: boolean };
 
-export class HostApi {
-  getViewName(): ViewNames {
-    return window.location.hash.slice(2) as ViewNames;
-  }
+export const hostApi = {
+  view: {
+    getViewName(): ViewNames {
+      return window.location.hash.slice(2) as ViewNames;
+    },
 
-  async onBeforeShow(callback: () => void): Promise<void> {
-    await listen('before_show', () => callback());
-  }
+    async onBeforeShow(callback: () => void): Promise<void> {
+      await listen('before_show', () => callback());
+    },
 
-  async getAccentColor(): Promise<string> {
-    return invoke<string>('accent_color');
-  }
+    async getAccentColor(): Promise<string> {
+      return invoke<string>('accent_color');
+    },
 
-  async onAccentColorChange(_callback: (accentColor: string) => void): Promise<void> {
-    // TODO: not implemented
-  }
+    async onAccentColorChange(_callback: (accentColor: string) => void): Promise<void> {
+      // TODO: not implemented
+    },
 
-  async getSettings(): Promise<Settings> {
-    return invoke<Settings>('settings');
-  }
-
-  async getDefaultSettings(): Promise<Settings> {
-    return invoke<Settings>('default_settings');
-  }
-
-  async updateSettings(updatedSettings: PartialSettings): Promise<void> {
-    await invoke('update_settings', { updatedSettings: updatedSettings });
-  }
-
-  async resetSettingsToDefault(): Promise<void> {
-    await invoke('reset_settings_to_default');
-  }
-
-  async openSettingsFile(): Promise<void> {
-    await invoke('open_settings_file');
-  }
-
-  async pauseHotkeys(): Promise<void> {
-    await emit('pause_hotkeys');
-  }
-
-  async resumeHotkeys(): Promise<void> {
-    await emit('resume_hotkeys');
-  }
-
-  async onSettingsChange(callback: (settings: Settings) => void): Promise<void> {
-    await listen('settings_changed', (event: Event<Settings>) => callback(event.payload));
-  }
-
-  async onTranslateText(callback: (showDefinitions: boolean) => void): Promise<void> {
-    await listen('translate_text', (event: Event<{ show_definition: boolean }>) =>
-      callback(event.payload.show_definition)
-    );
-  }
-
-  async onPlayText(callback: () => void): Promise<void> {
-    await listen('play_text', () => callback());
-  }
-
-  async onShowInput(callback: () => void): Promise<void> {
-    await listen('show_input', () => callback());
-  }
-
-  async getTextFromClipboard(): Promise<string> {
-    return invoke<string>('clipboard_text');
-  }
-
-  async getLastTranslationCommand(): Promise<TranslationCommand> {
-    return invoke<TranslationCommand>('last_translation_command');
-  }
-
-  async executeGoogleTranslateRequest(url: string, body: string): Promise<string> {
-    return invoke<string>('execute_google_translate_request', {
-      url,
-      body,
-      userAgent: navigator.userAgent
-    });
-  }
-
-  async setPlayingState(isPlaying: boolean): Promise<void> {
-    if (isPlaying) {
-      await emit('play_start');
-    } else {
-      await emit('play_stop');
+    async hideWindow(): Promise<void> {
+      await tauriWindow.getCurrent().hide();
+      // Show loader for next time
+      emit('before_show');
     }
-  }
+  },
 
-  async emitHistoryRecordChangeEvent(recordId: string): Promise<void> {
-    await emit(HISTORY_RECORD_CHANGE_EVENT, { recordId });
-  }
+  settings: {
+    async getSettings(): Promise<Settings> {
+      return invoke<Settings>('settings');
+    },
 
-  async onHistoryRecordChange(callback: (recordId: string) => void): Promise<void> {
-    await listen(HISTORY_RECORD_CHANGE_EVENT, (event: Event<{ recordId: string }>) =>
-      callback(event.payload.recordId)
-    );
-  }
+    async getDefaultSettings(): Promise<Settings> {
+      return invoke<Settings>('default_settings');
+    },
 
-  getStartupState(): Promise<boolean> {
-    return isAutostartEnabled();
-  }
+    async updateSettings(updatedSettings: PartialSettings): Promise<void> {
+      await invoke('update_settings', { updatedSettings: updatedSettings });
+    },
 
-  updateStartupState(enabled: boolean): Promise<void> {
-    if (enabled) {
-      return enableAutostart();
-    } else {
-      return disableAutostart();
+    async resetSettingsToDefault(): Promise<void> {
+      await invoke('reset_settings_to_default');
+    },
+
+    async openSettingsFile(): Promise<void> {
+      await invoke('open_settings_file');
+    },
+
+    async onSettingsChange(callback: (settings: Settings) => void): Promise<void> {
+      await listen('settings_changed', (event: Event<Settings>) => callback(event.payload));
     }
-  }
+  },
 
-  async showNotification(message: string, body?: string): Promise<void> {
-    await invoke('show_notification', { message, body });
-  }
+  globalHotkeys: {
+    async pauseHotkeys(): Promise<void> {
+      await emit('pause_hotkeys');
+    },
 
-  async showErrorNotification(message: string): Promise<void> {
-    await invoke('show_notification', { message, body: 'Details can be found in log' });
-  }
+    async resumeHotkeys(): Promise<void> {
+      await emit('resume_hotkeys');
+    }
+  },
+
+  translation: {
+    async onTranslateText(callback: (showDefinitions: boolean) => void): Promise<void> {
+      await listen('translate_text', (event: Event<{ show_definition: boolean }>) =>
+        callback(event.payload.show_definition)
+      );
+    },
+
+    async onPlayText(callback: () => void): Promise<void> {
+      await listen('play_text', () => callback());
+    },
+
+    async onShowInput(callback: () => void): Promise<void> {
+      await listen('show_input', () => callback());
+    },
+
+    async getTextFromClipboard(): Promise<string> {
+      return invoke<string>('clipboard_text');
+    },
+
+    async getLastTranslationCommand(): Promise<TranslationCommand> {
+      return invoke<TranslationCommand>('last_translation_command');
+    },
+
+    async executeGoogleTranslateRequest(url: string, body: string): Promise<string> {
+      return invoke<string>('execute_google_translate_request', {
+        url,
+        body,
+        userAgent: navigator.userAgent
+      });
+    },
+
+    async setPlayingState(isPlaying: boolean): Promise<void> {
+      if (isPlaying) {
+        await emit('play_start');
+      } else {
+        await emit('play_stop');
+      }
+    },
+
+    async emitHistoryRecordChangeEvent(recordId: string): Promise<void> {
+      await emit(HISTORY_RECORD_CHANGE_EVENT, { recordId });
+    },
+
+    async onHistoryRecordChange(callback: (recordId: string) => void): Promise<void> {
+      await listen(HISTORY_RECORD_CHANGE_EVENT, (event: Event<{ recordId: string }>) =>
+        callback(event.payload.recordId)
+      );
+    }
+  },
+
+  startup: {
+    getStartupState(): Promise<boolean> {
+      return isAutostartEnabled();
+    },
+
+    updateStartupState(enabled: boolean): Promise<void> {
+      if (enabled) {
+        return enableAutostart();
+      } else {
+        return disableAutostart();
+      }
+    }
+  },
+
+  notifications: {
+    async showNotification(message: string, body?: string): Promise<void> {
+      await invoke('show_notification', { message, body });
+    },
+
+    async showErrorNotification(message: string): Promise<void> {
+      await invoke('show_notification', { message, body: 'Details can be found in log' });
+    }
+  },
+
+  updater: {
+    async getVersion(): Promise<string> {
+      return getVersion();
+    },
+
+    async checkForUpdates(): Promise<void> {
+      const update = await check();
+      if (update) {
+        await hostApi.notifications.showNotification('Update is available. Downloading...');
+        await update.downloadAndInstall();
+      } else {
+        await hostApi.notifications.showNotification('No updates available.');
+      }
+    }
+  },
+
+  logging: {
+    logInfo(message: string): void {
+      info(message);
+    },
+
+    logWarning(message: string): void {
+      warn(message);
+    },
+
+    logError(err: Error, message: string): void {
+      error(`Error: ${message}. Error details: ${JSON.stringify(err)}. Stack: ${err.stack}.`);
+    }
+  },
 
   async openUrl(url: string): Promise<void> {
     await open(url);
   }
-
-  async hideWindow(): Promise<void> {
-    await tauriWindow.getCurrent().hide();
-    // Show loader for next time
-    emit('before_show');
-  }
-
-  async getVersion(): Promise<string> {
-    return getVersion();
-  }
-
-  async checkForUpdates(): Promise<void> {
-    const update = await check();
-    if (update) {
-      await this.showNotification('Update is available. Downloading...');
-      await update.downloadAndInstall();
-    } else {
-      await this.showNotification('No updates available.');
-    }
-  }
-
-  logInfo(message: string): void {
-    info(message);
-  }
-
-  logWarning(message: string): void {
-    warn(message);
-  }
-
-  logError(err: Error, message: string): void {
-    error(`Error: ${message}. Error details: ${JSON.stringify(err)}. Stack: ${err.stack}.`);
-  }
-}
-
-export const hostApi = new HostApi();
+};

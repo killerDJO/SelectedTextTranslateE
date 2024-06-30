@@ -17,10 +17,10 @@ export const useAboutStore = defineStore('about', {
   },
   actions: {
     async setup() {
-      this.version = await hostApi.getVersion();
+      this.version = await hostApi.updater.getVersion();
     },
     async checkForUpdates() {
-      await hostApi.checkForUpdates();
+      await hostApi.updater.checkForUpdates();
     },
     async openHomePage() {
       await hostApi.openUrl(this.homepage);

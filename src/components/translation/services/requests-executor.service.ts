@@ -10,7 +10,10 @@ export class RequestsExecutor {
     const url = `https://translate.google.com/_/TranslateWebserverUi/data/batchexecute?rpcids=${rpcId}&hl=ru&soc-app=1&soc-platform=1&soc-device=1&rt=c`;
     const formData = encodeURIComponent(`[[["${rpcId}","${data}",null,"generic"]]]`);
 
-    const response = await hostApi.executeGoogleTranslateRequest(url, `f.req=${formData}`);
+    const response = await hostApi.translation.executeGoogleTranslateRequest(
+      url,
+      `f.req=${formData}`
+    );
 
     return this.parseGoogleResponse(response, rpcId);
   }

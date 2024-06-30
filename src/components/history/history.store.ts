@@ -45,7 +45,7 @@ export const useHistoryStore = defineStore('history', {
   },
   actions: {
     async setup() {
-      await hostApi.onHistoryRecordChange(id => {
+      await hostApi.translation.onHistoryRecordChange(id => {
         queryRecordsInternal(this, true);
         updateTranslationIfNecessary(id);
       });

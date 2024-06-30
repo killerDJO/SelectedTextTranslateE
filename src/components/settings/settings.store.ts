@@ -35,29 +35,29 @@ export const useSettingsStore = defineStore('settings', {
   },
   actions: {
     async setup() {
-      this.defaultSettings = await hostApi.getDefaultSettings();
-      this.isStartupEnabled = await hostApi.getStartupState();
+      this.defaultSettings = await hostApi.settings.getDefaultSettings();
+      this.isStartupEnabled = await hostApi.startup.getStartupState();
     },
     async updateSettings(settings: DeepPartial<Settings>) {
-      await hostApi.updateSettings(cloneDeep(settings));
+      await hostApi.settings.updateSettings(cloneDeep(settings));
     },
     async updateHotkeys(hotkeySettings: EditableHotkeySettings) {
       await this.updateSettings(mapEditableHotkeysToSettings(hotkeySettings));
     },
     async pauseHotkeys() {
-      await hostApi.pauseHotkeys();
+      await hostApi.globalHotkeys.pauseHotkeys();
     },
     async enableHotkeys() {
-      await hostApi.resumeHotkeys();
+      await hostApi.globalHotkeys.resumeHotkeys();
     },
     async openSettingsFile() {
-      await hostApi.openSettingsFile();
+      await hostApi.settings.openSettingsFile();
     },
     async resetSettings() {
-      await hostApi.resetSettingsToDefault();
+      await hostApi.settings.resetSettingsToDefault();
     },
     async updateStartupState(isEnabled: boolean) {
-      await hostApi.updateStartupState(isEnabled);
+      await hostApi.startup.updateStartupState(isEnabled);
     }
   }
 });

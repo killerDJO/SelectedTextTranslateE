@@ -23,7 +23,7 @@ export class TextPlayer {
     this.isPlayInProgress = true;
 
     try {
-      hostApi.setPlayingState(true);
+      hostApi.translation.setPlayingState(true);
       const settings = this.settingsProvider.getSettings();
 
       const language = request.language || settings.translation.sourceLanguage;
@@ -35,7 +35,7 @@ export class TextPlayer {
 
       this.logger.info(`End playing ${this.getLogKey(request.text, language)}`);
     } finally {
-      hostApi.setPlayingState(false);
+      hostApi.translation.setPlayingState(false);
       this.isPlayInProgress = false;
     }
   }

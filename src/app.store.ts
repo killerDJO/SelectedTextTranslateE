@@ -31,7 +31,7 @@ export const useAppStore = defineStore('app', {
       if (!state._settings) {
         return 1;
       }
-      const viewName = hostApi.getViewName();
+      const viewName = hostApi.view.getViewName();
       if (viewName !== ViewNames.Translation && state._settings.scaling.scaleTranslationViewOnly) {
         return 1;
       }
@@ -39,16 +39,16 @@ export const useAppStore = defineStore('app', {
       return state._settings.scaling.scaleFactor;
     },
     isFrameless: () => {
-      return hostApi.getViewName() === ViewNames.Translation;
+      return hostApi.view.getViewName() === ViewNames.Translation;
     }
   },
   actions: {
     async setup(): Promise<void> {
-      this.accentColor = await hostApi.getAccentColor();
-      await hostApi.onAccentColorChange(accentColor => (this.accentColor = accentColor));
+      this.accentColor = await hostApi.view.getAccentColor();
+      await hostApi.view.onAccentColorChange(accentColor => (this.accentColor = accentColor));
 
-      this._settings = await hostApi.getSettings();
-      await hostApi.onSettingsChange(settings => (this._settings = settings));
+      this._settings = await hostApi.settings.getSettings();
+      await hostApi.settings.onSettingsChange(settings => (this._settings = settings));
     },
     zoomIn(): void {
       const scalingSettings = this.settings.scaling;
@@ -72,10 +72,10 @@ export const useAppStore = defineStore('app', {
       this.changeScale(1);
     },
     async updateSettings(settings: PartialSettings): Promise<void> {
-      await hostApi.updateSettings(settings);
+      await hostApi.settings.updateSettings(settings);
     },
     async changeScale(scaleFactor: number): Promise<void> {
-      await hostApi.updateSettings({ scaling: { scaleFactor } });
+      await hostApi.settings.updateSettings({ scaling: { scaleFactor } });
     }
   }
 });
