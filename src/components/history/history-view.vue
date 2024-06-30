@@ -59,6 +59,10 @@ async function changePage(pageNumber: number) {
   await history.queryRecords();
 }
 
+async function changePageSize(pageSize: number) {
+  app.updateSettings({ display: { historyPageSize: pageSize } });
+}
+
 async function updateColumns(columns: HistoryColumns) {
   await app.updateSettings({ display: { historyColumns: columns } });
 }
@@ -200,10 +204,12 @@ async function hardDelete() {
           <history-user class="history-user" />
           <history-paginator
             v-if="history.records?.length"
+            :page-size="app.settings.display.historyPageSize"
             :page-number="history.pageNumber"
             :total-pages="history.totalPages"
             :total-records="history.totalRecords"
             @update:page-number="pageNumber => changePage(pageNumber)"
+            @update:page-size="pageSize => changePageSize(pageSize)"
           />
         </div>
       </div>

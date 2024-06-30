@@ -6,7 +6,6 @@ import type ConfirmModal from '~/components/shared/confirm-modal/confirm-modal.v
 import SettingsHolder from './settings-holder/settings-holder.vue';
 import HotkeySettings from './hotkeys-settings/hotkeys-settings.vue';
 import ScalingSettings from './scaling-settings/scaling-settings.vue';
-import HistorySettings from './history-settings/history-settings.vue';
 import PlaySettings from './play-settings/play-settings.vue';
 import LanguageSettings from './language-settings/language-settings.vue';
 import StartupSettings from './startup-settings/startup-settings.vue';
@@ -27,9 +26,6 @@ onMounted(() => settingsStore.setup());
       </settings-holder>
       <settings-holder :title="'Scaling'">
         <scaling-settings />
-      </settings-holder>
-      <settings-holder :title="'History'">
-        <history-settings />
       </settings-holder>
       <settings-holder :title="'Play'">
         <play-settings />

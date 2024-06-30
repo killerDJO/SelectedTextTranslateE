@@ -12,6 +12,11 @@
   color: $color-gray;
 }
 
+.page-size-select {
+  width: 100px;
+  padding-right: $spacing-default;
+}
+
 :deep(.pagination) {
   display: inline-block;
   border-radius: $border-radius;
