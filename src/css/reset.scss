@@ -32,3 +32,8 @@ textarea,
 select {
   font: inherit;
 }
+
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}

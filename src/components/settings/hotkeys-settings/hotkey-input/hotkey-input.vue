@@ -99,13 +99,7 @@ function notifyHotkeyUpdated(): void {
 }
 
 function getNormalizeKey(event: KeyboardEvent): string {
-  const AKeyCode = 65;
-  const ZKeyCode = 90;
-  if (event.keyCode >= AKeyCode && event.keyCode <= ZKeyCode) {
-    return String.fromCharCode(event.keyCode);
-  }
-
-  return remapKey(event.key);
+  return event.code;
 }
 
 function isModifierKey(event: KeyboardEvent): boolean {
@@ -118,17 +112,6 @@ function isStandaloneKey(event: KeyboardEvent): boolean {
 
 function createHotkey(): Keys {
   return keys.value.slice();
-}
-
-function remapKey(key: string): string {
-  const keysMap: { [key: string]: string } = {
-    ArrowRight: 'Right',
-    ArrowLeft: 'Left',
-    ArrowUp: 'Up',
-    ArrowDown: 'Down',
-    ' ': 'Space'
-  };
-  return keysMap[key] || key;
 }
 
 function isNavigationSequence(keys: string[]): boolean {

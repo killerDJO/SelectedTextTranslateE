@@ -133,8 +133,10 @@ export class HostApi {
     await open(url);
   }
 
-  hideWindow(): Promise<void> {
-    return tauriWindow.getCurrent().hide();
+  async hideWindow(): Promise<void> {
+    await tauriWindow.getCurrent().hide();
+    // Show loader for next time
+    emit('before_show');
   }
 
   logInfo(message: string): void {

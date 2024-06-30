@@ -5,14 +5,14 @@
 
   input {
     min-height: fit-content;
-    padding-left: $spacing-large;
+    padding-left: $spacing-default;
     font-size: $font-medium;
   }
 
   .icon {
     position: absolute;
     top: 7px;
-    right: 5px;
+    right: $spacing-default;
     color: $color-gray;
     width: 18px;
     height: 18px;

@@ -1,8 +1,7 @@
 [package]
 name = "selected-text-translate"
 version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
+description = "Selected Text Translate"
 edition = "2021"
 
 [build-dependencies]

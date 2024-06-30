@@ -187,7 +187,9 @@ fn handle_translate_window_events(translate_window: &WebviewWindow) {
                 // This check prevents the window from hiding when it's resized
                 let is_actually_focused: bool = window.is_focused().unwrap();
                 if !is_focused && !is_actually_focused {
-                    // window.hide().unwrap();
+                    window.hide().unwrap();
+                    // Show loader for next time, to prevent flashing of old content
+                    EventsManager::emit_before_show_event(&window);
                 }
             }
             tauri::WindowEvent::Resized(size) => update_translation_window_settings(
