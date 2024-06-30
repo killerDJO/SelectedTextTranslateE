@@ -1,0 +1,8 @@
+{
+  "firebase": {
+    "apiKey": "AIzaSyBhwEnarwArZX2qfQ0EFbCj_zaOcnEgjms",
+    "authDomain": "stte-prod.firebaseapp.com",
+    "projectId": "stte-prod",
+    "firestoreBaseUrl": "https://firestore.googleapis.com/v1beta1"
+  }
+}

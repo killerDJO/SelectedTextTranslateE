@@ -22,6 +22,7 @@ onMounted(() => about.setup());
       <link-button :text="'Home Page'" @click="about.openHomePage()" />
     </div>
   </div>
+  <app-loader v-if="!about.version" :large="true"></app-loader>
 </template>
 
 <style src="./about-view.scss" lang="scss" scoped></style>
