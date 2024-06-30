@@ -38,7 +38,7 @@ function getFriendlyMessage(message: string, error: unknown): string {
         ><font-awesome-icon icon="xmark" class="icon-cancel"
       /></icon-button>
     </div>
-    <span v-if="isExpanded && error" class="error-details">{{ error }}</span>
+    <span v-if="isExpanded && error" class="error-details">{{ JSON.stringify(error) }}</span>
   </div>
 </template>
 

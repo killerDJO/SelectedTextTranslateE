@@ -10,12 +10,13 @@ export function setupErrorHandling(app: VueApp<Element>): void {
 
   window.onerror = (
     message: string | Event,
-    _source: string | undefined,
-    _lineno: number | undefined,
-    _colno: number | undefined,
+    source: string | undefined,
+    lineno: number | undefined,
+    colno: number | undefined,
     error: Error | undefined
   ) => {
-    sendErrorMessage(error || new Error(message.toString()));
+    const fullMessage = `${message} at ${source ?? '-'}:${lineno ?? '-'}:${colno ?? '-'}`;
+    sendErrorMessage(error ?? fullMessage);
   };
 
   app.config.errorHandler = (error: unknown) => {
