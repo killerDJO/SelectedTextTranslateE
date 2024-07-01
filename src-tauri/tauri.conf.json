@@ -1,6 +1,6 @@
 {
   "productName": "Selected Text Translate",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "identifier": "selected.text.translate.t",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -8,12 +8,6 @@
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist",
     "beforeBundleCommand": "node ./build-scripts/before-bundle.mjs"
-  },
-  "app": {
-    "windows": [],
-    "security": {
-      "csp": null
-    }
   },
   "bundle": {
     "publisher": "killerDJO",
