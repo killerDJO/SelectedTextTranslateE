@@ -1,5 +1,3 @@
-const { ar } = require('date-fns/locale');
-
 /* eslint-env node */
 module.exports = {
   root: true,

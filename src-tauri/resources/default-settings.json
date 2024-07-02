@@ -73,8 +73,9 @@
     "toggleTags": [["Alt", "KeyT"]]
   },
   "firebase": {
-    "apiKey": "AIzaSyAuHtBBH6VTFdX12AAOFiIa9xWl7AC2m0A",
-    "authDomain": "stte-cad70.firebaseapp.com",
-    "projectId": "stte-cad70"
+    "apiKey": "AIzaSyBhwEnarwArZX2qfQ0EFbCj_zaOcnEgjms",
+    "authDomain": "stte-prod.firebaseapp.com",
+    "projectId": "stte-prod",
+    "firestoreBaseUrl": "https://firestore.googleapis.com/v1beta1"
   }
 }

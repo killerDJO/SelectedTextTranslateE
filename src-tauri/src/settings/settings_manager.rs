@@ -12,6 +12,10 @@ use super::Settings;
 
 type ChangeHandler = Box<dyn Fn(&Settings, &Settings) + Send + Sync + 'static>;
 
+const DEFAULT_SETTINGS_FILENAME: &str = "default-settings.json";
+const DEFAULT_DEV_SETTINGS_FILENAME: &str = "dev.default-settings.json";
+const USER_SETTINGS_FILENAME: &str = "settings.json";
+
 pub struct SettingsManager {
     app: AppHandle,
     // Default settings aren't mutable, so no need to put them in mutex
@@ -89,11 +93,13 @@ impl SettingsManager {
 
         let default_settings_path = resources_dir
             .join("resources")
-            .join("default_settings.json");
+            .join(DEFAULT_SETTINGS_FILENAME);
         let default_settings_json = fs::read_to_string(default_settings_path).unwrap();
         let default_settings: Settings = serde_json::from_str(&default_settings_json).unwrap();
 
-        default_settings
+        // Dev settings, used to easily override settings for dev mode
+        let dev_settings_overrides = Self::read_dev_settings_override();
+        Settings::from(dev_settings_overrides.unwrap_or_default(), default_settings)
     }
 
     pub fn open_settings_file(&self) {
@@ -149,7 +155,25 @@ impl SettingsManager {
 
     fn get_user_settings_path(app: &AppHandle) -> PathBuf {
         let settings_dir = app.path().app_config_dir().unwrap();
-        let settings_path = settings_dir.join("settings.json");
+        let settings_path = settings_dir.join(USER_SETTINGS_FILENAME);
         settings_path
+    }
+
+    fn read_dev_settings_override() -> Option<PartialSettings> {
+        if !tauri::is_dev() {
+            return None;
+        }
+
+        let current_dir = std::env::current_dir().unwrap();
+
+        let dev_settings_path = current_dir.join(DEFAULT_DEV_SETTINGS_FILENAME);
+        if !dev_settings_path.exists() {
+            return None;
+        }
+
+        let dev_settings_json = fs::read_to_string(dev_settings_path).unwrap();
+        let dev_settings: PartialSettings = serde_json::from_str(&dev_settings_json).unwrap();
+
+        Some(dev_settings)
     }
 }

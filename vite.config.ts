@@ -10,7 +10,6 @@ export default defineConfig(async () => ({
   base: './',
 
   build: {
-    // sourcemap: 'inline',
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       input: {
