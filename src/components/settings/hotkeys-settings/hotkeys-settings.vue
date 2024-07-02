@@ -1,40 +1,35 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
-import { cloneDeep, isEqual } from 'lodash-es';
+import { cloneDeep, isEmpty } from 'lodash-es';
 
 import { useSettingsStore } from '~/components/settings/settings.store';
-import type {
-  EditableHotkeySettings,
-  GlobalHotkeySettings,
-  LocalHotkeySettings
-} from '~/components/settings/models/editable-hotkey-settings.model';
 import type ConfirmModal from '~/components/shared/confirm-modal/confirm-modal.vue';
-import { Keys } from '~/host/models/settings.model';
+import { HotkeySettings, Keys } from '~/host/models/settings.model';
 
 import HotkeyInput from './hotkey-input/hotkey-input.vue';
 
 interface Command {
   readonly name: string;
-  readonly key: string;
+  readonly key: keyof HotkeySettings;
   readonly isGlobal: boolean;
   hotkeys: Keys[];
 }
 
 const settingsStore = useSettingsStore();
 
-const hotkeysDisplayName = new Map<keyof LocalHotkeySettings | keyof GlobalHotkeySettings, string>([
-  ['translate', 'Translate Text'],
-  ['playText', 'Play Text'],
-  ['showDefinition', 'Show Definition'],
-  ['toggleDefinition', 'Toggle Definition View'],
-  ['toggleTags', 'Toggle Tags Visibility'],
-  ['addTag', 'Add Tag'],
-  ['archiveResult', 'Archive Translate Result'],
-  ['inputText', 'Input Text'],
-  ['toggleSuspend', 'Toggle Suspended State'],
-  ['zoomIn', 'Zoom In'],
-  ['zoomOut', 'Zoom Out'],
-  ['resetZoom', 'Reset Zoom']
+const hotkeysConfiguration = new Map<keyof HotkeySettings, { name: string; global: boolean }>([
+  ['translate', { name: 'Translate Text', global: true }],
+  ['playText', { name: 'Play Text', global: true }],
+  ['showDefinition', { name: 'Show Definition', global: true }],
+  ['toggleDefinition', { name: 'Toggle Definition View', global: false }],
+  ['toggleTags', { name: 'Toggle Tags Visibility', global: false }],
+  ['addTag', { name: 'Add Tag', global: false }],
+  ['archiveResult', { name: 'Archive Translate Result', global: false }],
+  ['inputText', { name: 'Input Text', global: true }],
+  ['toggleSuspend', { name: 'Toggle Suspended State', global: true }],
+  ['zoomIn', { name: 'Zoom In', global: false }],
+  ['zoomOut', { name: 'Zoom Out', global: false }],
+  ['resetZoom', { name: 'Reset Zoom', global: false }]
 ]);
 
 const commands = ref<Command[]>([]);
@@ -58,18 +53,18 @@ const isAddHotkeyEnabled = computed(
   () => !currentHotkeyValidationMessage.value && !!currentHotkey.value
 );
 
-watch(() => settingsStore.hotkeySettings, createCommandsList, { deep: true, immediate: true });
+watch(() => settingsStore.settings.hotkeys, createCommandsList, { deep: true, immediate: true });
 watch(() => currentHotkey, validateCurrentHotkey, { deep: true });
 
 function createCommandsList(): void {
   commands.value = [];
-  for (const [key, value] of hotkeysDisplayName) {
-    const hotkeySettings = cloneDeep(getHotkeySetting(key, settingsStore.hotkeySettings));
+  for (const [key, config] of hotkeysConfiguration) {
+    const keys = cloneDeep(settingsStore.settings.hotkeys[key]);
     commands.value.push({
-      name: value,
+      name: config.name,
       key: key,
-      hotkeys: hotkeySettings.hotkeys,
-      isGlobal: hotkeySettings.isGlobal
+      hotkeys: keys,
+      isGlobal: config.global
     });
   }
 }
@@ -80,7 +75,7 @@ function removeHotkey(hotkeyToRemove: Keys): void {
   }
   const newHotkeys: Keys[] = [];
   currentCommand.value.hotkeys.forEach(hotkey => {
-    if (createHotkeyString(hotkey) !== createHotkeyString(hotkeyToRemove)) {
+    if (hotkeyToCanonicalString(hotkey) !== hotkeyToCanonicalString(hotkeyToRemove)) {
       newHotkeys.push(hotkey);
     }
   });
@@ -106,20 +101,16 @@ function hotkeyInputCompleted(): void {
   settingsStore.enableHotkeys();
 }
 
-function createHotkeyString(hotkey: Keys): string {
-  return hotkey.join(' + ');
-}
-
 function validateCurrentHotkey() {
   if (!currentHotkey.value) {
     currentHotkeyValidationMessage.value = null;
     return;
   }
 
-  const currentHotkeyId = createHotkeyString(currentHotkey.value);
+  const currentHotkeyId = hotkeyToCanonicalString(currentHotkey.value);
   for (const command of commands.value) {
     for (const hotkey of command.hotkeys) {
-      if (createHotkeyString(hotkey) === currentHotkeyId) {
+      if (hotkeyToCanonicalString(hotkey) === currentHotkeyId) {
         currentHotkeyValidationMessage.value = `Hotkey conflicts with another one for the '${command.name}' command.`;
         return;
       }
@@ -129,41 +120,34 @@ function validateCurrentHotkey() {
 }
 
 function resetHotkeySettings(): void {
-  settingsStore.updateHotkeys(settingsStore.defaultHotkeySettings);
+  settingsStore.updateSettings({ hotkeys: settingsStore.defaultHotkeySettings });
 }
 
 function updateHotkeySettings(): void {
-  const updatedHotkeySettings = cloneDeep(settingsStore.hotkeySettings);
+  const updatedHotkeySettings: Partial<HotkeySettings> = {};
 
   for (const command of commands.value) {
-    const hotkeys = getHotkeySetting(command.key, updatedHotkeySettings).hotkeys;
-    hotkeys.length = 0;
-    hotkeys.push(...command.hotkeys);
-  }
+    const currentCombinations = hotkeysToCanonicalString(
+      settingsStore.settings.hotkeys[command.key]
+    );
+    const updatedCombinations = hotkeysToCanonicalString(command.hotkeys);
 
-  if (!isEqual(updateHotkeySettings, settingsStore.hotkeySettings)) {
-    settingsStore.updateHotkeys(updatedHotkeySettings);
-  }
-}
-
-function getHotkeySetting(
-  key: string,
-  settings: EditableHotkeySettings
-): { hotkeys: Keys[]; isGlobal: boolean } {
-  const hotkeyTypes: Array<keyof EditableHotkeySettings> = ['global', 'local'];
-  for (const hotkeyType of hotkeyTypes) {
-    for (const currentKey of Object.keys(settings[hotkeyType])) {
-      if (currentKey === key) {
-        return {
-          hotkeys:
-            settings[hotkeyType][currentKey as keyof (LocalHotkeySettings | GlobalHotkeySettings)],
-          isGlobal: hotkeyType === 'global'
-        };
-      }
+    if (currentCombinations !== updatedCombinations) {
+      updatedHotkeySettings[command.key] = command.hotkeys;
     }
   }
 
-  throw Error(`Unable to find key '${key}'.`);
+  if (!isEmpty(updatedHotkeySettings)) {
+    settingsStore.updateSettings({ hotkeys: updatedHotkeySettings });
+  }
+}
+
+function hotkeyToCanonicalString(hotkey: Keys): string {
+  return hotkey.sort().join(' + ');
+}
+
+function hotkeysToCanonicalString(hotkeys: Keys[]): string {
+  return hotkeys.map(hotkeyToCanonicalString).sort().join(',');
 }
 </script>
 
@@ -190,8 +174,8 @@ function getHotkeySetting(
         <div class="hotkeys-list">
           <div class="hotkeys-list-header">Combinations</div>
           <div class="hotkeys-list-header"></div>
-          <template v-for="hotkey in currentCommand.hotkeys" :key="createHotkeyString(hotkey)">
-            <div class="hotkeys-list-hotkey">{{ createHotkeyString(hotkey) }}</div>
+          <template v-for="hotkey in currentCommand.hotkeys" :key="hotkeyToCanonicalString(hotkey)">
+            <div class="hotkeys-list-hotkey">{{ hotkeyToCanonicalString(hotkey) }}</div>
             <div class="hotkeys-list-action">
               <icon-button class="remove-hotkey" title="Remove hotkey" @click="removeHotkey(hotkey)"
                 ><font-awesome-icon icon="xmark" class="remove-icon"

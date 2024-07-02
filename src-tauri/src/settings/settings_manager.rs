@@ -52,33 +52,11 @@ impl SettingsManager {
     }
 
     pub fn update_settings(&self, updated_settings: PartialSettings) {
-        let mut user_settings_cache = self.user_settings_cache.lock().unwrap();
-
-        // In practice, we'll always have a cache at this point, since update is always used after read
-        let user_settings = (*user_settings_cache)
-            .clone()
-            .unwrap_or_else(|| self.read_user_settings());
-        let old_settings =
-            Settings::from(user_settings.clone(), self.default_settings.clone()).clone();
-        let updated_user_settings = user_settings.update(updated_settings);
-
-        // Immediately update in-memory cache and schedule writing to disk
-        *user_settings_cache = Some(updated_user_settings.clone());
-        self.settings_flush_sender
-            .blocking_send(updated_user_settings.clone())
-            .unwrap();
-
-        let new_settings = Settings::from(updated_user_settings, self.default_settings.clone());
-
-        // Drop mutex before calling change handlers to avoid deadlock
-        // This allows change handlers to call read_settings without deadlocking
-        drop(user_settings_cache);
-
-        self.call_change_handlers(&old_settings, &new_settings);
+        self.update_settings_internal(Some(updated_settings))
     }
 
     pub fn reset_to_default(&self) {
-        self.update_settings(PartialSettings::default());
+        self.update_settings_internal(None);
     }
 
     pub fn add_change_handler<F>(&self, handler: F)
@@ -110,6 +88,37 @@ impl SettingsManager {
             .unwrap_or_else(|e| {
                 show_error_notification(&self.app, Box::new(e), "Error opening settings file.")
             });
+    }
+
+    fn update_settings_internal(&self, updated_settings: Option<PartialSettings>) {
+        let mut user_settings_cache = self.user_settings_cache.lock().unwrap();
+
+        // In practice, we'll always have a cache at this point, since update is always used after read
+        let user_settings = (*user_settings_cache)
+            .clone()
+            .unwrap_or_else(|| self.read_user_settings());
+        let old_settings =
+            Settings::from(user_settings.clone(), self.default_settings.clone()).clone();
+
+        let updated_user_settings = if updated_settings.is_some() {
+            user_settings.update(updated_settings.unwrap())
+        } else {
+            PartialSettings::default()
+        };
+
+        // Immediately update in-memory cache and schedule writing to disk
+        *user_settings_cache = Some(updated_user_settings.clone());
+        self.settings_flush_sender
+            .blocking_send(updated_user_settings.clone())
+            .unwrap();
+
+        let new_settings = Settings::from(updated_user_settings, self.default_settings.clone());
+
+        // Drop mutex before calling change handlers to avoid deadlock
+        // This allows change handlers to call read_settings without deadlocking
+        drop(user_settings_cache);
+
+        self.call_change_handlers(&old_settings, &new_settings);
     }
 
     fn call_change_handlers(&self, old_settings: &Settings, new_settings: &Settings) {

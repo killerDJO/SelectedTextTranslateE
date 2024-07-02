@@ -54,8 +54,8 @@ pub fn option_wrap(input: TokenStream) -> TokenStream {
             }
         }
 
-        impl #partial_name {
-            pub fn update(
+        impl UpdatableSettings for #partial_name {
+            fn update(
                 &self,
                 updated_settings: core::option::Option<#partial_name>,
             ) -> Self {
@@ -77,4 +77,17 @@ pub fn option_wrap(input: TokenStream) -> TokenStream {
     let stream = gen.into();
     // Return the generated Rust code as a token stream
     stream
+}
+
+#[proc_macro_attribute]
+pub fn settings(_attr: TokenStream, input: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(input as DeriveInput);
+
+    let expanded = quote! {
+        #[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Partial)]
+        #[serde(rename_all = "camelCase")]
+        #input
+    };
+
+    expanded.into()
 }

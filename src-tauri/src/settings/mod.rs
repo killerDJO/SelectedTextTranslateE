@@ -1,12 +1,10 @@
-use selected_text_translate_macros::Partial;
+use selected_text_translate_macros::{settings, Partial};
 use serde::{Deserialize, Serialize};
 use serde_with::skip_serializing_none;
 
 mod settings_manager;
 
 pub use settings_manager::SettingsManager;
-
-pub type Keys = Vec<String>;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(rename_all = "camelCase")]
@@ -37,8 +35,7 @@ pub struct PartialSettings {
     pub firebase: Option<PartialFirebaseSettings>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Partial)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct CoreSettings {
     pub copy_delay_milliseconds: u64,
     pub request_timeout_milliseconds: u32,
@@ -48,31 +45,27 @@ pub struct CoreSettings {
     pub proxy: Option<String>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Partial)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct TranslationSettings {
     pub source_language: String,
     pub target_language: String,
     pub tags: Vec<Tag>,
 }
 
-#[derive(Serialize, Deserialize, Debug, PartialEq, Clone)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct Tag {
     pub tag: String,
     pub enabled: bool,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Partial)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct DisplaySettings {
     pub visible_by_default_translations_in_category: u8,
     pub history_page_size: u16,
     pub history_columns: HistoryColumns,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct HistoryColumns {
     input: HistoryColumn,
     translation: HistoryColumn,
@@ -84,16 +77,14 @@ pub struct HistoryColumns {
     archived: HistoryColumn,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct HistoryColumn {
     visible: bool,
     weight: f32,
     index: u8,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Partial)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct TranslationWindowSettings {
     pub width: u32,
     pub height: u32,
@@ -104,8 +95,7 @@ pub struct TranslationWindowSettings {
     pub margin: u32,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Partial)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct WindowSettings {
     pub width_percentage: u8,
     pub height_percentage: u8,
@@ -113,8 +103,7 @@ pub struct WindowSettings {
     pub min_height: u32,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Partial)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct ScalingSettings {
     pub scale_factor: f32,
     pub scale_translation_view_only: bool,
@@ -124,8 +113,9 @@ pub struct ScalingSettings {
     pub vertical_resolution_baseline: u32,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Partial)]
-#[serde(rename_all = "camelCase")]
+pub type Keys = Vec<String>;
+
+#[settings]
 pub struct HotkeySettings {
     pub translate: Vec<Keys>,
     pub play_text: Vec<Keys>,
@@ -141,12 +131,18 @@ pub struct HotkeySettings {
     pub toggle_tags: Vec<Keys>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Partial)]
-#[serde(rename_all = "camelCase")]
+#[settings]
 pub struct FirebaseSettings {
     pub api_key: String,
     pub auth_domain: String,
     pub project_id: String,
+}
+
+pub trait UpdatableSettings
+where
+    Self: Sized,
+{
+    fn update(&self, updated_settings: core::option::Option<Self>) -> Self;
 }
 
 impl Settings {
@@ -195,58 +191,36 @@ impl Settings {
 impl PartialSettings {
     pub fn update(&self, updated_settings: PartialSettings) -> Self {
         Self {
-            core: self
-                .core
-                .clone()
-                .map_or(updated_settings.core.clone(), |core| {
-                    Some(core.update(updated_settings.core))
-                }),
-            translation: self
-                .translation
-                .clone()
-                .map_or(updated_settings.translation.clone(), |translation| {
-                    Some(translation.update(updated_settings.translation))
-                }),
-            display: self
-                .display
-                .clone()
-                .map_or(updated_settings.display.clone(), |display| {
-                    Some(display.update(updated_settings.display))
-                }),
-            translation_window: self.translation_window.clone().map_or(
-                updated_settings.translation_window.clone(),
-                |translation_window| {
-                    Some(translation_window.update(updated_settings.translation_window))
-                },
+            core: Self::update_settings(self.core.clone(), updated_settings.core),
+            translation: Self::update_settings(
+                self.translation.clone(),
+                updated_settings.translation,
             ),
-            history_window: self
-                .history_window
-                .clone()
-                .map_or(updated_settings.history_window.clone(), |history_window| {
-                    Some(history_window.update(updated_settings.history_window))
-                }),
-            settings_window: self.settings_window.clone().map_or(
-                updated_settings.settings_window.clone(),
-                |settings_window| Some(settings_window.update(updated_settings.settings_window)),
+            display: Self::update_settings(self.display.clone(), updated_settings.display),
+            translation_window: Self::update_settings(
+                self.translation_window.clone(),
+                updated_settings.translation_window,
             ),
-            scaling: self
-                .scaling
-                .clone()
-                .map_or(updated_settings.scaling.clone(), |scaling| {
-                    Some(scaling.update(updated_settings.scaling))
-                }),
-            hotkeys: self
-                .hotkeys
-                .clone()
-                .map_or(updated_settings.hotkeys.clone(), |hotkeys| {
-                    Some(hotkeys.update(updated_settings.hotkeys))
-                }),
-            firebase: self
-                .firebase
-                .clone()
-                .map_or(updated_settings.firebase.clone(), |firebase| {
-                    Some(firebase.update(updated_settings.firebase))
-                }),
+            history_window: Self::update_settings(
+                self.history_window.clone(),
+                updated_settings.history_window,
+            ),
+            settings_window: Self::update_settings(
+                self.settings_window.clone(),
+                updated_settings.settings_window,
+            ),
+            scaling: Self::update_settings(self.scaling.clone(), updated_settings.scaling),
+            hotkeys: Self::update_settings(self.hotkeys.clone(), updated_settings.hotkeys),
+            firebase: Self::update_settings(self.firebase.clone(), updated_settings.firebase),
         }
+    }
+
+    fn update_settings<T>(current_settings: Option<T>, updated_settings: Option<T>) -> Option<T>
+    where
+        T: Clone + UpdatableSettings,
+    {
+        current_settings.map_or(updated_settings.clone(), |current_settings| {
+            Some(current_settings.update(updated_settings))
+        })
     }
 }

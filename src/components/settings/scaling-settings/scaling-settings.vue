@@ -16,7 +16,7 @@ const scaleTranslationViewOnly = computed({
 });
 
 function updateScalingSettings(settings: Partial<ScalingSettings>) {
-  settingsStore.updateSettings({ scaling: { ...scalingSettings.value, ...settings } });
+  settingsStore.updateSettings({ scaling: settings });
 }
 
 function getAutoScaleFactor(): number {
