@@ -15,8 +15,10 @@ onMounted(() => about.setup());
     <p>Utility to translate selected text.</p>
     <div class="actions">
       <app-button
-        text="Check for Updates"
+        class="check-button"
+        :text="!about.isCheckInProgress ? 'Check for Updates' : 'Checking...'"
         :primary="true"
+        :disabled="about.isCheckInProgress"
         @click="about.checkForUpdates()"
       ></app-button>
       <link-button :text="'Home Page'" @click="about.openHomePage()" />

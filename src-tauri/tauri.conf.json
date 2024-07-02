@@ -1,6 +1,6 @@
 {
   "productName": "Selected Text Translate",
-  "version": "3.0.1",
+  "version": "3.0.0",
   "identifier": "selected.text.translate.t",
   "build": {
     "beforeDevCommand": "npm run dev",
