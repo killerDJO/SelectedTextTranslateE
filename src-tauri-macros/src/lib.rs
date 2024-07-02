@@ -75,7 +75,6 @@ pub fn option_wrap(input: TokenStream) -> TokenStream {
     };
 
     let stream = gen.into();
-    // Return the generated Rust code as a token stream
     stream
 }
 

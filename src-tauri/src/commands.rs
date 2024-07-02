@@ -42,10 +42,11 @@ pub async fn execute_google_translate_request(
     url: String,
     body: String,
     user_agent: String,
-) -> String {
+) -> Result<String, String> {
     let result =
         requests_executor::execute_google_translate_request(&app, url, body, user_agent).await;
-    result.unwrap()
+
+    result.map_err(|err| err.to_string())
 }
 
 #[tauri::command]
@@ -60,6 +61,7 @@ pub fn default_settings(app: AppHandle) -> Settings {
 
 #[tauri::command]
 pub fn reset_settings_to_default(settings_manager: tauri::State<SettingsManager>) {
+    log::info!("Resetting settings to default.");
     settings_manager.reset_to_default();
 }
 

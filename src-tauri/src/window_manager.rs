@@ -142,7 +142,7 @@ fn show_standard_window(
     label: &str,
 ) -> WebviewWindow {
     let window = app.get_webview_window(label).unwrap_or_else(|| {
-        let size_and_position = get_window_size_and_position(
+        let size_and_position = get_window_size_and_position_from_percentage(
             app,
             window_settings.width_percentage,
             window_settings.height_percentage,
@@ -171,7 +171,7 @@ fn show_standard_window(
 }
 
 fn get_window_url(view_name: &str) -> tauri::WebviewUrl {
-    tauri::WebviewUrl::App(format!("{}#{view_name}", WEB_VIEW_PATH).into())
+    tauri::WebviewUrl::App(format!("{WEB_VIEW_PATH}#{view_name}").into())
 }
 
 fn handle_translate_window_events(translate_window: &WebviewWindow) {
@@ -223,7 +223,7 @@ fn update_translation_window_settings(
     });
 }
 
-fn get_window_size_and_position(
+fn get_window_size_and_position_from_percentage(
     app: &AppHandle,
     width_percentage: u8,
     hight_percentage: u8,

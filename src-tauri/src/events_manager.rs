@@ -26,6 +26,7 @@ pub enum TranslationCommands {
 }
 
 pub struct EventsManager {
+    // Stores last translation command, so translation window can check it upon initial load
     pub last_translation_command: Mutex<Option<TranslationCommands>>,
 }
 

@@ -30,6 +30,9 @@ export class TextPlayer {
       this.logger.info(`Playing ${this.getLogKey(request.text, language)}`);
 
       const content = await this.getAudioContent(request.text, language);
+      if (!content) {
+        return;
+      }
 
       await this.playFile(content, settings);
 

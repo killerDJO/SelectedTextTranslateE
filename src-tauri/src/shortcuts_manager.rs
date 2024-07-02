@@ -23,7 +23,7 @@ pub struct ShortcutsManager {
     app: AppHandle,
     registered_shortcuts: Arc<Mutex<Vec<Shortcut>>>,
     suspended: Arc<Mutex<bool>>,
-    change_handlers: Arc<Mutex<Vec<ChangeHandler>>>,
+    suspend_change_handlers: Arc<Mutex<Vec<ChangeHandler>>>,
 }
 
 impl ShortcutsManager {
@@ -32,7 +32,7 @@ impl ShortcutsManager {
             app: app.clone(),
             registered_shortcuts: Arc::new(Mutex::new(Vec::new())),
             suspended: Arc::new(Mutex::new(false)),
-            change_handlers: Arc::new(Mutex::new(Vec::new())),
+            suspend_change_handlers: Arc::new(Mutex::new(Vec::new())),
         };
 
         shortcuts_manager.register_shortcuts(false);
@@ -63,7 +63,7 @@ impl ShortcutsManager {
         self.register_shortcuts(true);
         *self.suspended.lock().unwrap() = true;
 
-        self.call_change_handlers(true);
+        self.call_suspend_change_handlers(true);
     }
 
     pub fn enable(&self) {
@@ -75,7 +75,7 @@ impl ShortcutsManager {
         self.register_shortcuts(false);
         *self.suspended.lock().unwrap() = false;
 
-        self.call_change_handlers(false);
+        self.call_suspend_change_handlers(false);
     }
 
     pub fn toggle_suspend(&self) {
@@ -86,11 +86,14 @@ impl ShortcutsManager {
         }
     }
 
-    pub fn add_change_handler<F>(&self, handler: F)
+    pub fn add_suspend_change_handler<F>(&self, handler: F)
     where
         F: Fn(bool) + Send + Sync + 'static,
     {
-        self.change_handlers.lock().unwrap().push(Box::new(handler));
+        self.suspend_change_handlers
+            .lock()
+            .unwrap()
+            .push(Box::new(handler));
     }
 
     fn register_shortcuts(&self, toggle_suspend_shortcut_only: bool) {
@@ -104,16 +107,18 @@ impl ShortcutsManager {
             self_clone.handle_toggle_suspend_shortcut();
         });
 
+        // If shortcuts have been suspended, we re-register only toggle suspend shortcut upon settings change
+        // In this case, we skip all other shortcuts registration
         if toggle_suspend_shortcut_only {
             return;
         }
 
         self.register_shortcut(&settings.translate, "Translate Text", |app| {
-            Self::handle_translation_window_command(app, false);
+            Self::handle_translate_command(app, false);
         });
 
         self.register_shortcut(&settings.show_definition, "Show Definition", |app| {
-            Self::handle_translation_window_command(app, true);
+            Self::handle_translate_command(app, true);
         });
 
         self.register_shortcut(&settings.play_text, "Play Text", |app| {
@@ -129,7 +134,7 @@ impl ShortcutsManager {
         });
     }
 
-    fn handle_translation_window_command(app: &AppHandle, show_definition: bool) {
+    fn handle_translate_command(app: &AppHandle, show_definition: bool) {
         app.state::<TextExtractor>().copy_selected_text();
         let window = window_manager::show_translation_window(app);
         app.state::<EventsManager>()
@@ -141,8 +146,8 @@ impl ShortcutsManager {
         let app_clone = self.app.clone();
 
         // Shortcuts can only be registered/unregistered on the main thread
-        // However, if we'll try to unregister them immediately, we'll run into a deadlock with  shortcuts_manager
-        // Because of this, we do a roundtrip through the main thread to a background thread
+        // However, if we'll try to unregister them immediately, we'll run into a deadlock with global_shortcut plugin
+        // Because of this, we do a roundtrip through the background thread to a main thread
         tauri::async_runtime::spawn(async move {
             app_clone
                 .run_on_main_thread(move || {
@@ -166,12 +171,12 @@ impl ShortcutsManager {
 
         let shortcuts_manager = self.clone();
         app.listen(RESUME_HOTKEYS_EVENT, move |_| {
-            shortcuts_manager.register_shortcuts(false)
+            shortcuts_manager.register_shortcuts(shortcuts_manager.is_suspended())
         });
     }
 
-    fn call_change_handlers(&self, is_suspended: bool) {
-        for change_handler in self.change_handlers.lock().unwrap().iter() {
+    fn call_suspend_change_handlers(&self, is_suspended: bool) {
+        for change_handler in self.suspend_change_handlers.lock().unwrap().iter() {
             change_handler(is_suspended);
         }
     }

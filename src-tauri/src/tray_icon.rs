@@ -26,6 +26,10 @@ const TOGGLE_SUSPEND_MENU_ITEM_ID: &str = "toggle_suspend";
 const ABOUT_MENU_ITEM_ID: &str = "about";
 const EXIT_MENU_ITEM_ID: &str = "exit";
 
+const DEFAULT_TRAY_ICON_FILENAME: &str = "tray.ico";
+const SUSPENDED_TRAY_ICON_FILENAME: &str = "tray-suspended.ico";
+const PLAYING_TRAY_ICON_FILENAME: &str = "tray-playing.ico";
+
 #[derive(Clone)]
 pub struct AppTrayIcon {
     tray_icon: TrayIcon,
@@ -52,7 +56,7 @@ impl AppTrayIcon {
         let app_tray_icon = Self { tray_icon };
 
         let self_clone = app_tray_icon.clone();
-        shortcuts_manager.add_change_handler(move |suspended: bool| {
+        shortcuts_manager.add_suspend_change_handler(move |suspended: bool| {
             self_clone.handle_suspended_state_change(suspended);
         });
 
@@ -166,8 +170,10 @@ impl AppTrayIcon {
 
         let tray_icon_clone = tray_icon.clone();
         app.listen(PLAY_START_EVENT, move |_| {
-            let playing_icon =
-                Self::read_icon_from_resources(tray_icon_clone.app_handle(), "tray-playing.ico");
+            let playing_icon = Self::read_icon_from_resources(
+                tray_icon_clone.app_handle(),
+                PLAYING_TRAY_ICON_FILENAME,
+            );
             tray_icon_clone.set_icon(Some(playing_icon)).unwrap();
         });
 
@@ -257,9 +263,9 @@ impl AppTrayIcon {
 
     fn get_tray_icon_image(app: &AppHandle, is_suspended: bool) -> Image<'static> {
         let icon = if is_suspended {
-            Self::read_icon_from_resources(app, "tray-suspended.ico")
+            Self::read_icon_from_resources(app, SUSPENDED_TRAY_ICON_FILENAME)
         } else {
-            Self::read_icon_from_resources(app, "tray.ico")
+            Self::read_icon_from_resources(app, DEFAULT_TRAY_ICON_FILENAME)
         };
         icon
     }

@@ -50,6 +50,8 @@ impl TextExtractor {
     fn broadcast_copy_command() -> Result<(), Box<dyn Error>> {
         const CBSIZE: i32 = size_of::<INPUT>() as i32;
 
+        // Initialize inputs vector with default settings, to reduce boilerplate
+        // Actual keys are set below
         let mut inputs: Vec<INPUT> = vec![];
         for _ in 0..4 {
             let input = INPUT {

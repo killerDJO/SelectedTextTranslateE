@@ -62,11 +62,17 @@
     "inputText": [["Control", "Shift", "KeyT"]],
     "toggleSuspend": [["Shift", "Control", "Alt", "KeyS"]],
     "zoomIn": [
-      ["Control", "Plus"],
+      ["Control", "NumpadAdd"],
       ["Control", "Equal"]
     ],
-    "zoomOut": [["Control", "Minus"]],
-    "resetZoom": [["Control", "Digit0"]],
+    "zoomOut": [
+      ["Control", "Minus"],
+      ["Control", "NumpadSubtract"]
+    ],
+    "resetZoom": [
+      ["Control", "Digit0"],
+      ["Control", "Numpad0"]
+    ],
     "toggleDefinition": [["Control", "Shift", "KeyD"]],
     "archiveResult": [["Delete"]],
     "addTag": [["Shift", "KeyT"]],
