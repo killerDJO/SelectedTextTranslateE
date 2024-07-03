@@ -24,6 +24,13 @@ export const hostApi = {
       return window.location.hash.slice(2) as ViewNames;
     },
 
+    isInitiallyHidden(): boolean {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const initiallyHidden = urlParams.get('initially_hidden');
+      return initiallyHidden === true.toString();
+    },
+
     async onBeforeShow(callback: () => void): Promise<void> {
       await listen('before_show', () => callback());
     },

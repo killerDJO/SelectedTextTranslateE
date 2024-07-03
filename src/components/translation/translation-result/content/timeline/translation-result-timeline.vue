@@ -23,6 +23,7 @@ const sortedInstances = computed(() =>
       </div>
       <div class="tags-list">
         <span v-for="tag in instance.tags" :key="tag" class="tag">{{ tag }}</span>
+        <span v-if="!instance.tags.length">—</span>
       </div>
     </template>
   </div>

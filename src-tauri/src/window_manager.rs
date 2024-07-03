@@ -28,7 +28,10 @@ struct SizeAndPosition {
     y: f64,
 }
 
-pub fn get_or_create_translation_window(app: &AppHandle) -> (WebviewWindow, bool) {
+pub fn get_or_create_translation_window(
+    app: &AppHandle,
+    initially_hidden: bool,
+) -> (WebviewWindow, bool) {
     let settings_manager = app.state::<SettingsManager>();
 
     let settings = settings_manager.read_settings();
@@ -42,7 +45,7 @@ pub fn get_or_create_translation_window(app: &AppHandle) -> (WebviewWindow, bool
         let window = tauri::WebviewWindowBuilder::new(
             app,
             TRANSLATION_WINDOW_LABEL,
-            get_window_url(TRANSLATION_WINDOW_LABEL),
+            get_window_url(TRANSLATION_WINDOW_LABEL, initially_hidden),
         )
         .title("Selected Text Translate")
         .skip_taskbar(true)
@@ -71,7 +74,7 @@ pub fn get_or_create_translation_window(app: &AppHandle) -> (WebviewWindow, bool
 }
 
 pub fn show_translation_window(app: &AppHandle) -> WebviewWindow {
-    let (translate_win, is_window_created) = get_or_create_translation_window(app);
+    let (translate_win, is_window_created) = get_or_create_translation_window(app, false);
 
     // Emit the event before show to ensure loader is shown
     // This prevents flashes of the window content
@@ -121,7 +124,7 @@ pub fn show_about_window(app: &AppHandle) -> WebviewWindow {
             tauri::WebviewWindowBuilder::new(
                 app,
                 ABOUT_WINDOW_LABEL,
-                get_window_url(ABOUT_WINDOW_LABEL),
+                get_window_url(ABOUT_WINDOW_LABEL, false),
             )
             .title("About")
             .resizable(false)
@@ -156,7 +159,7 @@ fn show_standard_window(
             window_settings.height_percentage,
         );
 
-        tauri::WebviewWindowBuilder::new(app, label, get_window_url(label))
+        tauri::WebviewWindowBuilder::new(app, label, get_window_url(label, false))
             .title(title)
             .inner_size(size_and_position.width, size_and_position.height)
             .min_inner_size(
@@ -182,8 +185,10 @@ fn show_standard_window(
     window
 }
 
-fn get_window_url(view_name: &str) -> tauri::WebviewUrl {
-    tauri::WebviewUrl::App(format!("{WEB_VIEW_PATH}#{view_name}").into())
+fn get_window_url(view_name: &str, initially_hidden: bool) -> tauri::WebviewUrl {
+    tauri::WebviewUrl::App(
+        format!("{WEB_VIEW_PATH}?initially_hidden={initially_hidden}#{view_name}").into(),
+    )
 }
 
 fn handle_translate_window_events(translate_window: &WebviewWindow) {

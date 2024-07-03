@@ -1,7 +1,7 @@
 {
   "productName": "Selected Text Translate",
   "version": "3.0.0",
-  "identifier": "selected.text.translate.t",
+  "identifier": "com.killerdjo.stt",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",

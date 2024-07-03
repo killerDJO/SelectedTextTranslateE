@@ -16,7 +16,12 @@ onMounted(async () => {
   await app.setup();
   // Show window is called after setup to prevent flickering while webview is loading
   // Windows always start initially hidden and wait for the app to initialize before showing themselves
-  await Promise.all([historyAuth.setup(), hostApi.view.showWindow()]);
+  if (!hostApi.view.isInitiallyHidden()) {
+    hostApi.view.showWindow();
+  }
+
+  await historyAuth.setup();
+
   isSetupCompleted.value = true;
 });
 

@@ -123,7 +123,7 @@ impl ShortcutsManager {
 
         self.register_shortcut(&settings.play_text, "Play Text", |app| {
             app.state::<TextExtractor>().copy_selected_text();
-            let (window, _) = window_manager::get_or_create_translation_window(app);
+            let (window, _) = window_manager::get_or_create_translation_window(app, true);
             app.state::<EventsManager>().emit_play_text_command(&window);
         });
 
