@@ -1,0 +1,20 @@
+.hotkey-input {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+
+  input {
+    min-height: fit-content;
+    padding-left: $spacing-default;
+    font-size: $font-medium;
+  }
+
+  .icon {
+    position: absolute;
+    top: 7px;
+    right: $spacing-default;
+    color: $color-gray;
+    width: 18px;
+    height: 18px;
+  }
+}

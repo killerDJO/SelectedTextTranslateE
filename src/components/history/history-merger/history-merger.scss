@@ -1,0 +1,95 @@
+.merge-candidates {
+  min-height: 250px;
+  width: 50vw;
+  min-width: 600px;
+  margin: $spacing-xl;
+  max-height: 80vh;
+  overflow: auto;
+
+  .no-records-available {
+    text-align: center;
+    color: $color-gray;
+  }
+
+  .suggestion,
+  .no-translation {
+    font-style: italic;
+    color: $color-gray;
+  }
+
+  .table-header {
+    @include ellipsis();
+    padding-left: $spacing-default;
+    padding-right: $spacing-default;
+  }
+
+  .candidates-view {
+    .candidates-view-header {
+      height: 30px;
+      align-items: center;
+      display: flex;
+
+      .records-label {
+        font-size: $font-small;
+        color: $color-gray;
+        margin-left: auto;
+      }
+    }
+
+    .candidates {
+      .candidates-column {
+        text-align: center;
+      }
+    }
+  }
+
+  .candidate-view {
+    .candidate-view-header {
+      padding: $spacing-small 0;
+      display: inline-block;
+    }
+
+    .navigation-button .icon {
+      width: 15px;
+      height: 15px;
+    }
+
+    .candidate-view-controls {
+      display: inline-flex;
+      float: right;
+      padding: $spacing-small 0;
+      height: 30px;
+      align-items: center;
+
+      .navigation-button {
+        padding-left: $spacing-small;
+      }
+    }
+
+    .candidate {
+      :deep(tr:first-child) {
+        text-decoration: underline;
+        font-weight: bold;
+      }
+
+      .times-column {
+        text-align: center;
+      }
+
+      .actions-column {
+        display: flex;
+        justify-content: center;
+        column-gap: $spacing-small;
+        padding: 5px 0;
+      }
+    }
+  }
+}
+
+.footer {
+  border-top: $border-width solid $color-border;
+  padding: $spacing-default;
+  justify-content: flex-end;
+  align-items: center;
+  display: flex;
+}

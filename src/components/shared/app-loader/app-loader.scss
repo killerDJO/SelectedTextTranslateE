@@ -1,0 +1,18 @@
+.loading-overlay {
+  background-image: url('/loader.svg');
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-repeat: no-repeat;
+  background-size: 60px;
+  background-color: $color-white;
+  opacity: 0.5;
+  background-position: center;
+  border-radius: $border-radius;
+
+  &.large {
+    background-size: 120px;
+  }
+}

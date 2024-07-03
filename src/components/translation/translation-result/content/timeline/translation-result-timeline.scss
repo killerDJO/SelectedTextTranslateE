@@ -1,0 +1,77 @@
+.translation-result-timeline {
+  display: grid;
+  grid-template-columns: max-content 20px 1fr;
+  flex-direction: column;
+  column-gap: $spacing-default;
+
+  .date {
+    display: flex;
+    align-items: center;
+    padding: $spacing-small 0;
+    line-height: 1;
+  }
+
+  .separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    .dot {
+      background-color: $color-white;
+      border: 1px solid $color-border;
+      border-radius: 50%;
+      width: 11px;
+      height: 11px;
+      z-index: 1;
+    }
+
+    .line {
+      width: 0px;
+      border-right: 1px solid $color-border;
+      height: 100%;
+      position: absolute;
+      left: calc(50% - 1px);
+    }
+  }
+
+  .tags-list {
+    display: inline-flex;
+    gap: $spacing-small;
+    padding: $spacing-small 0;
+    flex-wrap: wrap;
+
+    .tag {
+      border-radius: $border-radius-small;
+      border: $border-width solid $color-border;
+      white-space: nowrap;
+      padding: 2px 3px;
+      line-height: 1;
+    }
+  }
+
+  :nth-child(1 of .separator) .line {
+    top: 50%;
+    height: 50%;
+  }
+
+  :nth-last-child(1 of .separator) .line {
+    // Dashed line at the bottom half
+    height: 50%;
+    top: 50%;
+    border-right: 1px dashed $color-border;
+  }
+
+  :nth-last-child(1 of .separator):not(:nth-child(1 of .separator)) .line {
+    // Solid line at the top half, if it's not the only separator
+    &::after {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: 0;
+      width: 1px;
+      height: 100%;
+      background-color: $color-border;
+    }
+  }
+}

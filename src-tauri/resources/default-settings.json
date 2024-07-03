@@ -1,0 +1,87 @@
+{
+  "core": {
+    "copyDelayMilliseconds": 100,
+    "requestTimeoutMilliseconds": 10000,
+    "playVolume": 100,
+    "searchPattern": "https://www.google.com.ua/search?safe=off&source=hp&q={{query}}",
+    "lastRecordsToScanForMerge": 10000,
+    "proxy": null
+  },
+  "translation": {
+    "sourceLanguage": "en",
+    "targetLanguage": "ru",
+    "tags": []
+  },
+  "display": {
+    "visibleByDefaultTranslationsInCategory": 7,
+    "historyPageSize": 15,
+    "historyColumns": {
+      "input": { "visible": true, "weight": 1, "index": 0 },
+      "translation": { "visible": true, "weight": 1, "index": 1 },
+      "tags": { "visible": true, "weight": 0.65, "index": 2 },
+      "timesTranslated": { "visible": true, "weight": 0.25, "index": 3 },
+      "lastTranslatedDate": { "visible": true, "weight": 0.45, "index": 4 },
+      "sourceLanguage": { "visible": false, "weight": 0.4, "index": 5 },
+      "targetLanguage": { "visible": false, "weight": 0.4, "index": 6 },
+      "archived": { "visible": true, "weight": 0.2, "index": 7 }
+    }
+  },
+  "translationWindow": {
+    "width": 300,
+    "height": 400,
+    "minWidth": 200,
+    "minHeight": 200,
+    "margin": 5,
+    "x": null,
+    "y": null
+  },
+  "historyWindow": {
+    "widthPercentage": 70,
+    "heightPercentage": 55,
+    "minWidth": 500,
+    "minHeight": 300
+  },
+  "settingsWindow": {
+    "widthPercentage": 35,
+    "heightPercentage": 45,
+    "minWidth": 400,
+    "minHeight": 400
+  },
+  "scaling": {
+    "scaleFactor": 1,
+    "scaleTranslationViewOnly": true,
+    "scalingStep": 0.05,
+    "minScaling": 0.7,
+    "maxScaling": 2,
+    "verticalResolutionBaseline": 860
+  },
+  "hotkeys": {
+    "translate": [["Control", "KeyT"]],
+    "playText": [["Control", "KeyR"]],
+    "showDefinition": [["Control", "KeyD"]],
+    "inputText": [["Control", "Shift", "KeyT"]],
+    "toggleSuspend": [["Shift", "Control", "Alt", "KeyS"]],
+    "zoomIn": [
+      ["Control", "NumpadAdd"],
+      ["Control", "Equal"]
+    ],
+    "zoomOut": [
+      ["Control", "Minus"],
+      ["Control", "NumpadSubtract"]
+    ],
+    "resetZoom": [
+      ["Control", "Digit0"],
+      ["Control", "Numpad0"]
+    ],
+    "toggleDefinition": [["Control", "Shift", "KeyD"]],
+    "archiveResult": [["Delete"]],
+    "addTag": [["Shift", "KeyT"]],
+    "toggleTags": [["Alt", "KeyT"]]
+  },
+  "firebase": {
+    "apiKey": "AIzaSyBhwEnarwArZX2qfQ0EFbCj_zaOcnEgjms",
+    "authDomain": "stte-prod.firebaseapp.com",
+    "projectId": "stte-prod",
+    "firestoreBaseUrl": "https://firestore.googleapis.com/v1beta1"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Capability for the windows",
+  "windows": ["translation", "history", "settings", "about"],
+  "permissions": [
+    "event:default",
+    "window:default",
+    "window:allow-start-dragging",
+    "window:allow-hide",
+    "window:allow-show",
+    "window:allow-set-focus",
+    "shell:allow-open",
+    "log:allow-log",
+    "webview:allow-internal-toggle-devtools",
+    "notification:allow-is-permission-granted",
+    "autostart:allow-is-enabled",
+    "autostart:allow-enable",
+    "autostart:allow-disable",
+    "app:allow-version",
+    "updater:default"
+  ]
+}

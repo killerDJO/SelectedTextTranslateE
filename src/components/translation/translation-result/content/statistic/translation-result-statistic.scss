@@ -1,0 +1,23 @@
+.statistics-summary {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-small;
+
+  .summary-item {
+    display: flex;
+    gap: $spacing-small;
+    align-items: baseline;
+
+    .icon {
+      color: $color-gray;
+
+      &.archived {
+        color: $color-error;
+      }
+    }
+
+    &.archive-actions {
+      align-items: center;
+    }
+  }
+}

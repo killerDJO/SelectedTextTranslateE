@@ -1,0 +1,28 @@
+.about {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: $spacing-default $spacing-xl;
+  background-color: $color-background;
+  height: 100vh;
+
+  .about-title {
+    font-size: $font-large;
+    font-weight: bold;
+
+    .version {
+      margin-right: $spacing-small;
+    }
+  }
+
+  .actions {
+    margin-top: $spacing-default;
+    display: flex;
+    align-items: center;
+    column-gap: $spacing-default;
+
+    .check-button {
+      min-width: 130px;
+    }
+  }
+}
