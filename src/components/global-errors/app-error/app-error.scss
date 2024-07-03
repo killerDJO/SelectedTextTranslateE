@@ -4,6 +4,7 @@
   padding: $spacing-small $spacing-default;
   border: 1px solid $color-white;
   border-radius: $border-radius-small;
+  gap: $spacing-small;
 
   .error-header {
     display: flex;
@@ -17,10 +18,20 @@
 
   .error-details {
     display: flex;
+    flex-direction: column;
     background-color: $color-background;
     color: $color-black;
     padding: $spacing-small;
     border-radius: $border-radius-small;
+
+    label {
+      font-weight: bold;
+    }
+
+    .details {
+      font-family: monospace;
+      word-break: break-all;
+    }
   }
 
   .icon-cancel {

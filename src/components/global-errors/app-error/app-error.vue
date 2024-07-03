@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { ensureErrorType } from '~/utils/error-handling.utils';
-
 interface Props {
   message: string;
-  error: unknown;
+  error: Error;
   dismissible?: boolean;
 }
 withDefaults(defineProps<Props>(), { dismissible: true });
@@ -16,9 +14,8 @@ defineEmits<{
 
 const isExpanded = ref(false);
 
-function getFriendlyMessage(message: string, error: unknown): string {
-  const errorType = ensureErrorType(error);
-  const errorText = (errorType?.message ?? errorType)?.toString() ?? '';
+function getFriendlyMessage(message: string, error: Error): string {
+  const errorText = (error?.message ?? error)?.toString() ?? '';
   if (errorText.includes('ENOTFOUND') || errorText.includes('timeout')) {
     return `${message} Network error.`;
   }
@@ -38,7 +35,14 @@ function getFriendlyMessage(message: string, error: unknown): string {
         ><font-awesome-icon icon="xmark" class="icon-cancel"
       /></icon-button>
     </div>
-    <span v-if="isExpanded && error" class="error-details">{{ JSON.stringify(error) }}</span>
+    <div v-if="isExpanded && error" class="error-details">
+      <div v-if="error.message">
+        <label>Message:</label> <span class="details">{{ error.message }}</span>
+      </div>
+      <div v-if="error.stack">
+        <label>Stack:</label> <span class="details">{{ error.stack }}</span>
+      </div>
+    </div>
   </div>
 </template>
 

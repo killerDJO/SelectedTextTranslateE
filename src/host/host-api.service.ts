@@ -184,7 +184,7 @@ export const hostApi = {
     },
 
     logError(err: Error, message: string): void {
-      error(`Error: ${message}. Error details: ${JSON.stringify(err)}. Stack: ${err.stack}.`);
+      error(`Message: [${message}] Error Message: [${err.message}] Stack: [${err.stack}]`);
     }
   },
 

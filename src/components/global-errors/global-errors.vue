@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ensureErrorType } from '~/utils/error-handling.utils';
+
 import AppError from './app-error/app-error.vue';
 import { useGlobalErrorsStore } from './global-errors.store';
 
@@ -11,7 +13,7 @@ const globalErrors = useGlobalErrorsStore();
       v-for="error in globalErrors.errors"
       :key="error.id"
       :message="error.message"
-      :error="error.error"
+      :error="ensureErrorType(error.error)"
       :dismissible="true"
       @dismiss="globalErrors.dismissError(error.id)"
     >
