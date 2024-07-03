@@ -6,15 +6,17 @@ import GlobalErrors from './components/global-errors/global-errors.vue';
 import { useAppStore } from './app.store';
 import { useHistoryAuthStore } from './components/history/history-auth/history-auth.store';
 import { hotkeysRegistry } from './services/hotkeys-registry.service';
+import { hostApi } from './host/host-api.service';
 
 const app = useAppStore();
 const historyAuth = useHistoryAuthStore();
 const isSetupCompleted = ref(false);
-
-// TODO: use suspense
+//123
 onMounted(async () => {
   await app.setup();
-  historyAuth.setup();
+  // Show window is called after setup to prevent flickering while webview is loading
+  // Windows always start initially hidden and wait for the app to initialize before showing themselves
+  await Promise.all([historyAuth.setup(), hostApi.view.showWindow()]);
   isSetupCompleted.value = true;
 });
 
@@ -60,6 +62,7 @@ function registerHotkeys(): void {
         <RouterView></RouterView>
       </div>
     </div>
+    <app-loader v-else :large="true" :style="{ zoom: app.scaleFactor * 100 + '%' }"></app-loader>
   </div>
 </template>
 

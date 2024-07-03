@@ -8,28 +8,10 @@
       content="default-src 'self' 'unsafe-inline' data:; img-src data: 'self'; connect-src https://translate.google.com https://firestore.googleapis.com https://www.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com ws://localhost:1420 http://ipc.localhost"
     />
     <title>Selected Text Translate</title>
-
-    <style>
-      .app-loader {
-        background-image: url('/loader.svg');
-        position: absolute;
-        top: 0;
-        left: 0;
-        bottom: 0;
-        right: 0;
-        background-repeat: no-repeat;
-        background-size: 120px;
-        background-color: #fff;
-        opacity: 0.5;
-        background-position: center;
-      }
-    </style>
   </head>
 
   <body>
-    <div id="app">
-      <div class="app-loader"></div>
-    </div>
+    <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

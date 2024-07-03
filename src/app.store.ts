@@ -44,11 +44,15 @@ export const useAppStore = defineStore('app', {
   },
   actions: {
     async setup(): Promise<void> {
-      this.accentColor = await hostApi.view.getAccentColor();
-      await hostApi.view.onAccentColorChange(accentColor => (this.accentColor = accentColor));
+      const [accentColor, settings] = await Promise.all([
+        hostApi.view.getAccentColor(),
+        hostApi.settings.getSettings()
+      ]);
+      this.accentColor = accentColor;
+      this._settings = settings;
 
-      this._settings = await hostApi.settings.getSettings();
-      await hostApi.settings.onSettingsChange(settings => (this._settings = settings));
+      hostApi.settings.onSettingsChange(settings => (this._settings = settings));
+      hostApi.view.onAccentColorChange(accentColor => (this.accentColor = accentColor));
     },
     zoomIn(): void {
       const scalingSettings = this.settings.scaling;

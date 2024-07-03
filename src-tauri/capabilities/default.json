@@ -8,6 +8,8 @@
     "window:default",
     "window:allow-start-dragging",
     "window:allow-hide",
+    "window:allow-show",
+    "window:allow-set-focus",
     "shell:allow-open",
     "log:allow-log",
     "webview:allow-internal-toggle-devtools",

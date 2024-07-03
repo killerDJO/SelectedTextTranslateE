@@ -28,55 +28,60 @@ struct SizeAndPosition {
     y: f64,
 }
 
-pub fn get_or_create_translation_window(app: &AppHandle) -> WebviewWindow {
+pub fn get_or_create_translation_window(app: &AppHandle) -> (WebviewWindow, bool) {
     let settings_manager = app.state::<SettingsManager>();
 
     let settings = settings_manager.read_settings();
     let window_settings = settings.translation_window;
 
-    let translate_window = app
-        .get_webview_window(TRANSLATION_WINDOW_LABEL)
-        .unwrap_or_else(|| {
-            let (x, y) = get_translation_window_position(app, &window_settings);
+    let exiting_window = app.get_webview_window(TRANSLATION_WINDOW_LABEL);
+    let is_window_created = exiting_window.is_none();
+    let translate_window = exiting_window.unwrap_or_else(|| {
+        let (x, y) = get_translation_window_position(app, &window_settings);
 
-            tauri::WebviewWindowBuilder::new(
-                app,
-                TRANSLATION_WINDOW_LABEL,
-                get_window_url(TRANSLATION_WINDOW_LABEL),
-            )
-            .title("Selected Text Translate")
-            .skip_taskbar(true)
-            .always_on_top(true)
-            .visible(false) // Important to hide the window initially, otherwise focus won't work
-            .decorations(false)
-            .focused(true)
-            .resizable(true)
-            .fullscreen(false)
-            .shadow(false)
-            .inner_size(window_settings.width as f64, window_settings.height as f64)
-            .min_inner_size(
-                window_settings.min_width as f64,
-                window_settings.min_height as f64,
-            )
-            .position(x, y)
-            .build()
-            .unwrap()
-        });
+        let window = tauri::WebviewWindowBuilder::new(
+            app,
+            TRANSLATION_WINDOW_LABEL,
+            get_window_url(TRANSLATION_WINDOW_LABEL),
+        )
+        .title("Selected Text Translate")
+        .skip_taskbar(true)
+        .always_on_top(true)
+        .visible(false) // Important to hide the window initially, otherwise focus won't work
+        .decorations(false)
+        .focused(true)
+        .resizable(true)
+        .fullscreen(false)
+        .shadow(false)
+        .inner_size(window_settings.width as f64, window_settings.height as f64)
+        .min_inner_size(
+            window_settings.min_width as f64,
+            window_settings.min_height as f64,
+        )
+        .position(x, y)
+        .build()
+        .unwrap();
 
-    handle_translate_window_events(&translate_window);
+        handle_translate_window_events(&window);
 
-    translate_window
+        window
+    });
+
+    (translate_window, is_window_created)
 }
 
 pub fn show_translation_window(app: &AppHandle) -> WebviewWindow {
-    let translate_win = get_or_create_translation_window(app);
+    let (translate_win, is_window_created) = get_or_create_translation_window(app);
 
     // Emit the event before show to ensure loader is shown
     // This prevents flashes of the window content
     EventsManager::emit_before_show_event(&translate_win);
 
-    translate_win.show().unwrap();
-    translate_win.set_focus().unwrap();
+    // Upon initial creation, window will show itself upon load
+    if !is_window_created {
+        translate_win.show().unwrap();
+        translate_win.set_focus().unwrap();
+    }
 
     translate_win
 }
@@ -141,7 +146,10 @@ fn show_standard_window(
     title: &str,
     label: &str,
 ) -> WebviewWindow {
-    let window = app.get_webview_window(label).unwrap_or_else(|| {
+    let existing_window = app.get_webview_window(label);
+    let is_window_created = existing_window.is_none();
+
+    let window = existing_window.unwrap_or_else(|| {
         let size_and_position = get_window_size_and_position_from_percentage(
             app,
             window_settings.width_percentage,
@@ -156,12 +164,16 @@ fn show_standard_window(
                 window_settings.min_height as f64,
             )
             .position(size_and_position.x, size_and_position.y)
+            .visible(false)
             .build()
             .unwrap()
     });
 
-    window.show().unwrap();
-    window.set_focus().unwrap();
+    // Upon initial creation, window will show itself upon load
+    if !is_window_created {
+        window.show().unwrap();
+        window.set_focus().unwrap();
+    }
 
     if window.is_minimized().unwrap() {
         window.unminimize().unwrap();

@@ -40,6 +40,11 @@ export const hostApi = {
       await tauriWindow.getCurrent().hide();
       // Show loader for next time
       emit('before_show');
+    },
+
+    async showWindow(): Promise<void> {
+      await tauriWindow.getCurrent().show();
+      await tauriWindow.getCurrent().setFocus();
     }
   },
 
