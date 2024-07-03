@@ -26,5 +26,3 @@ hex = "0.4.3"
 log = "^0.4"
 global-hotkey = "0.5.4"
 reqwest = "0.12"
-
-

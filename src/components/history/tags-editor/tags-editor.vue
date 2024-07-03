@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { normalizeTag } from '~/utils/tags.utils';
 import { historyCache } from '~/components/history/services/history-cache.service';
 import { Tag } from '~/host/models/settings.model';
 
@@ -57,6 +56,10 @@ function removeTag(tagToRemove: Tag): void {
     'update-tags',
     currentTags.value.filter(tag => tag.tag !== tagToRemove.tag)
   );
+}
+
+function normalizeTag(tag: Tag | string): Tag {
+  return typeof tag === 'string' ? { tag: tag, enabled: true } : tag;
 }
 
 function setCurrentTag(tag: string): void {
