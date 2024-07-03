@@ -52,8 +52,8 @@ function close(): void {
 </script>
 
 <template>
-  <transition v-if="show" name="modal">
-    <div class="modal-mask" @keyup.esc="close">
+  <transition name="modal">
+    <div v-if="show" class="modal-mask" @keyup.esc="close">
       <div v-tab-guard />
       <div class="modal-wrapper">
         <div ref="container" class="modal-container clearfix">

@@ -11,7 +11,7 @@ import { hostApi } from './host/host-api.service';
 const app = useAppStore();
 const historyAuth = useHistoryAuthStore();
 const isSetupCompleted = ref(false);
-//123
+
 onMounted(async () => {
   await app.setup();
   // Show window is called after setup to prevent flickering while webview is loading

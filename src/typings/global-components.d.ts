@@ -20,7 +20,7 @@ import type AppLoader from '~/components/shared/app-loader/app-loader.vue';
 import type DataTable from '~/components/shared/data-table/data-table.vue';
 import type AppAlert from '~/components/shared/app-alert/app-alert.vue';
 
-declare module '@vue/runtime-core' {
+declare module 'vue' {
   export interface GlobalComponents {
     FontAwesomeIcon: typeof FontAwesomeIcon;
     AppButton: typeof AppButton;

@@ -22,7 +22,7 @@
     border-radius: $border-radius;
     @extend %box-shadow;
 
-    transition: all 0.1s ease;
+    transition: all 0.05s ease;
     font-family: Helvetica, Arial, sans-serif;
 
     .modal-header {
@@ -52,7 +52,7 @@
   }
 }
 
-.modal-enter {
+.modal-enter-active {
   opacity: 0;
 }
 
@@ -60,7 +60,7 @@
   opacity: 0;
 }
 
-.modal-enter .modal-container,
+.modal-enter-active .modal-container,
 .modal-leave-active .modal-container {
   -webkit-transform: scale(1.1);
   transform: scale(1.1);

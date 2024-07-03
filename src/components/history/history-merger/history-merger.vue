@@ -213,7 +213,7 @@ defineExpose({
             :records="filteredCandidates"
             :is-loading="historyMerger.isActionInProgress"
             class="candidates"
-            @record-click="(record: any) => showCandidate(record)"
+            @record-click="record => showCandidate(record)"
           >
             <template #[getHeaderSlotId(CandidatesTableColumns.Word)]>
               <div v-overflow-tooltip class="table-header">Word</div>
