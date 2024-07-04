@@ -11,7 +11,8 @@
   "bundle": {
     "publisher": "killerDJO",
     "active": true,
-    "targets": ["updater", "nsis"],
+    "targets": ["nsis"],
+    "createUpdaterArtifacts": true,
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
