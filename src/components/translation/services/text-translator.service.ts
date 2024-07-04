@@ -99,7 +99,8 @@ export class TextTranslator {
   private async getTranslationResponse(descriptor: TranslateDescriptor): Promise<unknown> {
     // Double-escape string for correct processing by rpc
     const escapedData = this.escapeString(this.escapeString(descriptor.sentence));
-    const data = `[[\\"${escapedData}\\",\\"${descriptor.sourceLanguage}\\",\\"${
+    const normalizedData = escapedData.trim().replace(/\r?\n/g, '\\\\n');
+    const data = `[[\\"${normalizedData}\\",\\"${descriptor.sourceLanguage}\\",\\"${
       descriptor.targetLanguage
     }\\",${descriptor.isForcedTranslation ? 'null' : '1'}],[]]`;
     return this.requestsExecutor.executeGoogleTranslateRequest('MkEWBc', data);

@@ -58,8 +58,10 @@ export const useTranslationStore = defineStore('translation', {
 
       hostApi.view.onBeforeShow(() => {
         const translateResult = useTranslateResultStore();
+        const globalErrorsStore = useGlobalErrorsStore();
         translateResult.clearCurrentTranslation();
         translateResult.isTranslationInProgress = true;
+        globalErrorsStore.clearErrors();
         this.showInput = false;
       });
     },
