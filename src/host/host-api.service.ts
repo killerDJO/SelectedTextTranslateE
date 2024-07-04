@@ -33,8 +33,8 @@ export const hostApi = {
       return invoke<string>('accent_color');
     },
 
-    async onAccentColorChange(_callback: (accentColor: string) => void): Promise<void> {
-      // TODO: not implemented
+    async onAccentColorChange(callback: (accentColor: string) => void): Promise<void> {
+      await listen('accent_color_changed', (event: Event<string>) => callback(event.payload));
     },
 
     async hideWindow(): Promise<void> {

@@ -1,6 +1,7 @@
 use tauri::AppHandle;
 
 use crate::{
+    accent_color_provider::AccentColorProvider,
     events_manager::{EventsManager, TranslationCommands},
     notifications, requests_executor,
     settings::{PartialSettings, Settings, SettingsManager},
@@ -8,19 +9,8 @@ use crate::{
 };
 
 #[tauri::command]
-pub fn accent_color() -> String {
-    let mut colorization: u32 = 0;
-    let mut opaqueblend = windows::Win32::Foundation::BOOL(0);
-    unsafe {
-        windows::Win32::Graphics::Dwm::DwmGetColorizationColor(&mut colorization, &mut opaqueblend)
-            .unwrap();
-    };
-
-    let argb = hex::decode(format!("{:X}", colorization)).unwrap();
-    let rgb = [argb[1], argb[2], argb[3]];
-    let rgb_string = hex::encode(rgb);
-
-    return format!("#{}", rgb_string).to_string();
+pub fn accent_color(accent_color_provider: tauri::State<AccentColorProvider>) -> String {
+    accent_color_provider.accent_color()
 }
 
 #[tauri::command]

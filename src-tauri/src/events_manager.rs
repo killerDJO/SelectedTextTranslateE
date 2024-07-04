@@ -5,6 +5,8 @@ use tauri::{AppHandle, Manager, WebviewWindow};
 
 use crate::settings::Settings;
 
+const ACCENT_COLOR_CHANGED_EVENT: &str = "accent_color_changed";
+
 const BEFORE_SHOW_EVENT: &str = "before_show";
 const TRANSLATE_TEXT_COMMAND: &str = "translate_text";
 const PLAY_TEXT_COMMAND: &str = "play_text";
@@ -44,6 +46,10 @@ impl EventsManager {
 
     pub fn emit_before_show_event(window: &WebviewWindow) {
         window.emit(BEFORE_SHOW_EVENT, ()).unwrap();
+    }
+
+    pub fn emit_accent_color_changed_event(app: &AppHandle, color: String) {
+        app.emit(ACCENT_COLOR_CHANGED_EVENT, color).unwrap();
     }
 
     pub fn emit_translate_text_command(&self, window: &WebviewWindow, show_definition: bool) {
