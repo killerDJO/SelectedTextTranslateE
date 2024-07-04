@@ -42,6 +42,7 @@ pub struct CoreSettings {
     pub play_volume: u32,
     pub search_pattern: String,
     pub last_records_to_scan_for_merge: u32,
+    pub levenshtein_distance_for_merge: u8,
     pub proxy: Option<String>,
 }
 

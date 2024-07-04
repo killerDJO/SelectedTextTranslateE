@@ -45,7 +45,7 @@ pub fn get_or_create_translation_window(
         let window = tauri::WebviewWindowBuilder::new(
             app,
             TRANSLATION_WINDOW_LABEL,
-            get_window_url(TRANSLATION_WINDOW_LABEL, initially_hidden),
+            get_window_url(TRANSLATION_WINDOW_LABEL, !initially_hidden),
         )
         .title("Selected Text Translate")
         .skip_taskbar(true)
@@ -124,7 +124,7 @@ pub fn show_about_window(app: &AppHandle) -> WebviewWindow {
             tauri::WebviewWindowBuilder::new(
                 app,
                 ABOUT_WINDOW_LABEL,
-                get_window_url(ABOUT_WINDOW_LABEL, false),
+                get_window_url(ABOUT_WINDOW_LABEL, true),
             )
             .title("About")
             .resizable(false)
@@ -159,7 +159,7 @@ fn show_standard_window(
             window_settings.height_percentage,
         );
 
-        tauri::WebviewWindowBuilder::new(app, label, get_window_url(label, false))
+        tauri::WebviewWindowBuilder::new(app, label, get_window_url(label, true))
             .title(title)
             .inner_size(size_and_position.width, size_and_position.height)
             .min_inner_size(
@@ -185,9 +185,9 @@ fn show_standard_window(
     window
 }
 
-fn get_window_url(view_name: &str, initially_hidden: bool) -> tauri::WebviewUrl {
+fn get_window_url(view_name: &str, show_on_load: bool) -> tauri::WebviewUrl {
     tauri::WebviewUrl::App(
-        format!("{WEB_VIEW_PATH}?initially_hidden={initially_hidden}#{view_name}").into(),
+        format!("{WEB_VIEW_PATH}?show_on_load={show_on_load}#{view_name}").into(),
     )
 }
 

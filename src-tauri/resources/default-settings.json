@@ -5,6 +5,7 @@
     "playVolume": 100,
     "searchPattern": "https://www.google.com.ua/search?safe=off&source=hp&q={{query}}",
     "lastRecordsToScanForMerge": 10000,
+    "levenshteinDistanceForMerge": 1,
     "proxy": null
   },
   "translation": {

@@ -24,7 +24,9 @@ export class HistoryMerger {
   ) {}
 
   public async getMergeCandidates(): Promise<ReadonlyArray<MergeCandidate>> {
-    const lastRecordsToScan = this.settingsProvider.getSettings().core.lastRecordsToScanForMerge;
+    const coreSettings = this.settingsProvider.getSettings().core;
+    const lastRecordsToScan = coreSettings.lastRecordsToScanForMerge;
+    const levenshteinDistance = coreSettings.levenshteinDistanceForMerge;
     const recentRecords = await this.historyService.queryRecords(
       'lastTranslatedDate',
       SortOrder.Desc,
@@ -37,7 +39,8 @@ export class HistoryMerger {
     );
 
     const mergeCandidates = await this.mergeCandidatesFinder.getMergeCandidates(
-      recentRecords.records
+      recentRecords.records,
+      levenshteinDistance
     );
     return this.filterBlacklistedRecords(mergeCandidates);
   }

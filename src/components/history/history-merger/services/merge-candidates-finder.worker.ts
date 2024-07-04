@@ -1,3 +1,5 @@
+import levenshtein from 'fast-levenshtein';
+
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type {
   MergeCandidate,
@@ -8,18 +10,22 @@ const context: Worker = self as unknown as Worker;
 
 context.addEventListener('message', event => {
   const candidatesFinder = new MergeCandidatesFinder();
-  context.postMessage(candidatesFinder.getMergeCandidates(event.data));
+  const { records, maxLevenshteinDistance } = event.data;
+  context.postMessage(candidatesFinder.getMergeCandidates(records, maxLevenshteinDistance));
 });
 
 export default class MergeCandidatesFinder {
-  public getMergeCandidates(records: HistoryRecord[]): ReadonlyArray<MergeCandidate> {
+  public getMergeCandidates(
+    records: HistoryRecord[],
+    maxLevenshteinDistance: number
+  ): ReadonlyArray<MergeCandidate> {
     const mergeRecords: Array<MergeHistoryRecord | null> = records
       .sort((first, second) => second.lastTranslatedDate - first.lastTranslatedDate)
       .map(record => this.convertToMergeRecord(record));
 
     const result: MergeCandidate[] = [];
     for (let i = 0; i < mergeRecords.length; ++i) {
-      const candidates = this.processRecord(i, mergeRecords);
+      const candidates = this.processRecord(i, mergeRecords, maxLevenshteinDistance);
 
       if (candidates.length > 0) {
         result.push(
@@ -37,7 +43,8 @@ export default class MergeCandidatesFinder {
 
   private processRecord(
     recordIndex: number,
-    mergeRecords: Array<MergeHistoryRecord | null>
+    mergeRecords: Array<MergeHistoryRecord | null>,
+    maxLevenshteinDistance: number
   ): MergeHistoryRecord[] {
     const candidates: MergeHistoryRecord[] = [];
 
@@ -59,7 +66,7 @@ export default class MergeCandidatesFinder {
         continue;
       }
 
-      if (this.isMergeCandidate(record, candidateRecord)) {
+      if (this.isMergeCandidate(record, candidateRecord, maxLevenshteinDistance)) {
         candidates.push(candidateRecord);
         mergeRecords[i] = null;
       }
@@ -68,7 +75,11 @@ export default class MergeCandidatesFinder {
     return candidates;
   }
 
-  private isMergeCandidate(target: MergeHistoryRecord, source: MergeHistoryRecord): boolean {
+  private isMergeCandidate(
+    target: MergeHistoryRecord,
+    source: MergeHistoryRecord,
+    maxLevenshteinDistance: number
+  ): boolean {
     if (this.equalsIgnoreCase(target.sentence, source.sentence)) {
       return true;
     }
@@ -92,6 +103,10 @@ export default class MergeCandidatesFinder {
       this.containsIgnoreCase(target.sentence, source.similarWords) ||
       this.containsIgnoreCase(source.sentence, target.similarWords)
     ) {
+      return true;
+    }
+
+    if (levenshtein.get(target.sentence, source.sentence) <= maxLevenshteinDistance) {
       return true;
     }
 
@@ -124,7 +139,9 @@ export default class MergeCandidatesFinder {
       suggestion: record.translateResult.sentence.suggestion,
       baseForms: record.translateResult.categories.map(category => category.baseForm),
       similarWords: record.translateResult.sentence.similarWords || [],
-      blacklistedMergeRecords: record.blacklistedMergeRecords || []
+      blacklistedMergeRecords: record.blacklistedMergeRecords || [],
+      translationsAndDefinitionsNumber:
+        record.translateResult.categories.length + record.translateResult.definitions.length
     };
   }
 
@@ -150,6 +167,20 @@ export default class MergeCandidatesFinder {
     );
     if (similarWordsInChildren) {
       return this.promoteRecord(candidate, similarWordsInChildren);
+    }
+
+    let maxTranslationsRecord = candidate.record;
+    for (const record of candidate.mergeRecords) {
+      if (
+        record.translationsAndDefinitionsNumber >
+        maxTranslationsRecord.translationsAndDefinitionsNumber
+      ) {
+        maxTranslationsRecord = record;
+      }
+    }
+
+    if (maxTranslationsRecord !== candidate.record) {
+      return this.promoteRecord(candidate, maxTranslationsRecord);
     }
 
     return candidate;

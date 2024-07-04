@@ -15,6 +15,7 @@ import { PartialSettings, Settings } from './models/settings.model';
 import { ViewNames } from './models/views.model';
 
 const HISTORY_RECORD_CHANGE_EVENT = 'history_record_changed';
+const SHOW_ON_LOAD_QUERY_PARAM = 'show_on_load';
 
 export type TranslationCommand = 'Play' | 'ShowInput' | { Translate: boolean };
 
@@ -22,13 +23,6 @@ export const hostApi = {
   view: {
     getViewName(): ViewNames {
       return window.location.hash.slice(2) as ViewNames;
-    },
-
-    isInitiallyHidden(): boolean {
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      const initiallyHidden = urlParams.get('initially_hidden');
-      return initiallyHidden === true.toString();
     },
 
     async onBeforeShow(callback: () => void): Promise<void> {
@@ -49,9 +43,20 @@ export const hostApi = {
       emit('before_show');
     },
 
-    async showWindow(): Promise<void> {
+    shouldShowOnLoad(): boolean {
+      const urlParams = new URLSearchParams(window.location.search);
+      const initiallyHidden = urlParams.get(SHOW_ON_LOAD_QUERY_PARAM);
+      return initiallyHidden === true.toString();
+    },
+
+    async showWindowOnLoad(): Promise<void> {
       await tauriWindow.getCurrent().show();
       await tauriWindow.getCurrent().setFocus();
+
+      // Remove param to prevent showing on reload
+      const url = new URL(window.location.href);
+      url.searchParams.delete(SHOW_ON_LOAD_QUERY_PARAM);
+      window.history.replaceState(null, '', url.toString());
     }
   },
 

@@ -14,4 +14,5 @@ export interface MergeHistoryRecord extends TranslateDescriptor {
   readonly baseForms: ReadonlyArray<string>;
   readonly similarWords: ReadonlyArray<string>;
   readonly blacklistedMergeRecords: ReadonlyArray<string>;
+  readonly translationsAndDefinitionsNumber: number;
 }

@@ -22,6 +22,7 @@ export type CoreSettings = {
   playVolume: number;
   searchPattern: string;
   lastRecordsToScanForMerge: number;
+  levenshteinDistanceForMerge: number;
 };
 
 export type TranslationSettings = {

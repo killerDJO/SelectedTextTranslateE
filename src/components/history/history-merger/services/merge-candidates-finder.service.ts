@@ -2,11 +2,14 @@ import type { HistoryRecord } from '~/components/history/models/history-record.m
 import type { MergeCandidate } from '~/components/history/history-merger/models/merge-candidate.model';
 
 export class MergeCandidatesFinder {
-  public getMergeCandidates(records: HistoryRecord[]): Promise<ReadonlyArray<MergeCandidate>> {
+  public getMergeCandidates(
+    records: HistoryRecord[],
+    maxLevenshteinDistance: number
+  ): Promise<ReadonlyArray<MergeCandidate>> {
     const worker = new Worker(new URL('./merge-candidates-finder.worker.ts', import.meta.url), {
       type: 'module'
     });
-    worker.postMessage(records);
+    worker.postMessage({ records: records, maxLevenshteinDistance: maxLevenshteinDistance });
     return new Promise((resolve, reject) => {
       worker.onmessage = event => {
         resolve(event.data);
