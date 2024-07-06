@@ -6,10 +6,7 @@ import { computed, reactive } from 'vue';
 import { executeIfValid } from '~/utils/validation.utils';
 import { useHistoryAuthStore } from '~/components/history/history-auth/history-auth.store';
 import type { AuthResponse } from '~/components/history/history-auth/models/auth-response.model';
-import {
-  passwordValidators,
-  PASSWORD_TOO_WEAK_MESSAGE
-} from '~/components/history/history-auth/password.utils';
+import { passwordValidators } from '~/components/history/history-auth/password.utils';
 
 interface Props {
   actionExecutor: <TErrorCodes extends string>(
@@ -42,9 +39,7 @@ const v$ = useVuelidate(rules, state);
 async function signUpIfValid() {
   await executeIfValid(v$, () => {
     props.actionExecutor(() => historyAuth.signUp(state.email, state.password), {
-      'invalid-email': 'Email is invalid.',
-      'email-already-in-use': 'User with this email is already registered.',
-      'weak-password': PASSWORD_TOO_WEAK_MESSAGE
+      'email-already-in-use': 'User with this email is already registered.'
     });
   });
 }

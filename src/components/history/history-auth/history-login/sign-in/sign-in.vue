@@ -44,9 +44,7 @@ const v$ = useVuelidate(rules, state);
 async function signInIfValid() {
   await executeIfValid(v$, () => {
     props.actionExecutor(() => historyAuth.signIn(state.email, state.password), {
-      'invalid-email': 'Email is invalid.',
-      'invalid-password': 'Password is invalid.',
-      'user-not-found': 'User with this email is not found.'
+      'invalid-credentials': 'Email or password are invalid, or user is not registered.'
     });
   });
 }

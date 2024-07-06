@@ -36,11 +36,11 @@ async function executeLoginAction<TErrorCodes extends string>(
       errorMessage.value =
         errorCodes[authResponse.errorCode as TErrorCodes] ??
         commonErrorMessages[authResponse.errorCode] ??
-        `Unknown error: ${authResponse.errorCode}`;
+        `Authentication error: ${authResponse.errorCode}`;
       return false;
     }
   } catch (e) {
-    useGlobalErrorsStore().addError('Unknown error', e);
+    useGlobalErrorsStore().addError('Authentication error', e);
     return false;
   } finally {
     isLoginActionInProgress.value = false;

@@ -1,9 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-import {
-  authService,
-  type AuthService
-} from '~/components/history/history-auth/services/auth.service';
 import type {
   HistoryRecord,
   TranslationInstance
@@ -12,37 +8,42 @@ import { settingsProvider, SettingsProvider } from '~/services/settings-provider
 import { logger, type Logger } from '~/services/logger.service';
 import { TranslateResult } from '~/components/translation/models/translation.model';
 
-import { Database, Json, Tables } from './database.types';
+import { Database, Json, Tables } from './database.generated';
 
 export class HistoryDatabase {
-  private supabase: SupabaseClient<Database>;
+  private supabase: SupabaseClient<Database> | null = null;
 
   constructor(
     private readonly settingsProvider: SettingsProvider,
-    private readonly authService: AuthService,
     private readonly logger: Logger
-  ) {
-    const supabaseSettings = this.settingsProvider.getSettings().supabase;
-    this.supabase = createClient<Database>(supabaseSettings.projectUrl, supabaseSettings.anonKey);
-  }
+  ) {}
 
   public async getRecords(afterTimestamp: number): Promise<HistoryRecord[]> {
     this.logger.info(`[DB]: Getting history records after timestamp: ${afterTimestamp}`);
+    const supabase = this.ensureInitialized();
 
-    const records = await this.supabase
+    const records = await supabase
       .from('history')
       .select('*')
-      .gt('updatedDate', afterTimestamp)
-      .order('updatedDate', { ascending: true });
-    this.logger.info(`[DB]: Returned records: ${records.count}`);
+      .gt('updated_at', new Date(afterTimestamp).toISOString())
+      .order('updated_at', { ascending: true })
+      .throwOnError();
+
+    this.logger.info(`[DB]: Returned records: ${records.data?.length ?? 0}`);
 
     return records.data?.map(doc => this.mapToHistoryRecord(doc)) ?? [];
   }
 
   public async getRecord(id: string): Promise<HistoryRecord | undefined> {
     this.logger.info(`[DB]: Getting history record: ${id}`);
+    const supabase = this.ensureInitialized();
 
-    const record = await this.supabase.from('history').select('*').eq('id', id).single();
+    const record = await supabase
+      .from('history')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle()
+      .throwOnError();
 
     if (!record.data) {
       return undefined;
@@ -53,14 +54,16 @@ export class HistoryDatabase {
 
   public async upsertRecord(record: HistoryRecord): Promise<void> {
     this.logger.info(`[DB]: Upserting history record ${record.id}.`);
+    const supabase = this.ensureInitialized();
 
-    await this.supabase.from('history').upsert(this.mapFromHistoryRecord(record));
+    await supabase.from('history').upsert(this.mapFromHistoryRecord(record)).throwOnError();
   }
 
   public async deleteRecord(id: string): Promise<void> {
     this.logger.info(`[DB]: Deleting history record ${id}.`);
+    const supabase = this.ensureInitialized();
 
-    await this.supabase.from('history').delete().eq('id', id);
+    await supabase.from('history').delete().eq('id', id).throwOnError();
   }
 
   private mapToHistoryRecord(data: Tables<'history'>): HistoryRecord {
@@ -107,14 +110,15 @@ export class HistoryDatabase {
     };
   }
 
-  private async getUserId(): Promise<string> {
-    const user = await this.authService.getAccount();
-    if (!user) {
-      throw new Error('Unauthorized');
+  // Lazy initialization is needed to make sure settings are loaded before the database is initialized.
+  private ensureInitialized(): SupabaseClient<Database> {
+    if (!this.supabase) {
+      const supabaseSettings = this.settingsProvider.getSettings().supabase;
+      this.supabase = createClient<Database>(supabaseSettings.projectUrl, supabaseSettings.anonKey);
     }
 
-    return user.uid;
+    return this.supabase;
   }
 }
 
-export const historyDatabase = new HistoryDatabase(settingsProvider, authService, logger);
+export const historyDatabase = new HistoryDatabase(settingsProvider, logger);

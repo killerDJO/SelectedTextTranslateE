@@ -24,6 +24,6 @@ ALTER TABLE "public"."history" OWNER TO "postgres";
 ALTER TABLE ONLY "public"."history"
     ADD CONSTRAINT "history_pkey" PRIMARY KEY ("id");
 
-CREATE POLICY "Only Users Data" ON "public"."history" AS RESTRICTIVE TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+CREATE POLICY "Only Users Data" ON "public"."history" TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
 
 ALTER TABLE "public"."history" ENABLE ROW LEVEL SECURITY;

@@ -4,14 +4,10 @@ export interface AuthResponse<TErrorCodes> {
 }
 
 export enum SignInErrorCodes {
-  InvalidEmail = 'invalid-email',
-  UserNotFound = 'user-not-found',
-  InvalidPassword = 'invalid-password'
+  InvalidCredentials = 'invalid-credentials'
 }
 
 export enum SignUpErrorCodes {
-  InvalidEmail = 'invalid-email',
-  WeakPassword = 'weak-password',
   EmailAlreadyInUse = 'email-already-in-use'
 }
 

@@ -15,6 +15,7 @@ import {
   type AuthService
 } from '~/components/history/history-auth/services/auth.service';
 import { HistoryColumnName, Tag } from '~/host/models/settings.model';
+import { hostApi } from '~/host/host-api.service';
 
 import { historyDatabase, type HistoryDatabase } from './history-database.service';
 import { historyCache, type HistoryCache } from './history-cache.service';
@@ -128,7 +129,10 @@ export class HistoryService {
     await this.historyCache.patchRecord(clonedRecord);
 
     // Do not await for remote write, cache serves as a main data source
-    this.historyDatabase.upsertRecord(clonedRecord);
+    this.historyDatabase.upsertRecord(clonedRecord).catch(e => {
+      this.logger.error(e, `[History]: Failed to upsert history record ${clonedRecord.id}.`);
+      hostApi.notifications.showErrorNotification('Failed to update history.');
+    });
   }
 
   private getTags(record: HistoryRecord): ReadonlyArray<string> {

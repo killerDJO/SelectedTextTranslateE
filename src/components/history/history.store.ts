@@ -28,7 +28,7 @@ export const useHistoryStore = defineStore('history', {
       filter: { starredOnly: false, includeArchived: false },
       sortColumn: 'lastTranslatedDate',
       sortOrder: SortOrder.Desc,
-      pageNumber: 0,
+      pageNumber: 1,
       totalRecords: 0,
       records: null,
       isLoading: false
@@ -107,7 +107,7 @@ async function queryRecordsInternal(store: HistoryStore, cachedOnly = false): Pr
     const { records, total } = await historyService.queryRecords(
       store.sortColumn,
       store.sortOrder,
-      (store.pageNumber - 1) * store.pageSize,
+      Math.max(store.pageNumber - 1, 0) * store.pageSize,
       store.pageSize,
       store.filter,
       cachedOnly

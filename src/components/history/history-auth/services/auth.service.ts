@@ -1,19 +1,4 @@
-import { FirebaseError, initializeApp } from 'firebase/app';
-import {
-  getAuth,
-  type Auth,
-  signInWithEmailAndPassword,
-  signOut,
-  createUserWithEmailAndPassword,
-  sendPasswordResetEmail,
-  verifyPasswordResetCode,
-  confirmPasswordReset,
-  EmailAuthProvider,
-  updatePassword,
-  reauthenticateWithCredential,
-  indexedDBLocalPersistence
-} from 'firebase/auth';
-import 'firebase/firestore';
+import { AuthError, createClient, isAuthApiError, SupabaseClient } from '@supabase/supabase-js';
 
 import {
   PasswordChangeErrorCodes,
@@ -26,72 +11,73 @@ import {
 } from '~/components/history/history-auth/models/auth-response.model';
 import type { AccountInfo } from '~/components/history/history-auth/models/account-info.model';
 import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
+import { logger, Logger } from '~/services/logger.service';
 
 export class AuthService {
-  private auth: Promise<Auth> | null = null;
+  private supabase: SupabaseClient | null = null;
 
-  public constructor(private readonly settingsProvider: SettingsProvider) {}
+  public constructor(
+    private readonly settingsProvider: SettingsProvider,
+    private readonly logger: Logger
+  ) {}
 
-  public async initialize(): Promise<Auth> {
-    const settings = this.settingsProvider.getSettings().firebase;
-    const app = initializeApp({
-      apiKey: settings.apiKey,
-      authDomain: settings.authDomain,
-      projectId: settings.projectId
-    });
+  public async initialize(): Promise<SupabaseClient> {
+    const settings = this.settingsProvider.getSettings().supabase;
+    this.supabase = createClient(settings.projectUrl, settings.anonKey);
 
-    this.auth = new Promise(resolve => {
-      const auth = getAuth(app);
-      auth.setPersistence(indexedDBLocalPersistence).then(() => resolve(auth));
-    });
+    // this.auth = new Promise(resolve => {
+    //   const auth = getAuth(app);
+    //   auth.setPersistence(indexedDBLocalPersistence).then(() => resolve(auth));
+    // });
 
-    return this.auth;
-  }
-
-  public async onAccountChanged(callback: (account: AccountInfo | null) => void) {
-    const auth = await this.ensureInitialized();
-
-    auth.onAuthStateChanged(() => {
-      callback(this.mapAccountInfo(auth));
-    });
-  }
-
-  public async getAccount(): Promise<AccountInfo | null> {
-    const auth = await this.ensureInitialized();
-
-    return this.mapAccountInfo(auth);
+    return this.supabase;
   }
 
   public async signIn(email: string, password: string): Promise<AuthResponse<SignInErrorCodes>> {
-    const auth = await this.ensureInitialized();
+    const supabase = await this.ensureInitialized();
 
-    return this.handleAuthResponse<SignInErrorCodes>(
-      signInWithEmailAndPassword(auth, email, password),
-      this.mapSignInErrorCodes
-    );
+    const response = await supabase.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    return this.handleAuthResponse<SignInErrorCodes>(response, this.mapSignInErrorCodes);
   }
 
   public async signUp(email: string, password: string): Promise<AuthResponse<SignUpErrorCodes>> {
-    const auth = await this.ensureInitialized();
+    const supabase = await this.ensureInitialized();
 
-    return this.handleAuthResponse<SignUpErrorCodes>(
-      createUserWithEmailAndPassword(auth, email, password),
+    const response = await supabase.auth.signUp({
+      email,
+      password
+    });
+
+    const authResponse = this.handleAuthResponse<SignUpErrorCodes>(
+      response,
       this.mapSignUpErrorCodes
     );
+
+    if (authResponse.isSuccessful && !response.data.session) {
+      // This probably means email confirmation is enabled
+      throw new Error('Session is not available after sign up');
+    }
+
+    return authResponse;
   }
 
   public async signOut(): Promise<void> {
-    const auth = await this.ensureInitialized();
-    return signOut(auth);
+    const supabase = await this.ensureInitialized();
+    await supabase.auth.signOut();
   }
 
   public async sendPasswordResetToken(
     email: string
   ): Promise<AuthResponse<SendResetTokenErrorCodes>> {
-    const auth = await this.ensureInitialized();
+    const supabase = await this.ensureInitialized();
 
+    const response = await supabase.auth.resetPasswordForEmail(email);
     return this.handleAuthResponse<SendResetTokenErrorCodes>(
-      sendPasswordResetEmail(auth, email),
+      response,
       this.mapSendResetTokenErrorCodes
     );
   }
@@ -99,22 +85,28 @@ export class AuthService {
   public async verifyPasswordResetToken(
     token: string
   ): Promise<AuthResponse<VerifyResetTokenErrorCodes>> {
-    const auth = await this.ensureInitialized();
+    const supabase = await this.ensureInitialized();
 
-    return this.handleAuthResponse<VerifyResetTokenErrorCodes>(
-      verifyPasswordResetCode(auth, token),
-      this.mapVerifyResetTokenErrorCodes
-    );
+    return { isSuccessful: true };
+    // return this.handleAuthResponse<VerifyResetTokenErrorCodes>(
+    //   verifyPasswordResetCode(auth, token),
+    //   this.mapVerifyResetTokenErrorCodes
+    // );
   }
 
   public async confirmPasswordReset(
     token: string,
     password: string
   ): Promise<AuthResponse<PasswordResetErrorCodes>> {
-    const auth = await this.ensureInitialized();
+    const supabase = await this.ensureInitialized();
+
+    const response = await supabase.auth.updateUser({
+      nonce: token,
+      password
+    });
 
     return this.handleAuthResponse<PasswordResetErrorCodes>(
-      confirmPasswordReset(auth, token, password),
+      response,
       this.mapPasswordResetErrorCodes
     );
   }
@@ -123,125 +115,160 @@ export class AuthService {
     oldPassword: string,
     newPassword: string
   ): Promise<AuthResponse<PasswordChangeErrorCodes>> {
-    const auth = await this.ensureInitialized();
+    const supabase = await this.ensureInitialized();
 
-    const currentUser = auth.currentUser;
-    if (!currentUser) {
-      throw Error('User is not available.');
-    }
+    const response = await supabase.auth.updateUser({
+      password: newPassword
+    });
 
-    const credentials = EmailAuthProvider.credential(currentUser.email as string, oldPassword);
-    try {
-      await reauthenticateWithCredential(currentUser, credentials);
-    } catch (error: unknown) {
-      if (error instanceof FirebaseError && error.code === 'auth/wrong-password') {
-        return {
-          isSuccessful: false,
-          errorCode: PasswordChangeErrorCodes.WrongPassword
-        };
-      }
+    // const currentUser = auth.currentUser;
+    // if (!currentUser) {
+    //   throw Error('User is not available.');
+    // }
 
-      throw new Error('Unable to change password because current user is not found');
-    }
+    // const credentials = EmailAuthProvider.credential(currentUser.email as string, oldPassword);
+    // try {
+    //   await reauthenticateWithCredential(currentUser, credentials);
+    // } catch (error: unknown) {
+    //   if (error instanceof FirebaseError && error.code === 'auth/wrong-password') {
+    //     return {
+    //       isSuccessful: false,
+    //       errorCode: PasswordChangeErrorCodes.WrongPassword
+    //     };
+    //   }
+
+    //   throw new Error('Unable to change password because current user is not found');
+    // }
 
     return this.handleAuthResponse<PasswordChangeErrorCodes>(
-      updatePassword(currentUser, newPassword),
+      response,
       this.mapPasswordChangeErrorCodes
     );
   }
 
-  private mapAccountInfo(auth: Auth): AccountInfo | null {
-    const user = auth.currentUser;
-    if (user === null || !user.email) {
+  public async getAccount(): Promise<AccountInfo | null> {
+    const supabase = await this.ensureInitialized();
+    const session = await supabase.auth.getSession();
+
+    this.throwOnAuthError(session.error);
+
+    if (!session.data.session) {
       return null;
     }
 
+    if (!session.data.session.user.email) {
+      throw new Error('Email is not available');
+    }
+
     return {
-      email: user.email.toLowerCase(),
-      uid: user.uid
+      email: session.data.session.user.email.toLowerCase(),
+      uid: session.data.session.user.id
     };
   }
 
-  private async handleAuthResponse<TErrorCodes>(
-    response: Promise<unknown>,
-    errorCodeMapper: (errorCode: string) => TErrorCodes
-  ): Promise<AuthResponse<TErrorCodes>> {
-    try {
-      await response;
-      return { isSuccessful: true };
-    } catch (error: unknown) {
-      const errorCode = error instanceof FirebaseError ? error.code : 'unknown';
+  public async onAccountChanged(callback: (account: AccountInfo | null) => void) {
+    const supabase = await this.ensureInitialized();
+
+    supabase.auth.onAuthStateChange(async event => {
+      try {
+        if (event === 'SIGNED_OUT') {
+          callback(null);
+          return;
+        }
+
+        callback(await this.getAccount());
+      } catch (error: unknown) {
+        this.logger.error(error, 'Error occurred while handling auth state change');
+      }
+    });
+  }
+
+  private handleAuthResponse<TErrorCodes>(
+    response: { data: unknown; error: AuthError | null },
+    errorMapper: (error: AuthError) => TErrorCodes | undefined
+  ): AuthResponse<TErrorCodes> {
+    if (response.error) {
+      const customErrorCode = errorMapper(response.error);
+      if (!customErrorCode) {
+        throw response.error;
+      }
+
       return {
         isSuccessful: false,
-        errorCode: errorCodeMapper(errorCode) ?? errorCode
+        errorCode: customErrorCode
+      };
+    } else {
+      return {
+        isSuccessful: true
       };
     }
   }
 
-  private mapSignInErrorCodes(code: string): SignInErrorCodes {
-    const responsesMap: { [key: string]: SignInErrorCodes } = {
-      'auth/invalid-email': SignInErrorCodes.InvalidEmail,
-      'auth/user-not-found': SignInErrorCodes.UserNotFound,
-      'auth/wrong-password': SignInErrorCodes.InvalidPassword
-    };
-
-    return responsesMap[code];
+  private mapSignInErrorCodes(error: AuthError): SignInErrorCodes | undefined {
+    if (isAuthApiError(error) && error.status === 400) {
+      return SignInErrorCodes.InvalidCredentials;
+    }
   }
 
-  private mapSignUpErrorCodes(code: string): SignUpErrorCodes {
-    const responsesMap: { [key: string]: SignUpErrorCodes } = {
-      'auth/invalid-email': SignUpErrorCodes.InvalidEmail,
-      'auth/weak-password': SignUpErrorCodes.WeakPassword,
-      'auth/email-already-in-use': SignUpErrorCodes.EmailAlreadyInUse
-    };
-
-    return responsesMap[code];
+  private mapSignUpErrorCodes(error: AuthError): SignUpErrorCodes | undefined {
+    if (isAuthApiError(error) && error.status === 422) {
+      return SignUpErrorCodes.EmailAlreadyInUse;
+    }
   }
 
-  private mapSendResetTokenErrorCodes(code: string): SendResetTokenErrorCodes {
+  private mapSendResetTokenErrorCodes(error: AuthError): SendResetTokenErrorCodes | undefined {
     const responsesMap: { [key: string]: SendResetTokenErrorCodes } = {
       'auth/invalid-email': SendResetTokenErrorCodes.InvalidEmail,
       'auth/user-not-found': SendResetTokenErrorCodes.UserNotFound,
       'auth/too-many-requests': SendResetTokenErrorCodes.TooManyRequests
     };
 
-    return responsesMap[code];
+    return responsesMap[error.code ?? ''];
   }
 
-  private mapPasswordResetErrorCodes(code: string): PasswordResetErrorCodes {
+  private mapPasswordResetErrorCodes(error: AuthError): PasswordResetErrorCodes {
     const responsesMap: { [key: string]: PasswordResetErrorCodes } = {
       'auth/expired-action-code': PasswordResetErrorCodes.ExpiredActionCode,
       'auth/invalid-action-code': PasswordResetErrorCodes.InvalidActionCode,
       'auth/weak-password': PasswordResetErrorCodes.WeakPassword
     };
 
-    return responsesMap[code];
+    return responsesMap[error.code ?? ''];
   }
 
-  private mapPasswordChangeErrorCodes(code: string): PasswordChangeErrorCodes {
+  private mapPasswordChangeErrorCodes(error: AuthError): PasswordChangeErrorCodes {
     const responsesMap: { [key: string]: PasswordChangeErrorCodes } = {
       'auth/weak-password': PasswordChangeErrorCodes.WeakPassword
     };
 
-    return responsesMap[code];
+    return responsesMap[error.code ?? ''];
   }
 
-  private mapVerifyResetTokenErrorCodes(code: string): VerifyResetTokenErrorCodes {
+  private mapVerifyResetTokenErrorCodes(error: AuthError): VerifyResetTokenErrorCodes {
     const responsesMap: { [key: string]: VerifyResetTokenErrorCodes } = {
       'auth/expired-action-code': VerifyResetTokenErrorCodes.ExpiredToken,
       'auth/invalid-action-code': VerifyResetTokenErrorCodes.InvalidToken
     };
 
-    return responsesMap[code];
+    return responsesMap[error.code ?? ''];
   }
 
-  private async ensureInitialized(): Promise<Auth> {
-    if (!this.auth) {
+  private async ensureInitialized(): Promise<SupabaseClient> {
+    if (!this.supabase) {
       throw new Error("AuthService isn't initialized");
     }
 
-    return this.auth;
+    return this.supabase;
+  }
+
+  private async throwOnAuthError(error: AuthError | null | undefined) {
+    if (!error) {
+      return;
+    }
+
+    this.logger.error(error, `Auth error. Code: ${error?.code}.`);
+    throw new Error('Authentication error occurred.');
   }
 }
 
-export const authService = new AuthService(settingsProvider);
+export const authService = new AuthService(settingsProvider, logger);
