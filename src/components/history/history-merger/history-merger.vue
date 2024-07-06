@@ -246,8 +246,9 @@ function promoteRecordToCandidate(candidate: MergeCandidate, record: MergeHistor
         <template #[getBodySlotId(CandidatesTableColumns.Translation)]="{ record: candidate }">
           <div v-overflow-tooltip>
             <span v-if="!!candidate.record.translation">{{ candidate.record.translation }}</span>
-            <span v-if="!!candidate.record.suggestion" class="suggestion"
-              >(suggested: {{ candidate.record.suggestion }})</span
+            &nbsp;
+            <span v-if="!!candidate.record.suggestion" class="suggestion">
+              (suggested: {{ candidate.record.suggestion }})</span
             >
             <span v-if="!candidate.record.translation" class="no-translation">No Translation</span>
           </div>
