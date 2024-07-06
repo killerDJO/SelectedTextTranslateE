@@ -156,6 +156,8 @@ function executeAction(
 
   action(currentCandidate.value);
 
+  $emit('hideTranslation');
+
   removeRecordFromCandidate(currentCandidate.value, mergeRecord);
 
   if (currentCandidate.value === null) {
