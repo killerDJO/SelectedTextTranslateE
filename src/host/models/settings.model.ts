@@ -12,6 +12,7 @@ export type Settings = {
   scaling: ScalingSettings;
   hotkeys: HotkeySettings;
   firebase: FirebaseSettings;
+  supabase: SupabaseSettings;
 };
 
 export type PartialSettings = DeepPartial<Settings>;
@@ -108,4 +109,9 @@ export type FirebaseSettings = {
   apiKey: string;
   authDomain: string;
   projectId: string;
+};
+
+export type SupabaseSettings = {
+  projectUrl: string;
+  anonKey: string;
 };

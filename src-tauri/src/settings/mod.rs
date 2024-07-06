@@ -18,6 +18,7 @@ pub struct Settings {
     pub scaling: ScalingSettings,
     pub hotkeys: HotkeySettings,
     pub firebase: FirebaseSettings,
+    pub supabase: SupabaseSettings,
 }
 
 #[skip_serializing_none]
@@ -33,6 +34,7 @@ pub struct PartialSettings {
     pub scaling: Option<PartialScalingSettings>,
     pub hotkeys: Option<PartialHotkeySettings>,
     pub firebase: Option<PartialFirebaseSettings>,
+    pub supabase: Option<PartialSupabaseSettings>,
 }
 
 #[settings]
@@ -139,6 +141,12 @@ pub struct FirebaseSettings {
     pub project_id: String,
 }
 
+#[settings]
+pub struct SupabaseSettings {
+    pub project_url: String,
+    pub anon_key: String,
+}
+
 pub trait UpdatableSettings
 where
     Self: Sized,
@@ -185,6 +193,10 @@ impl Settings {
                 user_settings.firebase.unwrap_or_default(),
                 default_settings.firebase,
             ),
+            supabase: SupabaseSettings::from(
+                user_settings.supabase.unwrap_or_default(),
+                default_settings.supabase,
+            ),
         }
     }
 }
@@ -213,6 +225,7 @@ impl PartialSettings {
             scaling: Self::update_settings(self.scaling.clone(), updated_settings.scaling),
             hotkeys: Self::update_settings(self.hotkeys.clone(), updated_settings.hotkeys),
             firebase: Self::update_settings(self.firebase.clone(), updated_settings.firebase),
+            supabase: Self::update_settings(self.supabase.clone(), updated_settings.supabase),
         }
     }
 

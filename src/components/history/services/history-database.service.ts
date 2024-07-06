@@ -1,106 +1,110 @@
-import { initializeApp } from 'firebase/app';
-import {
-  collection,
-  Firestore,
-  getDocs,
-  getDoc,
-  getFirestore,
-  query,
-  where,
-  orderBy,
-  startAfter,
-  type DocumentData,
-  Query,
-  doc,
-  DocumentSnapshot,
-  setDoc,
-  initializeFirestore
-} from '@firebase/firestore';
-import { deleteDoc } from 'firebase/firestore';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 import {
   authService,
   type AuthService
 } from '~/components/history/history-auth/services/auth.service';
-import type { HistoryRecord } from '~/components/history/models/history-record.model';
+import type {
+  HistoryRecord,
+  TranslationInstance
+} from '~/components/history/models/history-record.model';
 import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
 import { logger, type Logger } from '~/services/logger.service';
+import { TranslateResult } from '~/components/translation/models/translation.model';
 
-const HISTORY_COLLECTION = 'history_v2';
+import { Database, Json, Tables } from './database.types';
 
 export class HistoryDatabase {
-  private db: Firestore | null = null;
+  private supabase: SupabaseClient<Database>;
 
   constructor(
     private readonly settingsProvider: SettingsProvider,
     private readonly authService: AuthService,
     private readonly logger: Logger
-  ) {}
+  ) {
+    const supabaseSettings = this.settingsProvider.getSettings().supabase;
+    this.supabase = createClient<Database>(supabaseSettings.projectUrl, supabaseSettings.anonKey);
+  }
 
   public async getRecords(afterTimestamp: number): Promise<HistoryRecord[]> {
     this.logger.info(`[DB]: Getting history records after timestamp: ${afterTimestamp}`);
 
-    const q = await this.createQuery(afterTimestamp);
+    const records = await this.supabase
+      .from('history')
+      .select('*')
+      .gt('updatedDate', afterTimestamp)
+      .order('updatedDate', { ascending: true });
+    this.logger.info(`[DB]: Returned records: ${records.count}`);
 
-    const querySnapshot = await getDocs(q);
-
-    this.logger.info(`[DB]: Returned records: ${querySnapshot.docs.length}`);
-    return querySnapshot.docs.map(doc => this.mapHistoryRecord(doc));
+    return records.data?.map(doc => this.mapToHistoryRecord(doc)) ?? [];
   }
 
   public async getRecord(id: string): Promise<HistoryRecord | undefined> {
     this.logger.info(`[DB]: Getting history record: ${id}`);
-    const db = await this.ensureInitialized();
 
-    const docRef = doc(db, HISTORY_COLLECTION, id);
-    const historyRecord = await getDoc(docRef);
+    const record = await this.supabase.from('history').select('*').eq('id', id).single();
 
-    if (!historyRecord.exists()) {
-      return;
+    if (!record.data) {
+      return undefined;
     }
 
-    return this.mapHistoryRecord(historyRecord);
+    return this.mapToHistoryRecord(record.data);
   }
 
   public async upsertRecord(record: HistoryRecord): Promise<void> {
     this.logger.info(`[DB]: Upserting history record ${record.id}.`);
 
-    const db = await this.ensureInitialized();
-
-    const recordRef = doc(db, HISTORY_COLLECTION, record.id);
-    const { id: _, ...recordData } = record;
-
-    await setDoc(recordRef, recordData);
+    await this.supabase.from('history').upsert(this.mapFromHistoryRecord(record));
   }
 
   public async deleteRecord(id: string): Promise<void> {
     this.logger.info(`[DB]: Deleting history record ${id}.`);
 
-    const db = await this.ensureInitialized();
-
-    const recordRef = doc(db, HISTORY_COLLECTION, id);
-
-    await deleteDoc(recordRef);
+    await this.supabase.from('history').delete().eq('id', id);
   }
 
-  private mapHistoryRecord(doc: DocumentSnapshot<DocumentData>): HistoryRecord {
+  private mapToHistoryRecord(data: Tables<'history'>): HistoryRecord {
     return {
-      id: doc.id,
-      ...doc.data()
-    } as HistoryRecord;
+      id: data.id,
+      sentence: data.sentence,
+      isForcedTranslation: data.forcedTranslation,
+      sourceLanguage: data.sourceLanguage,
+      targetLanguage: data.targetLanguage,
+      translateResult: data.translate_result as unknown as TranslateResult,
+      translationsNumber: data.translations_number,
+      createdDate: new Date(data.created_at).getTime(),
+      updatedDate: new Date(data.updated_at).getTime(),
+      lastTranslatedDate: new Date(data.last_translated_date).getTime(),
+      lastModifiedDate: new Date(data.last_modified_date).getTime(),
+      isStarred: data.starred,
+      isArchived: data.archived,
+      tags: data.tags ?? [],
+      blacklistedMergeRecords: data.blacklisted_merge_records ?? [],
+      user: data.user_id,
+      instances: data.instances as unknown as TranslationInstance[]
+    };
   }
 
-  private async createQuery(timestamp: number): Promise<Query<DocumentData>> {
-    const db = await this.ensureInitialized();
-
-    const recordsRef = collection(db, HISTORY_COLLECTION);
-
-    return query(
-      recordsRef,
-      where('user', '==', await this.getUserId()),
-      orderBy('updatedDate'),
-      startAfter(timestamp)
-    );
+  private mapFromHistoryRecord(data: HistoryRecord): Tables<'history'> {
+    return {
+      id: data.id,
+      sentence: data.sentence,
+      forcedTranslation: data.isForcedTranslation,
+      sourceLanguage: data.sourceLanguage,
+      targetLanguage: data.targetLanguage,
+      translate_result: data.translateResult as unknown as Json,
+      translations_number: data.translationsNumber,
+      created_at: new Date(data.createdDate).toISOString(),
+      updated_at: new Date(data.updatedDate).toISOString(),
+      last_translated_date: new Date(data.lastTranslatedDate).toISOString(),
+      last_modified_date: new Date(data.lastModifiedDate).toISOString(),
+      starred: data.isStarred,
+      archived: data.isArchived,
+      tags: data.tags?.slice() ?? null,
+      blacklisted_merge_records: data.blacklistedMergeRecords?.slice() ?? null,
+      user_id: data.user,
+      instances: data.instances as unknown as Json
+    };
   }
 
   private async getUserId(): Promise<string> {
@@ -110,21 +114,6 @@ export class HistoryDatabase {
     }
 
     return user.uid;
-  }
-
-  private ensureInitialized(): Firestore {
-    if (!this.db) {
-      const settings = this.settingsProvider.getSettings().firebase;
-      const app = initializeApp({
-        apiKey: settings.apiKey,
-        authDomain: settings.authDomain,
-        projectId: settings.projectId
-      });
-      initializeFirestore(app, { ignoreUndefinedProperties: true });
-      this.db = getFirestore(app);
-    }
-
-    return this.db;
   }
 }
 

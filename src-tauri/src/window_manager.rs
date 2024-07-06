@@ -131,6 +131,7 @@ pub fn show_about_window(app: &AppHandle) -> WebviewWindow {
             .fullscreen(false)
             .maximizable(false)
             .minimizable(false)
+            .visible(false)
             .inner_size(width, height)
             .position(x, y)
             .build()
