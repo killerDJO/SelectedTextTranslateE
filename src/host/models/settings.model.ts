@@ -11,7 +11,6 @@ export type Settings = {
   settingsWindow: WindowSettings;
   scaling: ScalingSettings;
   hotkeys: HotkeySettings;
-  firebase: FirebaseSettings;
   supabase: SupabaseSettings;
 };
 
@@ -103,12 +102,6 @@ export type HotkeySettings = {
   archiveResult: Keys[];
   addTag: Keys[];
   toggleTags: Keys[];
-};
-
-export type FirebaseSettings = {
-  apiKey: string;
-  authDomain: string;
-  projectId: string;
 };
 
 export type SupabaseSettings = {

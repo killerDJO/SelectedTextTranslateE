@@ -79,12 +79,6 @@
     "addTag": [["Shift", "KeyT"]],
     "toggleTags": [["Alt", "KeyT"]]
   },
-  "firebase": {
-    "apiKey": "AIzaSyBhwEnarwArZX2qfQ0EFbCj_zaOcnEgjms",
-    "authDomain": "stte-prod.firebaseapp.com",
-    "projectId": "stte-prod",
-    "firestoreBaseUrl": "https://firestore.googleapis.com/v1beta1"
-  },
   "supabase": {
     "projectUrl": "https://uemddrwfclnrspaifdns.supabase.co",
     "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVlbWRkcndmY2xucnNwYWlmZG5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjAwMzkyNjAsImV4cCI6MjAzNTYxNTI2MH0.hpHsPonnd8VPAOIm1HdcskQkdBSReFVDuZqf4jtS860"

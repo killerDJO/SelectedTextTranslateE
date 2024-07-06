@@ -17,7 +17,6 @@ pub struct Settings {
     pub settings_window: WindowSettings,
     pub scaling: ScalingSettings,
     pub hotkeys: HotkeySettings,
-    pub firebase: FirebaseSettings,
     pub supabase: SupabaseSettings,
 }
 
@@ -33,7 +32,6 @@ pub struct PartialSettings {
     pub settings_window: Option<PartialWindowSettings>,
     pub scaling: Option<PartialScalingSettings>,
     pub hotkeys: Option<PartialHotkeySettings>,
-    pub firebase: Option<PartialFirebaseSettings>,
     pub supabase: Option<PartialSupabaseSettings>,
 }
 
@@ -135,13 +133,6 @@ pub struct HotkeySettings {
 }
 
 #[settings]
-pub struct FirebaseSettings {
-    pub api_key: String,
-    pub auth_domain: String,
-    pub project_id: String,
-}
-
-#[settings]
 pub struct SupabaseSettings {
     pub project_url: String,
     pub anon_key: String,
@@ -189,10 +180,6 @@ impl Settings {
                 user_settings.hotkeys.unwrap_or_default(),
                 default_settings.hotkeys,
             ),
-            firebase: FirebaseSettings::from(
-                user_settings.firebase.unwrap_or_default(),
-                default_settings.firebase,
-            ),
             supabase: SupabaseSettings::from(
                 user_settings.supabase.unwrap_or_default(),
                 default_settings.supabase,
@@ -224,7 +211,6 @@ impl PartialSettings {
             ),
             scaling: Self::update_settings(self.scaling.clone(), updated_settings.scaling),
             hotkeys: Self::update_settings(self.hotkeys.clone(), updated_settings.hotkeys),
-            firebase: Self::update_settings(self.firebase.clone(), updated_settings.firebase),
             supabase: Self::update_settings(self.supabase.clone(), updated_settings.supabase),
         }
     }
