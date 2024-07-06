@@ -1,4 +1,4 @@
-import { AuthError, createClient, isAuthApiError, SupabaseClient } from '@supabase/supabase-js';
+import { AuthError, isAuthApiError } from '@supabase/supabase-js';
 
 import {
   PasswordChangeErrorCodes,
@@ -10,31 +10,17 @@ import {
   type AuthResponse
 } from '~/components/history/history-auth/models/auth-response.model';
 import type { AccountInfo } from '~/components/history/history-auth/models/account-info.model';
-import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
 import { logger, Logger } from '~/services/logger.service';
+import { supabaseProvider, SupabaseProvider } from '~/services/supabase-provider.service';
 
 export class AuthService {
-  private supabase: SupabaseClient | null = null;
-
   public constructor(
-    private readonly settingsProvider: SettingsProvider,
+    private readonly supabaseProvider: SupabaseProvider,
     private readonly logger: Logger
   ) {}
 
-  public async initialize(): Promise<SupabaseClient> {
-    const settings = this.settingsProvider.getSettings().supabase;
-    this.supabase = createClient(settings.projectUrl, settings.anonKey);
-
-    // this.auth = new Promise(resolve => {
-    //   const auth = getAuth(app);
-    //   auth.setPersistence(indexedDBLocalPersistence).then(() => resolve(auth));
-    // });
-
-    return this.supabase;
-  }
-
   public async signIn(email: string, password: string): Promise<AuthResponse<SignInErrorCodes>> {
-    const supabase = await this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient();
 
     const response = await supabase.auth.signInWithPassword({
       email,
@@ -45,7 +31,7 @@ export class AuthService {
   }
 
   public async signUp(email: string, password: string): Promise<AuthResponse<SignUpErrorCodes>> {
-    const supabase = await this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient();
 
     const response = await supabase.auth.signUp({
       email,
@@ -66,14 +52,14 @@ export class AuthService {
   }
 
   public async signOut(): Promise<void> {
-    const supabase = await this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient();
     await supabase.auth.signOut();
   }
 
   public async sendPasswordResetToken(
     email: string
   ): Promise<AuthResponse<SendResetTokenErrorCodes>> {
-    const supabase = await this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient();
 
     const response = await supabase.auth.resetPasswordForEmail(email);
     return this.handleAuthResponse<SendResetTokenErrorCodes>(
@@ -83,9 +69,9 @@ export class AuthService {
   }
 
   public async verifyPasswordResetToken(
-    token: string
+    _token: string
   ): Promise<AuthResponse<VerifyResetTokenErrorCodes>> {
-    const supabase = await this.ensureInitialized();
+    //const _supabase = await this.supabaseProvider.getClient();
 
     return { isSuccessful: true };
     // return this.handleAuthResponse<VerifyResetTokenErrorCodes>(
@@ -98,7 +84,7 @@ export class AuthService {
     token: string,
     password: string
   ): Promise<AuthResponse<PasswordResetErrorCodes>> {
-    const supabase = await this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient();
 
     const response = await supabase.auth.updateUser({
       nonce: token,
@@ -112,10 +98,10 @@ export class AuthService {
   }
 
   public async changePassword(
-    oldPassword: string,
+    _oldPassword: string,
     newPassword: string
   ): Promise<AuthResponse<PasswordChangeErrorCodes>> {
-    const supabase = await this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient();
 
     const response = await supabase.auth.updateUser({
       password: newPassword
@@ -147,7 +133,7 @@ export class AuthService {
   }
 
   public async getAccount(): Promise<AccountInfo | null> {
-    const supabase = await this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient();
     const session = await supabase.auth.getSession();
 
     this.throwOnAuthError(session.error);
@@ -167,7 +153,7 @@ export class AuthService {
   }
 
   public async onAccountChanged(callback: (account: AccountInfo | null) => void) {
-    const supabase = await this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient();
 
     supabase.auth.onAuthStateChange(async event => {
       try {
@@ -244,22 +230,14 @@ export class AuthService {
     return responsesMap[error.code ?? ''];
   }
 
-  private mapVerifyResetTokenErrorCodes(error: AuthError): VerifyResetTokenErrorCodes {
-    const responsesMap: { [key: string]: VerifyResetTokenErrorCodes } = {
-      'auth/expired-action-code': VerifyResetTokenErrorCodes.ExpiredToken,
-      'auth/invalid-action-code': VerifyResetTokenErrorCodes.InvalidToken
-    };
+  // private mapVerifyResetTokenErrorCodes(error: AuthError): VerifyResetTokenErrorCodes {
+  //   const responsesMap: { [key: string]: VerifyResetTokenErrorCodes } = {
+  //     'auth/expired-action-code': VerifyResetTokenErrorCodes.ExpiredToken,
+  //     'auth/invalid-action-code': VerifyResetTokenErrorCodes.InvalidToken
+  //   };
 
-    return responsesMap[error.code ?? ''];
-  }
-
-  private async ensureInitialized(): Promise<SupabaseClient> {
-    if (!this.supabase) {
-      throw new Error("AuthService isn't initialized");
-    }
-
-    return this.supabase;
-  }
+  //   return responsesMap[error.code ?? ''];
+  // }
 
   private async throwOnAuthError(error: AuthError | null | undefined) {
     if (!error) {
@@ -271,4 +249,4 @@ export class AuthService {
   }
 }
 
-export const authService = new AuthService(settingsProvider, logger);
+export const authService = new AuthService(supabaseProvider, logger);

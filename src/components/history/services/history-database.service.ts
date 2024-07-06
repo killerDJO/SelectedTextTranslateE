@@ -1,26 +1,22 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-
 import type {
   HistoryRecord,
   TranslationInstance
 } from '~/components/history/models/history-record.model';
-import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
 import { logger, type Logger } from '~/services/logger.service';
 import { TranslateResult } from '~/components/translation/models/translation.model';
+import { supabaseProvider, SupabaseProvider } from '~/services/supabase-provider.service';
 
 import { Database, Json, Tables } from './database.generated';
 
 export class HistoryDatabase {
-  private supabase: SupabaseClient<Database> | null = null;
-
   constructor(
-    private readonly settingsProvider: SettingsProvider,
+    private readonly supabaseProvider: SupabaseProvider,
     private readonly logger: Logger
   ) {}
 
   public async getRecords(afterTimestamp: number): Promise<HistoryRecord[]> {
     this.logger.info(`[DB]: Getting history records after timestamp: ${afterTimestamp}`);
-    const supabase = this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient<Database>();
 
     const records = await supabase
       .from('history')
@@ -36,7 +32,7 @@ export class HistoryDatabase {
 
   public async getRecord(id: string): Promise<HistoryRecord | undefined> {
     this.logger.info(`[DB]: Getting history record: ${id}`);
-    const supabase = this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient<Database>();
 
     const record = await supabase
       .from('history')
@@ -54,14 +50,14 @@ export class HistoryDatabase {
 
   public async upsertRecord(record: HistoryRecord): Promise<void> {
     this.logger.info(`[DB]: Upserting history record ${record.id}.`);
-    const supabase = this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient<Database>();
 
     await supabase.from('history').upsert(this.mapFromHistoryRecord(record)).throwOnError();
   }
 
   public async deleteRecord(id: string): Promise<void> {
     this.logger.info(`[DB]: Deleting history record ${id}.`);
-    const supabase = this.ensureInitialized();
+    const supabase = await this.supabaseProvider.getClient<Database>();
 
     await supabase.from('history').delete().eq('id', id).throwOnError();
   }
@@ -109,16 +105,6 @@ export class HistoryDatabase {
       instances: data.instances as unknown as Json
     };
   }
-
-  // Lazy initialization is needed to make sure settings are loaded before the database is initialized.
-  private ensureInitialized(): SupabaseClient<Database> {
-    if (!this.supabase) {
-      const supabaseSettings = this.settingsProvider.getSettings().supabase;
-      this.supabase = createClient<Database>(supabaseSettings.projectUrl, supabaseSettings.anonKey);
-    }
-
-    return this.supabase;
-  }
 }
 
-export const historyDatabase = new HistoryDatabase(settingsProvider, logger);
+export const historyDatabase = new HistoryDatabase(supabaseProvider, logger);

@@ -35,8 +35,6 @@ export const useHistoryAuthStore = defineStore('history-auth', {
       try {
         this.isSetupInProgress = true;
 
-        await authService.initialize();
-
         this.account = await authService.getAccount();
         await authService.onAccountChanged(account => (this.account = account));
       } finally {
