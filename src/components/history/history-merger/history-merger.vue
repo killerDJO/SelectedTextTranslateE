@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 
 import type { DataTableConfig } from '~/components/shared/data-table/data-table.vue';
 import ForcedTranslationIcon from '~/components/history/icons/forced-translation-icon.vue';
 import { settingsProvider } from '~/services/settings-provider.service';
+import { HistoryRecord } from '../models/history-record.model';
 
 import { useHistoryMergerStore } from './history-merger.store';
 import type { MergeCandidate, MergeHistoryRecord } from './models/merge-candidate.model';
@@ -25,8 +26,10 @@ enum CandidateTableColumns {
 const historyMerger = useHistoryMergerStore();
 const languages = ref(settingsProvider.getLanguages());
 
-defineEmits<{
+const $emit = defineEmits<{
   close: [];
+  translateRecord: [record: HistoryRecord];
+  hideTranslation: [];
 }>();
 
 onMounted(() => {
@@ -71,6 +74,9 @@ const candidateTableConfiguration = computed<DataTableConfig<CandidateTableColum
     ],
     clickable: false
   };
+});
+watch(currentCandidateIndex, () => {
+  $emit('hideTranslation');
 });
 
 function showCandidate(candidate: MergeCandidate): void {
@@ -302,7 +308,11 @@ function promoteRecordToCandidate(candidate: MergeCandidate, record: MergeHistor
         </template>
         <template #[getBodySlotId(CandidateTableColumns.Word)]="{ record: mergeRecord }">
           <div v-overflow-tooltip>
-            {{ mergeRecord.sentence }}
+            <span
+              class="sentence-translate-button"
+              @click="$emit('translateRecord', mergeRecord)"
+              >{{ mergeRecord.sentence }}</span
+            >
             <forced-translation-icon v-if="mergeRecord.isForcedTranslation" />
           </div>
         </template>

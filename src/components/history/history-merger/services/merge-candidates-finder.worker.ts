@@ -129,17 +129,11 @@ export default class MergeCandidatesFinder {
 
   private convertToMergeRecord(record: HistoryRecord): MergeHistoryRecord {
     return {
-      sentence: record.sentence,
-      isForcedTranslation: record.isForcedTranslation,
-      sourceLanguage: record.sourceLanguage,
-      targetLanguage: record.targetLanguage,
-      translationsNumber: record.translationsNumber,
-      id: record.id,
+      ...record,
       translation: record.translateResult.sentence.translation,
       suggestion: record.translateResult.sentence.suggestion,
       baseForms: record.translateResult.categories.map(category => category.baseForm),
       similarWords: record.translateResult.sentence.similarWords || [],
-      blacklistedMergeRecords: record.blacklistedMergeRecords || [],
       translationsAndDefinitionsNumber:
         record.translateResult.categories.length + record.translateResult.definitions.length
     };

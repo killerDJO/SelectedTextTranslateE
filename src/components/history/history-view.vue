@@ -217,7 +217,13 @@ function toggleMerger() {
           />
         </div>
       </div>
-      <history-merger v-if="isMergerVisible" class="merger-holder" @close="toggleMerger()" />
+      <history-merger
+        v-if="isMergerVisible"
+        class="merger-holder"
+        @close="toggleMerger()"
+        @translate-record="translateHistoryRecord"
+        @hide-translation="closeSidebar"
+      />
       <div
         v-if="isFilterVisible || isTranslationVisible"
         class="sidebar-controls"

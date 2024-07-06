@@ -1,4 +1,4 @@
-import type { TranslateDescriptor } from '~/components/translation/models/translation.model';
+import { HistoryRecord } from '~/components/history/models/history-record.model';
 
 export interface MergeCandidate {
   readonly id: string;
@@ -6,13 +6,10 @@ export interface MergeCandidate {
   readonly mergeRecords: ReadonlyArray<MergeHistoryRecord>;
 }
 
-export interface MergeHistoryRecord extends TranslateDescriptor {
-  readonly translationsNumber: number;
-  readonly id: string;
+export interface MergeHistoryRecord extends HistoryRecord {
   readonly translation: string | null;
   readonly suggestion?: string | null;
   readonly baseForms: ReadonlyArray<string>;
   readonly similarWords: ReadonlyArray<string>;
-  readonly blacklistedMergeRecords: ReadonlyArray<string>;
   readonly translationsAndDefinitionsNumber: number;
 }
