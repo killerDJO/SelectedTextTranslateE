@@ -51,6 +51,14 @@ function registerHotkeys(): void {
 </script>
 
 <template>
+  <div v-if="app.isFrameless" class="drag-control" data-tauri-drag-region>
+    <font-awesome-icon
+      class="icon-restore"
+      icon="up-down-left-right"
+      size="sm"
+      data-tauri-drag-region
+    />
+  </div>
   <div
     class="main"
     :style="{ 'border-color': app.accentColor }"
@@ -60,15 +68,9 @@ function registerHotkeys(): void {
       v-if="app.isFrameless"
       class="frameless-header"
       :style="{ 'background-color': app.accentColor }"
+      data-tauri-drag-region
     />
-    <div v-if="app.isFrameless" class="drag-control" data-tauri-drag-region>
-      <font-awesome-icon
-        class="icon-restore"
-        icon="up-down-left-right"
-        size="sm"
-        data-tauri-drag-region
-      />
-    </div>
+
     <global-errors></global-errors>
     <div v-if="isSetupCompleted" class="scroll-holder">
       <div class="view" :style="{ zoom: app.scaleFactor * 100 + '%' }">
