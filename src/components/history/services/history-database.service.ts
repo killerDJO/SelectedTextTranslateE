@@ -1,3 +1,5 @@
+import { PostgrestSingleResponse, SupabaseClient } from '@supabase/supabase-js';
+
 import type {
   HistoryRecord,
   TranslationInstance
@@ -18,16 +20,30 @@ export class HistoryDatabase {
     this.logger.info(`[DB]: Getting history records after timestamp: ${afterTimestamp}`);
     const supabase = await this.supabaseProvider.getClient<Database>();
 
-    const records = await supabase
-      .from('history')
-      .select('*')
-      .gt('updated_at', new Date(afterTimestamp).toISOString())
-      .order('updated_at', { ascending: true })
-      .throwOnError();
+    let historyRecords: Tables<'history'>[] = [];
+    const limit = 1000;
+    const records = await this.fetchRecordsPage(supabase, afterTimestamp, 0, limit, 'exact');
+
+    historyRecords = historyRecords.concat(records.data ?? []);
 
     this.logger.info(`[DB]: Returned records: ${records.data?.length ?? 0}`);
 
-    return records.data?.map(doc => this.mapToHistoryRecord(doc)) ?? [];
+    if (records.count && records.count > limit) {
+      this.logger.info(`[DB]: More than ${limit} records returned. Fetching rest in chunks.`);
+      for (let from = limit; from < records.count; from += limit) {
+        // Limit is exclusive
+        const to = from + limit;
+        const records = await this.fetchRecordsPage(supabase, afterTimestamp, from, to);
+
+        historyRecords = historyRecords.concat(records.data ?? []);
+
+        this.logger.info(
+          `[DB]: Returned records: ${records.data?.length ?? 0} in range ${from}-${to}.`
+        );
+      }
+    }
+
+    return historyRecords.map(record => this.mapToHistoryRecord(record));
   }
 
   public async getRecord(id: string): Promise<HistoryRecord | undefined> {
@@ -60,6 +76,23 @@ export class HistoryDatabase {
     const supabase = await this.supabaseProvider.getClient<Database>();
 
     await supabase.from('history').delete().eq('id', id).throwOnError();
+  }
+
+  private async fetchRecordsPage(
+    supabase: SupabaseClient<Database>,
+    afterTimestamp: number,
+    from: number,
+    to: number,
+    count?: 'exact'
+  ): Promise<PostgrestSingleResponse<Tables<'history'>[]>> {
+    const response = await supabase
+      .from('history')
+      .select('*', { count: count })
+      .gt('updated_at', new Date(afterTimestamp).toISOString())
+      .order('updated_at', { ascending: true })
+      .range(from, to)
+      .throwOnError();
+    return response;
   }
 
   private mapToHistoryRecord(data: Tables<'history'>): HistoryRecord {

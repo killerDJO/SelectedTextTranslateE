@@ -59,6 +59,15 @@ async function executeMigration() {
   const supabaseRecords: any[] = [];
 
   const historyRecords = await historyV2Collection.get();
+
+  fs.writeFileSync(
+    'history.json',
+    JSON.stringify(
+      historyRecords.docs.map(doc => doc.data()),
+      null,
+      2
+    )
+  );
   for (const doc of historyRecords.docs) {
     const data = doc.data();
 
