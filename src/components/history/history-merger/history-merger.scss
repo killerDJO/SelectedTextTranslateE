@@ -20,13 +20,19 @@
     padding-right: $spacing-default;
   }
 
+  $header-height: 40px;
+
   .merge-header {
     padding-top: $spacing-small;
     margin-bottom: $spacing-small;
-    height: 40px;
+    height: $header-height;
     align-items: center;
     display: flex;
     justify-content: space-between;
+
+    &.no-records {
+      justify-content: flex-end;
+    }
   }
 
   .candidates-view {
@@ -44,6 +50,9 @@
     }
 
     .candidates {
+      overflow: auto;
+      max-height: calc(100vh - $header-height - 2 * $spacing-small - $spacing-default);
+
       .candidates-column {
         text-align: center;
       }
@@ -93,12 +102,4 @@
       }
     }
   }
-}
-
-.footer {
-  border-top: $border-width solid $color-border;
-  padding: $spacing-default;
-  justify-content: flex-end;
-  align-items: center;
-  display: flex;
 }

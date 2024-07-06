@@ -19,7 +19,6 @@ const DATE_FORMAT = 'yyyy-MM-dd';
 const value$ = computed({
   get: () => formatDate(props.value),
   set: (value: string | undefined) => {
-    console.log(value);
     $emit('update:value', value ? parse(value, DATE_FORMAT, new Date()) : undefined);
   }
 });

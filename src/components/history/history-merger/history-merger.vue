@@ -200,9 +200,12 @@ function promoteRecordToCandidate(candidate: MergeCandidate, record: MergeHistor
 </script>
 
 <template>
-  <div class="merge-candidates" :class="{ 'no-records': !filteredCandidates?.length }">
+  <div class="merge-candidates">
     <div v-if="!currentCandidate" class="candidates-view">
-      <div v-if="filteredCandidates?.length" class="candidates-view-header merge-header">
+      <div
+        class="candidates-view-header merge-header"
+        :class="{ 'no-records': !filteredCandidates?.length }"
+      >
         <span v-if="filteredCandidates.length > 0" class="records-label"
           >{{ filteredCandidates.length }} record{{
             filteredCandidates.length > 1 ? 's' : ''
@@ -210,6 +213,7 @@ function promoteRecordToCandidate(candidate: MergeCandidate, record: MergeHistor
         >
         <div class="header-controls">
           <app-checkbox
+            v-if="filteredCandidates?.length"
             v-model:value="showLanguages"
             :label="'Show Languages'"
             :left-to-right="true"
