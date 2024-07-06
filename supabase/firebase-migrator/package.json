@@ -1,0 +1,16 @@
+{
+  "name": "migrator",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.44.2",
+    "firebase-admin": "^11.4.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "ts-node": "^10.9.1"
+  }
+}
