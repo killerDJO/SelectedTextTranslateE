@@ -1,5 +1,5 @@
 [package]
-name = "selected-text-translate"
+name = "SelectedTextTranslate"
 version = "0.0.0"
 description = "Selected Text Translate"
 edition = "2021"
