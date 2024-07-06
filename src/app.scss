@@ -30,6 +30,24 @@
     }
   }
 
+  .drag-control {
+    display: flex;
+    position: fixed;
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    cursor: move;
+    bottom: 2px;
+    right: 2px;
+    width: 20px;
+    height: 20px;
+    opacity: 0.2;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
   .view {
     min-height: 100%;
   }

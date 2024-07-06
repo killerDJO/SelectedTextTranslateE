@@ -22,7 +22,8 @@ import {
   faTrash,
   faBookOpen,
   faKeyboard,
-  faGlobe
+  faGlobe,
+  faUpDownLeftRight
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faStar as faStarRegular,
@@ -53,7 +54,8 @@ library.add(
   faKeyboard,
   faHashtag,
   faGlobe,
-  faCalendarRegular
+  faCalendarRegular,
+  faUpDownLeftRight
 );
 
 export default FontAwesomeIcon;
