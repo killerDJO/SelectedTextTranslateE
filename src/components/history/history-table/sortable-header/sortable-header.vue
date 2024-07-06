@@ -64,4 +64,3 @@ function sort(): void {
 </template>
 
 <style src="./sortable-header.scss" lang="scss" scoped></style>
-~/components/history/history.utils

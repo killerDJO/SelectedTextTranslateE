@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { stripHtml } from 'string-strip-html';
 
 import type {
   TranslateResult,
@@ -16,10 +15,13 @@ import type {
 //      0: "<transcription>",
 //      1: [
 //           0: [
-//                0: [<..>, <suggested_input>, ..],
+//                0: [<..>, <suggested_input_as_html>, ..],
 //                1: "<corrected_input>"
 //              ],
-//           1: ["<suggested_language>"]
+//           1: ["<suggested_language>"],
+//           2: <..>,
+//           3: <..>,
+//           4: "<suggested_input>"
 //         ],
 //         ....
 //    ],
@@ -131,8 +133,7 @@ export class TranslationResponseParser {
     let languageSuggestion: string | null = null;
     let transcription: string | null = null;
     if (inputResponseSection?.length > 0) {
-      const rawSuggestion = inputResponseSection[1]?.[0]?.[0]?.[1];
-      suggestion = rawSuggestion ? stripHtml(rawSuggestion).result : null;
+      suggestion = inputResponseSection[1]?.[0]?.[4];
 
       const correctedInput = inputResponseSection[1]?.[0]?.[1];
       origin = !!correctedInput && !!suggestion ? suggestion : input;
