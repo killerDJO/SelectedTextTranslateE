@@ -23,23 +23,27 @@ Solution contains 3 main source trees:
 - `tauri:build` - build in production mode and create installer/updater.
 - `lint` - run eslint checks on all files.
 
-### Firebase setup
+## Supabase
 
-In order to provide history synchronization functionality firebase is used as a backend. It must be configured before starting the application, otherwise history sync won't work. Most of the setup can be executed by navigating to the `src\firebase` folder and deploying an application from there. See [deploy guide](https://firebase.google.com/docs/hosting/deploying) for details.
+In order to provide history synchronization functionality Supabase is used as a backend. It must be configured before starting the application, otherwise history sync won't work.
 
-The password restore functionality should be configured additionally by providing a custom email template. To do this, navigate to `Firebase Console -> Authentication -> Templates -> Change Password` and provide the following items:
+Steps to connect Supabase to a project:
 
-```
-<p>Hello,</p>
-<p>Follow this link to get your password reset code for your %EMAIL% account.</p>
-<p><a href='%LINK%'>%LINK%</a></p>
-<p>If you didn’t ask to reset your password, you can ignore this email.</p>
-```
+1. Install Supabase CLI - https://supabase.com/docs/guides/cli
+2. Execute `supabase login` command.
+3. Link to a remote project using `supabase link  --project-ref <ref>`.
 
-Action URL: `https://<project-id>.firebaseapp.com/reset-code.html`
-Project name should also be configured in firebase to provide meaningful `%APP_NAME%`.
+### Migrations
 
-Current firebase project can be specified in the application settings in the `firebase` section.
+1. Migrations should be written in a `supabase/migrations` folder.
+2. To push a new migration to a server, run `supabase db push -p <db password command>`
+3. To fetch latest TypeScript types, use the following command: `supabase gen types typescript --project-id <projectId> src/components/history/services/database.generated.ts`
+
+### Auth configuration
+
+1. Disable Anonymous sign-ups in Auth Project settings
+2. Enable Email Auth provider in Authentication > Provider settings. Disable `Confirm email`, `Secure email change` and `Secure password change` features.
+3. Use `supabase/email-templates/otp.template.html` as a `Magic Link` email template. Use `Selected Text Translate > Login` as email subject.
 
 ## Releasing
 

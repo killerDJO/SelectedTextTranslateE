@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your OTP Login Code</title>
+    <style>
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f9f9f9;
+      }
+      .email-wrapper {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .email-header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .email-content {
+        font-size: 16px;
+        line-height: 1.8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-wrapper">
+      <div class="email-header">
+        <h2>Your Login Code</h2>
+      </div>
+      <div class="email-content">
+        <p>Here is your Login Code: <strong>{{ .Token }}</strong></p>
+        <p>
+          Please use this code to complete your login process. Ensure you enter it promptly as it
+          expires in a short period.
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

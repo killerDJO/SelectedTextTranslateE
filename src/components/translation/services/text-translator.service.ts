@@ -1,6 +1,3 @@
-import md5 from 'md5';
-
-import type { AccountInfo } from '~/components/history/history-auth/models/account-info.model';
 import {
   authService,
   type AuthService
@@ -52,7 +49,7 @@ export class TextTranslator {
       return { result: await this.getResponseFromService(request) };
     }
 
-    const id = this.generateId(request, account);
+    const id = await this.generateId(request);
 
     const [historyRecord, translateResult] = await Promise.all([
       this.getHistoryRecord(id),
@@ -110,10 +107,23 @@ export class TextTranslator {
     return str.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   }
 
-  private generateId(descriptor: TranslateDescriptor, account: AccountInfo) {
-    return `${md5(descriptor.sentence)}${descriptor.isForcedTranslation ? '-forced' : ''}-${
+  private async generateId(descriptor: TranslateDescriptor): Promise<string> {
+    const hash = await this.getHash(descriptor.sentence);
+    return `${hash}${descriptor.isForcedTranslation ? '-forced' : ''}-${
       descriptor.sourceLanguage
-    }-${descriptor.targetLanguage}-${account.uid}`;
+    }-${descriptor.targetLanguage}`;
+  }
+
+  private async getHash(sentence: string): Promise<string> {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(sentence);
+
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    return hashHex;
   }
 }
 

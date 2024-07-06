@@ -1,6 +1,7 @@
 
 CREATE TABLE IF NOT EXISTS "public"."history" (
     "id" character varying NOT NULL,
+    "user_id" "uuid" NOT NULL,
     "sentence" character varying NOT NULL,
     "forcedTranslation" boolean NOT NULL,
     "sourceLanguage" character varying NOT NULL,
@@ -15,14 +16,14 @@ CREATE TABLE IF NOT EXISTS "public"."history" (
     "archived" boolean DEFAULT false NOT NULL,
     "tags" character varying[],
     "blacklisted_merge_records" character varying[],
-    "user_id" "uuid" NOT NULL,
     "instances" "jsonb"
 );
 
 ALTER TABLE "public"."history" OWNER TO "postgres";
 
 ALTER TABLE ONLY "public"."history"
-    ADD CONSTRAINT "history_pkey" PRIMARY KEY ("id");
+    ADD CONSTRAINT "history_pkey" PRIMARY KEY ("id", "user_id");
+CREATE INDEX idx_history_updated_at ON public.history (user_id, updated_at);
 
 CREATE POLICY "Only Users Data" ON "public"."history" TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
 
