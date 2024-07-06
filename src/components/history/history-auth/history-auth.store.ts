@@ -5,12 +5,8 @@ import { historyCache } from '~/components/history/services/history-cache.servic
 import type { AccountInfo } from './models/account-info.model';
 import type {
   AuthResponse,
-  PasswordChangeErrorCodes,
-  PasswordResetErrorCodes,
-  SendResetTokenErrorCodes,
   SignInErrorCodes,
-  SignUpErrorCodes,
-  VerifyResetTokenErrorCodes
+  VerifyOTPErrorCodes
 } from './models/auth-response.model';
 import { authService } from './services/auth.service';
 
@@ -41,33 +37,15 @@ export const useHistoryAuthStore = defineStore('history-auth', {
         this.isSetupInProgress = false;
       }
     },
-    signIn(email: string, password: string): Promise<AuthResponse<SignInErrorCodes>> {
-      return authService.signIn(email, password);
+    signInWithOTP(email: string): Promise<AuthResponse<SignInErrorCodes>> {
+      return authService.signInWithOTP(email);
+    },
+    verifyOTPAndLogin(email: string, otp: string): Promise<AuthResponse<VerifyOTPErrorCodes>> {
+      return authService.verifyOTPAndLogin(email, otp);
     },
     signOut() {
       historyCache.clearUserData(this.account!.uid);
       return authService.signOut();
-    },
-    signUp(email: string, password: string): Promise<AuthResponse<SignUpErrorCodes>> {
-      return authService.signUp(email, password);
-    },
-    sendPasswordResetToken(email: string): Promise<AuthResponse<SendResetTokenErrorCodes>> {
-      return authService.sendPasswordResetToken(email);
-    },
-    verifyPasswordResetToken(token: string): Promise<AuthResponse<VerifyResetTokenErrorCodes>> {
-      return authService.verifyPasswordResetToken(token);
-    },
-    confirmPasswordReset(
-      token: string,
-      password: string
-    ): Promise<AuthResponse<PasswordResetErrorCodes>> {
-      return authService.confirmPasswordReset(token, password);
-    },
-    changePassword(
-      oldPassword: string,
-      newPassword: string
-    ): Promise<AuthResponse<PasswordChangeErrorCodes>> {
-      return authService.changePassword(oldPassword, newPassword);
     }
   }
 });

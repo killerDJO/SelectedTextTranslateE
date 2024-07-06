@@ -1,12 +1,8 @@
 import { AuthError, isAuthApiError } from '@supabase/supabase-js';
 
 import {
-  PasswordChangeErrorCodes,
-  PasswordResetErrorCodes,
-  SendResetTokenErrorCodes,
   SignInErrorCodes,
-  SignUpErrorCodes,
-  VerifyResetTokenErrorCodes,
+  VerifyOTPErrorCodes,
   type AuthResponse
 } from '~/components/history/history-auth/models/auth-response.model';
 import type { AccountInfo } from '~/components/history/history-auth/models/account-info.model';
@@ -19,117 +15,37 @@ export class AuthService {
     private readonly logger: Logger
   ) {}
 
-  public async signIn(email: string, password: string): Promise<AuthResponse<SignInErrorCodes>> {
+  public async signInWithOTP(email: string): Promise<AuthResponse<SignInErrorCodes>> {
     const supabase = await this.supabaseProvider.getClient();
 
-    const response = await supabase.auth.signInWithPassword({
+    const response = await supabase.auth.signInWithOtp({
       email,
-      password
+      options: {
+        shouldCreateUser: true
+      }
     });
 
     return this.handleAuthResponse<SignInErrorCodes>(response, this.mapSignInErrorCodes);
   }
 
-  public async signUp(email: string, password: string): Promise<AuthResponse<SignUpErrorCodes>> {
+  public async verifyOTPAndLogin(
+    email: string,
+    otp: string
+  ): Promise<AuthResponse<VerifyOTPErrorCodes>> {
     const supabase = await this.supabaseProvider.getClient();
 
-    const response = await supabase.auth.signUp({
+    const response = await supabase.auth.verifyOtp({
       email,
-      password
+      token: otp,
+      type: 'email'
     });
 
-    const authResponse = this.handleAuthResponse<SignUpErrorCodes>(
-      response,
-      this.mapSignUpErrorCodes
-    );
-
-    if (authResponse.isSuccessful && !response.data.session) {
-      // This probably means email confirmation is enabled
-      throw new Error('Session is not available after sign up');
-    }
-
-    return authResponse;
+    return this.handleAuthResponse<VerifyOTPErrorCodes>(response, this.mapVerifyOtpErrorCodes);
   }
 
   public async signOut(): Promise<void> {
     const supabase = await this.supabaseProvider.getClient();
     await supabase.auth.signOut();
-  }
-
-  public async sendPasswordResetToken(
-    email: string
-  ): Promise<AuthResponse<SendResetTokenErrorCodes>> {
-    const supabase = await this.supabaseProvider.getClient();
-
-    const response = await supabase.auth.resetPasswordForEmail(email);
-    return this.handleAuthResponse<SendResetTokenErrorCodes>(
-      response,
-      this.mapSendResetTokenErrorCodes
-    );
-  }
-
-  public async verifyPasswordResetToken(
-    _token: string
-  ): Promise<AuthResponse<VerifyResetTokenErrorCodes>> {
-    //const _supabase = await this.supabaseProvider.getClient();
-
-    return { isSuccessful: true };
-    // return this.handleAuthResponse<VerifyResetTokenErrorCodes>(
-    //   verifyPasswordResetCode(auth, token),
-    //   this.mapVerifyResetTokenErrorCodes
-    // );
-  }
-
-  public async confirmPasswordReset(
-    token: string,
-    password: string
-  ): Promise<AuthResponse<PasswordResetErrorCodes>> {
-    const supabase = await this.supabaseProvider.getClient();
-
-    const response = await supabase.auth.updateUser({
-      nonce: token,
-      password
-    });
-
-    return this.handleAuthResponse<PasswordResetErrorCodes>(
-      response,
-      this.mapPasswordResetErrorCodes
-    );
-  }
-
-  public async changePassword(
-    _oldPassword: string,
-    newPassword: string
-  ): Promise<AuthResponse<PasswordChangeErrorCodes>> {
-    const supabase = await this.supabaseProvider.getClient();
-
-    const response = await supabase.auth.updateUser({
-      password: newPassword
-    });
-
-    // const currentUser = auth.currentUser;
-    // if (!currentUser) {
-    //   throw Error('User is not available.');
-    // }
-
-    // const credentials = EmailAuthProvider.credential(currentUser.email as string, oldPassword);
-    // try {
-    //   await reauthenticateWithCredential(currentUser, credentials);
-    // } catch (error: unknown) {
-    //   if (error instanceof FirebaseError && error.code === 'auth/wrong-password') {
-    //     return {
-    //       isSuccessful: false,
-    //       errorCode: PasswordChangeErrorCodes.WrongPassword
-    //     };
-    //   }
-
-    //   throw new Error('Unable to change password because current user is not found');
-    // }
-
-    return this.handleAuthResponse<PasswordChangeErrorCodes>(
-      response,
-      this.mapPasswordChangeErrorCodes
-    );
   }
 
   public async getAccount(): Promise<AccountInfo | null> {
@@ -157,6 +73,10 @@ export class AuthService {
 
     supabase.auth.onAuthStateChange(async event => {
       try {
+        if (event === 'USER_UPDATED') {
+          return;
+        }
+
         if (event === 'SIGNED_OUT') {
           callback(null);
           return;
@@ -191,53 +111,20 @@ export class AuthService {
   }
 
   private mapSignInErrorCodes(error: AuthError): SignInErrorCodes | undefined {
-    if (isAuthApiError(error) && error.status === 400) {
-      return SignInErrorCodes.InvalidCredentials;
+    if (!isAuthApiError(error)) {
+      return;
+    }
+
+    if (error.status === 429) {
+      return SignInErrorCodes.TooManyRequests;
     }
   }
 
-  private mapSignUpErrorCodes(error: AuthError): SignUpErrorCodes | undefined {
-    if (isAuthApiError(error) && error.status === 422) {
-      return SignUpErrorCodes.EmailAlreadyInUse;
+  private mapVerifyOtpErrorCodes(error: AuthError): VerifyOTPErrorCodes | undefined {
+    if (isAuthApiError(error) && error.status === 403) {
+      return VerifyOTPErrorCodes.InvalidOTP;
     }
   }
-
-  private mapSendResetTokenErrorCodes(error: AuthError): SendResetTokenErrorCodes | undefined {
-    const responsesMap: { [key: string]: SendResetTokenErrorCodes } = {
-      'auth/invalid-email': SendResetTokenErrorCodes.InvalidEmail,
-      'auth/user-not-found': SendResetTokenErrorCodes.UserNotFound,
-      'auth/too-many-requests': SendResetTokenErrorCodes.TooManyRequests
-    };
-
-    return responsesMap[error.code ?? ''];
-  }
-
-  private mapPasswordResetErrorCodes(error: AuthError): PasswordResetErrorCodes {
-    const responsesMap: { [key: string]: PasswordResetErrorCodes } = {
-      'auth/expired-action-code': PasswordResetErrorCodes.ExpiredActionCode,
-      'auth/invalid-action-code': PasswordResetErrorCodes.InvalidActionCode,
-      'auth/weak-password': PasswordResetErrorCodes.WeakPassword
-    };
-
-    return responsesMap[error.code ?? ''];
-  }
-
-  private mapPasswordChangeErrorCodes(error: AuthError): PasswordChangeErrorCodes {
-    const responsesMap: { [key: string]: PasswordChangeErrorCodes } = {
-      'auth/weak-password': PasswordChangeErrorCodes.WeakPassword
-    };
-
-    return responsesMap[error.code ?? ''];
-  }
-
-  // private mapVerifyResetTokenErrorCodes(error: AuthError): VerifyResetTokenErrorCodes {
-  //   const responsesMap: { [key: string]: VerifyResetTokenErrorCodes } = {
-  //     'auth/expired-action-code': VerifyResetTokenErrorCodes.ExpiredToken,
-  //     'auth/invalid-action-code': VerifyResetTokenErrorCodes.InvalidToken
-  //   };
-
-  //   return responsesMap[error.code ?? ''];
-  // }
 
   private async throwOnAuthError(error: AuthError | null | undefined) {
     if (!error) {

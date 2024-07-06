@@ -1,0 +1,14 @@
+.email-actions {
+  display: flex;
+  gap: $spacing-default;
+
+  margin-bottom: $spacing-default;
+  margin-top: -$spacing-default;
+}
+
+.otp-login-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  column-gap: $spacing-default;
+}

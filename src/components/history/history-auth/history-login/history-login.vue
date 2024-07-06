@@ -3,20 +3,14 @@ import { ref } from 'vue';
 
 import type { AuthResponse } from '~/components/history/history-auth/models/auth-response.model';
 import { useGlobalErrorsStore } from '~/components/global-errors/global-errors.store';
-import { commonErrorMessages } from '~/components/history/history-auth/error-codes';
 
-import SignIn from './sign-in/sign-in.vue';
-import SignUp from './sign-up/sign-up.vue';
-import ResetPassword from './reset-password/reset-password.vue';
+import OptLogin from './otp-login/otp-login.vue';
 
 enum View {
-  SignIn = 'sign-in',
-  SignUp = 'sign-up',
-  ResetPassword = 'reset-password'
+  OTPLogin = 'otp-login'
 }
 
-const currentView = ref<View>(View.SignIn);
-const signInEmail = ref<string>('');
+const currentView = ref<View>(View.OTPLogin);
 const isLoginActionInProgress = ref(false);
 const errorMessage = ref<string | null>(null);
 const successMessage = ref<string | null>(null);
@@ -35,7 +29,6 @@ async function executeLoginAction<TErrorCodes extends string>(
     } else if (authResponse.errorCode) {
       errorMessage.value =
         errorCodes[authResponse.errorCode as TErrorCodes] ??
-        commonErrorMessages[authResponse.errorCode] ??
         `Authentication error: ${authResponse.errorCode}`;
       return false;
     }
@@ -48,19 +41,14 @@ async function executeLoginAction<TErrorCodes extends string>(
 
   return false;
 }
-
-function changeView(view: View, resetEmail?: string) {
-  signInEmail.value = resetEmail ?? '';
-  currentView.value = view;
-}
 </script>
 
 <template>
   <div class="login-container">
     <div class="login-header">
-      <template v-if="currentView === View.SignIn">Sign In to sync history across devices</template>
-      <template v-if="currentView === View.SignUp">Register a new account</template>
-      <template v-if="currentView === View.ResetPassword">Password reset</template>
+      <template v-if="currentView === View.OTPLogin"
+        >Sign In to sync history across devices</template
+      >
     </div>
 
     <app-alert
@@ -78,23 +66,10 @@ function changeView(view: View, resetEmail?: string) {
       @dismiss="successMessage = null"
     ></app-alert>
     <div class="login-content">
-      <sign-in
-        v-if="currentView === View.SignIn"
-        :action-executor="executeLoginAction"
-        :email="signInEmail"
-        @sign-up="changeView(View.SignUp)"
-        @restore-password="currentView = View.ResetPassword"
-      />
-      <sign-up
-        v-if="currentView === View.SignUp"
-        :action-executor="executeLoginAction"
-        @sign-in="changeView(View.SignIn)"
-      />
-      <reset-password
-        v-if="currentView === 'reset-password'"
+      <opt-login
+        v-if="currentView === View.OTPLogin"
         :action-executor="executeLoginAction"
         @show-message="message => (successMessage = message)"
-        @sign-in="email => changeView(View.SignIn, email)"
       />
       <app-loader v-show="isLoginActionInProgress"></app-loader>
     </div>
