@@ -116,9 +116,9 @@ export class HistoryMerger {
     record: MergeHistoryRecord,
     candidate: MergeHistoryRecord
   ): boolean {
-    return (
-      record.blacklistedMergeRecords.includes(candidate.id) ||
-      candidate.blacklistedMergeRecords.includes(record.id)
+    return !!(
+      record.blacklistedMergeRecords?.includes(candidate.id) ||
+      candidate.blacklistedMergeRecords?.includes(record.id)
     );
   }
 }
