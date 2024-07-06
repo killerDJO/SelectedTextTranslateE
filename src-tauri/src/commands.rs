@@ -45,8 +45,8 @@ pub fn settings(settings_manager: tauri::State<SettingsManager>) -> Settings {
 }
 
 #[tauri::command]
-pub fn default_settings(app: AppHandle) -> Settings {
-    SettingsManager::read_default_settings(&app)
+pub fn default_settings() -> Settings {
+    SettingsManager::read_default_settings()
 }
 
 #[tauri::command]

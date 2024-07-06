@@ -12,9 +12,10 @@ use super::Settings;
 
 type ChangeHandler = Box<dyn Fn(&Settings, &Settings) + Send + Sync + 'static>;
 
-const DEFAULT_SETTINGS_FILENAME: &str = "default-settings.json";
 const DEFAULT_DEV_SETTINGS_FILENAME: &str = "dev.default-settings.json";
 const USER_SETTINGS_FILENAME: &str = "settings.json";
+
+const DEFAULT_SETTINGS_JSON: &str = std::include_str!("./default-settings.json");
 
 pub struct SettingsManager {
     app: AppHandle,
@@ -33,7 +34,7 @@ impl SettingsManager {
 
         Self {
             app: app.clone(),
-            default_settings: SettingsManager::read_default_settings(app),
+            default_settings: SettingsManager::read_default_settings(),
             user_settings_cache: Mutex::new(None),
             settings_flush_sender: sender,
             change_handlers: Mutex::new(Vec::new()),
@@ -66,14 +67,8 @@ impl SettingsManager {
         self.change_handlers.lock().unwrap().push(Box::new(handler));
     }
 
-    pub fn read_default_settings(app: &AppHandle) -> Settings {
-        let resources_dir = app.path().resource_dir().unwrap();
-
-        let default_settings_path = resources_dir
-            .join("resources")
-            .join(DEFAULT_SETTINGS_FILENAME);
-        let default_settings_json = fs::read_to_string(default_settings_path).unwrap();
-        let default_settings: Settings = serde_json::from_str(&default_settings_json).unwrap();
+    pub fn read_default_settings() -> Settings {
+        let default_settings: Settings = serde_json::from_str(DEFAULT_SETTINGS_JSON).unwrap();
 
         // Dev settings, used to easily override settings for dev mode
         let dev_settings_overrides = Self::read_dev_settings_override();
