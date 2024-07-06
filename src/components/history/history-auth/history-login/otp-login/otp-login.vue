@@ -141,7 +141,7 @@ function changeEmail() {
         />
       </validated-field>
     </div>
-    <div class="/otp-login-controls">
+    <div class="otp-login-controls">
       <app-button :text="confirmText" :disabled="isStepInvalid()" @click="confirmIfValid()" />
     </div>
   </div>
