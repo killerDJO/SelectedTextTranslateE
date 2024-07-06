@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import { isEqual } from 'lodash-es';
+import isEqual from 'lodash-es/isEqual';
 
 import { Keys } from '~/host/models/settings.model';
 

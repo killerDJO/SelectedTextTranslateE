@@ -1,4 +1,5 @@
-import { cloneDeep, uniq } from 'lodash-es';
+import uniq from 'lodash-es/uniq';
+import cloneDeep from 'lodash-es/cloneDeep';
 
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { HistoryFilter } from '~/components/history/models/history-filter.model';

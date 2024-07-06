@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import { isEqual } from 'lodash-es';
+import isEqual from 'lodash-es/isEqual';
 
 import type { DropItem } from '~/components/shared/drop-button/drop-button.vue';
 import DropButton from '~/components/shared/drop-button/drop-button.vue';

@@ -1,5 +1,4 @@
 import type { Directive } from 'vue';
-import { reverse } from 'lodash-es';
 
 import { CallbacksRegistry } from './callbacks-registry';
 
@@ -33,7 +32,7 @@ function handleFocus(guardElement: HTMLElement, event: Event): void {
   );
 
   if (focusableItems[0] === guardElement) {
-    reverse(focusableItems);
+    focusableItems.reverse();
   }
 
   for (const focusableItem of focusableItems) {

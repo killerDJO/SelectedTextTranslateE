@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useVuelidate } from '@vuelidate/core';
-import { cloneDeep, debounce, isEqual } from 'lodash-es';
+import cloneDeep from 'lodash-es/cloneDeep';
+import debounce from 'lodash-es/debounce';
+import isEqual from 'lodash-es/isEqual';
 import { computed, reactive, ref, watch } from 'vue';
 import { helpers, maxValue, minValue } from '@vuelidate/validators';
 

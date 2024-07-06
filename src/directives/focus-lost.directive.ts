@@ -1,5 +1,4 @@
 import type { Directive, DirectiveBinding } from 'vue';
-import { isFunction } from 'lodash-es';
 
 import { CallbacksRegistry } from './callbacks-registry';
 import { isElementOutside } from './directives.utils';
@@ -8,7 +7,7 @@ const registry = new CallbacksRegistry();
 
 export const focusLostDirective: Directive = {
   beforeMount: (element: HTMLElement, binding: DirectiveBinding) => {
-    if (!binding.value || !isFunction(binding.value)) {
+    if (!binding.value || typeof binding.value !== 'function') {
       throw new Error('Function value must be provided for the focus-lost binding');
     }
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import { cloneDeep, uniq } from 'lodash-es';
+import cloneDeep from 'lodash-es/cloneDeep';
+import uniq from 'lodash-es/uniq';
 
 import { useAppStore } from '~/app.store';
 import { useTranslateResultStore } from '~/components/translation/translation-result/translation-result.store';

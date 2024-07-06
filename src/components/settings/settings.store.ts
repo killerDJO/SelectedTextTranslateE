@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { cloneDeep } from 'lodash-es';
+import cloneDeep from 'lodash-es/cloneDeep';
 
 import { useAppStore } from '~/app.store';
 import { DeepPartial, Settings } from '~/host/models/settings.model';

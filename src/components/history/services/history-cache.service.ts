@@ -1,4 +1,4 @@
-import { orderBy } from 'lodash-es';
+import orderBy from 'lodash-es/orderBy';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 
 import type { HistoryRecord } from '~/components/history/models/history-record.model';

@@ -1,4 +1,4 @@
-import { uniq } from 'lodash-es';
+import uniq from 'lodash-es/uniq';
 
 import { logger, type Logger } from '~/services/logger.service';
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
