@@ -28,8 +28,7 @@ const translateResult = useTranslateResultStore();
 
 const isFilterVisible = ref(false);
 const isTranslationVisible = ref(false);
-
-const historyMergerInstance = ref<InstanceType<typeof HistoryMerger> | null>(null);
+const isMergerVisible = ref(false);
 
 const columns = computed(() => app.settings.display.historyColumns);
 const languages = ref(settingsProvider.getLanguages());
@@ -128,6 +127,12 @@ async function hardDelete() {
   await translateResult.hardDelete();
   isTranslationVisible.value = false;
 }
+
+function toggleMerger() {
+  isFilterVisible.value = false;
+  isTranslationVisible.value = false;
+  isMergerVisible.value = !isMergerVisible.value;
+}
 </script>
 
 <template>
@@ -141,7 +146,7 @@ async function hardDelete() {
       class="grid-holder"
       :class="{ 'sidebar-visible': isTranslationVisible || isFilterVisible }"
     >
-      <div class="results-header">
+      <div v-if="!isMergerVisible" class="results-header">
         <div class="tags">
           <span class="tags-label">Tags:</span>
           <tags-editor
@@ -167,12 +172,7 @@ async function hardDelete() {
             />Filter</toggle-button
           >
 
-          <app-button
-            text="Merge"
-            :primary="false"
-            class="filter-button"
-            @click="historyMergerInstance?.open()"
-          />
+          <app-button text="Merge" :primary="false" class="filter-button" @click="toggleMerger()" />
           <columns-editor
             class="columns-customizer"
             :columns="columns"
@@ -180,7 +180,11 @@ async function hardDelete() {
           />
         </div>
       </div>
-      <div class="results-holder" :class="{ 'full-height': !history.records?.length }">
+      <div
+        v-if="!isMergerVisible"
+        class="results-holder"
+        :class="{ 'full-height': !history.records?.length }"
+      >
         <history-table
           v-model:sortColumn="history.sortColumn"
           v-model:sortOrder="history.sortOrder"
@@ -213,6 +217,7 @@ async function hardDelete() {
           />
         </div>
       </div>
+      <history-merger v-if="isMergerVisible" class="merger-holder" @close="toggleMerger()" />
       <div
         v-if="isFilterVisible || isTranslationVisible"
         class="sidebar-controls"
@@ -258,7 +263,6 @@ async function hardDelete() {
       </div>
     </div>
   </div>
-  <history-merger ref="historyMergerInstance" />
 </template>
 
 <style src="./history-view.scss" lang="scss" scoped></style>

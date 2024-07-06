@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 
 import type { DataTableConfig } from '~/components/shared/data-table/data-table.vue';
 import ForcedTranslationIcon from '~/components/history/icons/forced-translation-icon.vue';
@@ -25,7 +25,15 @@ enum CandidateTableColumns {
 const historyMerger = useHistoryMergerStore();
 const languages = ref(settingsProvider.getLanguages());
 
-const isVisible = ref(false);
+defineEmits<{
+  close: [];
+}>();
+
+onMounted(() => {
+  currentCandidateIndex.value = -1;
+  historyMerger.fetchCandidates();
+});
+
 const currentCandidateIndex = ref(-1);
 const showLanguages = ref(false);
 
@@ -183,182 +191,160 @@ function promoteRecordToCandidate(candidate: MergeCandidate, record: MergeHistor
       .concat([candidate.record])
   };
 }
-
-defineExpose({
-  open: async () => {
-    currentCandidateIndex.value = -1;
-    isVisible.value = true;
-    await historyMerger.fetchCandidates();
-  }
-});
 </script>
 
 <template>
-  <app-modal v-model:show="isVisible">
-    <template #header>Merge Records</template>
-    <template #body>
-      <div class="merge-candidates" :class="{ 'no-records': !filteredCandidates?.length }">
-        <div v-if="!currentCandidate" class="candidates-view">
-          <div v-if="filteredCandidates?.length" class="candidates-view-header">
-            <app-checkbox v-model:value="showLanguages" :label="'Show Languages'" />
-            <span v-if="filteredCandidates.length > 0" class="records-label"
-              >{{ filteredCandidates.length }} record{{
-                filteredCandidates.length > 1 ? 's' : ''
-              }}</span
-            >
-          </div>
+  <div class="merge-candidates" :class="{ 'no-records': !filteredCandidates?.length }">
+    <div v-if="!currentCandidate" class="candidates-view">
+      <div v-if="filteredCandidates?.length" class="candidates-view-header merge-header">
+        <span v-if="filteredCandidates.length > 0" class="records-label"
+          >{{ filteredCandidates.length }} record{{
+            filteredCandidates.length > 1 ? 's' : ''
+          }}</span
+        >
+        <div class="header-controls">
+          <app-checkbox
+            v-model:value="showLanguages"
+            :label="'Show Languages'"
+            :left-to-right="true"
+          />
+          <app-button text="Close" :primary="false" @click="$emit('close')" />
+        </div>
+      </div>
 
-          <data-table
-            :configuration="candidatesTableConfiguration"
-            :records="filteredCandidates"
-            :is-loading="historyMerger.isActionInProgress"
-            class="candidates"
-            @record-click="record => showCandidate(record)"
-          >
-            <template #[getHeaderSlotId(CandidatesTableColumns.Word)]>
-              <div v-overflow-tooltip class="table-header">Word</div>
-            </template>
-            <template #[getBodySlotId(CandidatesTableColumns.Word)]="{ record: candidate }">
-              <div v-overflow-tooltip>
-                {{ candidate.record.sentence }}
-                <forced-translation-icon v-if="candidate.record.isForcedTranslation" />
-              </div>
-            </template>
-            <template #[getHeaderSlotId(CandidatesTableColumns.Translation)]>
-              <div v-overflow-tooltip class="table-header">Translation</div>
-            </template>
-            <template #[getBodySlotId(CandidatesTableColumns.Translation)]="{ record: candidate }">
-              <div v-overflow-tooltip>
-                <span v-if="!!candidate.record.translation">{{
-                  candidate.record.translation
-                }}</span>
-                <span v-if="!!candidate.record.suggestion" class="suggestion"
-                  >(suggested: {{ candidate.record.suggestion }})</span
-                >
-                <span v-if="!candidate.record.translation" class="no-translation"
-                  >No Translation</span
-                >
-              </div>
-            </template>
-            <template #[getHeaderSlotId(CandidatesTableColumns.SourceLanguage)]>
-              <div v-overflow-tooltip class="table-header">Source</div>
-            </template>
-            <template
-              #[getBodySlotId(CandidatesTableColumns.SourceLanguage)]="{ record: candidate }"
-            >
-              <div v-overflow-tooltip>
-                {{
-                  languages.get(candidate.record.sourceLanguage) || candidate.record.sourceLanguage
-                }}
-              </div>
-            </template>
-            <template #[getHeaderSlotId(CandidatesTableColumns.TargetLanguage)]>
-              <div v-overflow-tooltip class="table-header">Target</div>
-            </template>
-            <template
-              #[getBodySlotId(CandidatesTableColumns.TargetLanguage)]="{ record: candidate }"
-            >
-              <div v-overflow-tooltip>
-                {{
-                  languages.get(candidate.record.targetLanguage) || candidate.record.targetLanguage
-                }}
-              </div>
-            </template>
-            <template #[getHeaderSlotId(CandidatesTableColumns.Candidates)]>
-              <div v-overflow-tooltip class="table-header candidates-column">Candidates</div>
-            </template>
-            <template #[getBodySlotId(CandidatesTableColumns.Candidates)]="{ record: candidate }">
-              <div class="candidates-column">
-                {{ candidate.mergeRecords.length }}
-              </div>
-            </template>
-            <template #empty
-              ><div class="no-records-available">No Records to Merge Available</div></template
-            >
-          </data-table>
-        </div>
-        <div v-if="currentCandidate" class="candidate-view">
-          <div class="candidate-view-header">
-            <link-button :text="'Back To List'" @click="backToCandidates" />
+      <data-table
+        :configuration="candidatesTableConfiguration"
+        :records="filteredCandidates"
+        :is-loading="historyMerger.isActionInProgress"
+        class="candidates"
+        @record-click="record => showCandidate(record)"
+      >
+        <template #[getHeaderSlotId(CandidatesTableColumns.Word)]>
+          <div v-overflow-tooltip class="table-header">Word</div>
+        </template>
+        <template #[getBodySlotId(CandidatesTableColumns.Word)]="{ record: candidate }">
+          <div v-overflow-tooltip>
+            {{ candidate.record.sentence }}
+            <forced-translation-icon v-if="candidate.record.isForcedTranslation" />
           </div>
-          <div class="candidate-view-controls">
-            <icon-button
-              :title="'Previous'"
-              :disabled="!isPreviousCandidateEnabled()"
-              class="navigation-button"
-              @click="previousCandidate"
+        </template>
+        <template #[getHeaderSlotId(CandidatesTableColumns.Translation)]>
+          <div v-overflow-tooltip class="table-header">Translation</div>
+        </template>
+        <template #[getBodySlotId(CandidatesTableColumns.Translation)]="{ record: candidate }">
+          <div v-overflow-tooltip>
+            <span v-if="!!candidate.record.translation">{{ candidate.record.translation }}</span>
+            <span v-if="!!candidate.record.suggestion" class="suggestion"
+              >(suggested: {{ candidate.record.suggestion }})</span
             >
-              <font-awesome-icon icon="arrow-left" size="xs" class="icon"></font-awesome-icon>
-            </icon-button>
-            <icon-button
-              :title="'Next'"
-              :disabled="!isNextCandidateEnabled()"
-              class="navigation-button"
-              @click="nextCandidate"
-            >
-              <font-awesome-icon icon="arrow-right" size="xs" class="icon"></font-awesome-icon>
-            </icon-button>
+            <span v-if="!candidate.record.translation" class="no-translation">No Translation</span>
           </div>
-          <data-table
-            :configuration="candidateTableConfiguration"
-            :records="currentMergeRecords"
-            class="candidate"
+        </template>
+        <template #[getHeaderSlotId(CandidatesTableColumns.SourceLanguage)]>
+          <div v-overflow-tooltip class="table-header">Source</div>
+        </template>
+        <template #[getBodySlotId(CandidatesTableColumns.SourceLanguage)]="{ record: candidate }">
+          <div v-overflow-tooltip>
+            {{ languages.get(candidate.record.sourceLanguage) || candidate.record.sourceLanguage }}
+          </div>
+        </template>
+        <template #[getHeaderSlotId(CandidatesTableColumns.TargetLanguage)]>
+          <div v-overflow-tooltip class="table-header">Target</div>
+        </template>
+        <template #[getBodySlotId(CandidatesTableColumns.TargetLanguage)]="{ record: candidate }">
+          <div v-overflow-tooltip>
+            {{ languages.get(candidate.record.targetLanguage) || candidate.record.targetLanguage }}
+          </div>
+        </template>
+        <template #[getHeaderSlotId(CandidatesTableColumns.Candidates)]>
+          <div v-overflow-tooltip class="table-header candidates-column">Candidates</div>
+        </template>
+        <template #[getBodySlotId(CandidatesTableColumns.Candidates)]="{ record: candidate }">
+          <div class="candidates-column">
+            {{ candidate.mergeRecords.length }}
+          </div>
+        </template>
+        <template #empty
+          ><div class="no-records-available">No Records to Merge Available</div></template
+        >
+      </data-table>
+    </div>
+    <div v-if="currentCandidate" class="candidate-view">
+      <div class="candidate-view-header merge-header">
+        <div class="candidate-view-controls">
+          <icon-button
+            :title="'Previous'"
+            :disabled="!isPreviousCandidateEnabled()"
+            class="navigation-button"
+            @click="previousCandidate"
           >
-            <template #[getHeaderSlotId(CandidateTableColumns.Word)]>
-              <div v-overflow-tooltip class="table-header">Word</div>
-            </template>
-            <template #[getBodySlotId(CandidateTableColumns.Word)]="{ record: mergeRecord }">
-              <div v-overflow-tooltip>
-                {{ mergeRecord.sentence }}
-                <forced-translation-icon v-if="mergeRecord.isForcedTranslation" />
-              </div>
-            </template>
-            <template #[getHeaderSlotId(CandidateTableColumns.Translation)]>
-              <div v-overflow-tooltip class="table-header">Translation</div>
-            </template>
-            <template #[getBodySlotId(CandidateTableColumns.Translation)]="{ record: mergeRecord }">
-              <div v-overflow-tooltip>
-                <span v-if="!!mergeRecord.translation">{{ mergeRecord.translation }}</span>
-                <span v-if="!!mergeRecord.suggestion" class="suggestion">
-                  &nbsp;(suggested: {{ mergeRecord.suggestion }})</span
-                >
-                <span v-if="!mergeRecord.translation" class="no-translation">No Translation</span>
-              </div>
-            </template>
-            <template #[getHeaderSlotId(CandidateTableColumns.Times)]>
-              <div v-overflow-tooltip class="table-header times-column">Times</div>
-            </template>
-            <template #[getBodySlotId(CandidateTableColumns.Times)]="{ record: mergeRecord }">
-              <div v-overflow-tooltip class="times-column">
-                {{ mergeRecord.translationsNumber }}
-              </div>
-            </template>
-            <template #[getHeaderSlotId(CandidateTableColumns.Actions)]>
-              <div v-overflow-tooltip class="table-header actions-column">Actions</div>
-            </template>
-            <template
-              #[getBodySlotId(CandidateTableColumns.Actions)]="{ record: mergeRecord, index }"
-            >
-              <div v-overflow-tooltip class="actions-column">
-                <template v-if="index > 0">
-                  <link-button :text="'Merge'" @click="merge(mergeRecord)" />
-                  <link-button :text="'Ignore'" @click="blacklist(mergeRecord)" />
-                  <link-button :text="'Promote'" @click="promote(mergeRecord)" />
-                </template>
-                <template v-else>
-                  <link-button :text="'Ignore All'" @click="blacklistAll()" />
-                  <link-button :text="'Merge All'" @click="mergeAll()" />
-                </template>
-              </div>
-            </template>
-          </data-table>
+            <font-awesome-icon icon="arrow-left" size="xs" class="icon"></font-awesome-icon>
+          </icon-button>
+          <icon-button
+            :title="'Next'"
+            :disabled="!isNextCandidateEnabled()"
+            class="navigation-button"
+            @click="nextCandidate"
+          >
+            <font-awesome-icon icon="arrow-right" size="xs" class="icon"></font-awesome-icon>
+          </icon-button>
         </div>
+
+        <app-button :primary="false" :text="'Back To List'" @click="backToCandidates" />
       </div>
-      <div class="footer">
-        <app-button :primary="false" :text="'Close'" @click="isVisible = false" />
-      </div>
-    </template>
-  </app-modal>
+      <data-table
+        :configuration="candidateTableConfiguration"
+        :records="currentMergeRecords"
+        class="candidate"
+      >
+        <template #[getHeaderSlotId(CandidateTableColumns.Word)]>
+          <div v-overflow-tooltip class="table-header">Word</div>
+        </template>
+        <template #[getBodySlotId(CandidateTableColumns.Word)]="{ record: mergeRecord }">
+          <div v-overflow-tooltip>
+            {{ mergeRecord.sentence }}
+            <forced-translation-icon v-if="mergeRecord.isForcedTranslation" />
+          </div>
+        </template>
+        <template #[getHeaderSlotId(CandidateTableColumns.Translation)]>
+          <div v-overflow-tooltip class="table-header">Translation</div>
+        </template>
+        <template #[getBodySlotId(CandidateTableColumns.Translation)]="{ record: mergeRecord }">
+          <div v-overflow-tooltip>
+            <span v-if="!!mergeRecord.translation">{{ mergeRecord.translation }}</span>
+            <span v-if="!!mergeRecord.suggestion" class="suggestion">
+              &nbsp;(suggested: {{ mergeRecord.suggestion }})</span
+            >
+            <span v-if="!mergeRecord.translation" class="no-translation">No Translation</span>
+          </div>
+        </template>
+        <template #[getHeaderSlotId(CandidateTableColumns.Times)]>
+          <div v-overflow-tooltip class="table-header times-column">Times</div>
+        </template>
+        <template #[getBodySlotId(CandidateTableColumns.Times)]="{ record: mergeRecord }">
+          <div v-overflow-tooltip class="times-column">
+            {{ mergeRecord.translationsNumber }}
+          </div>
+        </template>
+        <template #[getHeaderSlotId(CandidateTableColumns.Actions)]>
+          <div v-overflow-tooltip class="table-header actions-column">Actions</div>
+        </template>
+        <template #[getBodySlotId(CandidateTableColumns.Actions)]="{ record: mergeRecord, index }">
+          <div v-overflow-tooltip class="actions-column">
+            <template v-if="index > 0">
+              <link-button :text="'Merge'" @click="merge(mergeRecord)" />
+              <link-button :text="'Ignore'" @click="blacklist(mergeRecord)" />
+              <link-button :text="'Promote'" @click="promote(mergeRecord)" />
+            </template>
+            <template v-else>
+              <link-button :text="'Ignore All'" @click="blacklistAll()" />
+              <link-button :text="'Merge All'" @click="mergeAll()" />
+            </template>
+          </div>
+        </template>
+      </data-table>
+    </div>
+  </div>
 </template>
 
 <style src="./history-merger.scss" lang="scss" scoped></style>

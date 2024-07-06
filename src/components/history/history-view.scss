@@ -101,5 +101,10 @@
         background-color: $color-button-hover;
       }
     }
+
+    .merger-holder {
+      grid-row-start: header;
+      grid-row-end: contend;
+    }
   }
 }

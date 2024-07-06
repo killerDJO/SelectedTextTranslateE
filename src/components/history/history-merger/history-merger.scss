@@ -1,9 +1,6 @@
 .merge-candidates {
   min-height: 250px;
-  width: 50vw;
   min-width: 600px;
-  margin: $spacing-xl;
-  max-height: 80vh;
   overflow: auto;
 
   .no-records-available {
@@ -23,16 +20,26 @@
     padding-right: $spacing-default;
   }
 
+  .merge-header {
+    padding-top: $spacing-small;
+    margin-bottom: $spacing-small;
+    height: 40px;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+
   .candidates-view {
     .candidates-view-header {
-      height: 30px;
-      align-items: center;
-      display: flex;
-
       .records-label {
         font-size: $font-small;
         color: $color-gray;
-        margin-left: auto;
+      }
+
+      .header-controls {
+        display: flex;
+        align-items: center;
+        column-gap: $spacing-default;
       }
     }
 
@@ -45,24 +52,21 @@
 
   .candidate-view {
     .candidate-view-header {
-      padding: $spacing-small 0;
-      display: inline-block;
-    }
+      .navigation-button .icon {
+        width: 15px;
+        height: 15px;
+      }
 
-    .navigation-button .icon {
-      width: 15px;
-      height: 15px;
-    }
+      .candidate-view-controls {
+        display: inline-flex;
+        float: right;
+        padding: $spacing-small 0;
+        height: 30px;
+        align-items: center;
 
-    .candidate-view-controls {
-      display: inline-flex;
-      float: right;
-      padding: $spacing-small 0;
-      height: 30px;
-      align-items: center;
-
-      .navigation-button {
-        padding-left: $spacing-small;
+        .navigation-button {
+          padding-left: $spacing-small;
+        }
       }
     }
 
