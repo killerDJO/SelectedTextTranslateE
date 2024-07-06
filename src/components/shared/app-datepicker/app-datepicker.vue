@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { format, parse } from 'date-fns';
 import { computed } from 'vue';
+
+import { toISODate } from '~/utils/date.utils';
 
 interface Props {
   value: Date | undefined;
@@ -14,26 +15,24 @@ const $emit = defineEmits<{
   (e: 'update:value', date: Date | undefined): void;
 }>();
 
-const DATE_FORMAT = 'yyyy-MM-dd';
-
 const value$ = computed({
   get: () => formatDate(props.value),
   set: (value: string | undefined) => {
-    $emit('update:value', value ? parse(value, DATE_FORMAT, new Date()) : undefined);
+    $emit('update:value', value ? new Date(value) : undefined);
   }
 });
 
 function formatDate(date: Date | undefined) {
-  return date ? format(date, DATE_FORMAT) : undefined;
+  return date ? toISODate(date) : undefined;
 }
 
 function max(): string | undefined {
   if (props.disableFutureDates) {
     const maxDate = props.maxDate ?? new Date();
-    return formatDate(maxDate);
+    return toISODate(maxDate);
   }
 
-  return formatDate(props.maxDate);
+  return toISODate(props.maxDate);
 }
 </script>
 
@@ -43,7 +42,7 @@ function max(): string | undefined {
     :class="{ 'has-value': props.value }"
     class="datepicker"
     type="date"
-    :min="formatDate(minDate)"
+    :min="toISODate(minDate)"
     :max="max()"
   />
 </template>

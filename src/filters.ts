@@ -1,10 +1,15 @@
-import { format } from 'date-fns';
-
 export const filters = {
   dateTime(input: number | Date): string {
-    return format(input, 'dd/MM/yyyy, H:mm');
+    const date = new Date(input);
+    const datePart = `${padNumber(date.getDate())}/${padNumber(date.getMonth() + 1)}/${date.getFullYear()}`;
+    const timePart = `${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`;
+    return `${datePart} ${timePart}`;
   },
   percent(input: number): string {
     return `${Math.round(input)}%`;
   }
 };
+
+function padNumber(value: number): string {
+  return value.toString().padStart(2, '0');
+}

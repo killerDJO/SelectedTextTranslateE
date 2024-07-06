@@ -1,6 +1,5 @@
 import { orderBy } from 'lodash-es';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
-import { add } from 'date-fns';
 
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { SortOrder } from '~/components/history/models/sort-order.enum';
@@ -10,6 +9,7 @@ import {
   type AuthService
 } from '~/components/history/history-auth/services/auth.service';
 import { HistoryColumnName } from '~/host/models/settings.model';
+import { ensureEndOfDate, ensureStartOfDate } from '~/utils/date.utils';
 
 import { historyDatabase, type HistoryDatabase } from './history-database.service';
 
@@ -168,18 +168,15 @@ export class HistoryCache {
       const tagsCondition =
         !filter.tags?.length || filter.tags.every(tag => record.tags?.includes(tag));
 
+      const maiLastTranslatedDate = filter.minLastTranslatedDate
+        ? ensureStartOfDate(filter.minLastTranslatedDate)
+        : undefined;
       const minTranslationDateCondition =
-        !filter.minLastTranslatedDate ||
-        record.lastTranslatedDate >= filter.minLastTranslatedDate.getTime();
+        !maiLastTranslatedDate || record.lastTranslatedDate >= maiLastTranslatedDate.getTime();
 
       const maxLastTranslatedDate = filter.maxLastTranslatedDate
-        ? add(filter.maxLastTranslatedDate, {
-            hours: 23,
-            minutes: 59,
-            seconds: 59
-          })
+        ? ensureEndOfDate(filter.maxLastTranslatedDate)
         : undefined;
-      maxLastTranslatedDate?.setMilliseconds(999);
       const maxTranslationDateCondition =
         !maxLastTranslatedDate || record.lastTranslatedDate <= maxLastTranslatedDate.getTime();
 
