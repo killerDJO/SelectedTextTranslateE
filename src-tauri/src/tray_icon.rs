@@ -2,6 +2,7 @@ use std::error::Error;
 
 use tauri::{
     image::Image,
+    include_image,
     menu::{CheckMenuItem, Menu, MenuBuilder, MenuEvent, MenuItemBuilder, Submenu, SubmenuBuilder},
     tray::{MouseButton, TrayIcon, TrayIconBuilder, TrayIconEvent},
     AppHandle, Manager, Wry,
@@ -26,9 +27,9 @@ const TOGGLE_SUSPEND_MENU_ITEM_ID: &str = "toggle_suspend";
 const ABOUT_MENU_ITEM_ID: &str = "about";
 const EXIT_MENU_ITEM_ID: &str = "exit";
 
-const DEFAULT_TRAY_ICON_FILENAME: &str = "tray.ico";
-const SUSPENDED_TRAY_ICON_FILENAME: &str = "tray-suspended.ico";
-const PLAYING_TRAY_ICON_FILENAME: &str = "tray-playing.ico";
+const TRAY_ICON: Image<'_> = include_image!("./icons/tray.ico");
+const TRAY_PLAYING_ICON: Image<'_> = include_image!("./icons/tray-playing.ico");
+const TRAY_SUSPENDED_ICON: Image<'_> = include_image!("./icons/tray-suspended.ico");
 
 #[derive(Clone)]
 pub struct AppTrayIcon {
@@ -43,10 +44,7 @@ impl AppTrayIcon {
 
         let tray_icon = TrayIconBuilder::new()
             .menu(&menu)
-            .icon(Self::get_tray_icon_image(
-                app,
-                shortcuts_manager.is_suspended(),
-            ))
+            .icon(Self::get_tray_icon_image(shortcuts_manager.is_suspended()))
             .tooltip("Selected text translate..")
             .on_menu_event(Self::menu_event_handler)
             .on_tray_icon_event(Self::tray_icon_event_handler)
@@ -119,10 +117,7 @@ impl AppTrayIcon {
 
     fn handle_suspended_state_change(&self, suspended: bool) {
         self.tray_icon
-            .set_icon(Some(Self::get_tray_icon_image(
-                self.tray_icon.app_handle(),
-                suspended,
-            )))
+            .set_icon(Some(Self::get_tray_icon_image(suspended)))
             .unwrap();
         self.tray_icon
             .set_menu(Some(Self::build_menu(
@@ -170,20 +165,13 @@ impl AppTrayIcon {
 
         let tray_icon_clone = tray_icon.clone();
         app.listen(PLAY_START_EVENT, move |_| {
-            let playing_icon = Self::read_icon_from_resources(
-                tray_icon_clone.app_handle(),
-                PLAYING_TRAY_ICON_FILENAME,
-            );
-            tray_icon_clone.set_icon(Some(playing_icon)).unwrap();
+            tray_icon_clone.set_icon(Some(TRAY_PLAYING_ICON)).unwrap();
         });
 
         let tray_icon_clone = tray_icon.clone();
         app.listen(PLAY_STOP_EVENT, move |_| {
             let shortcuts_manager = tray_icon_clone.app_handle().state::<ShortcutsManager>();
-            let regular_icon = Self::get_tray_icon_image(
-                tray_icon_clone.app_handle(),
-                shortcuts_manager.is_suspended(),
-            );
+            let regular_icon = Self::get_tray_icon_image(shortcuts_manager.is_suspended());
             tray_icon_clone.set_icon(Some(regular_icon)).unwrap();
         });
     }
@@ -261,24 +249,12 @@ impl AppTrayIcon {
         tags_submenu
     }
 
-    fn get_tray_icon_image(app: &AppHandle, is_suspended: bool) -> Image<'static> {
-        let icon = if is_suspended {
-            Self::read_icon_from_resources(app, SUSPENDED_TRAY_ICON_FILENAME)
+    fn get_tray_icon_image(is_suspended: bool) -> Image<'static> {
+        if is_suspended {
+            TRAY_SUSPENDED_ICON
         } else {
-            Self::read_icon_from_resources(app, DEFAULT_TRAY_ICON_FILENAME)
-        };
-        icon
-    }
-
-    fn read_icon_from_resources(app: &AppHandle, icon_name: &str) -> Image<'static> {
-        let resources_dir = app.path().resource_dir().unwrap();
-
-        let icon_path = resources_dir
-            .join("resources")
-            .join("icons")
-            .join(icon_name);
-
-        Image::from_path(icon_path).unwrap()
+            TRAY_ICON
+        }
     }
 
     fn open_logs_folder(app: &AppHandle) -> Result<(), Box<dyn Error>> {
