@@ -42,7 +42,7 @@ function sort(): void {
 }
 </script>
 <template>
-  <div class="sortable-header" @click="sort">
+  <div class="sortable-header" :class="{ sortable }" @click="sort">
     <span v-overflow-tooltip class="header-name">{{ getColumnDisplayName(sortColumn) }}</span>
 
     <font-awesome-icon

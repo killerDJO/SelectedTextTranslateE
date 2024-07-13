@@ -2,7 +2,8 @@ export function debounce<TArgs extends Array<unknown>>(
   fn: (...args: TArgs) => void,
   delay: number
 ): (...args: TArgs) => void {
-  let timeoutID: NodeJS.Timeout | undefined = undefined;
+  let timeoutID: ReturnType<typeof setTimeout> | undefined = undefined;
+
   return function (this: unknown, ...args: TArgs) {
     clearTimeout(timeoutID);
     timeoutID = setTimeout(() => {

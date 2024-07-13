@@ -139,11 +139,18 @@ function clearFilter() {
       <div class="inputs-wrapper">
         <validated-field :errors="v$.minTranslatedTime.$errors">
           <input
-            v-model.number="state.minTranslatedTime"
+            :value="state.minTranslatedTime"
             type="number"
             min="0"
             :max="state.maxTranslatedTime"
             class="form-control"
+            @input="
+              event =>
+                debounceInput(
+                  event,
+                  value => (state.minTranslatedTime = !value ? undefined : Number(value))
+                )
+            "
           />
         </validated-field>
         <div class="range-separator">to</div>
@@ -152,10 +159,17 @@ function clearFilter() {
           :hide-message="v$.minTranslatedTime.$error"
         >
           <input
-            v-model.number="state.maxTranslatedTime"
+            :value="state.maxTranslatedTime"
             type="number"
             :min="Math.max(state.minTranslatedTime ?? 0, 1)"
             class="form-control"
+            @input="
+              event =>
+                debounceInput(
+                  event,
+                  value => (state.maxTranslatedTime = !value ? undefined : Number(value))
+                )
+            "
           />
         </validated-field>
       </div>
