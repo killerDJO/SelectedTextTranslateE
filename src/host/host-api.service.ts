@@ -41,7 +41,7 @@ export const hostApi = {
     },
 
     async hideWindow(): Promise<void> {
-      await tauriWindow.getCurrent().hide();
+      await tauriWindow.getCurrentWindow().hide();
       // Show loader for next time
       emit('before_show');
     },
@@ -53,8 +53,8 @@ export const hostApi = {
     },
 
     async showWindowOnLoad(): Promise<void> {
-      await tauriWindow.getCurrent().show();
-      await tauriWindow.getCurrent().setFocus();
+      await tauriWindow.getCurrentWindow().show();
+      await tauriWindow.getCurrentWindow().setFocus();
 
       // Remove param to prevent showing on reload
       const url = new URL(window.location.href);

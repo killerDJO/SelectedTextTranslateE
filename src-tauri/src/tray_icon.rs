@@ -5,7 +5,7 @@ use tauri::{
     include_image,
     menu::{CheckMenuItem, Menu, MenuBuilder, MenuEvent, MenuItemBuilder, Submenu, SubmenuBuilder},
     tray::{MouseButton, TrayIcon, TrayIconBuilder, TrayIconEvent},
-    AppHandle, Manager, Wry,
+    AppHandle, Listener, Manager, Wry,
 };
 use tauri_plugin_shell::ShellExt;
 

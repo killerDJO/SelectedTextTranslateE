@@ -5,7 +5,7 @@ use std::{
 };
 
 use global_hotkey::HotKeyState;
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Listener, Manager};
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
 
 use crate::{
