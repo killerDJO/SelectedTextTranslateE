@@ -3,9 +3,14 @@ import vue from '@vitejs/plugin-vue';
 import { visualizer } from 'rollup-plugin-visualizer';
 import path from 'node:path';
 
+const WITH_STATS = !!process.env.WITH_STATS;
+
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [vue(), visualizer({ filename: './dist/stats.html' })],
+  plugins: [
+    vue(),
+    WITH_STATS ? visualizer({ filename: './dist/stats.html', sourcemap: true }) : undefined
+  ],
 
   base: './',
 
@@ -22,7 +27,8 @@ export default defineConfig(async () => ({
           }
         }
       }
-    }
+    },
+    sourcemap: WITH_STATS
   },
 
   resolve: {
