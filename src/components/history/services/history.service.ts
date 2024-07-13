@@ -1,6 +1,3 @@
-import uniq from 'lodash-es/uniq';
-import cloneDeep from 'lodash-es/cloneDeep';
-
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import type { HistoryFilter } from '~/components/history/models/history-filter.model';
 import type { SortOrder } from '~/components/history/models/sort-order.enum';
@@ -17,6 +14,8 @@ import {
 } from '~/components/history/history-auth/services/auth.service';
 import { HistoryColumnName, Tag } from '~/host/models/settings.model';
 import { hostApi } from '~/host/host-api.service';
+import { uniq } from '~/utils/collection.utils';
+import { cloneDeep } from '~/utils/object.utils';
 
 import { historyDatabase, type HistoryDatabase } from './history-database.service';
 import { historyCache, type HistoryCache } from './history-cache.service';

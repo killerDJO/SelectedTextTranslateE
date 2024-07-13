@@ -1,5 +1,5 @@
 import { hostApi } from '~/host/host-api.service';
-import { ensureErrorType } from '~/utils/error-handling.utils';
+import { ensureErrorType } from '~/utils';
 
 export class Logger {
   public info(message: string): void {

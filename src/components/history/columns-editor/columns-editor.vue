@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import isEqual from 'lodash-es/isEqual';
 
 import type { DropItem } from '~/components/shared/drop-button/drop-button.vue';
 import DropButton from '~/components/shared/drop-button/drop-button.vue';
 import { HistoryColumnName, HistoryColumns } from '~/host/models/settings.model';
 import { getColumnDisplayName } from '../history.utils';
+import { deepEqual } from '~/utils/object.utils';
 
 interface ColumnDropItem extends DropItem {
   readonly column: HistoryColumnName;
@@ -47,7 +47,7 @@ function itemClick(item: ColumnDropItem) {
     visible: !updatedColumns[item.column].visible
   };
 
-  if (!isEqual(props.columns, updatedColumns)) {
+  if (!deepEqual(props.columns, updatedColumns)) {
     $emit('update-columns', updatedColumns);
   }
 }

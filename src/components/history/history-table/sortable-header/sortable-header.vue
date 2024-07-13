@@ -7,8 +7,13 @@ interface Props {
   sortColumn: HistoryColumnName;
   currentSortOrder?: SortOrder;
   currentSortColumn?: HistoryColumnName;
+  sortable?: boolean;
 }
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  sortable: true,
+  currentSortOrder: undefined,
+  currentSortColumn: undefined
+});
 
 const $emit = defineEmits<{
   (e: 'update:currentSortOrder', sortOrder: SortOrder): void;
@@ -41,6 +46,7 @@ function sort(): void {
     <span v-overflow-tooltip class="header-name">{{ getColumnDisplayName(sortColumn) }}</span>
 
     <font-awesome-icon
+      v-if="sortable"
       icon="caret-up"
       size="xs"
       class="icon sort-asc"
@@ -51,6 +57,7 @@ function sort(): void {
       title="Sort Ascending"
     />
     <font-awesome-icon
+      v-if="sortable"
       icon="caret-down"
       size="xs"
       class="icon sort-desc"

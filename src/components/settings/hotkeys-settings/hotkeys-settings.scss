@@ -18,6 +18,7 @@
       display: grid;
       grid-template-columns: 1fr $action-column-width;
       overflow: hidden;
+      font-size: $font-medium;
 
       .hotkeys-list-header,
       .hotkeys-list-hotkey,

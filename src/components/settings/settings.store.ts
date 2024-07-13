@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import cloneDeep from 'lodash-es/cloneDeep';
 
 import { useAppStore } from '~/app.store';
 import { DeepPartial, Settings } from '~/host/models/settings.model';
@@ -33,7 +32,7 @@ export const useSettingsStore = defineStore('settings', {
       this.isStartupEnabled = await hostApi.startup.getStartupState();
     },
     async updateSettings(settings: DeepPartial<Settings>) {
-      await hostApi.settings.updateSettings(cloneDeep(settings));
+      await hostApi.settings.updateSettings(settings);
     },
     async pauseHotkeys() {
       await hostApi.globalHotkeys.pauseHotkeys();

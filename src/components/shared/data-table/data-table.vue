@@ -1,6 +1,7 @@
 <script setup lang="ts" generic="TRecord extends { id: string }, TColumns extends string">
-import cloneDeep from 'lodash-es/cloneDeep';
 import { Ref, computed, onMounted, ref, useSlots, watch } from 'vue';
+
+import { cloneDeep } from '~/utils/object.utils';
 
 export interface DataTableConfig<TColumns> {
   readonly columns: ReadonlyArray<DataTableColumnConfig<TColumns>>;

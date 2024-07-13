@@ -173,11 +173,7 @@ const statusBodySlotId = getBodySlotId('archived');
 
     <template #[tagsHeaderSlotId]>
       <div>
-        <sortable-header
-          v-model:current-sort-column="sortColumn$"
-          v-model:current-sort-order="sortOrder$"
-          :sort-column="'tags'"
-        />
+        <sortable-header :sortable="false" :sort-column="'tags'" />
       </div>
     </template>
     <template #[tagsBodySlotId]="{ record }">

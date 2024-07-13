@@ -20,6 +20,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    "typeRoots": ["./node_modules/@types"],
+
     "paths": {
       "~/*": ["./src/*"]
     }

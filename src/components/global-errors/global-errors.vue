@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ensureErrorType } from '~/utils/error-handling.utils';
+import { ensureErrorType } from '~/utils';
 
 import AppError from './app-error/app-error.vue';
 import { useGlobalErrorsStore } from './global-errors.store';

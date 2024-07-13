@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
-import isEqual from 'lodash-es/isEqual';
 
 import { Keys } from '~/host/models/settings.model';
+import { deepEqual } from '~/utils/object.utils';
 
 interface Props {
   hotkey: Keys | null;
@@ -122,7 +122,7 @@ function isNavigationSequence(keys: string[]): boolean {
     return true;
   }
 
-  return isEqual([shiftKey, tabKey], keys);
+  return deepEqual([shiftKey, tabKey], keys);
 }
 </script>
 

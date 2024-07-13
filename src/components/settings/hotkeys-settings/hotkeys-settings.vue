@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue';
-import { cloneDeep, isEmpty } from 'lodash-es';
 
 import { useSettingsStore } from '~/components/settings/settings.store';
 import type ConfirmModal from '~/components/shared/confirm-modal/confirm-modal.vue';
 import { HotkeySettings, Keys } from '~/host/models/settings.model';
+import { cloneDeep } from '~/utils/object.utils';
 
 import HotkeyInput from './hotkey-input/hotkey-input.vue';
 
@@ -137,7 +137,7 @@ function updateHotkeySettings(): void {
     }
   }
 
-  if (!isEmpty(updatedHotkeySettings)) {
+  if (Object.keys(updatedHotkeySettings).length) {
     settingsStore.updateSettings({ hotkeys: updatedHotkeySettings });
   }
 }

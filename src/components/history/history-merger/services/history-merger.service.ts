@@ -1,5 +1,3 @@
-import uniq from 'lodash-es/uniq';
-
 import { logger, type Logger } from '~/services/logger.service';
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
 import { SortOrder } from '~/components/history/models/sort-order.enum';
@@ -9,6 +7,7 @@ import type {
   MergeHistoryRecord
 } from '~/components/history/history-merger/models/merge-candidate.model';
 import { settingsProvider, type SettingsProvider } from '~/services/settings-provider.service';
+import { uniq } from '~/utils/collection.utils';
 
 import {
   mergeCandidatesFinder,
@@ -63,14 +62,14 @@ export class HistoryMerger {
     const updatedTargetRecord: HistoryRecord = {
       ...targetRecord,
       translationsNumber: targetRecord.translationsNumber + sourceRecord.translationsNumber,
-      tags: uniq((targetRecord.tags || []).concat(sourceRecord.tags || [])),
+      tags: uniq((targetRecord.tags ?? []).concat(sourceRecord.tags ?? [])),
       instances: mergedTranslationInstances
     };
 
     const updatedSourceRecord: HistoryRecord = {
       ...sourceRecord,
       isArchived: true,
-      tags: uniq((sourceRecord.tags || []).concat(['Merged']))
+      tags: uniq((sourceRecord.tags ?? []).concat(['Merged']))
     };
 
     await Promise.all([

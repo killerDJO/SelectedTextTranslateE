@@ -1,4 +1,3 @@
-import orderBy from 'lodash-es/orderBy';
 import { openDB, type DBSchema, type IDBPDatabase } from 'idb';
 
 import type { HistoryRecord } from '~/components/history/models/history-record.model';
@@ -10,6 +9,7 @@ import {
 } from '~/components/history/history-auth/services/auth.service';
 import { HistoryColumnName } from '~/host/models/settings.model';
 import { ensureEndOfDate, ensureStartOfDate } from '~/utils/date.utils';
+import { sortBy, SortByGetter } from '~/utils/collection.utils';
 
 import { historyDatabase, type HistoryDatabase } from './history-database.service';
 
@@ -133,18 +133,25 @@ export class HistoryCache {
     sortColumn: HistoryColumnName,
     sortOrder: SortOrder
   ): HistoryRecord[] {
-    const sortColumnMap: { [key in HistoryColumnName]: string } = {
-      input: 'sentence',
-      timesTranslated: 'translationsNumber',
-      lastTranslatedDate: 'lastTranslatedDate',
-      translation: 'translateResult.sentence.translation',
-      sourceLanguage: 'sourceLanguage',
-      targetLanguage: 'targetLanguage',
-      archived: 'isArchived',
-      tags: 'tags'
+    const sortColumnMap: {
+      [key in HistoryColumnName]: SortByGetter<HistoryRecord> | undefined;
+    } = {
+      input: record => record.sentence,
+      timesTranslated: record => record.translationsNumber,
+      lastTranslatedDate: record => record.lastTranslatedDate,
+      translation: record => record.translateResult.sentence.translation ?? '',
+      sourceLanguage: record => record.sourceLanguage,
+      targetLanguage: record => record.sourceLanguage,
+      archived: record => record.isArchived,
+      tags: undefined
     };
 
-    return orderBy(records, [sortColumnMap[sortColumn]], [sortOrder]);
+    const sortGetter = sortColumnMap[sortColumn];
+    if (!sortGetter) {
+      throw new Error(`Sorting by column ${sortColumn} is not supported`);
+    }
+
+    return sortBy(records, sortGetter, sortOrder);
   }
 
   private filterRecords(records: HistoryRecord[], filter: HistoryFilter): HistoryRecord[] {

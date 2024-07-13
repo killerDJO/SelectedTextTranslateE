@@ -1,6 +1,6 @@
 import { hostApi } from '~/host/host-api.service';
 import { settingsProvider, SettingsProvider } from '~/services/settings-provider.service';
-import { replacePattern } from '~/utils/pattern.utils';
+import { replacePattern } from '~/utils';
 
 export class SearchExecutor {
   public constructor(private readonly settingsProvider: SettingsProvider) {}

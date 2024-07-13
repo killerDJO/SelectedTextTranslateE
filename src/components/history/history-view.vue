@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue';
-import cloneDeep from 'lodash-es/cloneDeep';
-import uniq from 'lodash-es/uniq';
 
 import { useAppStore } from '~/app.store';
 import { useTranslateResultStore } from '~/components/translation/translation-result/translation-result.store';
@@ -9,6 +7,8 @@ import TranslationResult from '~/components/translation/translation-result/trans
 import type { TranslateRequest } from '../translation/models/requests.model';
 import { HistoryColumns, Tag } from '~/host/models/settings.model';
 import { settingsProvider } from '~/services/settings-provider.service';
+import { uniq } from '~/utils/collection.utils';
+import { cloneDeep } from '~/utils/object.utils';
 
 import ColumnsEditor from './columns-editor/columns-editor.vue';
 import TagsEditor from './tags-editor/tags-editor.vue';

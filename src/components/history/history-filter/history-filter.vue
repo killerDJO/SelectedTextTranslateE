@@ -1,8 +1,5 @@
 <script setup lang="ts">
 import { useVuelidate } from '@vuelidate/core';
-import cloneDeep from 'lodash-es/cloneDeep';
-import debounce from 'lodash-es/debounce';
-import isEqual from 'lodash-es/isEqual';
 import { computed, reactive, ref, watch } from 'vue';
 import { helpers, maxValue, minValue } from '@vuelidate/validators';
 
@@ -12,6 +9,8 @@ import type { HistoryFilter } from '~/components/history/models/history-filter.m
 import type { SelectedLanguages } from '~/components/shared/language-selector/language-selector.vue';
 import { Tag } from '~/host/models/settings.model';
 import { settingsProvider } from '~/services/settings-provider.service';
+import { cloneDeep, deepEqual } from '~/utils/object.utils';
+import { debounce } from '~/utils';
 
 interface Props {
   filter: HistoryFilter;
@@ -50,7 +49,7 @@ watch(state, async () => await executeIfValid(v$, () => $emit('filter-updated', 
 watch(
   () => props.filter,
   () => {
-    if (!isEqual(props.filter, state)) {
+    if (!deepEqual(props.filter, state)) {
       Object.assign(state, props.filter);
     }
   },
