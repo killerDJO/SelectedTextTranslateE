@@ -22,7 +22,10 @@ export type TranslationCommand = 'Play' | 'ShowInput' | { Translate: boolean };
 export const hostApi = {
   view: {
     getViewName(): ViewNames {
-      return window.location.hash.slice(2) as ViewNames;
+      const urlParams = new URLSearchParams(window.location.search);
+      const viewName = urlParams.get('view');
+
+      return viewName as ViewNames;
     },
 
     async onBeforeShow(callback: () => void): Promise<void> {

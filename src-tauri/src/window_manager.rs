@@ -188,7 +188,7 @@ fn show_standard_window(
 
 fn get_window_url(view_name: &str, show_on_load: bool) -> tauri::WebviewUrl {
     tauri::WebviewUrl::App(
-        format!("{WEB_VIEW_PATH}?show_on_load={show_on_load}#{view_name}").into(),
+        format!("{WEB_VIEW_PATH}?show_on_load={show_on_load}&view={view_name}").into(),
     )
 }
 

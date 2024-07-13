@@ -57,14 +57,7 @@ function registerHotkeys(): void {
 </script>
 
 <template>
-  <div v-if="app.isFrameless" class="drag-control" data-tauri-drag-region>
-    <font-awesome-icon
-      class="icon-restore"
-      icon="up-down-left-right"
-      size="sm"
-      data-tauri-drag-region
-    />
-  </div>
+  <div v-if="app.isFrameless" class="drag-control" data-tauri-drag-region></div>
   <div
     class="main"
     :style="{ 'border-color': app.accentColor }"
