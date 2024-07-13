@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router';
 import { onMounted, ref, watch } from 'vue';
 
 import GlobalErrors from './components/global-errors/global-errors.vue';
@@ -7,10 +6,17 @@ import { useAppStore } from './app.store';
 import { useHistoryAuthStore } from './components/history/history-auth/history-auth.store';
 import { hotkeysRegistry } from './services/hotkeys-registry.service';
 import { hostApi } from './host/host-api.service';
+import TranslationView from './components/translation/translation-view.vue';
+import HistoryView from './components/history/history-view.vue';
+import SettingsView from './components/settings/settings-view.vue';
+import AboutView from './components/about/about-view.vue';
+import { ViewNames } from './host/models/views.model';
 
 const app = useAppStore();
 const historyAuth = useHistoryAuthStore();
 const isSetupCompleted = ref(false);
+
+const viewName = ref(app.viewName);
 
 onMounted(async () => {
   await app.setup();
@@ -74,7 +80,10 @@ function registerHotkeys(): void {
     <global-errors></global-errors>
     <div v-if="isSetupCompleted" class="scroll-holder">
       <div class="view" :style="{ zoom: app.scaleFactor * 100 + '%' }">
-        <RouterView></RouterView>
+        <TranslationView v-if="viewName === ViewNames.Translation" />
+        <HistoryView v-if="viewName === ViewNames.History" />
+        <SettingsView v-if="viewName === ViewNames.Settings" />
+        <AboutView v-if="viewName === ViewNames.About" />
       </div>
     </div>
     <app-loader v-else :large="true" :style="{ zoom: app.scaleFactor * 100 + '%' }"></app-loader>

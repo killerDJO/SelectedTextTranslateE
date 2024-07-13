@@ -40,6 +40,9 @@ export const useAppStore = defineStore('app', {
     },
     isFrameless: () => {
       return hostApi.view.getViewName() === ViewNames.Translation;
+    },
+    viewName: () => {
+      return hostApi.view.getViewName();
     }
   },
   actions: {

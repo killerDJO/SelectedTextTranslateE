@@ -31,7 +31,6 @@
     "tinykeys": "^2.1.0",
     "tippy.js": "6.3.7",
     "vue": "3.4.31",
-    "vue-router": "4.4.0",
     "vuejs-paginate-next": "1.0.2"
   },
   "devDependencies": {

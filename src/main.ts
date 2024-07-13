@@ -1,7 +1,6 @@
 import { createPinia } from 'pinia';
 import { createApp } from 'vue';
 
-import router from './router';
 import { filters } from './filters';
 import { setupErrorHandling } from './error-handler';
 import App from './app.vue';
@@ -36,7 +35,6 @@ const app = createApp(App);
 setupErrorHandling(app);
 
 app.use(createPinia());
-app.use(router);
 
 app
   .component('FontAwesomeIcon', FontAwesomeIcon)
