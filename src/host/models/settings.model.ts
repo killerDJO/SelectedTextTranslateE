@@ -19,6 +19,7 @@ export type PartialSettings = DeepPartial<Settings>;
 export type CoreSettings = {
   copyDelayMilliseconds: number;
   requestTimeoutMilliseconds: number;
+  logRequests: boolean;
   playVolume: number;
   searchPattern: string;
   lastRecordsToScanForMerge: number;

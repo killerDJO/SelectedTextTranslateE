@@ -2,6 +2,7 @@
   "core": {
     "copyDelayMilliseconds": 100,
     "requestTimeoutMilliseconds": 10000,
+    "logRequests": false,
     "playVolume": 100,
     "searchPattern": "https://www.google.com.ua/search?safe=off&source=hp&q={{query}}",
     "lastRecordsToScanForMerge": 10000,

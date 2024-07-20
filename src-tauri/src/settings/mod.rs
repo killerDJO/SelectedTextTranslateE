@@ -39,6 +39,7 @@ pub struct PartialSettings {
 pub struct CoreSettings {
     pub copy_delay_milliseconds: u64,
     pub request_timeout_milliseconds: u32,
+    pub log_requests: bool,
     pub play_volume: u32,
     pub search_pattern: String,
     pub last_records_to_scan_for_merge: u32,
