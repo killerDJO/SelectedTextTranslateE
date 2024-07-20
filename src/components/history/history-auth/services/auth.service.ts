@@ -1,4 +1,4 @@
-import { AuthError, isAuthApiError } from '@supabase/supabase-js';
+import { AuthError, isAuthApiError, Session } from '@supabase/supabase-js';
 
 import {
   SignInErrorCodes,
@@ -54,24 +54,13 @@ export class AuthService {
 
     this.throwOnAuthError(session.error);
 
-    if (!session.data.session) {
-      return null;
-    }
-
-    if (!session.data.session.user.email) {
-      throw new Error('Email is not available');
-    }
-
-    return {
-      email: session.data.session.user.email.toLowerCase(),
-      uid: session.data.session.user.id
-    };
+    return this.mapAccountFromSession(session.data.session);
   }
 
   public async onAccountChanged(callback: (account: AccountInfo | null) => void) {
     const supabase = await this.supabaseProvider.getClient();
 
-    supabase.auth.onAuthStateChange(async event => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
       try {
         if (event === 'USER_UPDATED') {
           return;
@@ -82,11 +71,26 @@ export class AuthService {
           return;
         }
 
-        callback(await this.getAccount());
+        callback(this.mapAccountFromSession(session));
       } catch (error: unknown) {
         this.logger.error(error, 'Error occurred while handling auth state change');
       }
     });
+  }
+
+  private mapAccountFromSession(session: Session | null): AccountInfo | null {
+    if (!session) {
+      return null;
+    }
+
+    if (!session.user.email) {
+      throw new Error('Email is not available');
+    }
+
+    return {
+      email: session.user.email.toLowerCase(),
+      uid: session.user.id
+    };
   }
 
   private handleAuthResponse<TErrorCodes>(
