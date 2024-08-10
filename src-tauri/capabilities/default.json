@@ -4,20 +4,20 @@
   "description": "Capability for the windows",
   "windows": ["translation", "history", "settings", "about"],
   "permissions": [
-    "event:default",
-    "window:default",
-    "window:allow-start-dragging",
-    "window:allow-hide",
-    "window:allow-show",
-    "window:allow-set-focus",
+    "core:event:default",
+    "core:window:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-hide",
+    "core:window:allow-show",
+    "core:window:allow-set-focus",
+    "core:app:allow-version",
+    "core:webview:allow-internal-toggle-devtools",
     "shell:allow-open",
     "log:allow-log",
-    "webview:allow-internal-toggle-devtools",
     "notification:allow-is-permission-granted",
     "autostart:allow-is-enabled",
     "autostart:allow-enable",
     "autostart:allow-disable",
-    "app:allow-version",
     "updater:default"
   ]
 }
