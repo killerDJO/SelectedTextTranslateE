@@ -10,6 +10,7 @@ import {
   isEnabled as isAutostartEnabled,
   disable as disableAutostart
 } from '@tauri-apps/plugin-autostart';
+import { getCurrentWebview } from '@tauri-apps/api/webview';
 
 import { PartialSettings, Settings } from './models/settings.model';
 import { ViewNames } from './models/views.model';
@@ -60,6 +61,10 @@ export const hostApi = {
       const url = new URL(window.location.href);
       url.searchParams.delete(SHOW_ON_LOAD_QUERY_PARAM);
       window.history.replaceState(null, '', url.toString());
+    },
+
+    async setZoom(zoom: number) {
+      await getCurrentWebview().setZoom(zoom);
     }
   },
 

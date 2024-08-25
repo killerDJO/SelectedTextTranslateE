@@ -32,7 +32,7 @@ export const useAppStore = defineStore('app', {
         return 1;
       }
       const viewName = hostApi.view.getViewName();
-      if (viewName !== ViewNames.Translation && state._settings.scaling.scaleTranslationViewOnly) {
+      if (viewName !== ViewNames.Translation) {
         return 1;
       }
 
@@ -53,8 +53,13 @@ export const useAppStore = defineStore('app', {
       ]);
       this.accentColor = accentColor;
       this._settings = settings;
+      applyWebviewZoom(settings);
 
-      hostApi.settings.onSettingsChange(settings => (this._settings = settings));
+      hostApi.settings.onSettingsChange(settings => {
+        this._settings = settings;
+        applyWebviewZoom(settings);
+      });
+
       hostApi.view.onAccentColorChange(accentColor => (this.accentColor = accentColor));
     },
     zoomIn(): void {
@@ -86,3 +91,14 @@ export const useAppStore = defineStore('app', {
     }
   }
 });
+
+function applyWebviewZoom(settings: Settings): void {
+  // Translation window is scaled separately using zoom attribute, to avoid scaling custom frame
+  const viewName = hostApi.view.getViewName();
+  if (viewName === ViewNames.Translation || settings.scaling.scaleTranslationViewOnly) {
+    hostApi.view.setZoom(1);
+    return;
+  }
+
+  hostApi.view.setZoom(settings.scaling.scaleFactor);
+}

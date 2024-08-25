@@ -16,7 +16,6 @@ $items-size: 400px;
 
   > .holder {
     background-color: $color-white;
-    min-width: $items-size + $spacing-large;
     padding: $spacing-default;
     display: grid;
   }
