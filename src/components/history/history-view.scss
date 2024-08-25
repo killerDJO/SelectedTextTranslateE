@@ -8,7 +8,7 @@
     grid-template:
       'header'
       'content';
-    grid-template-rows: $header-height max-content;
+    grid-template-rows: minmax($header-height, max-content) max-content;
     min-height: 100vh;
     row-gap: $spacing-small;
 
@@ -17,7 +17,7 @@
         'header sidebar-controls sidebar'
         'content sidebar-controls sidebar';
       grid-template-columns: 1fr $spacing-large 30%;
-      grid-template-rows: $header-height max-content;
+      grid-template-rows: minmax($header-height, max-content) max-content;
       column-gap: $spacing-small;
     }
 
@@ -74,16 +74,17 @@
     .sidebar {
       grid-area: sidebar;
       background-color: $color-white;
-      padding: $spacing-small $spacing-small $spacing-small 0;
+      margin: $spacing-small $spacing-small $spacing-small 0;
       overflow: auto;
       position: relative;
-      height: calc(100vh - $spacing-small);
+      height: calc(100vh - 2 * $spacing-small);
+      border: $border-width solid $color-border;
+      border-radius: $border-radius;
 
       .history-translate-result {
-        border: $border-width solid $color-border;
-        border-radius: $border-radius;
         overflow: auto;
         height: 100%;
+        width: 100%;
       }
     }
 
