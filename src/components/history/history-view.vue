@@ -187,8 +187,8 @@ function toggleMerger() {
         :class="{ 'full-height': !history.records?.length }"
       >
         <history-table
-          v-model:sortColumn="history.sortColumn"
-          v-model:sortOrder="history.sortOrder"
+          v-model:sort-column="history.sortColumn"
+          v-model:sort-order="history.sortOrder"
           :columns="columns"
           :history-records="history.records ?? []"
           :is-loading="history.isLoading"

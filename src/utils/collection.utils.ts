@@ -1,5 +1,5 @@
 export function uniq<T>(array: Iterable<T>): T[] {
-  return Array.from(new Set(array) ?? []);
+  return Array.from(new Set(array));
 }
 
 export type SortByGetter<T> = (value: T) => number | boolean | string | Date;

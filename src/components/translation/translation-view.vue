@@ -8,7 +8,6 @@ import TranslationResult from './translation-result/translation-result.vue';
 import TranslationInput from './translation-input/translation-input.vue';
 import { useTranslateResultStore } from './translation-result/translation-result.store';
 import { useTranslationStore } from './translation.store';
-import type { TranslateRequest } from './models/requests.model';
 
 const app = useAppStore();
 const translateResult = useTranslateResultStore();
@@ -53,7 +52,7 @@ function archive() {
       @force-translation="translateResult.forceTranslation()"
       @archive="archive()"
       @unarchive="translateResult.unarchive()"
-      @translate-text="(request: TranslateRequest) => translateResult.translateText(request)"
+      @translate-text="request => translateResult.translateText(request)"
       @change-language="translateResult.changeLanguage()"
       @play-text="translateResult.playCurrentSentence()"
       @search="translateResult.search()"
