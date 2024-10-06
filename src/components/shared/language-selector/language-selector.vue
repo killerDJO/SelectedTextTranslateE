@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const $emit = defineEmits<{
-  (e: 'languages-updated', languages: SelectedLanguages): void;
+  'languages-updated': [languages: SelectedLanguages];
 }>();
 
 const selectedLanguages = reactive({

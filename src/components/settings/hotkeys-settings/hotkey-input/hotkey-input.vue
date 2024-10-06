@@ -10,9 +10,9 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'input-started'): void;
-  (e: 'input-completed'): void;
-  (e: 'update:hotkey', hotkey: Keys | null): void;
+  'input-started': [];
+  'input-completed': [];
+  'update:hotkey': [hotkey: Keys | null];
 }>();
 
 const keys = ref<string[]>([]);

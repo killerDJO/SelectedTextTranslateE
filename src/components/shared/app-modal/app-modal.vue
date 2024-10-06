@@ -10,7 +10,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const $emit = defineEmits<{
-  (e: 'update:show', show: false): void;
+  'update:show': [show: false];
 }>();
 
 const slots = useSlots();

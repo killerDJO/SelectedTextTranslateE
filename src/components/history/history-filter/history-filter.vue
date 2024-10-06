@@ -18,8 +18,8 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'filter-updated', filter: HistoryFilter): void;
-  (e: 'close'): void;
+  'filter-updated': [filter: HistoryFilter];
+  close: [];
 }>();
 
 const languages = ref(settingsProvider.getLanguages());

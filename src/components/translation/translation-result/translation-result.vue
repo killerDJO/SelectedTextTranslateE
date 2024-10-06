@@ -31,19 +31,18 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const $emit = defineEmits<{
-  (e: 'play-text'): void;
-  (e: 'translate-text', request: TranslateRequest): void;
-  (e: 'translate-suggestion'): void;
-  (e: 'force-translation'): void;
-  (e: 'set-starred-status', isStarred: boolean): void;
-  (e: 'archive', historyRecord: HistoryRecord): void;
-  (e: 'change-language'): void;
-  (e: 'search'): void;
-  (e: 'translate', text: string): void;
-  (e: 'hard-delete'): void;
-  (e: 'archive'): void;
-  (e: 'unarchive'): void;
-  (e: 'update-tags', tags: ReadonlyArray<Tag>): void;
+  'play-text': [];
+  'translate-text': [request: TranslateRequest];
+  'translate-suggestion': [];
+  'force-translation': [];
+  'set-starred-status': [isStarred: boolean];
+  'change-language': [];
+  search: [];
+  translate: [text: string];
+  'hard-delete': [];
+  archive: [];
+  unarchive: [];
+  'update-tags': [tags: ReadonlyArray<Tag>];
 }>();
 
 watch(
@@ -57,7 +56,7 @@ watch(
       props.settings.hotkeys.archiveResult,
       () => {
         if (props.historyRecord) {
-          $emit('archive', props.historyRecord);
+          $emit('archive');
         }
       }
     );

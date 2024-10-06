@@ -19,7 +19,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'update-columns', columns: HistoryColumns): void;
+  'update-columns': [columns: HistoryColumns];
 }>();
 
 const dropInstance = ref<InstanceType<typeof DropButton> | null>(null);

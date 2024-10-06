@@ -11,11 +11,11 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'play-text'): void;
-  (e: 'translate-suggestion'): void;
-  (e: 'force-translation'): void;
-  (e: 'set-starred-status', isStarred: boolean): void;
-  (e: 'translate-text', text: string): void;
+  'play-text': [];
+  'translate-suggestion': [];
+  'force-translation': [];
+  'set-starred-status': [isStarred: boolean];
+  'translate-text': [text: string];
 }>();
 
 const sentence = computed(() => props.translateResult.sentence);

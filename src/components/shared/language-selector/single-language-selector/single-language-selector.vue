@@ -11,7 +11,7 @@ defineProps<Props>();
 const NOT_SELECTED_VALUE = '-';
 
 const $emit = defineEmits<{
-  (e: 'update:selectedLanguage', language?: string): void;
+  'update:selectedLanguage': [language?: string];
 }>();
 
 function onLanguageSelected(element: HTMLSelectElement) {

@@ -16,8 +16,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const $emit = defineEmits<{
-  (e: 'update:currentSortOrder', sortOrder: SortOrder): void;
-  (e: 'update:currentSortColumn', sortColumn: HistoryColumnName): void;
+  'update:currentSortOrder': [sortOrder: SortOrder];
+  'update:currentSortColumn': [sortColumn: HistoryColumnName];
 }>();
 
 function isSortArrowHidden(sortOrder: SortOrder): boolean {

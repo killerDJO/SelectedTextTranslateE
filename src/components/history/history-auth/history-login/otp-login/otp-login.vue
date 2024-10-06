@@ -21,7 +21,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'show-message', message: string | null): void;
+  'show-message': [message: string | null];
 }>();
 
 const historyAuth = useHistoryAuthStore();

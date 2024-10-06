@@ -8,7 +8,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 defineEmits<{
-  (e: 'click'): void;
+  click: [];
 }>();
 </script>
 

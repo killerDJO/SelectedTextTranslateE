@@ -25,11 +25,8 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'record-click', record: TRecord): void;
-  (
-    e: 'update-columns-configuration',
-    columns: ReadonlyArray<DataTableColumnConfig<TColumns>>
-  ): void;
+  'record-click': [record: TRecord];
+  'update-columns-configuration': [columns: ReadonlyArray<DataTableColumnConfig<TColumns>>];
 }>();
 
 const slots = useSlots();

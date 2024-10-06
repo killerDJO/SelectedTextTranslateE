@@ -22,8 +22,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 defineEmits<{
-  (e: 'click'): void;
-  (e: 'item-click', item: DropItem): void;
+  click: [];
+  'item-click': [item: DropItem];
 }>();
 
 const baseDrop = useDrop();

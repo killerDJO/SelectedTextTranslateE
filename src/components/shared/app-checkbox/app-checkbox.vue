@@ -13,7 +13,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 defineEmits<{
-  (e: 'update:value', isChecked: boolean): void;
+  'update:value': [isChecked: boolean];
 }>();
 </script>
 

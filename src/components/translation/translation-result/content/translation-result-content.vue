@@ -28,13 +28,13 @@ interface Props {
 const props = defineProps<Props>();
 
 defineEmits<{
-  (e: 'change-language'): void;
-  (e: 'search'): void;
-  (e: 'translate', text: string): void;
-  (e: 'hard-delete'): void;
-  (e: 'archive'): void;
-  (e: 'unarchive'): void;
-  (e: 'update-tags', tags: Tag[]): void;
+  'change-language': [];
+  search: [];
+  translate: [text: string];
+  'hard-delete': [];
+  archive: [];
+  unarchive: [];
+  'update-tags': [tags: Tag[]];
 }>();
 
 const showTags = ref(false);

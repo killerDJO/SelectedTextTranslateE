@@ -9,7 +9,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 const $emit = defineEmits<{
-  (e: 'confirm'): void;
+  confirm: [];
 }>();
 
 const isVisible = ref(false);

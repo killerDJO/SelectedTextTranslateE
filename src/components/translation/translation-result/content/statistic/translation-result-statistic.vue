@@ -12,9 +12,9 @@ interface Props {
 defineProps<Props>();
 
 defineEmits<{
-  (e: 'hard-delete'): void;
-  (e: 'archive'): void;
-  (e: 'unarchive'): void;
+  'hard-delete': [];
+  archive: [];
+  unarchive: [];
 }>();
 
 const confirmModalInstance = ref<InstanceType<typeof ConfirmModal> | null>(null);

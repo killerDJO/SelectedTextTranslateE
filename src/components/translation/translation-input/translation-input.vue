@@ -15,8 +15,8 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'translate-text', request: TranslateRequest): void;
-  (e: 'play-text', request: PlayTextRequest): void;
+  'translate-text': [request: TranslateRequest];
+  'play-text': [request: PlayTextRequest];
 }>();
 
 const selectedLanguages = reactive({

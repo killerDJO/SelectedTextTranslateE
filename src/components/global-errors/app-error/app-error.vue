@@ -9,7 +9,7 @@ interface Props {
 withDefaults(defineProps<Props>(), { dismissible: true });
 
 defineEmits<{
-  (e: 'dismiss'): void;
+  dismiss: [];
 }>();
 
 const isExpanded = ref(false);

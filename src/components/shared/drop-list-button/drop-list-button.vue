@@ -22,7 +22,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 defineEmits<{
-  (e: 'click'): void;
+  click: [];
 }>();
 
 const dropButton = ref<InstanceType<typeof DropButton> | null>(null);

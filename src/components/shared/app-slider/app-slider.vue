@@ -8,7 +8,7 @@ interface Props {
 defineProps<Props>();
 
 defineEmits<{
-  (e: 'update:value', value: number): void;
+  'update:value': [value: number];
 }>();
 </script>
 

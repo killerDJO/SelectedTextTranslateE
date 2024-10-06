@@ -12,7 +12,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'update:value', date: Date | undefined): void;
+  'update:value': [date: Date | undefined];
 }>();
 
 const value$ = computed({

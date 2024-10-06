@@ -9,7 +9,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 defineEmits<{
-  (e: 'dismiss'): void;
+  dismiss: [];
 }>();
 </script>
 

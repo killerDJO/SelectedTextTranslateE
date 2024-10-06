@@ -18,9 +18,9 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const $emit = defineEmits<{
-  (e: 'get-suggestions', input: string): void;
-  (e: 'input-changed', input: string): void;
-  (e: 'input-selected', input: string): void;
+  'get-suggestions': [input: string];
+  'input-changed': [input: string];
+  'input-selected': [input: string];
 }>();
 
 const drop = useDrop();

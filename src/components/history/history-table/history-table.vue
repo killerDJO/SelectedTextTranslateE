@@ -24,15 +24,15 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'update:sortColumn', column: HistoryColumnName): void;
-  (e: 'update:sortOrder', column: SortOrder): void;
-  (e: 'update-columns', columns: HistoryColumns): void;
-  (e: 'translate-record', record: HistoryRecord): void;
-  (e: 'set-starred-status', record: HistoryRecord, isStarred: boolean): void;
-  (e: 'play-record', record: HistoryRecord): void;
-  (e: 'update-tags', record: HistoryRecord, tags: ReadonlyArray<Tag>): void;
-  (e: 'tag-clicked', tag: Tag): void;
-  (e: 'set-archived-status', record: HistoryRecord, isArchived: boolean): void;
+  'update:sortColumn': [column: HistoryColumnName];
+  'update:sortOrder': [column: SortOrder];
+  'update-columns': [columns: HistoryColumns];
+  'translate-record': [record: HistoryRecord];
+  'set-starred-status': [record: HistoryRecord, isStarred: boolean];
+  'play-record': [record: HistoryRecord];
+  'update-tags': [record: HistoryRecord, tags: ReadonlyArray<Tag>];
+  'tag-clicked': [tag: Tag];
+  'set-archived-status': [record: HistoryRecord, isArchived: boolean];
 }>();
 
 const sortColumn$ = computed({

@@ -14,7 +14,7 @@ interface Props {
 const props = defineProps<Props>();
 
 defineEmits<{
-  (e: 'translate', text: string): void;
+  translate: [text: string];
 }>();
 
 const isExpanded = ref(false);

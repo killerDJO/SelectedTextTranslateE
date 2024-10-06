@@ -15,8 +15,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const $emit = defineEmits<{
-  (e: 'tag-clicked', tag: Tag): void;
-  (e: 'update-tags', tags: Tag[]): void;
+  'tag-clicked': [tag: Tag];
+  'update-tags': [tags: Tag[]];
 }>();
 
 const isTagInputVisible = ref(false);

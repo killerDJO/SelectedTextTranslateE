@@ -8,8 +8,8 @@ interface Props {
 const props = defineProps<Props>();
 
 const $emit = defineEmits<{
-  (e: 'update:value', value: string): void;
-  (e: 'blur'): void;
+  'update:value': [value: string];
+  blur: [];
 }>();
 
 const isPasswordVisible = ref(false);
