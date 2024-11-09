@@ -33,5 +33,3 @@ function onLanguagesUpdated(languages: SelectedLanguages) {
     />
   </div>
 </template>
-
-<style src="./language-settings.scss" lang="scss" scoped></style>

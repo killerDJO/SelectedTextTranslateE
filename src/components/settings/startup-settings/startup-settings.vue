@@ -15,5 +15,3 @@ const startupState = computed({
     <app-checkbox v-model:value="startupState" :label="'Launch when system starts'" />
   </div>
 </template>
-
-<style src="./startup-settings.scss" lang="scss" scoped></style>

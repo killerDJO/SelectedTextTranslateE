@@ -3,6 +3,8 @@
 </template>
 
 <style lang="scss" scoped>
+@import '~/css/framework.scss';
+
 .forced-icon {
   width: 10px;
   height: 10px;

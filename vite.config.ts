@@ -40,7 +40,7 @@ export default defineConfig(async () => ({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "sass:math"; @import "./src/css/framework.scss";`
+        api: 'modern-compiler'
       }
     }
   },

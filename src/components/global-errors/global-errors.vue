@@ -20,5 +20,3 @@ const globalErrors = useGlobalErrorsStore();
     </app-error>
   </div>
 </template>
-
-<style src="./global-errors.scss" lang="scss" scoped></style>
