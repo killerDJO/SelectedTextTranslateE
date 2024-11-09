@@ -5,25 +5,24 @@ description = "Selected Text Translate"
 edition = "2021"
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-rc", features = [] }
+tauri-build = { version = "2.0.2", features = [] }
 
 [dependencies]
 selected-text-translate-macros = { path = "../src-tauri-macros" }
-tauri = { version = "2.0.0-rc", features = ["tray-icon", "image-ico"] }
-tauri-plugin-shell = "2.0.0-rc"
-tauri-plugin-log = "2.0.0-rc"
-tauri-plugin-notification = "2.0.0-rc"
-tauri-plugin-single-instance = "2.0.0-rc"
-tauri-plugin-global-shortcut = "2.0.0-rc"
-tauri-plugin-clipboard-manager = "2.0.0-rc"
-tauri-plugin-autostart = "2.0.0-rc"
-tauri-plugin-updater = "2.0.0-rc"
+tauri = { version = "2.0.6", features = ["tray-icon", "image-ico"] }
+tauri-plugin-shell = "2.0.2"
+tauri-plugin-log = "2.0.2"
+tauri-plugin-notification = "2.0.1"
+tauri-plugin-single-instance = "2.0.1"
+tauri-plugin-global-shortcut = "2.0.1"
+tauri-plugin-clipboard-manager = "2.0.2"
+tauri-plugin-autostart = "2.0.1"
+tauri-plugin-updater = "2.0.2"
 windows = { version = "0.56.0", features = ["Win32_UI_Input_KeyboardAndMouse", "Win32_UI_WindowsAndMessaging", "Win32_Graphics_Dwm"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-serde_with = "3.8.1"
+serde_with = "3.11.0"
 hex = "0.4.3"
 log = "^0.4"
-global-hotkey = "0.5.4"
 reqwest = "0.12"
-tokio = { version = "1.38.0", features = ["time"] }
+tokio = { version = "1.41.1", features = ["time"] }

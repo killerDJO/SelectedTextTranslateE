@@ -1,6 +1,6 @@
-@import 'reset';
-@import 'framework';
-@import 'tippy.js/dist/tippy.css';
+@use 'reset';
+@use 'framework' as *;
+@use 'tippy.js/dist/tippy.css';
 
 body {
   height: 100%;

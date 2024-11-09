@@ -3,7 +3,7 @@
 </template>
 
 <style lang="scss" scoped>
-@import '~/css/framework.scss';
+@use '~/css/framework.scss' as *;
 
 .forced-icon {
   width: 10px;

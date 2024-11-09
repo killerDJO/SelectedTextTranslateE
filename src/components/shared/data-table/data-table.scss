@@ -1,6 +1,5 @@
 @use 'sass:math';
-
-@import '~/css/framework.scss';
+@use '~/css/framework.scss' as *;
 
 .table-holder {
   position: relative;

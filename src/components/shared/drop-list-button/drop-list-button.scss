@@ -1,4 +1,4 @@
-@import '~/css/framework.scss';
+@use '~/css/framework.scss' as *;
 
 .drop-item-value {
   cursor: pointer;

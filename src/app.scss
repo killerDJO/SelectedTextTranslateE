@@ -1,4 +1,4 @@
-@import '~/css/framework.scss';
+@use '~/css/framework.scss' as *;
 
 .main {
   font-family: Arial, Helvetica, sans-serif;

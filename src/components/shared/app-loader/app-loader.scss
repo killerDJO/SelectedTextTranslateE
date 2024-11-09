@@ -1,4 +1,4 @@
-@import '~/css/framework.scss';
+@use '~/css/framework.scss' as *;
 
 .loading-overlay {
   background-image: url('/loader.svg');

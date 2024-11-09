@@ -1,4 +1,4 @@
-@import '~/css/framework.scss';
+@use '~/css/framework.scss' as *;
 
 $line-height: 22px;
 $compact-line-height: 16px;

@@ -1,4 +1,4 @@
-@import '~/css/framework.scss';
+@use '~/css/framework.scss' as *;
 
 .translate-result {
   line-height: 1.1;

@@ -4,9 +4,8 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use global_hotkey::HotKeyState;
 use tauri::{AppHandle, Listener, Manager};
-use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut};
+use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
 
 use crate::{
     events_manager::{EventsManager, PAUSE_HOTKEYS_EVENT, RESUME_HOTKEYS_EVENT},
@@ -211,7 +210,7 @@ impl ShortcutsManager {
             self.app
                 .global_shortcut()
                 .on_shortcut(shortcut.clone(), move |app, _shortcut, event| {
-                    if event.state == HotKeyState::Pressed {
+                    if event.state == ShortcutState::Pressed {
                         handler_clone(&app);
                     }
                 })
