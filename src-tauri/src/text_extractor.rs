@@ -22,7 +22,12 @@ impl TextExtractor {
     }
 
     pub fn text_from_clipboard(&self) -> String {
-        self.text_from_clipboard.lock().unwrap().clone()
+        self.text_from_clipboard
+            .lock()
+            .unwrap()
+            .clone()
+            .trim()
+            .to_string()
     }
 
     pub fn copy_selected_text(&self) {
